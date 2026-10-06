@@ -13,8 +13,6 @@ import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Position2D;
 import org.apache.commons.math3.util.FastMath;
 
-import java.io.Serial;
-
 /**
  * A {@link Layer} representing a linear distribution in space of a molecule.
  *
@@ -22,8 +20,6 @@ import java.io.Serial;
  */
 public final class BiomolGradientLayer<P extends Position2D<P>> implements Layer<Double, P> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final double a;
     private final double b;
     private final double c;

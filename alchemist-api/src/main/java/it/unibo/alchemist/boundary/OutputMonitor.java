@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.Time;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serializable;
 
 /**
  * An interface for the visualization of the simulation.
@@ -24,7 +23,7 @@ import java.io.Serializable;
  * @param <T> Concentration Type
  * @param <P> {@link Position} Type
  */
-public interface OutputMonitor<T, P extends Position<? extends P>> extends Serializable {
+public interface OutputMonitor<T, P extends Position<? extends P>> {
 
     /**
      * This method will be called by the simulation once the whole simulation has

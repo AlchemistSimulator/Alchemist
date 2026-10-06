@@ -8,8 +8,6 @@
  */
 package it.unibo.alchemist.model
 
-import java.io.Serializable
-
 /**
  * An interface to represent a generic coordinates system.
  *
@@ -18,7 +16,7 @@ import java.io.Serializable
  *            progressively refine the {@link Position} by inheritance, allowing
  *            for specifying incrementally fine grained model elements.
  */
-interface Position<P : Position<P>> : Serializable {
+interface Position<P : Position<P>> {
     /**
      * Given a range, produces N coordinates, representing the N opposite
      * vertices of the hypercube having the current coordinate as center and

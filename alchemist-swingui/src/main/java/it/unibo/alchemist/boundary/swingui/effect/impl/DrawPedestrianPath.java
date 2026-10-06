@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +47,6 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
      * The paths will be drawn as circles of this diameter.
      */
     protected static final int DIAMETER = 5;
-    @Serial
-    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")
     private RangedInteger alpha = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE / INITIAL_ALPHA_DIVIDER);
     @ExportForGUI(nameToExport = "R")

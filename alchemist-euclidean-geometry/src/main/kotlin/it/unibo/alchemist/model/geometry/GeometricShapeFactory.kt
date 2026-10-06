@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.geometry
 
 import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
-import java.io.Serializable
 
 /**
  * Generic factory for [Shape] instances.
@@ -18,7 +17,7 @@ import java.io.Serializable
  * @param S the [Vector] type used by the shapes created by this factory.
  * @param A the [Transformation] type supported by the shapes.
  */
-interface GeometricShapeFactory<S : Vector<S>, A : Transformation<S>> : Serializable {
+interface GeometricShapeFactory<S : Vector<S>, A : Transformation<S>> {
     /**
      * A special shape that occupies no space and does not intersect any other shape.
      */

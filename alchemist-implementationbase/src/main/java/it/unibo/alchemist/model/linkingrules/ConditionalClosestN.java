@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 
-import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -25,8 +24,6 @@ import java.util.Objects;
  */
 public final class ConditionalClosestN<T, P extends Position<P>> extends ClosestN<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final Molecule molecule;
     private final T value;
 

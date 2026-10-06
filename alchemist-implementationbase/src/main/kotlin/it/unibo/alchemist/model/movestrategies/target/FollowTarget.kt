@@ -110,7 +110,6 @@ open class FollowTarget<T, P : Position<P>>(
         FollowTarget(environment, destination, this.targetMolecule)
 
     private companion object {
-        private const val serialVersionUID = -446053307821810438L
         private val LOGGER = LoggerFactory.getLogger(FollowTarget::class.java)
     }
 }

@@ -25,7 +25,6 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.environments.EmptyEnvironment
-import java.io.Serializable
 import kotlin.properties.ReadOnlyProperty
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
@@ -140,24 +139,23 @@ internal class DSLLoader<T, P : Position<P>, I : Incarnation<T, P>>(
                     loader.launcher = launcher
                 }
 
-                override fun <V : Serializable> variable(variable: Variable<out V>) =
-                    VariableDelegateFactory { _, property ->
-                        var registeredVariable = variables[property.name]
-                        if (registeredVariable == null) {
-                            logger.debug("Registering variable '{}' with definition: {}", property.name, variable)
-                            variables += property.name to variable
-                            registeredVariable = variable
-                        }
-                        check(registeredVariable == variable) {
-                            "Error: variable '${property.name}' was defined multiple times. " +
-                                "The first definition binds to: $registeredVariable, " +
-                                "while the second definition attempts to bind to: $variable."
-                        }
-                        ReadOnlyProperty { _, _ ->
-                            @Suppress("UNCHECKED_CAST")
-                            instancedVariables[property.name] as V
-                        }
+                override fun <V : Any> variable(variable: Variable<out V>) = VariableDelegateFactory { _, property ->
+                    var registeredVariable = variables[property.name]
+                    if (registeredVariable == null) {
+                        logger.debug("Registering variable '{}' with definition: {}", property.name, variable)
+                        variables += property.name to variable
+                        registeredVariable = variable
                     }
+                    check(registeredVariable == variable) {
+                        "Error: variable '${property.name}' was defined multiple times. " +
+                            "The first definition binds to: $registeredVariable, " +
+                            "while the second definition attempts to bind to: $variable."
+                    }
+                    ReadOnlyProperty { _, _ ->
+                        @Suppress("UNCHECKED_CAST")
+                        instancedVariables[property.name] as V
+                    }
+                }
 
                 fun checkSeedCanBeSet() {
                     check(environmentHasNotBeenSet) {

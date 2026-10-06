@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.GeoPosition;
 import org.danilopianini.util.Hashes;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
@@ -50,9 +49,6 @@ public final class LatLongPosition implements GeoPosition {
     private static final double MAX_LON = Math.toRadians(180d); // PI
     private static final double MIN_LAT = Math.toRadians(-90d); // -PI/2
     private static final double MIN_LON = Math.toRadians(-180d); // -PI
-
-    @Serial
-    private static final long serialVersionUID = -8972065367390749356L;
 
     private final DistanceFormula df;
     private int hash;

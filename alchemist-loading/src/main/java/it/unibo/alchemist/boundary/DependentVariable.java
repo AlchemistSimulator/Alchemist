@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -19,7 +18,7 @@ import java.util.Map;
  * @param <V> value type of the variable
  */
 @FunctionalInterface
-public interface DependentVariable<V> extends Serializable {
+public interface DependentVariable<V> {
 
     /**
      * Given the current controlled variables, computes the current values for

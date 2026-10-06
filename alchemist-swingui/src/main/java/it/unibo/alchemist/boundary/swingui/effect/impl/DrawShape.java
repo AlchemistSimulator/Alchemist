@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.io.Serial;
 import java.util.Set;
 
 /**
@@ -45,8 +44,6 @@ public final class DrawShape implements Effect {
     private static final int SCALE_DIFF = MAX_SCALE - MIN_SCALE;
     private static final int SCALE_INITIAL = SCALE_DIFF / 2 + MIN_SCALE;
     private static final Logger L = LoggerFactory.getLogger(DrawShape.class);
-    @Serial
-    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Incarnation to use")
     private CollectionWithCurrentElement<String> curIncarnation;
     @ExportForGUI(nameToExport = "Mode")
@@ -85,15 +82,9 @@ public final class DrawShape implements Effect {
     private RangedInteger maxprop = new RangedInteger(-PROPERTY_SCALE, PROPERTY_SCALE, PROPERTY_SCALE);
     private Color colorCache = Color.BLACK;
     @Nullable
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Molecule molecule;
     @Nullable
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Object molStringCached;
-    @SuppressFBWarnings(
-            value = "SE_TRANSIENT_FIELD_NOT_RESTORED",
-            justification = "If null, it gets reinitialized anyway if needed"
-    )
     private transient CollectionWithCurrentElement<String> prevIncarnation;
     private transient Incarnation<?, ?> incarnation;
 

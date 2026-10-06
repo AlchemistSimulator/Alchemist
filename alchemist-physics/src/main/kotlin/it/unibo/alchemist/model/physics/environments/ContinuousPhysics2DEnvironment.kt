@@ -34,8 +34,6 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     Continuous2DEnvironment<T>(incarnation),
     Physics2DEnvironment<T> {
     private companion object {
-        @JvmStatic private val serialVersionUID: Long = 1L
-
         private val adimensional =
             AdimensionalShape<Euclidean2DPosition, Euclidean2DTransformation>(Euclidean2DEnvironment.origin)
     }
@@ -46,7 +44,6 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0
 
-    @Transient
     private val shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape> =
         Caffeine.newBuilder().weakKeys().build { node ->
             node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional

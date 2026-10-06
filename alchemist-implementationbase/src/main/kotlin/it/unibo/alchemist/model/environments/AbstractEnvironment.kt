@@ -24,7 +24,6 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.observables.ObservableMutableList
@@ -34,9 +33,6 @@ import it.unibo.alchemist.model.observables.ObservableMutableSet.Companion.toObs
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableSet
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serial
 import java.util.Objects
 import java.util.function.Consumer
 import kotlinx.collections.immutable.ImmutableList
@@ -72,7 +68,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override val nodes: ObservableList<Node<T>> = mutableNodes
 
-    @Transient
     final override val nodeCount: Observable<Int> = nodes.size
 
     private val regionObservers = ArrayList<RegionObserver>()
@@ -87,14 +82,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             nodes.current.forEach { node -> observableNeighCache.put(node.id, value.computeNeighborhood(node, this)) }
         }
 
-    @Transient
     private var cache: LoadingCache<Pair<P, Double>, List<Node<T>>>? = null
 
-    @Transient
-    final override var incarnation: Incarnation<T, P> = requireNotNull(incarnation)
-        private set
+    final override val incarnation: Incarnation<T, P> = requireNotNull(incarnation)
 
-    @Transient
     final override var simulationOrNull: Simulation<T, P>? = null
         private set
 
@@ -116,10 +107,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         }
 
     private var terminationPredicate: TerminationPredicate<T, P> = TerminationPredicate { false }
-
-    init {
-        this.incarnation = requireNotNull(incarnation)
-    }
 
     override fun addLayer(molecule: Molecule, layer: Layer<T, P>) {
         check(molecule !in layers.keys) { "A layer for $molecule was already associated to this environment." }
@@ -410,16 +397,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      */
     protected open fun nodeShouldBeAdded(node: Node<T>, position: P): Boolean = true
 
-    @Serial
-    private fun readObject(inputStream: ObjectInputStream) {
-        inputStream.defaultReadObject()
-        val name = inputStream.readObject().toString()
-        incarnation =
-            SupportedIncarnations
-                .get<T, P>(name)
-                .orElseThrow { IllegalStateException("Unknown incarnation $name") }
-    }
-
     private fun recomputeNeighborhood(node: Node<T>): Sequence<Node<T>> {
         val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(node), this)
         val oldNeighborhood = observableNeighCache.current[node.id]
@@ -555,11 +532,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         }
     }
 
-    private fun writeObject(out: ObjectOutputStream) {
-        out.defaultWriteObject()
-        out.writeObject(incarnation.javaClass.getSimpleName())
-    }
-
     private inner class RegionObserver(
         val centerId: Int? = null,
         val centerProvider: () -> P,
@@ -602,9 +574,5 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             delegate.dispose()
             onInactive()
         }
-    }
-
-    private companion object {
-        private const val serialVersionUID = 1L
     }
 }

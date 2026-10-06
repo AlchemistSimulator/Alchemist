@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,12 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-
 /**
  */
 public final class VarTreeNode extends ATreeNode<Object> {
 
-    private static final long serialVersionUID = -2700393518024515482L;
     private static final Logger L = LoggerFactory.getLogger(VarTreeNode.class);
 
     /**
@@ -52,7 +50,7 @@ public final class VarTreeNode extends ATreeNode<Object> {
     public ITreeNode<?> getValue(final Map<HashString, ITreeNode<?>> matches) {
         final ITreeNode<?> res = matches.get(getData());
         if (res == null) {
-            L.error("Uninstanced variable: " + getData());
+            L.error("Uninstanced variable: {}", getData());
         }
         return res;
     }

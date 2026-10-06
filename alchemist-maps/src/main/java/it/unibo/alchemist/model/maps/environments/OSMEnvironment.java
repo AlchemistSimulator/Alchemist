@@ -70,8 +70,8 @@ public final class OSMEnvironment<T>
      */
     private final boolean forceStreets;
     private final boolean onlyStreet;
-    @Nullable private transient GraphHopperRoutingService navigator;
-    @Nullable private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
+    @Nullable private GraphHopperRoutingService navigator;
+    @Nullable private LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
     private boolean benchmarking;
     private final int approximation;
     private final String mapFile;

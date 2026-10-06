@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import it.unibo.alchemist.util.RealDistributions
-import java.io.ObjectInputStream
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.ProtelisLoader
@@ -171,12 +170,9 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      *
      * @return the current [AlchemistExecutionContext]
      */
-    @Transient
-    var executionContext = device.executionContextOf(this)
-        private set
+    val executionContext = device.executionContextOf(this)
 
-    @Transient
-    private var vm: ProtelisVM = ProtelisVM(program, executionContext)
+    private val vm: ProtelisVM = ProtelisVM(program, executionContext)
 
     /**
      * @return the molecule associated with the execution of this program
@@ -220,23 +216,5 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         computationalCycleIsComplete.update { false }
     }
 
-    /**
-     * Called reflectively by the Java serialization subsystem during deserialization.
-     * This method is intentionally private and may appear unused to static analyzers.
-     *
-     * After default deserialization, recreate transient components tied to the device.
-     */
-    @Suppress("unused")
-    private fun readObject(stream: ObjectInputStream) {
-        stream.defaultReadObject()
-        // After deserialization, recreate the components using the device
-        executionContext = device.executionContextOf(this)
-        vm = ProtelisVM(program, executionContext)
-    }
-
     override fun toString(): String = name.toString() + "@" + node.id
-
-    private companion object {
-        private const val serialVersionUID = 2L
-    }
 }

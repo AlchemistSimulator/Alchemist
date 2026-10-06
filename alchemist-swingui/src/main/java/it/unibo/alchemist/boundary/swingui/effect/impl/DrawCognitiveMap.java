@@ -33,7 +33,6 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.Serial;
 
 /**
  * Draws an orienting node's cognitive map.
@@ -53,8 +52,6 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     /**
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
-    @Serial
-    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")
     private RangedInteger alpha = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE / INITIAL_ALPHA_DIVIDER);
     @ExportForGUI(nameToExport = "R")
@@ -65,7 +62,6 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE);
     private Color colorCache = Color.RED;
     @Nullable
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient volatile NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap;
 
     /**

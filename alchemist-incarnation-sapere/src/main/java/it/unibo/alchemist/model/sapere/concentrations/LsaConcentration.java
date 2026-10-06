@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.sapere.concentrations;
 import it.unibo.alchemist.model.Concentration;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 
-import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,9 +20,6 @@ import java.util.List;
  * It is required to enforce compatibility with the basic Alchemist model.
  */
 public final class LsaConcentration implements Concentration<List<? extends ILsaMolecule>> {
-
-    @Serial
-    private static final long serialVersionUID = -5225528630199110508L;
 
     @Override
     public List<? extends ILsaMolecule> getContent() {

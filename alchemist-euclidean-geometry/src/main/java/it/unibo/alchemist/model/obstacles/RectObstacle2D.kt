@@ -207,7 +207,6 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(private val backend: j
     override fun toString(): String = "[$minX,$minY -> $maxX,$maxY]"
 
     private companion object {
-        private const val serialVersionUID = -3552947311155196461L
         private const val HALF_PI = Math.PI / 2
 
         /*

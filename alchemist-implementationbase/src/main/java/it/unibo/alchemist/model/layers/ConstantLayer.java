@@ -12,8 +12,6 @@ package it.unibo.alchemist.model.layers;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Position;
 
-import java.io.Serial;
-
 /**
  * a Layer where the concentration is the same at every point in space.
  *
@@ -22,11 +20,6 @@ import java.io.Serial;
  */
 public final class ConstantLayer<T, P extends Position<? extends P>> implements Layer<T, P> {
 
-    /**
-     *
-     */
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final T level;
 
     /**

@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.maps.MapEnvironment
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
-import java.io.Serial
 import java.util.Objects
 import java.util.concurrent.TimeUnit
 import kotlin.time.Instant
@@ -187,9 +186,6 @@ class AISVessel<T>(
     }
 
     private companion object {
-        @Serial
-        private const val serialVersionUID = 1L
-
         private val TRACE_LOADER_CACHE: LoadingCache<TraceRef, AISTraceLoader> = Caffeine
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)

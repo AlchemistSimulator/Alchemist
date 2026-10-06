@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * {@link it.unibo.alchemist.model.LinkingRule} which connects nodes whose Euclidean distance is shorter than a
@@ -26,8 +26,6 @@ import java.io.Serial;
  */
 public class ConnectWithinDistance<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = -405055780667941773L;
     private final double range;
 
     /**
@@ -41,8 +39,9 @@ public class ConnectWithinDistance<T, P extends Position<P>> extends AbstractLoc
     /**
      * Subclasses may change the way a neighborhood is computed.
      */
+    @Nonnull
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
+    public Neighborhood<T> computeNeighborhood(@Nonnull final Node<T> center, @Nonnull final Environment<T, P> environment) {
         return Neighborhoods.make(environment, center, environment.getNodesWithinRange(center, range));
     }
 

@@ -11,14 +11,10 @@ package it.unibo.alchemist.model.protelis.concentrations;
 
 import it.unibo.alchemist.model.Concentration;
 
-import java.io.Serial;
-
 /**
  */
 public final class Local implements Concentration<Object> {
 
-    @Serial
-    private static final long serialVersionUID = 4137133493821814841L;
     private final Object content;
 
     /**

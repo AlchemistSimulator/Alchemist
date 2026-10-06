@@ -36,7 +36,6 @@ import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,9 +74,6 @@ class TestBiomolLayer {
         AlchemistTesting.terminatingAfterSteps(sim, 1_000);
         sim.play();
         sim.addOutputMonitor(new OutputMonitor<>() {
-            @Serial
-            private static final long serialVersionUID = 0L;
-
             @Override
             public void stepDone(
                 @NotNull final Environment<Double, Euclidean2DPosition> environment,

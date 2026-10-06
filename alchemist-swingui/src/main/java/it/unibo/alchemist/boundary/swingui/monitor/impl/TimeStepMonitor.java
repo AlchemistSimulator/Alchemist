@@ -55,7 +55,7 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     private final JLabel s;
     private volatile long step;
     private final JLabel t;
-    private volatile Time time = new DoubleTime();
+    private transient volatile Time time = new DoubleTime();
 
     private final AtomicBoolean updateIsScheduled = new AtomicBoolean(false);
 

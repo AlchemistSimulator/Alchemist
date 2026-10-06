@@ -31,8 +31,4 @@ class FollowTrace<T>(private val reaction: NodeReaction<*>) :
     }
 
     override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): FollowTrace<T> = FollowTrace(reaction)
-
-    private companion object {
-        private const val serialVersionUID = 2L
-    }
 }

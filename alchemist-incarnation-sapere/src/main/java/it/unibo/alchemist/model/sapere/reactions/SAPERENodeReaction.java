@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.reactions;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
@@ -48,10 +47,6 @@ import java.util.Map.Entry;
 public final class SAPERENodeReaction extends AbstractNodeReaction<List<ILsaMolecule>> {
 
     private final Environment<List<ILsaMolecule>, ?> environment;
-    @SuppressFBWarnings(
-            value = "SE_BAD_FIELD",
-            justification = "All provided RandomGenerator implementations are actually Serializable"
-    )
     private final RandomGenerator rng;
     private final SAPERETimeDistribution timeDistribution;
 

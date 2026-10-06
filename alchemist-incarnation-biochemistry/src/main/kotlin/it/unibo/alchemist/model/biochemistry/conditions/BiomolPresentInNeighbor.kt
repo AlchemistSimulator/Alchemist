@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.biochemistry.util.toMoleculeCount
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
-import java.io.Serial
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
 
 /**
@@ -78,18 +77,5 @@ class BiomolPresentInNeighbor(
                     ?: false
             },
         )
-    }
-
-    /**
-     * Companion object for the [BiomolPresentInNeighbor] class.
-     *
-     * This object stores the `serialVersionUID` constant required for serialization purposes.
-     */
-    companion object {
-
-        /**
-         * Unique ID for deserialization purposes.
-         */
-        @Serial const val serialVersionUID: Long = 499903479123400111L
     }
 }

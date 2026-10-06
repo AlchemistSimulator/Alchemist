@@ -13,16 +13,11 @@ import org.danilopianini.lang.HashString;
 
 import java.util.Map;
 
-
 /**
  */
 public final class UIDNode extends ConstTreeNode {
 
     private static final String PREFIX = "id";
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -2166926230641043532L;
     private HashString cache;
     private final HashString original;
 

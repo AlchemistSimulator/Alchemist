@@ -12,8 +12,6 @@ package it.unibo.alchemist.model.layers;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Position2D;
 
-import java.io.Serial;
-
 /**
  * Implements a {@link Layer} with a discontinuous spatial distribution: the plane is divided
  * in two parts, both with a constant concentration but with a different in value.
@@ -24,8 +22,6 @@ import java.io.Serial;
  */
 public final class StepLayer<T, P extends Position2D<? extends P>> implements Layer<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = -4002670240161927416L;
     private final double maxx;
     private final double maxy;
     private final T highValue;

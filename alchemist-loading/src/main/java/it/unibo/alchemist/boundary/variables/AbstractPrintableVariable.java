@@ -11,8 +11,6 @@ package it.unibo.alchemist.boundary.variables;
 
 import it.unibo.alchemist.boundary.Variable;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.stream.Collectors;
 
 /**
@@ -20,10 +18,7 @@ import java.util.stream.Collectors;
  *
  * @param <V> value type of the variable
  */
-public abstract class AbstractPrintableVariable<V extends Serializable> implements Variable<V> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public abstract class AbstractPrintableVariable<V> implements Variable<V> {
 
     /**
      * {@inheritDoc}

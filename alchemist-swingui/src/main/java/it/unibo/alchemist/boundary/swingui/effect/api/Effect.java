@@ -17,13 +17,12 @@ import it.unibo.alchemist.model.Position2D;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.io.Serializable;
 
 /**
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
-public interface Effect extends Serializable {
+public interface Effect {
 
     /**
      * Applies the effect.

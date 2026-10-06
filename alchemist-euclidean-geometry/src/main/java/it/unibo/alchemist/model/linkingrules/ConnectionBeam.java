@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,13 +16,11 @@ import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithObstacles
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
+import javax.annotation.Nonnull;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,12 +42,10 @@ import static org.apache.commons.math3.util.FastMath.sin;
  */
 public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2DPosition> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;
     private final double beamWidth;
-    private transient Euclidean2DEnvironmentWithObstacles<?, T> oenv;
-    private transient Area obstacles = new Area();
+    private Euclidean2DEnvironmentWithObstacles<?, T> oenv;
+    private final Area obstacles = new Area();
 
     /**
      * @param radius
@@ -62,8 +58,12 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
         beamWidth = beamSize;
     }
 
+    @Nonnull
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, Euclidean2DPosition> environment) {
+    public Neighborhood<T> computeNeighborhood(
+        @Nonnull final Node<T> center,
+        @Nonnull final Environment<T, Euclidean2DPosition> environment
+    ) {
         final Neighborhood<T> normal = super.computeNeighborhood(center, environment);
         if (oenv == null) {
             if (!(environment instanceof Euclidean2DEnvironmentWithObstacles<?, ?>)) {
@@ -84,11 +84,12 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
             });
         }
         if (!normal.isEmpty()) {
+            final Euclidean2DEnvironmentWithObstacles<?, T> obstacleEnvironment = oenv;
             final Euclidean2DPosition cp = environment.getCurrentPosition(center);
             final List<Node<T>> neighs = normal.getNeighbors().stream()
                 .filter(neigh -> {
                     final Euclidean2DPosition np = environment.getCurrentPosition(neigh);
-                    return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
+                    return !obstacleEnvironment.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
             return Neighborhoods.make(environment, center, neighs);
@@ -164,13 +165,6 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
             }
         }
         return false;
-    }
-
-    @Serial
-    private void readObject(final ObjectInputStream o) throws ClassNotFoundException, IOException {
-        o.defaultReadObject();
-        oenv = null;
-        obstacles = new Area();
     }
 
 }

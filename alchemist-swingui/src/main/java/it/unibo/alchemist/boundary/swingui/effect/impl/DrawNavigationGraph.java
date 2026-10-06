@@ -31,7 +31,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
-import java.io.Serial;
 
 /**
  * Draws the navigation graph of an {@link ImageEnvironmentWithGraph}.
@@ -54,8 +53,6 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
      *
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawNavigationGraph.class);
-    @Serial
-    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")
     private RangedInteger alpha = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE / INITIAL_ALPHA_DIVIDER);
     @ExportForGUI(nameToExport = "R")
@@ -66,7 +63,6 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
     private Color colorCache = Color.BLUE;
     @Nullable
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient volatile NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, Euclidean2DPassage> graph;
 
     /**

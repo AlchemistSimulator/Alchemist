@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -53,7 +52,7 @@ public final class RealDistributions {
         final String name = shortname + (
             shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution"
         );
-        final var result = REAL_DISTRIBUTIONS.stream()
+        return REAL_DISTRIBUTIONS.stream()
             .filter(stat -> stat.getSimpleName().equalsIgnoreCase(requireNonNull(name)))
             .findAny()
             .stream()
@@ -87,11 +86,5 @@ public final class RealDistributions {
                     "Could not initialize " + name + " with " + randomGenerator + " and " + Arrays.toString(arguments)
                 )
             );
-        if (!(result instanceof Serializable)) {
-            throw new IllegalStateException(
-                result.getClass().getSimpleName() + " is not Serializable. This may break the simulator."
-            );
-        }
-        return result;
     }
 }

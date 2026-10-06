@@ -21,7 +21,6 @@ import org.danilopianini.view.ExportForGUI;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Dimension2D;
-import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -48,8 +47,6 @@ import java.util.stream.Collectors;
 @Deprecated
 public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValues {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private static final int MAX_NUMBER_OF_ISOLINES = 50;
     @ExportForGUI(nameToExport = "Number of isolines")
     private RangedInteger nOfIsolines = new RangedInteger(1, MAX_NUMBER_OF_ISOLINES, MAX_NUMBER_OF_ISOLINES / 4);

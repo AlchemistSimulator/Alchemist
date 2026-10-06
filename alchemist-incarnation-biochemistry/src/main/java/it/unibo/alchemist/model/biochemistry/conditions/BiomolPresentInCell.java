@@ -15,15 +15,10 @@ import it.unibo.alchemist.model.NodeReaction;
 
 import javax.annotation.Nonnull;
 
-import java.io.Serial;
-
 /**
  *
  */
 public final class BiomolPresentInCell extends GenericMoleculePresent<Double> {
-
-    @Serial
-    private static final long serialVersionUID = -5772829360637946655L;
 
     /**
      * @param biomol the molecule

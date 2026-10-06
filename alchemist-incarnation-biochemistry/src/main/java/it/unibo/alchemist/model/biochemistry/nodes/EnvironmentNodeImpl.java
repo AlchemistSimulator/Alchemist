@@ -15,15 +15,11 @@ import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.nodes.GenericNode;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 
 /**
  * A node with non-negative concentration.
  */
 public final class EnvironmentNodeImpl extends GenericNode<Double> implements EnvironmentNode {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     /**
      * Create a new environment node.

@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -25,8 +24,6 @@ import java.util.Optional;
  */
 public abstract class AbstractAction<T> implements Action<T> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     @Nonnull
     private final Node<T> node;
 

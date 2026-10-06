@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.Position2D;
 
 import javax.annotation.Nullable;
 import java.awt.Graphics2D;
-import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -31,8 +30,6 @@ import java.util.Optional;
 @Deprecated
 public abstract class AbstractDrawOnce implements Effect {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     @Nullable
     private Integer markerNodeID;
 

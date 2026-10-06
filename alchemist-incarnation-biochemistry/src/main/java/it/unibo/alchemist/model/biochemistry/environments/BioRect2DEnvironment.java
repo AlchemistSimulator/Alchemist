@@ -20,15 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.Map;
 
 /**
  */
 public class BioRect2DEnvironment extends AbstractLimitedContinuous2D<Double> {
 
-    @Serial
-    private static final long serialVersionUID = -2952112972706738682L;
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironment.class);
 
     private final double minX;

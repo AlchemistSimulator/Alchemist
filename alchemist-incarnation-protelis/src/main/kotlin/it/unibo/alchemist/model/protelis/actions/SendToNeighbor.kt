@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
-import java.io.Serial
 import java.util.Objects
 
 /**
@@ -44,9 +43,4 @@ class SendToNeighbor(node: Node<Any>, reaction: NodeReaction<Any>, val protelisP
     }
 
     override fun toString(): String = "broadcast " + protelisProgram.asMolecule().getName() + " data"
-
-    private companion object {
-        @Serial
-        private val serialVersionUID = -8826563176323247613L
-    }
 }

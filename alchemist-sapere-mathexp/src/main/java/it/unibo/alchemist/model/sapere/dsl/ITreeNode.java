@@ -10,18 +10,16 @@ package it.unibo.alchemist.model.sapere.dsl;
 
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.danilopianini.lang.HashString;
-
 
 /**
  * Represents an interface for node of the Tree class.
  * 
  * @param <T> concentration type
  */
-public interface ITreeNode<T> extends Serializable {
+public interface ITreeNode<T> {
 
     /**
      * @return the object embedded in this node

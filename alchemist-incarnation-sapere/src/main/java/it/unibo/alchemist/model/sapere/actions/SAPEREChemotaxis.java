@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
@@ -25,8 +24,6 @@ import java.util.List;
  */
 public final class SAPEREChemotaxis<P extends Position<P>> extends AbstractSAPERENeighborAgent<P> {
 
-    @Serial
-    private static final long serialVersionUID = -4845100315774422690L;
     private final int idPosition;
     private final ILsaMolecule response;
     private final ILsaMolecule gradient;

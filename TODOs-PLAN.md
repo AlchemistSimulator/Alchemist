@@ -532,15 +532,16 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 ## Phase 8: remove Java serialization
 
-- [ ] Inventory `Serializable`, `serialVersionUID`, `@Serial`, `@Transient`, `readObject`, `writeObject`, and cloning
-  code coupled to serialization.
 - [x] Remove serialization from the action, condition, linking-rule, and speed-strategy interface hierarchies.
-- [ ] Remove serialization inheritance from model, engine, reaction, condition, action, node, environment, molecule,
-  and time-distribution APIs where present.
-- [ ] Remove obsolete serialization fields, hooks, tests, and warning suppressions.
-- [ ] Check exporters, UI tools, distributed execution, and loaders for accidental reliance on Java object streams.
-- [ ] If persistence remains necessary, define explicit versioned DTOs outside the live reactive object graph.
-- [ ] Document the breaking change.
+- [x] Remove serialization inheritance from model, engine, reaction, condition, action, node, environment, molecule,
+  and time-distribution APIs where present, and from the loading boundary (`Loader`, variables, and export filters).
+  Exceptions, the Commons Math distribution shim, `ProtelisDevice` (a Protelis `DeviceUID`), and Swing components
+  remain serializable only through their third-party supertypes; Swing UI effects persist through Gson.
+- [x] Remove obsolete serialization fields, hooks, tests, and warning suppressions.
+- [x] Check exporters, UI tools, distributed execution, and loaders for accidental reliance on Java object streams.
+- [x] If persistence remains necessary, define explicit versioned DTOs outside the live reactive object graph.
+  Not needed: no repository consumer persists the live model.
+- [x] Document the breaking change in the release notes through the commit's `BREAKING CHANGE` footer.
 
 ## Phase 9: complete observable model migration
 
@@ -676,6 +677,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Removed Java serialization from the model, engine, and loading APIs.
 - 2026-10-06: Completed distribution-family tests with SAPERE static and match-driven exponential rates.
 - 2026-10-06: Covered molecule-controlled delay reads, validation, and error-distribution draws.
 - 2026-10-06: Covered network-arrival parameter refresh and access-point bandwidth sharing.

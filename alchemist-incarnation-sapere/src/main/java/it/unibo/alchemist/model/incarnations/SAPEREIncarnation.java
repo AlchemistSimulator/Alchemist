@@ -37,8 +37,6 @@ import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import javax.annotation.Nullable;
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -51,10 +49,8 @@ import java.util.regex.Pattern;
  * @param <P> position type
  */
 public final class SAPEREIncarnation<P extends Position<? extends P>>
-        implements Incarnation<List<ILsaMolecule>, P>, Serializable {
+        implements Incarnation<List<ILsaMolecule>, P> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private static final String CONDITION_GROUP = "condition";
     private static final String CONDITIONS_GROUP = "conditions";
     private static final String ACTION_GROUP = "action";

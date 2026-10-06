@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.biochemistry.molecules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 
-import java.io.Serial;
 import java.util.Collections;
 import java.util.Map;
 
@@ -21,9 +20,6 @@ import java.util.Map;
  */
 @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
 public final class Junction extends SimpleMolecule {
-
-    @Serial
-    private static final long serialVersionUID = -5538036651435573599L;
 
     private final Map<Biomolecule, Double> moleculesInCurrentNode;
     private final Map<Biomolecule, Double> moleculesInNeighborNode;

@@ -9,25 +9,15 @@
 
 package it.unibo.alchemist.model.biochemistry.actions;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import org.apache.commons.math3.random.RandomGenerator;
-
-import java.io.Serial;
 
 /**
  * @param <T> concentration type
  */
 public abstract class AbstractRandomizableAction<T> extends AbstractAction<T> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    @SuppressFBWarnings(
-            value = "SE_BAD_FIELD",
-            justification = "All provided RandomGenerator implementations are actually Serializable"
-    )
     private final RandomGenerator rand;
 
     /**

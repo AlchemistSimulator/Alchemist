@@ -39,7 +39,6 @@ import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
-import java.io.Serial
 import java.lang.ref.WeakReference
 import java.time.Duration
 import java.util.Objects
@@ -346,9 +345,6 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     }
 
     private data object NoNode : Node<Any> {
-        @Serial
-        private const val serialVersionUID = 1L
-
         override val contents: MutableMap<Molecule, Any> get() = notImplemented()
 
         override val observableContents: ObservableMap<Molecule, Any> get() = notImplemented()
@@ -386,13 +382,6 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         override fun dispose() = notImplemented<Unit>()
 
         override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
-
-        /**
-         * Ensures that deserialization of this sentinel object returns the canonical instance.
-         * Called reflectively by the Java serialization subsystem; kept private intentionally.
-         */
-        @Suppress("unused")
-        private fun readResolve(): Any = NoNode
 
         private fun <A> notImplemented(): A =
             throw UnsupportedOperationException("Method can't be invoked in this context.")

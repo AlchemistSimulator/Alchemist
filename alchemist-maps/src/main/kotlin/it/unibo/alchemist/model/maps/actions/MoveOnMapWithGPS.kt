@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.maps.ObjectWithGPS
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
-import java.io.Serial
 import java.util.Objects
 import java.util.concurrent.TimeUnit
 
@@ -84,8 +83,6 @@ open class MoveOnMapWithGPS<T, O : RoutingServiceOptions<O>, S : RoutingService<
      * A cache of trace loaders.
      */
     protected companion object {
-        @Serial
-        private const val serialVersionUID = 1L
         private val TRACE_LOADER_CACHE: LoadingCache<TraceRef, TraceLoader> =
             Caffeine
                 .newBuilder()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.linkingrules.AbstractLocallyConsistentLinkingRul
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,8 +27,6 @@ import java.util.stream.Stream;
  */
 public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsistentLinkingRule<T, GeoPosition> {
 
-    @Serial
-    private static final long serialVersionUID = 726751817489962367L;
     private final double range;
 
     /**
@@ -38,8 +36,12 @@ public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsist
         range = r;
     }
 
+    @Nonnull
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, GeoPosition> environment) {
+    public Neighborhood<T> computeNeighborhood(
+        @Nonnull final Node<T> center,
+        @Nonnull final Environment<T, GeoPosition> environment
+    ) {
         if (environment instanceof final MapEnvironment<T, ?, ?> menv) {
             final Stream<? extends Node<T>> stream =
                 menv.getNodesWithinRange(center, range).parallelStream();

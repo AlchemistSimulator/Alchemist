@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 
-import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -30,8 +29,6 @@ import java.util.Objects;
  */
 public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final TargetSelectionStrategy<T, P> targetSelectionStrategy;
     private final SpeedSelectionStrategy<T, P> speedSelectionStrategy;
     private final RoutingStrategy<T, P> routingStrategy;

@@ -135,8 +135,6 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     private companion object {
-        private const val serialVersionUID = 2496775909028222278L
-
         private val IDGENERATOR = MapMaker().weakKeys().makeMap<Environment<*, *>, AtomicInteger>()
 
         private val MUTEX = Semaphore(1)

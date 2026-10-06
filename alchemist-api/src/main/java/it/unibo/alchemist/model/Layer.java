@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.model;
 
-import java.io.Serializable;
-
 /**
  * Interface for static layer, containing a substance or a molecule with a
  * spatial distribution.
@@ -21,7 +19,7 @@ import java.io.Serializable;
  *            Concentration type
  */
 @FunctionalInterface
-public interface Layer<T, P extends Position<? extends P>> extends Serializable {
+public interface Layer<T, P extends Position<? extends P>> {
 
     /**
      * @param p

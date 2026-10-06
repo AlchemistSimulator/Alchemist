@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
-import java.io.Serializable
 import java.util.Collections
 import java.util.Objects
 import org.apache.commons.math3.distribution.RealDistribution
@@ -51,8 +50,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
      * the distribution connecting the distance to the packet loss.
      */
     val distanceLossDistribution: RealDistribution? = null,
-) : NetworkManager,
-    Serializable {
+) : NetworkManager {
     private val environment: Environment<Any, *> = Objects.requireNonNull(program.environment)
     private val messages: MutableMap<DeviceUID, MessageInfo> = LinkedHashMap()
     private var toBeSent: Map<CodePath, Any> = emptyMap()
@@ -140,14 +138,5 @@ class AlchemistNetworkManager @JvmOverloads constructor(
         }
     }
 
-    private data class MessageInfo(val time: Double, val source: DeviceUID, val payload: Map<CodePath, Any>) :
-        Serializable {
-        companion object {
-            private const val serialVersionUID = 2L
-        }
-    }
-
-    private companion object {
-        private const val serialVersionUID = 2L
-    }
+    private data class MessageInfo(val time: Double, val source: DeviceUID, val payload: Map<CodePath, Any>)
 }

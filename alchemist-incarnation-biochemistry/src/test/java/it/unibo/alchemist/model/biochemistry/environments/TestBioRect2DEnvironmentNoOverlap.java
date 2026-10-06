@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -769,9 +768,6 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Environment<Double, Euclidean2DPosition> env = sim.getEnvironment();
         AlchemistTesting.terminatingAfterSteps(sim, 1_000);
         sim.addOutputMonitor(new OutputMonitor<>() {
-            @Serial
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void stepDone(
                     @Nonnull final Environment<Double, Euclidean2DPosition> environment,

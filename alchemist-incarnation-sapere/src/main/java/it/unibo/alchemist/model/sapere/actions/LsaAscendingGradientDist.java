@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import it.unibo.alchemist.model.sapere.nodes.LsaNode;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +30,6 @@ import java.util.List;
  */
 public final class LsaAscendingGradientDist<P extends Position<P>> extends AbstractSAPERENeighborAgent<P> {
 
-    @Serial
-    private static final long serialVersionUID = 7719580008466360029L;
     private static final ILsaMolecule MOLGRAD = new LsaMolecule("grad, req, Type, Distance, Time");
     private static final ILsaMolecule MOLRESPONSE = new LsaMolecule("response, Req, Ser, MD, D");
     private static final int POS = 3;

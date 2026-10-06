@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
@@ -25,9 +24,6 @@ import java.util.List;
  * This is why N molecules are instanced if there are N neighbors.
  */
 public final class LsaAllNeighborsAction extends LsaRandomNeighborAction {
-
-    @Serial
-    private static final long serialVersionUID = -4798752202640197182L;
 
     /**
      * @param node

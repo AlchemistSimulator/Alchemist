@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.physics.environments
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import java.io.Serial
 
 /**
  * A 2D continuous environment with spatial constraints.
@@ -23,10 +22,6 @@ import java.io.Serial
  */
 abstract class AbstractLimitedContinuous2D<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
     ContinuousPhysics2DEnvironment<T>(incarnation) {
-
-    private companion object {
-        @Serial private const val serialVersionUID = -7838255122589911058L
-    }
 
     override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) {
         val (curX, curY) = getCurrentPosition(node).coordinates

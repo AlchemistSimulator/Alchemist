@@ -24,7 +24,6 @@ import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 
-import java.io.Serial;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -111,11 +110,6 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
     }
 
     private static final class NextTargetStrategy<T> implements TargetSelectionStrategy<T, GeoPosition> {
-        /**
-         *
-         */
-        @Serial
-        private static final long serialVersionUID = -618772546563562484L;
         private final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment;
         private final Node<List<ILsaMolecule>> node;
         private final ILsaMolecule template;

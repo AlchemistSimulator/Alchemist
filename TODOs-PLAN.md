@@ -558,14 +558,17 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [x] Decide whether layer association can change at runtime; if it can, expose the environment's layer registry
     as an observable map and define add, replacement, and removal semantics before exposing mutation operations.
     Decided: layers are associated only during setup; `addLayer` fails once the environment joins a simulation.
-  - [ ] Migrate every layer-reading condition, reaction, action, exporter, and incarnation to the observable
+  - [x] Migrate every layer-reading condition, reaction, action, exporter, and incarnation to the observable
     contract. Scheduling consumers must own exact subscription handles or consume a lazy derived observable.
     - [x] `BiomolPresentInEnv` observes the extracellular layer through `Environment.observeLayerValue`, so layer
       changes and movement update biochemical rates; layers resolve lazily, so setup order does not matter.
-    - [ ] Audit the cognitive danger reader; Protelis, Scafi, cognitive steering actions, the Swing UI, and GraphQL
-      read current values at execution or query time and need no scheduling subscription.
-  - [ ] Add regressions for static layers, mutable layer values, movement across a spatial gradient, runtime layer
+    - [x] The cognitive danger reader samples the layer while integrating `BeliefDanger` at each cognitive step, so
+      the layer never decides when that reaction occurs; Protelis, Scafi, cognitive steering actions, the Swing UI,
+      and GraphQL likewise read current values at execution or query time and need no scheduling subscription.
+  - [x] Add regressions for static layers, mutable layer values, movement across a spatial gradient, runtime layer
     association changes if supported, subscription disposal, and absence of updates after reaction or node removal.
+    Node removal now disposes the node's reactions before removing its position and neighborhood, so reactions
+    observing their own node no longer receive a removal emission.
   - [ ] Update the layer API documentation, YAML reference, layer how-to, and scheduling documentation in the same
     change, removing the current assumption that layers are necessarily static.
 - [ ] Audit biochemistry, Protelis, SAPERE, Scafi, cognitive agents, physics, maps, and environment-owned reactions.
@@ -682,6 +685,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Classified every layer reader and detached removed nodes' reactions before removing their state.
 - 2026-10-06: Introduced time-invariant layers and migrated extracellular biochemical conditions to observable layers.
 - 2026-10-06: Added observable layer values composed with node positions; layers are fixed at setup.
 - 2026-10-06: Removed Java serialization from the model, engine, and loading APIs.

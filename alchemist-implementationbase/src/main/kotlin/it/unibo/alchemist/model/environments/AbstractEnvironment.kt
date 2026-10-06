@@ -416,6 +416,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun removeNode(node: Node<T>) {
         val reactions = node.reactions.toList()
+        // Detach the node's reactions before its position and neighborhood leave the observable model state.
+        node.dispose()
         invalidateCache()
         val position = requireNotNull(observableNodeToPos.current[node.id]) { "Node position cannot be null." }
         spatialIndex.remove(node, *position.coordinates)
@@ -437,7 +439,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         updateRegionObservers(node, null, null)
         ifEngineAvailable { simulation -> reactions.forEach(simulation::reactionRemoved) }
         nodeRemoved(node, neigh)
-        node.dispose()
     }
 
     private fun runQuery(center: P, range: Double): List<Node<T>> = spatialIndex
@@ -555,10 +556,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * It serves as both a way to avoid leaks through the [onInactive] callback (which should clear
      * the backing caches), and a lazy evaluation of [onActive] when observers are registered.
      *
-     *
      * @param onActive the callback to be invoked when the first observer is added
-     * @param onInactive the callback to be invoked when the last observer is removed, which
-     *                   should clear backing caches and resources.
+     * @param onInactive the callback to be invoked when the last observer is removed,
+     * which should clear backing caches and resources.
      */
     private class RefCountObservableSet<T>(
         private val delegate: ObservableMutableSet<T>,

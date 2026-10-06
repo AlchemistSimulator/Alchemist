@@ -27,6 +27,7 @@ import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.test.assertEquals
@@ -143,22 +144,7 @@ class BiochemicalReactionSchedulingTest {
 
     @Test
     fun `a time-varying layer drives the extracellular rate of a biochemical reaction`() {
-        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
-        every { randomGenerator.nextDouble() } returns 0.5
-        val incarnation = BiochemistryIncarnation()
-        val environment = BioRect2DEnvironment(incarnation)
-        val node = incarnation.createNode(randomGenerator, environment, null)
-        assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
-        val molecule = assertIs<Biomolecule>(incarnation.createMolecule("token"))
-        val level = observe(2.0)
-        val condition = BiomolPresentInEnv(environment, node, molecule, 1.0)
-        environment.addLayer(molecule) { level }
-        val reaction = BiochemicalNodeReaction(
-            node,
-            ExponentialTime(1.0, randomGenerator),
-            environment,
-            randomGenerator,
-        ).apply { conditions = listOf(condition) }
+        val (randomGenerator, environment, _, level, condition, reaction) = layerFixture()
         reaction.initializationComplete(Time.ZERO, environment)
         val initialOccurrence = reaction.nextOccurrence.current
         level.current = 4.0
@@ -167,6 +153,24 @@ class BiochemicalReactionSchedulingTest {
         level.current = 0.0
         assertTrue(reaction.nextOccurrence.current.isInfinite)
         verify(exactly = 1) { randomGenerator.nextDouble() }
+    }
+
+    @Test
+    fun `a removed reaction or node stops observing a time-varying layer`() {
+        listOf<(Node<Double>, BiochemicalNodeReaction, BioRect2DEnvironment) -> Unit>(
+            { node, reaction, _ -> node.removeReaction(reaction) },
+            { node, _, environment -> environment.removeNode(node) },
+        ).forEach { remove ->
+            val (randomGenerator, environment, node, level, _, reaction) = layerFixture()
+            reaction.initializationComplete(Time.ZERO, environment)
+            assertTrue(level.observers.isNotEmpty())
+            val occurrence = reaction.nextOccurrence.current
+            remove(node, reaction, environment)
+            assertTrue(level.observers.isEmpty())
+            level.current = 4.0
+            assertEquals(occurrence, reaction.nextOccurrence.current)
+            verify(exactly = 1) { randomGenerator.nextDouble() }
+        }
     }
 
     @Test
@@ -246,6 +250,30 @@ class BiochemicalReactionSchedulingTest {
         }
     }
 
+    /**
+     * A node whose reaction depends on a time-varying extracellular layer, associated after the condition is built.
+     */
+    private fun layerFixture(): LayerFixture {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation)
+        val node = incarnation.createNode(randomGenerator, environment, null)
+        assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
+        val molecule = assertIs<Biomolecule>(incarnation.createMolecule("token"))
+        val level = observe(2.0)
+        val condition = BiomolPresentInEnv(environment, node, molecule, 1.0)
+        environment.addLayer(molecule) { level }
+        val reaction = BiochemicalNodeReaction(
+            node,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        ).apply { conditions = listOf(condition) }
+        node.addReaction(reaction)
+        return LayerFixture(randomGenerator, environment, node, level, condition, reaction)
+    }
+
     private fun createFixture(randomGenerator: RandomGenerator): BiochemicalFixture {
         val incarnation = BiochemistryIncarnation()
         val environment = BioRect2DEnvironment(incarnation)
@@ -262,6 +290,15 @@ class BiochemicalReactionSchedulingTest {
         ).apply { conditions = listOf(condition) }
         return BiochemicalFixture(environment, node, molecule, condition, reaction)
     }
+
+    private data class LayerFixture(
+        val randomGenerator: RandomGenerator,
+        val environment: BioRect2DEnvironment,
+        val node: Node<Double>,
+        val level: MutableObservable<Double>,
+        val condition: BiomolPresentInEnv<Euclidean2DPosition>,
+        val reaction: BiochemicalNodeReaction,
+    )
 
     private data class BiochemicalFixture(
         val environment: BioRect2DEnvironment,

@@ -34,6 +34,7 @@ dependencies {
     val jsr305 by catalog
     val slf4j by catalog
     val `spotbugs-annotations` by catalog
+    val `kotlin-test` by catalog
     val resourceloader by catalog
 
     val alchemistApi = alchemist("api")
@@ -53,6 +54,7 @@ dependencies {
     testCompileOnly(`spotbugs-annotations`)
 
     testImplementation(alchemist("test"))
+    testImplementation(`kotlin-test`)
 }
 
 java {

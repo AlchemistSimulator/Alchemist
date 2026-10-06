@@ -22,8 +22,6 @@ dependencies {
     implementation(alchemist("physics"))
     implementation(libs.boilerplate)
     implementation(libs.trove4j)
-
-    testImplementation(libs.kotlin.test)
 }
 
 spotbugs {

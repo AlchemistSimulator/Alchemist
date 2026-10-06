@@ -35,7 +35,6 @@ dependencies {
     testImplementation(alchemist("test"))
     testImplementation(alchemist("euclidean-geometry"))
     testImplementation(incarnation("protelis"))
-    testImplementation(libs.kotlin.test)
 }
 
 publishing.publications {

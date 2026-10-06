@@ -327,6 +327,9 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   specific implementations.
 - [x] Make invalid samples, negative delays, NaN, and infinity behavior explicit.
 - [ ] Add isolated deterministic and statistical tests for every distribution family.
+  - [x] Dirac comb, arbitrary real, exponential, Weibull, Weibull-distributed Weibull, and random Dirac comb
+    distributions, including exact random-number consumption.
+  - [ ] Network-arrival, molecule-controlled, and SAPERE exponential distributions.
 
 ## Phase 5: make reactions own scheduling
 
@@ -670,6 +673,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Added seeded statistical and draw-count tests for the core stochastic distributions.
 - 2026-10-06: Covered destination-bound SAPERE clone matching and disposal.
 - 2026-10-06: Covered destination-bound biochemical clone scheduling and disposal.
 - 2026-10-05: Made linking-rule replacement republish every neighborhood; covered topology-driven validity changes.

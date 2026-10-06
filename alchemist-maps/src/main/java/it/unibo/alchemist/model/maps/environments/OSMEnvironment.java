@@ -232,12 +232,12 @@ public final class OSMEnvironment<T>
         final GeoPosition coord,
         final GraphHopperOptions options
     ) {
-        return computeRoute(retrievePosition(node), coord, options);
+        return computeRoute(currentPositionOf(node), coord, options);
     }
 
     @Override
     public Route<GeoPosition> computeRoute(final Node<T> node, final Node<T> node2) {
-        return computeRoute(node, retrievePosition(node2));
+        return computeRoute(node, currentPositionOf(node2));
     }
 
     @Override

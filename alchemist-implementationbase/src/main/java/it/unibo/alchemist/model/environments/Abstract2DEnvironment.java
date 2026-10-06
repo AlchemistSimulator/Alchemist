@@ -119,7 +119,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
     public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final P newPosition) {
         includeObject(newPosition);
         setPosition(node, newPosition);
-        updateNeighborhood(node);
+        refreshNeighborhoodsAround(node);
     }
 
     /**

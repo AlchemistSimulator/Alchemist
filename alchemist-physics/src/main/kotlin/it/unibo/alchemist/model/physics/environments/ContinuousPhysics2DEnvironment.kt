@@ -63,7 +63,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     }
 
     override fun getShape(node: Node<T>): Euclidean2DShape = shapefulNodes[node].transformed {
-        origin(retrievePosition(node))
+        origin(currentPositionOf(node))
         rotate(getHeading(node))
     }
 
@@ -124,7 +124,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         desiredPosition: Euclidean2DPosition,
         hitboxRadius: Double,
     ): Euclidean2DPosition {
-        val currentPosition = retrievePosition(node)
+        val currentPosition = currentPositionOf(node)
         val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)
         val nodesOnPath =
             nodesOnPath(node, desiredMovement)

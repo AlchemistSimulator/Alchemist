@@ -685,6 +685,8 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Passed the actual insertion position to environment node-addition hooks; clarified `AbstractEnvironment` member names.
+- 2026-10-06: Rebuilt live range queries in `AbstractEnvironment`, fixing stale and inactive queries; dropped the range-query cache.
 - 2026-10-06: Classified every layer reader and detached removed nodes' reactions before removing their state.
 - 2026-10-06: Introduced time-invariant layers and migrated extracellular biochemical conditions to observable layers.
 - 2026-10-06: Added observable layer values composed with node positions; layers are fixed at setup.

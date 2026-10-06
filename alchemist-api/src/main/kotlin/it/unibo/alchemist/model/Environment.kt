@@ -71,7 +71,8 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     val layers: Map<Molecule, Layer<T, P>>
 
     /**
-     * Returns the current [LinkingRule].
+     * The current [LinkingRule].
+     * Assigning a new rule recomputes and publishes the neighborhood of every node in the environment.
      */
     var linkingRule: LinkingRule<T, P>
 

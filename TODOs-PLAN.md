@@ -585,7 +585,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   another draw; the next completed round starts exactly one new wait.
   - [x] Cover the complete deterministic/stateful sequence with explicit sample counts.
   - [x] Repeat the sequence with an exponential distribution and explicit random-generator consumption.
-- [ ] Test neighborhood addition/removal, movement, environment-wide changes, and dynamic reaction/node changes.
+- [x] Test neighborhood addition/removal, movement, environment-wide changes, and dynamic reaction/node changes.
 - [x] Test that previously published neighborhood snapshots cannot change when topology changes and that observers
   receive a distinct immutable replacement snapshot.
 - [x] Test propensity changes that do not change Boolean condition validity.
@@ -668,6 +668,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-05: Made linking-rule replacement republish every neighborhood; covered topology-driven validity changes.
 - 2026-10-05: Covered the propensity-free condition API and YAML rejection of unsupported biochemical conditions.
 - 2026-10-05: Covered engine-level one-shot event execution, cleanup, and non-resurrection by node cloning.
 - 2026-10-05: Covered generic and SAPERE revalidation from the current simulation time.

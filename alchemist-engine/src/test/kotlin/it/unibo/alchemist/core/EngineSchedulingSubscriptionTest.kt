@@ -24,8 +24,11 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.conditions.NeighborHasConcentration
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.observables.CompositeDisposable
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
@@ -33,6 +36,7 @@ import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.reactions.AbsoluteEvent
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 import it.unibo.alchemist.model.reactions.ConditionalEvent
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.time.Duration.Companion.milliseconds
@@ -250,6 +254,59 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         engine.schedule { input.current++ }
         engine.drainCommand()
         refreshOrder shouldBe reactions.indices.toList()
+    }
+
+    "topology changes gate a neighborhood-dependent reaction exactly when its validity changes" {
+        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+        environment.linkingRule = ConnectWithinDistance(1.0)
+        val molecule = Biomolecule("M")
+        val center = GenericNode(environment)
+        val peer = GenericNode(environment).apply { setConcentration(molecule, 1.0) }
+        val distribution = CountingDistribution()
+        val reaction = GenericReaction(center, distribution).apply {
+            conditions = listOf(NeighborHasConcentration(center, environment, molecule, 1.0))
+        }
+        center.addReaction(reaction)
+        environment.addNode(center, environment.makePosition(0, 0))
+        environment.addNode(peer, environment.makePosition(5, 0))
+        val scheduler = RecordingScheduler<Double>()
+        val engine = TestEngine(environment, scheduler)
+        engine.initializeForTest()
+        fun mutate(mutation: () -> Unit) {
+            engine.schedule(mutation)
+            engine.drainCommand()
+        }
+        fun assertScheduling(finite: Boolean, samples: Int, updates: Int) {
+            reaction.nextOccurrence.current.isFinite shouldBe finite
+            distribution.samples shouldBe samples
+            scheduler.updates.count { it === reaction } shouldBe updates
+        }
+        assertScheduling(finite = false, samples = 0, updates = 0)
+        // A neighbor with the molecule moves into range.
+        mutate { environment.moveNodeToPosition(peer, environment.makePosition(0.5, 0)) }
+        assertScheduling(finite = true, samples = 1, updates = 1)
+        // Movement that keeps the neighborhood valid neither redraws nor reindexes.
+        mutate { environment.moveNodeToPosition(peer, environment.makePosition(0.6, 0)) }
+        assertScheduling(finite = true, samples = 1, updates = 1)
+        // The neighbor leaves and comes back.
+        mutate { environment.moveNodeToPosition(peer, environment.makePosition(5, 0)) }
+        assertScheduling(finite = false, samples = 1, updates = 2)
+        mutate { environment.moveNodeToPosition(peer, environment.makePosition(0.5, 0)) }
+        assertScheduling(finite = true, samples = 2, updates = 3)
+        // The neighbor's concentration changes while topology stays the same.
+        mutate { peer.setConcentration(molecule, 2.0) }
+        assertScheduling(finite = false, samples = 2, updates = 4)
+        mutate { peer.setConcentration(molecule, 1.0) }
+        assertScheduling(finite = true, samples = 3, updates = 5)
+        // Node removal and addition.
+        mutate { environment.removeNode(peer) }
+        assertScheduling(finite = false, samples = 3, updates = 6)
+        val newcomer = GenericNode(environment).apply { setConcentration(molecule, 1.0) }
+        mutate { environment.addNode(newcomer, environment.makePosition(0, 0.5)) }
+        assertScheduling(finite = true, samples = 4, updates = 7)
+        // An environment-wide topology change.
+        mutate { environment.linkingRule = ConnectWithinDistance(0.1) }
+        assertScheduling(finite = false, samples = 4, updates = 8)
     }
 
     "a reaction removed during a model mutation is not refreshed" {

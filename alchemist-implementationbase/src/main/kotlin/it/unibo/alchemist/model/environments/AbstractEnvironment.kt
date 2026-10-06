@@ -82,6 +82,10 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     private val regionPositionCenteredIndex = HashMap<P, TDoubleObjectHashMap<RegionObserver>>()
 
     final override var linkingRule: LinkingRule<T, P> = NoLinks()
+        set(value) {
+            field = value
+            nodes.current.forEach { node -> observableNeighCache.put(node.id, value.computeNeighborhood(node, this)) }
+        }
 
     @Transient
     private var cache: LoadingCache<Pair<P, Double>, List<Node<T>>>? = null

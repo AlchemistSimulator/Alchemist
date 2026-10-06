@@ -26,6 +26,12 @@ Reactions whose scheduling depends on a layer subscribe to these observables
 and publish the resulting changes through their `nextOccurrence`, as described in
 [Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/).
 
+A custom layer whose spatial distribution never changes extends
+{{% api package="model.layers" class="TimeInvariantLayer" %}} and implements only `getValue`.
+A layer whose values change over time implements `observeValue` instead:
+the returned observable emits every new value at the observed position,
+and `getValue` reads its current value.
+
 Layers are created with the [`type/parameter` syntax](/reference/yaml/#arbitrary-class-loading-system),
 as in this example:
 

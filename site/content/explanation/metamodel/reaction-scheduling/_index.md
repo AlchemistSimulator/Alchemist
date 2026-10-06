@@ -68,6 +68,8 @@ A {{% api package="model.reactions" class="ConditionalEvent" %}} unregisters its
 ### Reactive invalidation
 
 An observable model change can invalidate a reaction between occurrences.
+Observable model state includes node contents, positions, neighborhoods, nodes within a range,
+and layer values observed at node positions.
 The reaction is marked dirty synchronously.
 When the enclosing reaction execution or scheduled command completes,
 each dirty reaction refreshes its specialized state once and applies an invalidation policy distinct from post-firing

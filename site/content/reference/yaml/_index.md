@@ -500,6 +500,8 @@ if the process requires multiple simulation "stages"
 
 Builds a {{% api class="Layer" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
+Each molecule can be associated with at most one layer,
+and layers are associated with the environment before the simulation starts.
 
 #### Examples
 

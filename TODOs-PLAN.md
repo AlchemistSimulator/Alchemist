@@ -550,7 +550,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] For every source formerly present in a condition dependency set, verify an explicit destination: condition
   validity or a specialized reaction-owned invalidation signal.
 - [ ] Cover node contents, molecule presence, neighborhoods, positions, node counts, ranges, layers, and global state.
-- [ ] Make layers observable:
+- [x] Make layers observable:
   - [x] Define a typed API for observing a layer's value at a position, including the semantics of static layers,
     mutable layer values, and disposal.
   - [x] Compose layer-value observation with observable node positions so movement invalidates consumers even when
@@ -569,7 +569,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     association changes if supported, subscription disposal, and absence of updates after reaction or node removal.
     Node removal now disposes the node's reactions before removing its position and neighborhood, so reactions
     observing their own node no longer receive a removal emission.
-  - [ ] Update the layer API documentation, YAML reference, layer how-to, and scheduling documentation in the same
+  - [x] Update the layer API documentation, YAML reference, layer how-to, and scheduling documentation in the same
     change, removing the current assumption that layers are necessarily static.
 - [ ] Audit biochemistry, Protelis, SAPERE, Scafi, cognitive agents, physics, maps, and environment-owned reactions.
 - [x] Remove topology-driven engine callbacks. Neighborhood and position changes remain observable model state;
@@ -685,6 +685,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Completed observable layers with custom-layer, YAML, and scheduling documentation.
 - 2026-10-06: Passed the actual insertion position to environment node-addition hooks; clarified `AbstractEnvironment` member names.
 - 2026-10-06: Rebuilt live range queries in `AbstractEnvironment`, fixing stale and inactive queries; dropped the range-query cache.
 - 2026-10-06: Classified every layer reader and detached removed nodes' reactions before removing their state.

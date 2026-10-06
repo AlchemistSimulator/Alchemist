@@ -142,6 +142,34 @@ class BiochemicalReactionSchedulingTest {
     }
 
     @Test
+    fun `a time-varying layer drives the extracellular rate of a biochemical reaction`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation)
+        val node = incarnation.createNode(randomGenerator, environment, null)
+        assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
+        val molecule = assertIs<Biomolecule>(incarnation.createMolecule("token"))
+        val level = observe(2.0)
+        val condition = BiomolPresentInEnv(environment, node, molecule, 1.0)
+        environment.addLayer(molecule) { level }
+        val reaction = BiochemicalNodeReaction(
+            node,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        ).apply { conditions = listOf(condition) }
+        reaction.initializationComplete(Time.ZERO, environment)
+        val initialOccurrence = reaction.nextOccurrence.current
+        level.current = 4.0
+        assertEquals(4.0, condition.quantity.current)
+        assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
+        level.current = 0.0
+        assertTrue(reaction.nextOccurrence.current.isInfinite)
+        verify(exactly = 1) { randomGenerator.nextDouble() }
+    }
+
+    @Test
     fun `mass-action quantities must be non-negative integer counts`() {
         listOf(
             Double.NaN,

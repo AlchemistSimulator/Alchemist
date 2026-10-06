@@ -29,32 +29,7 @@ fun interface Layer<T, P : Position<out P>> {
     fun observeValue(position: P): Observable<T>
 
     /**
-     * The current value at [p].
+     * The current value at [position].
      */
-    fun getValue(p: P): T = observeValue(p).current
-
-    companion object {
-
-        /**
-         * An [Observable] whose value is always [value]: it notifies only subscribers that request the current value on
-         * registration, and holds no reference to them.
-         */
-        protected fun <T> constant(value: T): Observable<T> = object : Observable<T> {
-            override val current: T = value
-
-            override val observers: List<Any> = emptyList()
-
-            override val observingCallbacks: Map<Any, List<(T) -> Unit>> = emptyMap()
-
-            override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
-                if (invokeOnRegistration) {
-                    callback(value)
-                }
-            }
-
-            override fun stopWatching(registrant: Any) = Unit
-
-            override fun toString(): String = "Constant($value)"
-        }
-    }
+    fun getValue(position: P): T = observeValue(position).current
 }

@@ -560,6 +560,10 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     Decided: layers are associated only during setup; `addLayer` fails once the environment joins a simulation.
   - [ ] Migrate every layer-reading condition, reaction, action, exporter, and incarnation to the observable
     contract. Scheduling consumers must own exact subscription handles or consume a lazy derived observable.
+    - [x] `BiomolPresentInEnv` observes the extracellular layer through `Environment.observeLayerValue`, so layer
+      changes and movement update biochemical rates; layers resolve lazily, so setup order does not matter.
+    - [ ] Audit the cognitive danger reader; Protelis, Scafi, cognitive steering actions, the Swing UI, and GraphQL
+      read current values at execution or query time and need no scheduling subscription.
   - [ ] Add regressions for static layers, mutable layer values, movement across a spatial gradient, runtime layer
     association changes if supported, subscription disposal, and absence of updates after reaction or node removal.
   - [ ] Update the layer API documentation, YAML reference, layer how-to, and scheduling documentation in the same
@@ -678,6 +682,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Introduced time-invariant layers and migrated extracellular biochemical conditions to observable layers.
 - 2026-10-06: Added observable layer values composed with node positions; layers are fixed at setup.
 - 2026-10-06: Removed Java serialization from the model, engine, and loading APIs.
 - 2026-10-06: Completed distribution-family tests with SAPERE static and match-driven exponential rates.

@@ -68,12 +68,12 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     fun getLayer(molecule: Molecule): Layer<T, P>?
 
     /**
-     * Observes the value of the [Layer] associated with [molecule] at the position of [node], or returns `null` if
-     * no layer is associated with [molecule].
-     * The observable emits when [node] moves to a position where the value differs, and when a layer with
-     * time-varying values changes the value at the current position of [node].
+     * Observes the value of the [Layer] associated with [molecule] at the position of [node].
+     * The observable emits when [node] moves to a position where the value differs, and when the layer changes the
+     * value at the current position of [node]. Its value is `null` while no layer is associated with [molecule]; the
+     * layer is resolved when the value is computed, so observables created during setup see layers associated later.
      */
-    fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T>?
+    fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T?>
 
     /**
      * Return all the Layers in this [Environment].

@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.biochemistry.layers
 
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.layers.TimeInvariantLayer
 import kotlin.math.hypot
 
 /**
@@ -24,7 +24,7 @@ class BiomolGradientLayer<P : Position2D<P>>(
     directionY: Double,
     unitVariation: Double,
     offset: Double,
-) : Layer<Double, P> {
+) : TimeInvariantLayer<Double, P>() {
     private val a: Double
     private val b: Double
     private val c: Double = offset
@@ -57,9 +57,7 @@ class BiomolGradientLayer<P : Position2D<P>>(
      */
     val parameters: DoubleArray get() = doubleArrayOf(a, b, c)
 
-    override fun getValue(p: P): Double = p.x * a + p.y * b + c
-
-    override fun observeValue(position: P): Observable<Double> = Layer.constant(getValue(position))
+    override fun getValue(position: P): Double = position.x * a + position.y * b + c
 
     override fun toString(): String = "Layer representing a gradient of the molecule. " +
         "The equation describing this gradient is: concentration = ${a}x + ${b}y + $c"

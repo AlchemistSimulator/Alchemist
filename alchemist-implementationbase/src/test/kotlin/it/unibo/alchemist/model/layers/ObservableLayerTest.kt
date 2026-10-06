@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class ObservableLayerTest {
@@ -36,20 +35,20 @@ class ObservableLayerTest {
         environment.addLayer(LAYER, StepLayer(0.0, 0.0, HIGH, LOW))
         val node = GenericNode(environment)
         environment.addNode(node, environment.makePosition(-1, -1))
-        assertNull(environment.observeLayerValue(SimpleMolecule("absent"), node))
-        val value = assertNotNull(environment.observeLayerValue(LAYER, node))
-        val received = mutableListOf<Any>()
+        assertNull(environment.observeLayerValue(SimpleMolecule("absent"), node).current)
+        val value = environment.observeLayerValue(LAYER, node)
+        val received = mutableListOf<Any?>()
         val subscription = value.subscribe(invokeOnSubscription = false) { received += it }
         environment.moveNodeToPosition(node, environment.makePosition(-2, -2))
         assertEquals(emptyList(), received)
         environment.moveNodeToPosition(node, environment.makePosition(1, 1))
-        assertEquals(listOf<Any>(HIGH), received)
+        assertEquals(listOf<Any?>(HIGH), received)
         environment.moveNodeToPosition(node, environment.makePosition(1, -1))
-        assertEquals(listOf<Any>(HIGH, LOW), received)
+        assertEquals(listOf<Any?>(HIGH, LOW), received)
         assertEquals(LOW, value.current)
         subscription.dispose()
         environment.moveNodeToPosition(node, environment.makePosition(2, 2))
-        assertEquals(listOf<Any>(HIGH, LOW), received)
+        assertEquals(listOf<Any?>(HIGH, LOW), received)
     }
 
     @Test
@@ -59,16 +58,27 @@ class ObservableLayerTest {
         environment.addLayer(LAYER, layer)
         val node = GenericNode(environment)
         environment.addNode(node, environment.makePosition(2, 0))
-        val value = assertNotNull(environment.observeLayerValue(LAYER, node))
-        val received = mutableListOf<Any>()
+        val value = environment.observeLayerValue(LAYER, node)
+        val received = mutableListOf<Any?>()
         val subscription = value.subscribe { received += it }
         layer.scale.current = 3.0
         environment.moveNodeToPosition(node, environment.makePosition(1, 0))
-        assertEquals(listOf<Any>(2.0, 6.0, 3.0), received)
+        assertEquals(listOf<Any?>(2.0, 6.0, 3.0), received)
         subscription.dispose()
         layer.scale.current = 5.0
-        assertEquals(listOf<Any>(2.0, 6.0, 3.0), received)
+        assertEquals(listOf<Any?>(2.0, 6.0, 3.0), received)
         assertEquals(0, layer.scale.observers.size)
+    }
+
+    @Test
+    fun `a layer value observed during setup resolves a layer associated later`() {
+        val environment = environment()
+        val node = GenericNode(environment)
+        environment.addNode(node, environment.makePosition(1, 1))
+        val value = environment.observeLayerValue(LAYER, node)
+        assertNull(value.current)
+        environment.addLayer(LAYER, StepLayer(0.0, 0.0, HIGH, LOW))
+        assertEquals(HIGH, value.current)
     }
 
     @Test
@@ -84,7 +94,7 @@ class ObservableLayerTest {
      */
     private class ScaledLayer(val scale: MutableObservable<Double>) :
         Layer<Any, Euclidean2DPosition> {
-        override fun getValue(p: Euclidean2DPosition): Any = p.x * scale.current
+        override fun getValue(position: Euclidean2DPosition): Any = position.x * scale.current
 
         override fun observeValue(position: Euclidean2DPosition): Observable<Any> = scale.map { position.x * it }
     }

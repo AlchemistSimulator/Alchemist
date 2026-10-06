@@ -36,8 +36,8 @@ class BiomolPresentInEnv<P : Position<out P>>(
                 .map { neighbor -> neighbor.observeConcentration(biomolecule).map { it.getOrElse { 0.0 } } }
                 .combineLatest { quantities -> quantities.sum() }
                 .map { it.getOrElse { 0.0 } }
-        }.mergeWith(environment.getPosition(node)) { neighboringQuantity, position ->
-            neighboringQuantity + (environment.getLayer(biomolecule)?.getValue(position) ?: 0.0)
+        }.mergeWith(environment.observeLayerValue(biomolecule, node)) { neighboringQuantity, layerQuantity ->
+            neighboringQuantity + (layerQuantity ?: 0.0)
         }
 
     init {

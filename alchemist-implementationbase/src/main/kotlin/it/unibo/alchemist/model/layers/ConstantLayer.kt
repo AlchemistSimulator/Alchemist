@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.observation.Observable
 
 /**
  * A [Layer] whose value is [level] at every position and never changes.
@@ -20,8 +19,6 @@ import it.unibo.alchemist.model.observation.Observable
  * @param P position type
  * @param level the value of the layer
  */
-class ConstantLayer<T, P : Position<out P>>(private val level: T) : Layer<T, P> {
-    override fun getValue(p: P): T = level
-
-    override fun observeValue(position: P): Observable<T> = Layer.constant(level)
+class ConstantLayer<T, P : Position<out P>>(private val level: T) : TimeInvariantLayer<T, P>() {
+    override fun getValue(position: P): T = level
 }

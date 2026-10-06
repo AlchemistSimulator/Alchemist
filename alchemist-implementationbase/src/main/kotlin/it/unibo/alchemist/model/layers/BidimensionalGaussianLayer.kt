@@ -10,7 +10,6 @@ package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.util.math.BidimensionalGaussian
 
 /**
@@ -33,16 +32,11 @@ constructor(
     norm: Double,
     sigmaX: Double,
     sigmaY: Double = sigmaX,
-) : Layer<Double, P> {
+) : TimeInvariantLayer<Double, P>() {
     /**
      * The function on which the layer is based.
      */
     val function = BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
 
-    override fun getValue(p: P) = baseline + function.value(p.x, p.y)
-
-    /**
-     * The gaussian does not change over time, so the value at [position] never changes.
-     */
-    override fun observeValue(position: P): Observable<Double> = Layer.constant(getValue(position))
+    override fun getValue(position: P) = baseline + function.value(position.x, position.y)
 }

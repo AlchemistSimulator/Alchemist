@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.observation.Observable
 
 /**
  * A [Layer] with a discontinuous spatial distribution that never changes over time: the value is [maxValue] where
@@ -29,14 +28,12 @@ class StepLayer<T, P : Position2D<out P>>(
     private val my: Double,
     private val maxValue: T,
     private val minValue: T,
-) : Layer<T, P> {
+) : TimeInvariantLayer<T, P>() {
     /**
      * Builds a [StepLayer] whose concentration is at its [maxValue] in the first quadrant, for positive values of
      * both coordinates, and [minValue] elsewhere.
      */
     constructor(maxValue: T, minValue: T) : this(0.0, 0.0, maxValue, minValue)
 
-    override fun getValue(p: P): T = if (p.x > mx && p.y > my) maxValue else minValue
-
-    override fun observeValue(position: P): Observable<T> = Layer.constant(getValue(position))
+    override fun getValue(position: P): T = if (position.x > mx && position.y > my) maxValue else minValue
 }

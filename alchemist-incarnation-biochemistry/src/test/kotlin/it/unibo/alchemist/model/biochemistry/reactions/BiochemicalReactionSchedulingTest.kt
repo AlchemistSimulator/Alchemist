@@ -13,7 +13,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
@@ -66,6 +65,34 @@ class BiochemicalReactionSchedulingTest {
         assertFailsWith<IllegalArgumentException> {
             reaction.conditions = listOf(mockk<Condition<Double>>())
         }
+    }
+
+    @Test
+    fun `a cloned reaction follows only its destination quantities and stops after disposal`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
+        val (environment, source, molecule, _, reaction) = createFixture(randomGenerator)
+        val destination = BiochemistryIncarnation().createNode(randomGenerator, environment, null)
+        destination.setConcentration(molecule, 1.0)
+        assertTrue(environment.addNode(destination, Euclidean2DPosition(5.0, 0.0)))
+        reaction.initializationComplete(Time.ZERO, environment)
+        val clone = reaction.cloneOnNewNode(destination, Time.ZERO)
+        clone.initializationComplete(Time.ZERO, environment)
+        verify(exactly = 2) { randomGenerator.nextDouble() }
+        val sourceOccurrence = reaction.nextOccurrence.current
+        val cloneOccurrence = clone.nextOccurrence.current
+        source.setConcentration(molecule, 2.0)
+        assertEquals(sourceOccurrence * 0.5, reaction.nextOccurrence.current)
+        assertEquals(cloneOccurrence, clone.nextOccurrence.current)
+        destination.setConcentration(molecule, 2.0)
+        assertEquals(sourceOccurrence * 0.5, reaction.nextOccurrence.current)
+        assertEquals(cloneOccurrence * 0.5, clone.nextOccurrence.current)
+        clone.dispose()
+        destination.setConcentration(molecule, 4.0)
+        assertEquals(cloneOccurrence * 0.5, clone.nextOccurrence.current)
+        source.setConcentration(molecule, 4.0)
+        assertEquals(sourceOccurrence * 0.25, reaction.nextOccurrence.current)
+        verify(exactly = 2) { randomGenerator.nextDouble() }
     }
 
     @Test
@@ -209,7 +236,7 @@ class BiochemicalReactionSchedulingTest {
     }
 
     private data class BiochemicalFixture(
-        val environment: Environment<Double, *>,
+        val environment: BioRect2DEnvironment,
         val node: Node<Double>,
         val molecule: Molecule,
         val condition: GenericMoleculePresent<Double>,

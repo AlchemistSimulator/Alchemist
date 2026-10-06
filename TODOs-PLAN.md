@@ -592,6 +592,8 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Test specialized condition acceptance and propensity behavior across chemical, biochemical, SAPERE, and other
   families migrated from condition-level contributions, including clone reconstruction and exact subscription
   cleanup.
+  - [x] Biochemical: accepted condition types, typed rate inputs, destination-bound clones, and disposal.
+  - [ ] SAPERE: destination-bound clone matches and exact subscription cleanup after disposal.
 - [x] Test match and other specialized scheduling changes that leave condition validity `true`, proving that their
   direct reaction-specific signals invalidate scheduling without dependency sets or repeated Boolean emissions.
 - [x] Test zero-to-positive, positive-to-zero, and positive-to-positive chemical propensity transitions.
@@ -668,6 +670,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Covered destination-bound biochemical clone scheduling and disposal.
 - 2026-10-05: Made linking-rule replacement republish every neighborhood; covered topology-driven validity changes.
 - 2026-10-05: Covered the propensity-free condition API and YAML rejection of unsupported biochemical conditions.
 - 2026-10-05: Covered engine-level one-shot event execution, cleanup, and non-resurrection by node cloning.

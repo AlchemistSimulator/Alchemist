@@ -9,9 +9,21 @@ summary = "Define data layers that live in the environment"
 
 It is possible to define overlays (layers) of data that can be sensed everywhere in the environment.
 Layers can be used to model physical properties, such as pollution, light, temperature, and so on.
-Layers are static spatial functions and do not emit reactive updates.
-If custom scheduling state depends on a changing external value, the reaction must observe that value explicitly and
-publish any resulting scheduling change through its `nextOccurrence`, as described in
+Layers belong to the environment setup: each molecule is associated with at most one layer,
+and no layer can be associated once the environment is part of a running simulation.
+
+A {{% api class="Layer" %}} maps each position to a value that may change over time:
+its `observeValue` notifies every change of the value at a position.
+{{% api class="Environment" %}}'s `observeLayerValue` observes a layer at the position of a node:
+it notifies a new value whenever the node moves to a position with a different value,
+or the layer changes the value at the node's current position.
+Layers whose spatial distribution never changes, such as
+{{% api package="model.layers" class="ConstantLayer" %}},
+{{% api package="model.layers" class="StepLayer" %}}, and
+{{% api package="model.layers" class="BidimensionalGaussianLayer" %}},
+notify changes only through the movement of the observing node.
+Reactions whose scheduling depends on a layer subscribe to these observables
+and publish the resulting changes through their `nextOccurrence`, as described in
 [Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/).
 
 Layers are created with the [`type/parameter` syntax](/reference/yaml/#arbitrary-class-loading-system),

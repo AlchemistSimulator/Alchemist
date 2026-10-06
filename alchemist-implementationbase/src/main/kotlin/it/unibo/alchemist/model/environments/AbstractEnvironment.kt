@@ -30,6 +30,7 @@ import it.unibo.alchemist.model.observables.ObservableMutableList
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.ObservableMutableSet
 import it.unibo.alchemist.model.observables.ObservableMutableSet.Companion.toObservableSet
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableSet
@@ -109,6 +110,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     private var terminationPredicate: TerminationPredicate<T, P> = TerminationPredicate { false }
 
     override fun addLayer(molecule: Molecule, layer: Layer<T, P>) {
+        check(simulationOrNull == null) {
+            "Cannot associate a layer with $molecule: layers must be added before the environment joins a simulation."
+        }
         check(molecule !in layers.keys) { "A layer for $molecule was already associated to this environment." }
         layers += molecule to layer
     }
@@ -263,6 +267,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         retrievePosition(n1).distanceTo(retrievePosition(n2))
 
     override fun getLayer(molecule: Molecule): Layer<T, P>? = layers[molecule]
+
+    override fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T>? =
+        getLayer(molecule)?.let { layer -> getPosition(node).switchMap(layer::observeValue) }
 
     protected fun retrieveNeighborhood(node: Node<T>): Neighborhood<T> {
         val result = observableNeighCache.current[node.id]

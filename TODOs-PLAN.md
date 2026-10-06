@@ -551,12 +551,13 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   validity or a specialized reaction-owned invalidation signal.
 - [ ] Cover node contents, molecule presence, neighborhoods, positions, node counts, ranges, layers, and global state.
 - [ ] Make layers observable:
-  - [ ] Define a typed API for observing a layer's value at a position, including the semantics of static layers,
+  - [x] Define a typed API for observing a layer's value at a position, including the semantics of static layers,
     mutable layer values, and disposal.
-  - [ ] Compose layer-value observation with observable node positions so movement invalidates consumers even when
+  - [x] Compose layer-value observation with observable node positions so movement invalidates consumers even when
     the layer object itself does not change.
-  - [ ] Decide whether layer association can change at runtime; if it can, expose the environment's layer registry
+  - [x] Decide whether layer association can change at runtime; if it can, expose the environment's layer registry
     as an observable map and define add, replacement, and removal semantics before exposing mutation operations.
+    Decided: layers are associated only during setup; `addLayer` fails once the environment joins a simulation.
   - [ ] Migrate every layer-reading condition, reaction, action, exporter, and incarnation to the observable
     contract. Scheduling consumers must own exact subscription handles or consume a lazy derived observable.
   - [ ] Add regressions for static layers, mutable layer values, movement across a spatial gradient, runtime layer
@@ -677,6 +678,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-06: Added observable layer values composed with node positions; layers are fixed at setup.
 - 2026-10-06: Removed Java serialization from the model, engine, and loading APIs.
 - 2026-10-06: Completed distribution-family tests with SAPERE static and match-driven exponential rates.
 - 2026-10-06: Covered molecule-controlled delay reads, validation, and error-distribution draws.

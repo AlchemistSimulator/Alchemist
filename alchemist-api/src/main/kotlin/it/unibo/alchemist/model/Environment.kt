@@ -22,7 +22,9 @@ import it.unibo.alchemist.model.observation.ObservableSet
 @Suppress("TooManyFunctions")
 interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     /**
-     * Add a [Layer] to the [Environment].
+     * Associates [layer] with [molecule].
+     * Layers are part of the environment setup: association fails once the environment is attached to a simulation,
+     * and a molecule cannot be associated with more than one layer.
      */
     fun addLayer(molecule: Molecule, layer: Layer<T, P>)
 
@@ -64,6 +66,14 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
      * with the given molecule, return `null`.
      */
     fun getLayer(molecule: Molecule): Layer<T, P>?
+
+    /**
+     * Observes the value of the [Layer] associated with [molecule] at the position of [node], or returns `null` if
+     * no layer is associated with [molecule].
+     * The observable emits when [node] moves to a position where the value differs, and when a layer with
+     * time-varying values changes the value at the current position of [node].
+     */
+    fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T>?
 
     /**
      * Return all the Layers in this [Environment].

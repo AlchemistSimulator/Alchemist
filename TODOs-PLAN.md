@@ -675,7 +675,13 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [x] Test that node- and environment-owned events execute at most once and then disappear from the scheduler,
   engine subscription ownership, and model owner without an infinite reindex, phantom step, or clone resurrection.
 - [x] Test and document the selected policy for an event whose condition is invalid at its absolute occurrence.
-- [ ] Add performance checks for large reaction populations and high-frequency invalidation.
+- [x] Add performance checks for large reaction populations and high-frequency invalidation.
+  Wall-clock timing is meaningless in CI, so `ReactiveScalingTest` checks deterministic proxies on populations of 100
+  and 1000 nodes, built with the Kotlin DSL and run by the engine: a local change or movement reschedules exactly the same
+  reactions, a node has the same observers, and removing reactions releases every subscription to node contents. Observer counts are read through the public
+  `Observable.observers`, with no production instrumentation; positions and neighborhoods are observed through derived
+  observables, so they are covered by the invalidation fan-out only. A JMH benchmark task outside `build` is an
+  optional follow-up for constant-factor regressions.
 
 ## Phase 11: finish API modernization
 
@@ -759,6 +765,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-07: Added deterministic scaling checks for invalidation fan-out and subscriptions.
 - 2026-10-07: Completed the per-module reaction audit; documented the execution-time occurrence contract.
 - 2026-10-07: Covered every observable node and environment input with emission tests.
 - 2026-10-07: Verified an explicit observable destination for every former condition dependency.

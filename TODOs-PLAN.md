@@ -555,8 +555,9 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - [x] `NoOtherReactionCanExecute` snapshotted `node.reactions` at construction, so reactions added later never
     invalidated it. `ReactionHost.reactions` is now an observable list, and the condition switches over it; its
     single-instance check still sees only the reactions present when it is built.
-  - [ ] `TensionPresent` observes nodes within `maxDiameterAmongCircularDeformableCells` as read at construction;
-    larger cells added afterwards widen the interaction range without widening the observed range.
+  - [x] `TensionPresent` observed nodes within `maxDiameterAmongCircularDeformableCells` as read at construction, so
+    larger cells added afterwards widened the interaction range without widening the observed range. The maximum
+    diameter is now observable, and the condition switches its range query when it changes.
   - [ ] `NeighborhoodPresent` and `BiomolPresentInNeighbor` read neighbor properties without observing them; node
     properties are effectively fixed after creation, so decide whether property changes must be observable.
     `BiomolPresentInNeighbor` validity also re-reads concentrations already covered by its observed weights.
@@ -717,6 +718,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-07: Made the deformable-cell interaction range observable, fixing stale `TensionPresent` ranges.
 - 2026-10-07: Made reaction ownership coherent across hosts, reactions, conditions, and actions.
 - 2026-10-06: Made reaction-host membership observable and fixed `NoOtherReactionCanExecute` for later reactions.
 - 2026-10-06: Completed observable layers with custom-layer, YAML, and scheduling documentation.

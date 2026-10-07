@@ -38,7 +38,7 @@ class CellTensionPolarization(
     override fun execute() {
         val position = environment.getCurrentPosition(targetNode)
         val pushForces = environment
-            .getNodesWithinRange(targetNode, environment.maxDiameterAmongCircularDeformableCells)
+            .getNodesWithinRange(targetNode, environment.maxDiameterAmongCircularDeformableCells.current)
             .filter { overlaps(it) }
             .map { pushForce(it, position) }
         val resultX = pushForces.sumOf { it.x }

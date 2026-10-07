@@ -133,20 +133,20 @@ class TestDeformableCell {
         environment.addNode(cellNode2, CELL_POS2_2);
         environment.addNode(cellNode3, CELL_POS2_3);
         environment.addNode(cellNode4, CELL_POS2_4);
+        final var envWithDeformableCells = (EnvironmentSupportingDeformableCells<Euclidean2DPosition>) environment;
         assertEquals(
             3d,
-            ((EnvironmentSupportingDeformableCells<Euclidean2DPosition>) environment)
-                    .getMaxDiameterAmongCircularDeformableCells(),
+            envWithDeformableCells.getMaxDiameterAmongCircularDeformableCells().getCurrent(),
             PRECISION
         );
         environment.removeNode(cellNode1);
         environment.removeNode(cellNode2);
         environment.removeNode(cellNode3);
         environment.removeNode(cellNode4);
-        assertEquals(0d,
-                ((EnvironmentSupportingDeformableCells<Euclidean2DPosition>) environment)
-                        .getMaxDiameterAmongCircularDeformableCells(),
-                PRECISION
+        assertEquals(
+            0d,
+            envWithDeformableCells.getMaxDiameterAmongCircularDeformableCells().getCurrent(),
+            PRECISION
         );
     }
 
@@ -169,22 +169,30 @@ class TestDeformableCell {
         reaction.initializationComplete(Time.ZERO, environment);
         assertFalse(cellNode1.getReactions().getCurrent().isEmpty());
         assertTrue(cellNode1.getReactions().getCurrent().stream()
-                .findFirst()
-                .orElseThrow()
-                .getConditions().get(0).isValid().getCurrent());
-        assertEquals(1d, ((BiochemicalNodeReaction) cellNode1.getReactions().getCurrent().stream()
+            .findFirst()
+            .orElseThrow()
+            .getConditions().get(0).isValid().getCurrent());
+        assertEquals(
+            1d,
+            ((BiochemicalNodeReaction) cellNode1.getReactions().getCurrent().stream()
                 .findFirst()
                 .orElseThrow()).getRate(),
-                PRECISION);
+            PRECISION
+        );
         environment.moveNodeTo(cellNode2, new Euclidean2DPosition(0, 4));
-        assertFalse(cellNode1.getReactions().getCurrent().stream()
+        assertFalse(
+            cellNode1.getReactions().getCurrent().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).isValid().getCurrent());
-        assertEquals(0d, ((BiochemicalNodeReaction) cellNode1.getReactions().getCurrent().stream()
+                .getConditions().get(0).isValid().getCurrent()
+        );
+        assertEquals(
+            0d,
+            ((BiochemicalNodeReaction) cellNode1.getReactions().getCurrent().stream()
                 .findFirst()
                 .orElseThrow()).getRate(),
-                PRECISION);
+            PRECISION
+        );
     }
 
     /**
@@ -204,14 +212,19 @@ class TestDeformableCell {
         cellNode1.addReaction(reaction);
         reaction.initializationComplete(Time.ZERO, environment);
         assertFalse(cellNode1.getReactions().getCurrent().isEmpty());
-        assertTrue(cellNode1.getReactions().getCurrent().stream()
+        assertTrue(
+            cellNode1.getReactions().getCurrent().stream()
                 .findFirst()
                 .orElseThrow()
-                .getConditions().get(0).isValid().getCurrent());
-        assertEquals(1d, ((BiochemicalNodeReaction) cellNode1.getReactions().getCurrent().stream()
+                .getConditions().get(0).isValid().getCurrent()
+        );
+        assertEquals(
+            1d,
+            ((BiochemicalNodeReaction) cellNode1.getReactions().getCurrent().stream()
                 .findFirst()
                 .orElseThrow()).getRate(),
-                PRECISION);
+            PRECISION
+        );
         environment.moveNodeTo(cellNode3, MOVE_TO_POS2_1);
         assertTrue(cellNode1.getReactions().getCurrent().stream()
                 .findFirst()

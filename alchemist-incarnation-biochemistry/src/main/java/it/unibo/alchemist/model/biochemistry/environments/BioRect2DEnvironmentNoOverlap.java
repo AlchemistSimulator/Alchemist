@@ -16,6 +16,9 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
 import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
+import it.unibo.alchemist.model.observables.util.MutableObservables;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
@@ -39,6 +42,7 @@ public final class BioRect2DEnvironmentNoOverlap
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironmentNoOverlap.class);
     private Optional<Node<Double>> biggestCellWithCircularArea = Optional.absent();
     private Optional<Node<Double>> biggestCircularDeformableCell = Optional.absent();
+    private final MutableObservable<Double> maxDiameterAmongCircularDeformableCells = MutableObservables.observe(0d);
 
     /**
      * Returns an infinite {@link BioRect2DEnvironment}.
@@ -268,9 +272,11 @@ public final class BioRect2DEnvironmentNoOverlap
             biggestCellWithCircularArea = Optional.of(node);
         }
         final var deformableCell = node.asPropertyOrNull(CircularDeformableCellProperty.class);
-        if (deformableCell != null && deformableCell.getMaximumDiameter() > getMaxDiameterAmongCircularDeformableCells()) {
+        if (deformableCell != null
+            && deformableCell.getMaximumDiameter() > maxDiameterAmongCircularDeformableCells.getCurrent()) {
             biggestCircularDeformableCell = Optional.of(node);
         }
+        updateMaxDiameterAmongCircularDeformableCells();
     }
 
     @Override
@@ -285,6 +291,7 @@ public final class BioRect2DEnvironmentNoOverlap
                         .transform(CircularCellProperty::getNode);
             }
         }
+        updateMaxDiameterAmongCircularDeformableCells();
     }
 
     private <C> Optional<C> getBiggest(final Class<C> cellClass) {
@@ -349,9 +356,14 @@ public final class BioRect2DEnvironmentNoOverlap
         return getDiameterFromCell(biggestCellWithCircularArea);
     }
 
+    @Nonnull
     @Override
-    public double getMaxDiameterAmongCircularDeformableCells() {
-        return getDiameterFromCell(biggestCircularDeformableCell);
+    public Observable<Double> getMaxDiameterAmongCircularDeformableCells() {
+        return maxDiameterAmongCircularDeformableCells;
+    }
+
+    private void updateMaxDiameterAmongCircularDeformableCells() {
+        maxDiameterAmongCircularDeformableCells.setCurrent(getDiameterFromCell(biggestCircularDeformableCell));
     }
 
     private double getDiameterFromCell(final Optional<Node<Double>> biggest) {

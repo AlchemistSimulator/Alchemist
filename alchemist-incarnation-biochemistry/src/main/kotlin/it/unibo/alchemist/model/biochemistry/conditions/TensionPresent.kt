@@ -17,15 +17,24 @@ import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty
 import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells
 import it.unibo.alchemist.model.conditions.AbstractLocalCondition
 import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
 
 /** A condition requiring mechanical tension from at least one nearby circular cell. */
 class TensionPresent(private val environment: EnvironmentSupportingDeformableCells<*>, reaction: NodeReaction<Double>) :
     AbstractLocalCondition<Double>(reaction) {
 
+    /*
+     * Deformable cells interact within the biggest deformable cell diameter, which grows as bigger cells are added:
+     * the observed range follows it.
+     */
     private val mechanics: Observable<MechanicalState> = environment
-        .observeNodesWithinRange(targetNode, environment.maxDiameterAmongCircularDeformableCells)
-        .combineLatest(environment::getPosition) { computeMechanicalState() }
+        .maxDiameterAmongCircularDeformableCells
+        .switchMap { range ->
+            environment
+                .observeNodesWithinRange(targetNode, range)
+                .combineLatest(environment::getPosition) { computeMechanicalState(range) }
+        }
 
     init {
         requireNotNull(targetNode.asPropertyOrNull<Double, CircularDeformableCellProperty>()) {
@@ -43,13 +52,13 @@ class TensionPresent(private val environment: EnvironmentSupportingDeformableCel
     /** Observable mechanical state consumed by the owning biochemical reaction. */
     fun observeMechanicalState(): Observable<MechanicalState> = mechanics
 
-    private fun computeMechanicalState(): MechanicalState {
+    private fun computeMechanicalState(range: Double): MechanicalState {
         val thisNode = targetNode
         val thisCell = thisNode.asProperty<Double, CircularDeformableCellProperty>()
         var valid = false
         var totalTension = 0.0
         environment
-            .getNodesWithinRange(thisNode, environment.maxDiameterAmongCircularDeformableCells)
+            .getNodesWithinRange(thisNode, range)
             .mapNotNull { neighbor ->
                 neighbor.asPropertyOrNull<Double, CircularCellProperty>()?.let { neighbor to it }
             }.forEach { (neighbor, neighborCell) ->

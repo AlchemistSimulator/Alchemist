@@ -105,6 +105,11 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     val nodes: ObservableList<Node<T>>
 
     /**
+     * Whether [node] is part of this environment.
+     */
+    operator fun contains(node: Node<T>): Boolean = nodes.current.any { it === node }
+
+    /**
      * Returns an [Observable] view of the number of [Node]s currently in the [Environment].
      */
     val nodeCount: Observable<Int>

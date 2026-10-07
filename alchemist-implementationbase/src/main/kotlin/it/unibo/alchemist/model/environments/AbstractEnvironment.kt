@@ -231,6 +231,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             "$node is not part of the environment."
         }
 
+    override fun contains(node: Node<T>): Boolean = node.id in nodesToPositions.current
+
     override fun getNodeByID(id: Int): Node<T> = nodes.current.first { n: Node<T> -> n.id == id }
 
     override fun getNodesWithinRange(node: Node<T>, range: Double): List<Node<T>> {

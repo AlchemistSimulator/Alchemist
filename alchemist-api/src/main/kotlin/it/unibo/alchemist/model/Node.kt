@@ -137,6 +137,9 @@ interface Node<T> :
 
     /**
      * Adds a capability to the node.
+     * Properties are part of the node setup: adding one fails once the node is in an environment,
+     * so properties can be read without being observed.
+     *
      * @param nodeProperty the capability you want to add to the node
      */
     fun addProperty(nodeProperty: NodeProperty<T>)

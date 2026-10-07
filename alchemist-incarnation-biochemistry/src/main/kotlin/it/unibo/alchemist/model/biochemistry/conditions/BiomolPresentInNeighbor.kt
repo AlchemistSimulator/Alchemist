@@ -38,7 +38,8 @@ class BiomolPresentInNeighbor(
     private val requiredMolecules = concentration.toMoleculeCount(this)
 
     init {
-        setUpObservability()
+        // A neighbor has a positive weight exactly when it is a cell holding at least the required molecules.
+        setValidity(observeValidNeighbors().map { it.isNotEmpty() })
     }
 
     override fun observeNeighborWeight(neighbor: Node<Double>): Observable<Double> =
@@ -63,17 +64,4 @@ class BiomolPresentInNeighbor(
         BiomolPresentInNeighbor(environment, newReaction, molecule, concentration)
 
     override fun toString(): String = "$molecule >= $concentration in neighbor"
-
-    private fun setUpObservability() {
-        setValidity(
-            observeValidNeighbors().map { validNeighbors ->
-                val current = environment.getNeighborhood(targetNode).current
-                validNeighbors
-                    .takeIf { it.isNotEmpty() }?.entries
-                    ?.filter { it.key.asPropertyOrNull<Double, CellProperty<*>>() != null }
-                    ?.all { it.key in current && it.key.getConcentration(molecule) >= concentration }
-                    ?: false
-            },
-        )
-    }
 }

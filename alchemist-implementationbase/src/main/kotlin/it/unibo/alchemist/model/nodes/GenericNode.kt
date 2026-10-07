@@ -43,8 +43,10 @@ open class GenericNode<T> @JvmOverloads constructor(
      * The node's molecules.
      */
     molecules: MutableMap<Molecule, T> = LinkedHashMap(),
-    final override val properties: MutableList<NodeProperty<T>> = ArrayList(),
+    properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
+    final override val properties: List<NodeProperty<T>>
+        field: MutableList<NodeProperty<T>> = properties
 
     override val observableContents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
 
@@ -115,14 +117,14 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     final override fun addProperty(nodeProperty: NodeProperty<T>) {
-        if (properties.none { it::class == nodeProperty::class }) {
-            properties.add(nodeProperty)
-        } else {
-            error(
-                "Node with id ${this.id} already contains a property of type ${nodeProperty::class}, " +
-                    "this may lead to an inconsistent state",
-            )
+        check(this !in environment) {
+            "Properties are part of the node setup: $nodeProperty cannot be added to node $id, already in $environment"
         }
+        check(properties.none { it::class == nodeProperty::class }) {
+            "Node with id ${this.id} already contains a property of type ${nodeProperty::class}, " +
+                "this may lead to an inconsistent state"
+        }
+        properties.add(nodeProperty)
     }
 
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
@@ -135,7 +137,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     private fun ifRegisteredInEnvironment(action: (it.unibo.alchemist.core.Simulation<T, *>) -> Unit) {
-        if (environment.nodes.current.any { it === this }) {
+        if (this in environment) {
             environment.simulationOrNull?.let(action)
         }
     }

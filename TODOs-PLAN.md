@@ -578,8 +578,26 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     - Removing a node notified the observers of its position, which then failed, whenever they reached it through a
       neighborhood or a range query (as `TensionPresent` does). Removal now drops the position last, once the node
       has left the node list, the neighborhoods, and the range queries.
-- [ ] For every source formerly present in a condition dependency set, verify an explicit destination: condition
+- [x] For every source formerly present in a condition dependency set, verify an explicit destination: condition
   validity or a specialized reaction-owned invalidation signal.
+  Verified against `master` (2026-10-07); the former context is in parentheses.
+  - Local molecules (`LOCAL`): `ConcentrationChanged`, `MoleculeHasConcentration`, `ContainsMolecule`,
+    `GenericMoleculePresent` and its subclasses observe the node concentration, which also feeds the biochemical rate.
+  - Neighbor molecules and topology (`NEIGHBORHOOD`): `BiomolPresentInEnv` observes the neighborhood, the concentration
+    of each environment node, and the layer; `BiomolPresentInNeighbor`, `NeighborhoodPresent`, and
+    `JunctionPresentInCell` observe the neighborhood and per-neighbor weights (concentrations or junction counts),
+    with the cell junctions also driving `JunctionPresentInCell` validity; `EnvPresent` observes the neighborhood.
+  - Mechanics (`NEIGHBORHOOD`): `TensionPresent` observes a range query following the maximum deformable-cell
+    diameter, and the positions of the nodes in it.
+  - Program rounds (program molecule, `LOCAL`): `ComputationalRoundComplete` and `ScafiComputationalRoundComplete`
+    observe the completion of their program round.
+  - LSAs: `LsaStandardCondition` (`LOCAL`) publishes the LSAs with its template name as matching input;
+    `LsaNeighborhoodCondition` (`NEIGHBORHOOD`) the neighborhood and the neighbors' LSA spaces.
+  - No dependency: `NoOtherReactionCanExecute` observes the host reactions and their eligibility; `WantToEscape`
+    the escape decision.
+  - Reaction-level inbound dependencies: `SAPEREGradient` (source, context, gradient, movement) observes its source and
+    context LSAs, its position, and the neighbors' positions and LSA spaces; `PhysicalBlendedSteering` (physics) is
+    clock-driven and reads the physical state when firing, so it needs no scheduling input.
 - [ ] Cover node contents, molecule presence, neighborhoods, positions, node counts, ranges, layers, and global state.
 - [x] Make layers observable:
   - [x] Define a typed API for observing a layer's value at a position, including the semantics of static layers,
@@ -734,6 +752,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-07: Verified an explicit observable destination for every former condition dependency.
 - 2026-10-07: Audited reactions; fixed stale SAPERE neighbor actions and off-schedule cognitive updates.
 - 2026-10-07: Fixed node properties at setup and simplified `BiomolPresentInNeighbor` validity.
 - 2026-10-07: Made the deformable-cell interaction range observable, fixing stale `TensionPresent` ranges.

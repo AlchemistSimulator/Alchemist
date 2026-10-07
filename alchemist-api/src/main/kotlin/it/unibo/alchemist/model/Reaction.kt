@@ -66,6 +66,9 @@ interface Reaction<T> :
 
     /**
      * Executes this reaction.
+     *
+     * While executing, [nextOccurrence] still holds the occurrence being executed, so conditions and actions can read
+     * it as the current time; the following occurrence is published only once the model mutation is complete.
      */
     fun execute()
 

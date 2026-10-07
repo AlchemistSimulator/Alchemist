@@ -623,7 +623,11 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     observing their own node no longer receive a removal emission.
   - [x] Update the layer API documentation, YAML reference, layer how-to, and scheduling documentation in the same
     change, removing the current assumption that layers are necessarily static.
-- [ ] Audit biochemistry, Protelis, SAPERE, Scafi, cognitive agents, physics, maps, and environment-owned reactions.
+- [x] Audit biochemistry, Protelis, SAPERE, Scafi, cognitive agents, physics, maps, and environment-owned reactions.
+  Covered by the reaction audit above. The cognitive steering reactions override no scheduling hook and read the model
+  only when firing; maps defines no reaction, and its trace strategies read the owning reaction's `nextOccurrence` as
+  the current time while executing, a contract now documented on `Reaction.execute`; environment-owned reactions are
+  `PhysicsUpdate` and the generic reactions and events, audited above.
 - [x] Remove topology-driven engine callbacks. Neighborhood and position changes remain observable model state;
   affected reactions publish their own scheduling changes through `nextOccurrence`.
 - [x] Make observable neighborhood and position maps and the ordered observable node list authoritative; remove their
@@ -755,6 +759,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-07: Completed the per-module reaction audit; documented the execution-time occurrence contract.
 - 2026-10-07: Covered every observable node and environment input with emission tests.
 - 2026-10-07: Verified an explicit observable destination for every former condition dependency.
 - 2026-10-07: Audited reactions; fixed stale SAPERE neighbor actions and off-schedule cognitive updates.

@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.maps.MapEnvironment;
@@ -151,15 +152,16 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         gradientExpr = new LsaMolecule(grexp);
         fakeconds.add(
             new SGFakeConditionAction(
+                this,
                 source,
                 node.observeMoleculeName(source.getArg(0).toString()),
                 observeNeighborState(environment, node)
             )
         );
-        fakeacts.add(new SGFakeConditionAction(gradient));
+        fakeacts.add(new SGFakeConditionAction(this, gradient));
         if (context != null) {
             fakeconds.add(
-                new SGFakeConditionAction(context, node.observeMoleculeName(context.getArg(0).toString()))
+                new SGFakeConditionAction(this, context, node.observeMoleculeName(context.getArg(0).toString()))
             );
         }
         final boolean usesRoutes = this.environment instanceof MapEnvironment
@@ -290,12 +292,12 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
      * neighbors'
      */
     private List<ILsaMolecule> cleanUpExistingAndRecomputeFromSource(final Map<HashString, ITreeNode<?>> matches) {
-        for (final ILsaMolecule g : getNode().getConcentration(gradient)) {
+        for (final ILsaMolecule g : getHost().getConcentration(gradient)) {
             getLsaNode().removeConcentration(g);
         }
         final List<ILsaMolecule> createdFromSource = new ArrayList<>(sourceCache.size());
         if (!sourceCache.isEmpty()) {
-            matches.put(LsaMolecule.SYN_O, new NumTreeNode(getNode().getId()));
+            matches.put(LsaMolecule.SYN_O, new NumTreeNode(getHost().getId()));
             for (final ILsaMolecule s : sourceCache) {
                 for (int i = 0; i < source.size(); i++) {
                     final ITreeNode<?> uninstancedArg = source.getArg(i).getRootNode();
@@ -403,7 +405,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
      * @return the current node as {@link ILsaNode}
      */
     public ILsaNode getLsaNode() {
-        return (ILsaNode) getNode();
+        return (ILsaNode) getHost();
     }
 
     @Override
@@ -443,16 +445,16 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
          *
          * my position is changed
          */
-        final List<? extends ILsaMolecule> sourceCacheTemp = getNode().getConcentration(source);
+        final List<? extends ILsaMolecule> sourceCacheTemp = getHost().getConcentration(source);
         final List<? extends ILsaMolecule> contextCacheTemp = context == null
                 ? EMPTY_LIST
-                : getNode().getConcentration(context);
+                : getHost().getConcentration(context);
         final TIntObjectMap<P> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
-        final P curPos = this.environment.getCurrentPosition(getNode());
+        final P curPos = this.environment.getCurrentPosition(getHost());
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
-        for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getNode()).getCurrent()) {
+        for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getHost()).getCurrent()) {
             final P p = this.environment.getCurrentPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
@@ -462,7 +464,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
                 neighPositionChanged = true;
             }
             if (mapenvironment != null && (!pConstant || positionChanged)) {
-                routecache.put(nid, mapenvironment.computeRoute(n, getNode()).length());
+                routecache.put(nid, mapenvironment.computeRoute(n, getHost()).length());
             }
         }
         if (!sourceCacheTemp.equals(sourceCache)
@@ -616,31 +618,37 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     }
 
     private static class SGFakeConditionAction implements Action<List<ILsaMolecule>>, Condition<List<ILsaMolecule>> {
+        private final Reaction<List<ILsaMolecule>> reaction;
         private final Molecule mol;
         private final Observable<Boolean> validity = observe(false);
         private final List<Observable<?>> schedulingInputs;
 
-        SGFakeConditionAction(final Molecule m, final Observable<?>... dependencies) {
+        SGFakeConditionAction(
+            final Reaction<List<ILsaMolecule>> reaction,
+            final Molecule m,
+            final Observable<?>... dependencies
+        ) {
             super();
+            this.reaction = reaction;
             mol = m;
             schedulingInputs = List.of(dependencies);
         }
 
         @Override
         @Nonnull
-        public Action<List<ILsaMolecule>> cloneAction(
-            @Nonnull final Node<List<ILsaMolecule>> node,
-            @Nonnull final NodeReaction<List<ILsaMolecule>> reaction
-        ) {
+        public Reaction<List<ILsaMolecule>> getReaction() {
+            return reaction;
+        }
+
+        @Override
+        @Nonnull
+        public Action<List<ILsaMolecule>> cloneAction(@Nonnull final Reaction<List<ILsaMolecule>> newReaction) {
             return null;
         }
 
         @Override
         @Nonnull
-        public Condition<List<ILsaMolecule>> cloneCondition(
-            @Nonnull final Node<List<ILsaMolecule>> newNode,
-            @Nonnull final NodeReaction<List<ILsaMolecule>> newReaction
-        ) {
+        public Condition<List<ILsaMolecule>> cloneCondition(@Nonnull final Reaction<List<ILsaMolecule>> newReaction) {
             return null;
         }
 
@@ -658,12 +666,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
                 }));
             }
             return subscriptions;
-        }
-
-        @Override
-        @Nonnull
-        public Node<List<ILsaMolecule>> getNode() {
-            return null;
         }
 
         @Override

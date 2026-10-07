@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,9 +10,8 @@
 package it.unibo.alchemist.model.physics.actions
 
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.actions.AbstractAction
+import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.math.atan2
@@ -21,27 +20,24 @@ import kotlin.math.sin
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Changes the heading of [node] randomly.
+ * Changes the heading of the node owning this action randomly.
  * The [environment] must support node heading, hence, be a [Physics2DEnvironment].
  */
 class HeadTowardRandomDirection<T>(
-    node: Node<T>,
+    reaction: NodeReaction<T>,
     private val environment: Physics2DEnvironment<T>,
     private val randomGenerator: RandomGenerator,
-) : AbstractAction<T>(node) {
-    /**
-     * {@inheritDoc}.
-     */
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> =
-        HeadTowardRandomDirection(node, environment, randomGenerator)
+) : AbstractLocalAction<T>(reaction) {
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): Action<T> =
+        HeadTowardRandomDirection(newReaction, environment, randomGenerator)
 
     /**
      * Changes the heading of the node randomly.
      */
     override fun execute() {
         val delta = PI_8 * (2 * randomGenerator.nextDouble() - 1)
-        val originalAngle = environment.getHeading(node).asAngle()
-        environment.setHeading(node, (originalAngle + delta).toDirection())
+        val originalAngle = environment.getHeading(targetNode).asAngle()
+        environment.setHeading(targetNode, (originalAngle + delta).toDirection())
     }
 
     private fun Euclidean2DPosition.asAngle() = atan2(y, x)

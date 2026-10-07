@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.VisibleNode
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
@@ -18,28 +17,28 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * Given a list of [VisibleNode] associated to [visionMolecule],
- * it finds the closest to a point located at [distance] from [node]
- * in the direction of [node]'s heading,
+ * it finds the closest to a point located at [distance] from the node owning this action
+ * in the direction of its heading,
  * and injects its position in [targetMolecule].
  *
- * If there are no [VisibleNode]s, [targetMolecule] will be removed from [node].
+ * If there are no [VisibleNode]s, [targetMolecule] will be removed from the node.
  */
 class CameraInjectVisibleNodeClosestToDistance(
-    node: Node<Any>,
+    reaction: NodeReaction<Any>,
     private val environment: Physics2DEnvironment<Any>,
     private val distance: Double,
     private val visionMolecule: Molecule,
     private val targetMolecule: Molecule,
-) : AbstractAction<Any>(node) {
-    override fun cloneAction(node: Node<Any>, reaction: NodeReaction<Any>) =
-        CameraInjectVisibleNodeClosestToDistance(node, environment, distance, visionMolecule, targetMolecule)
+) : AbstractLocalAction<Any>(reaction) {
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Any>) =
+        CameraInjectVisibleNodeClosestToDistance(newReaction, environment, distance, visionMolecule, targetMolecule)
 
     override fun execute() {
-        if (node.contains(visionMolecule)) {
-            val visibleNodes = node.getConcentration(visionMolecule)
+        if (targetNode.contains(visionMolecule)) {
+            val visibleNodes = targetNode.getConcentration(visionMolecule)
             require(visibleNodes is List<*>) { "visionMolecule contains ${visibleNodes::class} instead of a List" }
             if (visibleNodes.isEmpty()) {
-                if (node.contains(targetMolecule)) node.removeConcentration(targetMolecule)
+                if (targetNode.contains(targetMolecule)) targetNode.removeConcentration(targetMolecule)
             } else {
                 val aNode = visibleNodes.first()
                 require(aNode is VisibleNode<*, *>) {
@@ -50,13 +49,13 @@ class CameraInjectVisibleNodeClosestToDistance(
                 }
                 @Suppress("UNCHECKED_CAST")
                 val nodes = visibleNodes as List<VisibleNode<*, Euclidean2DPosition>>
-                val myPosition = environment.getCurrentPosition(node).surroundingPointAt(
-                    versor = environment.getHeading(node),
+                val myPosition = environment.getCurrentPosition(targetNode).surroundingPointAt(
+                    versor = environment.getHeading(targetNode),
                     distance = distance,
                 )
                 nodes.map { it.position }
                     .reduce { n1, n2 -> minOf(n1, n2, compareBy { it.distanceTo(myPosition) }) }
-                    .also { node.setConcentration(targetMolecule, it) }
+                    .also { targetNode.setConcentration(targetMolecule, it) }
             }
         }
     }

@@ -31,10 +31,10 @@ class PhysicalBlendedSteering<T>(
 ) : BlendedSteering<T>(environment, pedestrian, timeDistribution) {
     private var previouslyAppliedForce = Euclidean2DPosition.zero
 
-    private val physics = node.asProperty<T, PhysicalPedestrian2D<T>>()
+    private val physics = host.asProperty<T, PhysicalPedestrian2D<T>>()
 
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
-        Sum(environment, node, super.steerStrategy)
+        Sum(environment, host, super.steerStrategy)
 
     /**
      * Update the node physical state.
@@ -46,12 +46,12 @@ class PhysicalBlendedSteering<T>(
             previouslyAppliedForce += force
             physics.checkAndPossiblyFall()
             val velocity = computeNewVelocity(force)
-            environment.setVelocity(node, velocity)
+            environment.setVelocity(host, velocity)
             if (velocity.magnitude > 0) {
-                environment.setHeading(node, velocity.normalized())
+                environment.setHeading(host, velocity.normalized())
             }
         } else {
-            environment.setVelocity(node, Euclidean2DPosition.zero)
+            environment.setVelocity(host, Euclidean2DPosition.zero)
         }
     }
 

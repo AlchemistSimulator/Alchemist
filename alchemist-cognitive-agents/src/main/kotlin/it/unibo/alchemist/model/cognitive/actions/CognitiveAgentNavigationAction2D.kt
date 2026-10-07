@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.cognitive.actions
 
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
@@ -98,15 +97,15 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
 
     override fun nextPosition(): Euclidean2DPosition {
         update()
-        return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
+        return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition()
     }
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {
         val clone =
             CognitiveAgentNavigationAction2D<T, L, R>(
                 environment,
-                reaction,
-                node.pedestrianProperty,
+                newReaction,
+                newReaction.host.pedestrianProperty,
                 wallRepulsionFactor,
             )
         clone.strategy = this.strategy

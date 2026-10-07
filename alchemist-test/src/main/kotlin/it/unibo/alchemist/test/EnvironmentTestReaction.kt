@@ -30,6 +30,8 @@ class EnvironmentTestReaction<T>(
     override val timeDistribution: TimeDistribution<T>,
 ) : TimeDistributedReaction<T> {
 
+    override val host: Environment<T, *> get() = environment
+
     override val rate: Double get() = timeDistribution.expectedRate
     private val mutableNextOccurrence = observe(timeDistribution.startTime, false)
     override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
@@ -41,7 +43,7 @@ class EnvironmentTestReaction<T>(
             field = value
             validity.dispose()
             validity = value
-                .map(Condition<T>::isValid)
+                .map { it.isValid }
                 .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
                 ?: observe(true)
         }
@@ -51,7 +53,7 @@ class EnvironmentTestReaction<T>(
     override val canExecute: Observable<Boolean> get() = validity
 
     override fun execute() {
-        conditions.forEach(Condition<T>::reactionReady)
+        conditions.forEach(Condition<T>::beforeReactionFires)
         actions.forEach(Action<T>::execute)
         updateSchedulingAfterFiring(environment.simulationOrNull?.time ?: nextOccurrence.current)
     }

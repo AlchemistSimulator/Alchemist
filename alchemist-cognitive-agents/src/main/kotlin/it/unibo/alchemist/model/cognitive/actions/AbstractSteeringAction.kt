@@ -30,23 +30,20 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The reaction in which this action is executed.
      */
-    hostingReaction: NodeReaction<T>,
+    reaction: NodeReaction<T>,
     /**
      * The pedestrian property of the owner of this action.
      */
     protected val pedestrian: PedestrianProperty<T>,
-) : AbstractMoveNode<T, P>(environment, pedestrian.node),
+) : AbstractMoveNode<T, P>(environment, reaction),
     SteeringAction<T, P>
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P> {
-    /** The reaction in which this action is executed. */
-    protected open val reaction: NodeReaction<T> = hostingReaction
-
     /** The recurrence rate required to normalize per-execution movement. */
     protected val recurrenceRate: Double =
-        requireNotNull(hostingReaction as? TimeDistributedReaction<*>) {
-            "$hostingReaction does not expose a recurrence rate"
+        requireNotNull(reaction as? TimeDistributedReaction<*>) {
+            "$reaction does not expose a recurrence rate"
         }.rate
 
     /**
@@ -61,17 +58,9 @@ abstract class AbstractSteeringAction<T, P, A>(
     override fun getNextPosition(): P = nextPosition()
 
     /**
-     * This method allows to clone this action on a new node. It may result
-     * useful to support runtime creation of nodes with the same reaction
-     * programming, e.g. for morphogenesis.
-     *
-     * @param [node]
-     *            The node where to clone this {@link Action}
-     * @param [reaction]
-     *            The reaction to which the CURRENT action is assigned
-     * @return the cloned action
+     * Creates an equivalent action owned by [newReaction], bound to its node.
      */
-    abstract override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): AbstractSteeringAction<T, P, A>
+    abstract override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): AbstractSteeringAction<T, P, A>
 
     /**
      * Ensures that the passed [node] has type [N].

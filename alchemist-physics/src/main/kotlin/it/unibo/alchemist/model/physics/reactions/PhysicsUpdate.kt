@@ -33,6 +33,8 @@ class PhysicsUpdate<T>(
 
     constructor(environment: Dynamics2DEnvironment<T>, updateRate: Double) : this(environment, DiracComb(updateRate))
 
+    override val host: Dynamics2DEnvironment<T> get() = environment
+
     override val rate: Double get() = timeDistribution.expectedRate
 
     override fun performModelMutation() = environment.updatePhysics(1 / rate)

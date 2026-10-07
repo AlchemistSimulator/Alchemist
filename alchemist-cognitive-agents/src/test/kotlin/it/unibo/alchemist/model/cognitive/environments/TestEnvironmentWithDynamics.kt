@@ -41,29 +41,38 @@ class TestEnvironmentWithDynamics<T, P> :
         }
         "Environment should allow physics update rate customization" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate.yml").environment
-            environment.reactions.size shouldBe 1
-            environment.reactions
+            environment.reactions.current.size shouldBe 1
+            environment.reactions.current
                 .first()
                 .shouldBeInstanceOf<TimeDistributedReaction<*>>()
                 .rate shouldBe 1.5
         }
         "Ignore time distribution when updateRate is Specified" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate2.yml").environment
-            environment.reactions.size shouldBe 1
-            environment.reactions
+            environment.reactions.current.size shouldBe 1
+            environment.reactions.current
                 .first()
                 .shouldBeInstanceOf<TimeDistributedReaction<*>>()
                 .rate shouldBe 0.5
         }
         "Customize rate with time-distribution" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate3.yml").environment
-            environment.reactions.size shouldBe 1
+            environment.reactions.current.size shouldBe 1
             val globalReaction =
-                environment.reactions
+                environment.reactions.current
                     .first()
                     .shouldBeInstanceOf<TimeDistributedReaction<*>>()
             globalReaction.timeDistribution::class shouldBe ExponentialTime::class
             globalReaction.rate shouldBe 0.5
+        }
+        "absolute and relative moves both move the physical body" {
+            val environment = loadYamlSimulation<T, P>("testSinglePedestrian.yml").environment
+                .shouldBeInstanceOf<EnvironmentWithDynamics<T>>()
+            val node = environment.nodes.current.single()
+            environment.moveNodeTo(node, Euclidean2DPosition(5.0, 5.0))
+            environment.getCurrentPosition(node) shouldBe Euclidean2DPosition(5.0, 5.0)
+            environment.moveNodeBy(node, Euclidean2DPosition(1.0, -2.0))
+            environment.getCurrentPosition(node) shouldBe Euclidean2DPosition(6.0, 3.0)
         }
         "PhysicsUpdate can be overriden only once" {
             val environment =
@@ -74,7 +83,7 @@ class TestEnvironmentWithDynamics<T, P> :
             shouldThrow<IllegalArgumentException> {
                 environment.addReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>))
             }
-            environment.reactions
+            environment.reactions.current
                 .first()
                 .shouldBeInstanceOf<TimeDistributedReaction<*>>()
                 .rate shouldBe 2.0

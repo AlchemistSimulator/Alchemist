@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.scafi.actions
 
-import it.unibo.alchemist.model.actions.AbstractAction
+import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.observables.util.MutableObservables
 import it.unibo.alchemist.model.observation.Observable
@@ -29,23 +29,20 @@ import scala.util.{Failure, Try}
 
 sealed class DefaultRunScafiProgram[P <: Position[P]](
   environment: Environment[Any, P],
-  node: Node[Any],
   reaction: NodeReaction[Any],
   randomGenerator: RandomGenerator,
   programName: String,
   retentionTime: Double
-) extends RunScafiProgram[Any, P](environment, node, reaction, randomGenerator, programName, retentionTime) {
+) extends RunScafiProgram[Any, P](environment, reaction, randomGenerator, programName, retentionTime) {
 
   def this(
     environment: Environment[Any, P],
-    node: Node[Any],
     reaction: NodeReaction[Any],
     randomGenerator: RandomGenerator,
     programName: String
   ) =
     this(
       environment,
-      node,
       reaction,
       randomGenerator,
       programName,
@@ -55,23 +52,20 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
 
 sealed class RunScafiProgram[T, P <: Position[P]](
   environment: Environment[T, P],
-  node: Node[T],
   reaction: NodeReaction[T],
   randomGenerator: RandomGenerator,
   programName: String,
   retentionTime: Double
-) extends AbstractAction[T](node) {
+) extends AbstractLocalAction[T](reaction) {
 
   def this(
     environment: Environment[T, P],
-    node: Node[T],
     reaction: NodeReaction[T],
     randomGenerator: RandomGenerator,
     programName: String
   ) =
     this(
       environment,
-      node,
       reaction,
       randomGenerator,
       programName,
@@ -79,6 +73,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     )
 
   import RunScafiProgram.NeighborData
+  private val node: Node[T] = reaction.getHost
   val program: ScafiIncarnationForAlchemist.Context with ScafiIncarnationForAlchemist.ContextOps => ScafiIncarnationForAlchemist.Export with ScafiIncarnationForAlchemist.ExportOps =
     ResourceLoader.classForName(programName).getDeclaredConstructor().newInstance().asInstanceOf[CONTEXT => EXPORT]
   val programNameMolecule = new SimpleMolecule(programName)
@@ -88,8 +83,8 @@ sealed class RunScafiProgram[T, P <: Position[P]](
   private val _completed = MutableObservables.observe[Boolean](false)
   def asMolecule: SimpleMolecule = programNameMolecule
 
-  override def cloneAction(node: Node[T], reaction: NodeReaction[T]) =
-    new RunScafiProgram(environment, node, reaction, randomGenerator, programName, retentionTime)
+  override protected def cloneOnNodeReaction(newReaction: NodeReaction[T]): RunScafiProgram[T, P] =
+    new RunScafiProgram(environment, newReaction, randomGenerator, programName, retentionTime)
 
   override def execute(): Unit = {
     import scala.jdk.CollectionConverters._

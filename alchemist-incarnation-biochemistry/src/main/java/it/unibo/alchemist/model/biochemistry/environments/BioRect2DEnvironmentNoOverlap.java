@@ -92,9 +92,9 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     @Override
-    public void moveNodeToPosition(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition newPosition) {
+    public void moveNodeTo(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition position) {
         final double[] cur = currentPositionOf(node).getCoordinates();
-        final double[] np = newPosition.getCoordinates();
+        final double[] np = position.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
         if (node.asPropertyOrNull(CircularCellProperty.class) != null) {
             final Euclidean2DPosition nextPos = findNearestFreePosition(
@@ -102,9 +102,9 @@ public final class BioRect2DEnvironmentNoOverlap
                     new Euclidean2DPosition(cur[0], cur[1]),
                     nextWithinLimts
             );
-            super.moveNodeToPosition(node, nextPos);
+            super.moveNodeTo(node, nextPos);
         } else {
-            super.moveNodeToPosition(node, nextWithinLimts);
+            super.moveNodeTo(node, nextWithinLimts);
         }
     }
 

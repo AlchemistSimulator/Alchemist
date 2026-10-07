@@ -51,7 +51,7 @@ class ConditionalEvent<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) 
 
     override fun performModelMutation() {
         super.performModelMutation()
-        node.removeReaction(this)
+        host.removeReaction(this)
     }
 
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ConditionalEvent<T> =

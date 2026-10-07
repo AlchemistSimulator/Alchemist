@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model
 
+import it.unibo.alchemist.model.observation.ObservableList
+
 /**
  * A model entity owning [Reaction] membership.
  *
@@ -16,10 +18,13 @@ package it.unibo.alchemist.model
  * register or unregister reactions through their host: scheduler synchronization is not their responsibility.
  */
 interface ReactionHost<T> {
-    /** The reactions currently registered with this host. */
-    val reactions: List<Reaction<T>>
+    /** The reactions registered with this host, in registration order; [ObservableList.current] is a snapshot. */
+    val reactions: ObservableList<Reaction<T>>
 
-    /** Registers [reaction] and notifies the running simulation when it was not already present. */
+    /**
+     * Registers [reaction] and notifies the running simulation when it was not already present.
+     * Fails if this is not the [Reaction.host] of [reaction].
+     */
     fun addReaction(reaction: Reaction<T>)
 
     /** Unregisters [reaction] and notifies the running simulation when it was actually present. */

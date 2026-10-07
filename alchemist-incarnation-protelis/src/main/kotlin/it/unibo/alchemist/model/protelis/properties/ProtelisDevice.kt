@@ -112,7 +112,7 @@ constructor(
     /**
      * Finds all the [RunProtelisProgram]s installed on this node.
      */
-    fun allProtelisPrograms(): List<RunProtelisProgram<*>> = node.reactions
+    fun allProtelisPrograms(): List<RunProtelisProgram<*>> = node.reactions.current
         .asSequence()
         .flatMap { it.actions }
         .filterIsInstance<RunProtelisProgram<*>>()
@@ -202,7 +202,7 @@ constructor(
     private fun validateCommunicationConfiguration() {
         val hasProtelisPrograms = allProtelisPrograms().isNotEmpty()
         if (hasProtelisPrograms) {
-            val hasSendAction = node.reactions
+            val hasSendAction = node.reactions.current
                 .asSequence()
                 .flatMap { it.actions }
                 .any { it is SendToNeighbor }

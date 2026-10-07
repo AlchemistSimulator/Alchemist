@@ -10,12 +10,9 @@
 package it.unibo.alchemist.model.sapere;
 
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import org.danilopianini.lang.HashString;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
@@ -32,12 +29,5 @@ public interface ILsaAction extends Action<List<ILsaMolecule>> {
      *            the nodes allowed for this action
      */
     void setExecutionContext(Map<HashString, ITreeNode<?>> matches, List<ILsaNode> nodes);
-
-    @Nonnull
-    @Override
-    ILsaAction cloneAction(
-        @Nonnull Node<List<ILsaMolecule>> node,
-        @Nonnull NodeReaction<List<ILsaMolecule>> reaction
-    );
 
 }

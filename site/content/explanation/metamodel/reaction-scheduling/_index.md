@@ -21,8 +21,17 @@ Scheduling responsibilities have explicit owners:
 * An {{% api package="model.reactions" class="AbsoluteEvent" %}} owns one fixed absolute occurrence.
 * A {{% api package="model.reactions" class="ConditionalEvent" %}} draws a new putative occurrence when its
   conditions become valid and unregisters itself after its first successful execution.
-* A {{% api package="model" class="ReactionHost" %}} owns reaction membership. Both
+* A {{% api package="model" class="ReactionHost" %}} owns reaction membership and publishes it as an observable
+  list of reactions. Both
   {{% api package="model" class="Node" %}} and {{% api package="model" class="Environment" %}} are reaction hosts.
+  Ownership is explicit in both directions: every reaction exposes its fixed `host`,
+  and a host only registers reactions whose host is the host itself.
+* Every {{% api package="model" class="Condition" %}} and {{% api package="model" class="Action" %}} exposes the
+  `reaction` owning it, and a reaction only accepts conditions and actions it owns.
+  Their host, and possibly their node, are reached through the owning reaction.
+  Conditions and actions that work on a node take it as an explicit target,
+  while local ones work on the node hosting their
+  {{% api package="model" class="NodeReaction" %}}.
 * {{% api package="model" class="Condition" %}} exposes reactive validity through the general model contract.
   A recurring reaction owns a subscription to their combined validity. Specialized reaction families validate the
   concrete condition types they accept and own exact subscriptions to any additional semantic inputs used by their
@@ -53,6 +62,8 @@ sampling begins on the transition to valid.
 An {{% api package="model.reactions" class="AbsoluteEvent" %}} starts at its fixed occurrence and uses its conditions
 as occurrence-time guards.
 A reaction cloned onto another node is a newly instantiated program.
+Its conditions and actions are cloned onto the new reaction:
+a node target that was the host of the original reaction becomes the host of the new one, other targets are kept.
 
 ### Firing
 

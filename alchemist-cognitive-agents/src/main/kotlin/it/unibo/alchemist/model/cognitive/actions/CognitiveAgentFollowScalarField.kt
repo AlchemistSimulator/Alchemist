@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EnvironmentWithObstacles
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
@@ -62,8 +61,8 @@ class CognitiveAgentFollowScalarField<T, P, A>(
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
-        CognitiveAgentFollowScalarField(environment, reaction, node.pedestrianProperty, center, valueIn)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
+        CognitiveAgentFollowScalarField(environment, newReaction, newReaction.host.pedestrianProperty, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> = when (environment) {
         is EnvironmentWithObstacles<*, T, P> ->
@@ -73,7 +72,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
 
     private fun Sequence<P>.enforceOthers(): Sequence<P> = when (environment) {
         is PhysicsEnvironment<T, P, *, *> ->
-            map { (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(node, it) }
+            map { (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(targetNode, it) }
         else -> this
     }
 

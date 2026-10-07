@@ -72,7 +72,7 @@ class BiochemicalNodeReaction(
                 is GenericMoleculePresent<*> -> condition.quantity
                 is AbstractNeighborCondition<*> -> condition.observeValidNeighbors()
                 is TensionPresent -> condition.observeMechanicalState()
-                is EnvPresent -> condition.isValid()
+                is EnvPresent -> condition.isValid
                 else -> error("Unsupported biochemical condition: $condition")
             }
             subscriptions.add(

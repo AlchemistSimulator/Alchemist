@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.EuclideanEnvironment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.cognitive.SteeringActionWithTarget
@@ -27,7 +26,7 @@ open class CognitiveAgentSeek2D<T, P, A>(
     /**
      * The environment the node is into.
      */
-    protected val environment: EuclideanEnvironment<T, P>,
+    override val environment: EuclideanEnvironment<T, P>,
     reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     /**
@@ -55,6 +54,6 @@ open class CognitiveAgentSeek2D<T, P, A>(
 
     override fun nextPosition(): P = followScalarField.nextPosition()
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentSeek2D<T, P, A> =
-        CognitiveAgentSeek2D(environment, reaction, node.pedestrianProperty, target)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentSeek2D<T, P, A> =
+        CognitiveAgentSeek2D(environment, newReaction, newReaction.host.pedestrianProperty, target)
 }

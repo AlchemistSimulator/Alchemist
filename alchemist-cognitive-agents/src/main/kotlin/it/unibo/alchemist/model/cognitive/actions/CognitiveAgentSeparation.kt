@@ -27,18 +27,18 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  * @param pedestrian the owner pedestrian property.
  */
 class CognitiveAgentSeparation<T>(
-    val environment: Physics2DEnvironment<T>,
+    override val environment: Physics2DEnvironment<T>,
     reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
 ) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentSeparation<T> =
-        CognitiveAgentSeparation(environment, reaction, node.pedestrianProperty)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentSeparation<T> =
+        CognitiveAgentSeparation(environment, newReaction, newReaction.host.pedestrianProperty)
 
     override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)
 
-    override fun group(): List<Node<T>> = node
+    override fun group(): List<Node<T>> = targetNode
         .asProperty<T, PerceptiveProperty<T>>()
         .fieldOfView
         .influentialNodes()
-        .plusElement(node)
+        .plusElement(targetNode)
 }

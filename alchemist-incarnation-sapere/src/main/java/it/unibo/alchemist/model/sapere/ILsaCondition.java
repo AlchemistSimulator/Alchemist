@@ -10,8 +10,6 @@
 package it.unibo.alchemist.model.sapere;
 
 import it.unibo.alchemist.model.Condition;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import org.danilopianini.lang.HashString;
@@ -23,13 +21,6 @@ import java.util.Map;
 /**
  */
 public interface ILsaCondition extends Condition<List<ILsaMolecule>> {
-
-    @Nonnull
-    @Override
-    ILsaCondition cloneCondition(
-        @Nonnull Node<List<ILsaMolecule>> newNode,
-        @Nonnull NodeReaction<List<ILsaMolecule>> newReaction
-    );
 
     /**
      * When this method is called, the condition must filter the current matches
@@ -49,10 +40,6 @@ public interface ILsaCondition extends Condition<List<ILsaMolecule>> {
         List<ILsaNode> validNodes,
         List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
     );
-
-    @Nonnull
-    @Override
-    ILsaNode getNode();
 
     /**
      * Observable LSA state used to compute matches for this condition.

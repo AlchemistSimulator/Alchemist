@@ -38,5 +38,5 @@ constructor(
     alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
 ) : NavigationPrioritizedSteering<T, N>(environment, pedestrian, timeDistribution, toleranceAngle, alpha) {
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
-        Sum(environment, node, super.steerStrategy)
+        Sum(environment, host, super.steerStrategy)
 }

@@ -78,7 +78,7 @@ private fun testSimulation() = environment.startSimulationWithoutParameters(
     initialized = {
         assertEquals(1.0, nodes.first.getConcentration(BIOMOLECULE))
         assertEquals(0.0, nodes.second.getConcentration(BIOMOLECULE))
-        assertEquals(1, nodes.toList().sumOf { it.reactions.count() })
+        assertEquals(1, nodes.toList().sumOf { it.reactions.current.count() })
     },
     stepDone = {
         assertEquals(1.0, nodes.toList().sumOf { it.getConcentration(BIOMOLECULE) })

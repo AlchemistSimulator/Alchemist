@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
@@ -43,6 +42,6 @@ open class CognitiveAgentSeek<T, P, A>(
         vararg coordinates: Number,
     ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentSeek<T, P, A> =
-        CognitiveAgentSeek(environment, reaction, node.pedestrianProperty, target)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentSeek<T, P, A> =
+        CognitiveAgentSeek(environment, newReaction, newReaction.host.pedestrianProperty, target)
 }

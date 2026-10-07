@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.conditions.AbstractCondition
@@ -137,16 +138,16 @@ private class CountingDistribution : TimeDistribution<Double> {
     override fun newInstanceOn(node: Node<Double>): TimeDistribution<Double> = CountingDistribution()
 }
 
-private class CountingAction(private val executions: MutableList<Action<Double>>) : Action<Double> {
-    override fun cloneAction(node: Node<Double>, reaction: NodeReaction<Double>): Action<Double> =
-        CountingAction(executions)
+private class CountingAction(reaction: Reaction<Double>, private val executions: MutableList<Action<Double>>) :
+    AbstractAction<Double>(reaction) {
+    override fun cloneAction(newReaction: Reaction<Double>): Action<Double> = CountingAction(newReaction, executions)
 
     override fun execute() {
         executions += this
     }
 }
 
-private class InvalidCondition(node: Node<Double>) : AbstractCondition<Double>(node) {
+private class InvalidCondition(reaction: Reaction<Double>) : AbstractCondition<Double>(reaction) {
     var readySignals = 0
         private set
 
@@ -154,7 +155,9 @@ private class InvalidCondition(node: Node<Double>) : AbstractCondition<Double>(n
         setValidity(observe(false))
     }
 
-    override fun reactionReady() {
+    override fun cloneCondition(newReaction: Reaction<Double>) = InvalidCondition(newReaction)
+
+    override fun beforeReactionFires() {
         readySignals++
     }
 }
@@ -191,7 +194,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
 
     "an infinite scheduler head is quiescent and is not consumed as a step" {
         val (environment, _, reaction) = fixture()
-        reaction.conditions = listOf(InvalidCondition(reaction.node))
+        reaction.conditions = listOf(InvalidCondition(reaction))
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
@@ -264,7 +267,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val peer = GenericNode(environment).apply { setConcentration(molecule, 1.0) }
         val distribution = CountingDistribution()
         val reaction = GenericReaction(center, distribution).apply {
-            conditions = listOf(NeighborHasConcentration(center, environment, molecule, 1.0))
+            conditions = listOf(NeighborHasConcentration(this, environment, molecule, 1.0))
         }
         center.addReaction(reaction)
         environment.addNode(center, environment.makePosition(0, 0))
@@ -283,15 +286,15 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         }
         assertScheduling(finite = false, samples = 0, updates = 0)
         // A neighbor with the molecule moves into range.
-        mutate { environment.moveNodeToPosition(peer, environment.makePosition(0.5, 0)) }
+        mutate { environment.moveNodeTo(peer, environment.makePosition(0.5, 0)) }
         assertScheduling(finite = true, samples = 1, updates = 1)
         // Movement that keeps the neighborhood valid neither redraws nor reindexes.
-        mutate { environment.moveNodeToPosition(peer, environment.makePosition(0.6, 0)) }
+        mutate { environment.moveNodeTo(peer, environment.makePosition(0.6, 0)) }
         assertScheduling(finite = true, samples = 1, updates = 1)
         // The neighbor leaves and comes back.
-        mutate { environment.moveNodeToPosition(peer, environment.makePosition(5, 0)) }
+        mutate { environment.moveNodeTo(peer, environment.makePosition(5, 0)) }
         assertScheduling(finite = false, samples = 1, updates = 2)
-        mutate { environment.moveNodeToPosition(peer, environment.makePosition(0.5, 0)) }
+        mutate { environment.moveNodeTo(peer, environment.makePosition(0.5, 0)) }
         assertScheduling(finite = true, samples = 2, updates = 3)
         // The neighbor's concentration changes while topology stays the same.
         mutate { peer.setConcentration(molecule, 2.0) }
@@ -359,7 +362,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         engine.drainCommand()
         scheduler.reactions shouldNotContain event
         scheduler.updates shouldNotContain event
-        node.reactions shouldNotContain event
+        node.reactions.current shouldNotContain event
         event.nextOccurrence.observers.size shouldBe 0
     }
 
@@ -374,7 +377,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         engine.drainCommand()
         scheduler.reactions shouldNotContain event
         scheduler.updates shouldNotContain event
-        environment.reactions shouldNotContain event
+        environment.reactions.current shouldNotContain event
         event.nextOccurrence.observers.size shouldBe 0
     }
 
@@ -384,20 +387,20 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         val executions = mutableListOf<Action<Double>>()
         val distribution = CountingDistribution()
         val absolute = AbsoluteEvent<Double>(node, DoubleTime(0.5)).apply {
-            actions = listOf(CountingAction(executions))
+            actions = listOf(CountingAction(this, executions))
         }
         val conditional = ConditionalEvent(node, distribution).apply {
-            actions = listOf(CountingAction(executions))
+            actions = listOf(CountingAction(this, executions))
         }
         val environmentEvent = AbsoluteEvent<Double>(environment, DoubleTime(3.0)).apply {
-            actions = listOf(CountingAction(executions))
+            actions = listOf(CountingAction(this, executions))
         }
         node.addReaction(absolute)
         node.addReaction(conditional)
         environment.addReaction(environmentEvent)
         environment.addNode(node, environment.makePosition(0, 0))
         val events = listOf(absolute, conditional, environmentEvent)
-        val clonedBeforeFiring = node.cloneNode(Time.ZERO).reactions
+        val clonedBeforeFiring = node.cloneNode(Time.ZERO).reactions.current
         clonedBeforeFiring.size shouldBe 1
         clonedBeforeFiring.single().shouldBeInstanceOf<ConditionalEvent<Double>>()
         clonedBeforeFiring.single() shouldNotBe conditional
@@ -416,9 +419,9 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
             scheduler.updates shouldNotContain event
             event.nextOccurrence.observers.size shouldBe 0
         }
-        node.reactions.shouldBeEmpty()
-        environment.reactions.shouldBeEmpty()
-        node.cloneNode(DoubleTime(3.0)).reactions.shouldBeEmpty()
+        node.reactions.current.shouldBeEmpty()
+        environment.reactions.current.shouldBeEmpty()
+        node.cloneNode(DoubleTime(3.0)).reactions.current.shouldBeEmpty()
         engine.stepForTest()
         executions.size shouldBe events.size
         engine.step shouldBe events.size.toLong()
@@ -427,10 +430,9 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
     "an absolute event expires at its occurrence when its conditions are invalid" {
         val environment = Continuous2DEnvironment(BiochemistryIncarnation())
         val node = GenericNode(environment)
-        val condition = InvalidCondition(node)
-        val event = AbsoluteEvent<Double>(node, Time.ZERO).apply {
-            conditions = listOf(condition)
-        }
+        val event = AbsoluteEvent<Double>(node, Time.ZERO)
+        val condition = InvalidCondition(event)
+        event.conditions = listOf(condition)
         node.addReaction(event)
         environment.addNode(node, environment.makePosition(0, 0))
         val scheduler = RecordingScheduler<Double>()
@@ -443,7 +445,7 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         engine.step shouldBe 1L
         condition.readySignals shouldBe 0
         scheduler.reactions shouldNotContain event
-        node.reactions shouldNotContain event
+        node.reactions.current shouldNotContain event
     }
 
     "runtime host mutations synchronize scheduler membership for both host types" {

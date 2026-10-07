@@ -30,6 +30,7 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableMap
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
@@ -93,7 +94,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             }
         return if (parameters.equals("send", ignoreCase = true)) {
             val alreadyDone =
-                node.reactions
+                node.reactions.current
                     .asSequence()
                     .flatMap { it.actions.asSequence() }
                     .filterIsInstance<SendToNeighbor>()
@@ -104,7 +105,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             check(pList.size == 1) {
                 "There are too many programs requiring a ${SendToNeighbor::class.qualifiedName} action: $pList"
             }
-            SendToNeighbor(node, reaction as NodeReaction<Any>, pList.first())
+            SendToNeighbor(reaction as NodeReaction<Any>, pList.first())
         } else {
             @Suppress("TooGenericExceptionCaught")
             try {
@@ -146,7 +147,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
-            val alreadyDone = node.reactions
+            val alreadyDone = node.reactions.current
                 .asSequence()
                 .flatMap { r: Reaction<Any> -> r.conditions.asSequence() }
                 .filter { c: Condition<Any> -> c is ComputationalRoundComplete }
@@ -162,7 +163,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
                 "There are too many programs requiring a " + ComputationalRoundComplete::class.java.simpleName +
                     " condition: " + pList
             }
-            return ComputationalRoundComplete(node, pList[0])
+            return ComputationalRoundComplete(reaction as NodeReaction<Any>, pList[0])
         }
         throw IllegalArgumentException(
             "The provided actionable should be an instance of " + NodeReaction::class.java.simpleName,
@@ -357,7 +358,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override val properties: List<NodeProperty<Any>> = emptyList()
 
-        override val reactions: List<Reaction<Any>> = emptyList()
+        override val reactions: ObservableList<Reaction<Any>> get() = notImplemented()
 
         override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
 
@@ -409,7 +410,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         private fun getIncomplete(
             protelisNode: Node<*>,
             alreadyDone: Set<RunProtelisProgram<*>>,
-        ): List<RunProtelisProgram<*>> = protelisNode.reactions
+        ): List<RunProtelisProgram<*>> = protelisNode.reactions.current
             .asSequence()
             // Get the actions
             .flatMap { it.actions.asSequence() }

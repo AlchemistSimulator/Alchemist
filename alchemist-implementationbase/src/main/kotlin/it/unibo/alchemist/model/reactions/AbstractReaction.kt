@@ -29,15 +29,20 @@ import it.unibo.alchemist.model.observation.Observable
 abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     override var actions: List<Action<T>> = emptyList()
+        set(value) {
+            requireOwnership(value, Action<T>::reaction)
+            field = value
+        }
 
     override val canExecute: Observable<Boolean> get() = conditionValidity
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
+            requireOwnership(value, Condition<T>::reaction)
             validateConditions(value)
             field = value
             conditionValidity.dispose()
-            conditionValidity = value.map(Condition<T>::isValid)
+            conditionValidity = value.map { it.isValid }
                 .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
                 ?: observe(true)
             if (initializedEnvironment != null) {
@@ -85,7 +90,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
     protected open fun performModelMutation() = actions.forEach(Action<T>::execute)
 
     /** Notifies conditions immediately before their valid reaction executes. */
-    protected fun signalConditionsReady() = conditions.forEach(Condition<T>::reactionReady)
+    protected fun signalConditionsReady() = conditions.forEach(Condition<T>::beforeReactionFires)
 
     /** The scheduling information appended by [toString], or `null` when none exists. */
     protected open val rateAsString: String? get() = null
@@ -108,6 +113,11 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     /** Called after reaction-specific initialization completes. */
     protected open fun afterInitializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+
+    private fun <E> requireOwnership(elements: List<E>, owner: (E) -> Any) {
+        val foreign = elements.filterNot { owner(it) === this }
+        require(foreign.isEmpty()) { "$foreign belong to a reaction other than $this" }
+    }
 
     /** Rejects unsupported conditions before they become observable reaction state. */
     protected open fun validateConditions(conditions: List<Condition<T>>) = Unit

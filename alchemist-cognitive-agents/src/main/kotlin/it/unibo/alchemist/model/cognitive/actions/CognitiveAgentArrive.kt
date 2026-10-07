@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
@@ -68,15 +67,15 @@ open class CognitiveAgentArrive<T, P, A>(
             when {
                 this < arrivalTolerance -> 0.0
                 this < decelerationRadius -> Speed.default * this / decelerationRadius / recurrenceRate
-                else -> node.asProperty<T, PedestrianProperty<T>>().speed() / recurrenceRate
+                else -> targetNode.asProperty<T, PedestrianProperty<T>>().speed() / recurrenceRate
             }
         }
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentArrive<T, P, A> =
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentArrive<T, P, A> =
         CognitiveAgentArrive(
             environment,
-            reaction,
-            node.pedestrianProperty,
+            newReaction,
+            newReaction.host.pedestrianProperty,
             decelerationRadius,
             arrivalTolerance,
             target,

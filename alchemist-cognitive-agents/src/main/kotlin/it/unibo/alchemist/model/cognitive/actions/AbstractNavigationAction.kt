@@ -51,7 +51,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
           A : Transformation<P>,
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
-    final override val navigatingNode = node
+    final override val navigatingNode = targetNode
 
     /**
      * The strategy used to navigate the environment.
@@ -76,7 +76,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * at present. This workaround allows to specify a minimum distance which is dependent on the node
      * shape. In the future, something better could be done.
      */
-    protected val minDistance: Double = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter
+    protected val minDistance: Double = targetNode.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter
 
     /**
      * @returns true if the distance to [pedestrianPosition] is smaller than or equal to [minDistance].

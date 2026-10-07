@@ -36,7 +36,7 @@ class TestTOMACS {
         Assertions.assertTrue(
             loader.getDefault().getEnvironment().getNodes().getCurrent().stream()
                 .flatMap(n ->
-                    n.getReactions().stream()
+                    n.getReactions().getCurrent().stream()
                         .map(Reaction::getActions)
                         .flatMap(Collection::stream)
                         .filter(a -> a instanceof RunProtelisProgram)

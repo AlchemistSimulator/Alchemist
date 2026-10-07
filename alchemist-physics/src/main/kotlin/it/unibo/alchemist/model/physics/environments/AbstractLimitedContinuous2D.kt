@@ -23,10 +23,10 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 abstract class AbstractLimitedContinuous2D<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
     ContinuousPhysics2DEnvironment<T>(incarnation) {
 
-    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) {
+    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) {
         val (curX, curY) = getCurrentPosition(node).coordinates
-        val (newX, newY) = newPosition.coordinates
-        super.moveNodeToPosition(node, next(curX, curY, newX, newY))
+        val (newX, newY) = position.coordinates
+        super.moveNodeTo(node, next(curX, curY, newX, newY))
     }
 
     override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =

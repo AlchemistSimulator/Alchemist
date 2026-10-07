@@ -9,38 +9,33 @@
 
 package it.unibo.alchemist.model.biochemistry.conditions
 
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty
 import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells
-import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.conditions.AbstractLocalCondition
 import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observation.Observable
 
 /** A condition requiring mechanical tension from at least one nearby circular cell. */
-class TensionPresent(private val environment: EnvironmentSupportingDeformableCells<*>, node: Node<Double>) :
-    AbstractCondition<Double>(node) {
+class TensionPresent(private val environment: EnvironmentSupportingDeformableCells<*>, reaction: NodeReaction<Double>) :
+    AbstractLocalCondition<Double>(reaction) {
 
     private val mechanics: Observable<MechanicalState> = environment
-        .observeNodesWithinRange(node, environment.maxDiameterAmongCircularDeformableCells)
+        .observeNodesWithinRange(targetNode, environment.maxDiameterAmongCircularDeformableCells)
         .combineLatest(environment::getPosition) { computeMechanicalState() }
 
     init {
-        requireNotNull(node.asPropertyOrNull<Double, CircularDeformableCellProperty>()) {
+        requireNotNull(targetNode.asPropertyOrNull<Double, CircularDeformableCellProperty>()) {
             "Node must have a ${CircularDeformableCellProperty::class.simpleName}"
         }
         setValidity(mechanics.map(MechanicalState::valid))
     }
 
-    override fun cloneCondition(newNode: Node<Double>, newReaction: NodeReaction<Double>): TensionPresent {
-        requireNotNull(newNode.asPropertyOrNull<Double, CircularDeformableCellProperty>()) {
-            "Node must have a ${CircularDeformableCellProperty::class.simpleName}"
-        }
-        return TensionPresent(environment, newNode)
-    }
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Double>): TensionPresent =
+        TensionPresent(environment, newReaction)
 
     /** Current tension factor consumed by [it.unibo.alchemist.model.biochemistry.reactions.BiochemicalNodeReaction]. */
     fun getTension(): Double = mechanics.current.tension
@@ -49,7 +44,7 @@ class TensionPresent(private val environment: EnvironmentSupportingDeformableCel
     fun observeMechanicalState(): Observable<MechanicalState> = mechanics
 
     private fun computeMechanicalState(): MechanicalState {
-        val thisNode = getNode()
+        val thisNode = targetNode
         val thisCell = thisNode.asProperty<Double, CircularDeformableCellProperty>()
         var valid = false
         var totalTension = 0.0

@@ -52,11 +52,11 @@ constructor(
             }
         }
 
-    override fun cloneAction(node: Node<Number>, reaction: NodeReaction<Number>): CognitiveAgentAvoidLayer =
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Number>): CognitiveAgentAvoidLayer =
         CognitiveAgentAvoidLayer(
             environment,
-            reaction,
-            node.pedestrianProperty,
+            newReaction,
+            newReaction.host.pedestrianProperty,
             targetMolecule,
             viewDepth,
         )
@@ -66,7 +66,7 @@ constructor(
      * (either because it is in sight or due to social contagion), otherwise a zero vector is returned.
      */
     override fun nextPosition(): Euclidean2DPosition = when {
-        node.wantsToEscape() || isDangerInSight() -> followScalarField.nextPosition()
+        targetNode.wantsToEscape() || isDangerInSight() -> followScalarField.nextPosition()
         else -> environment.origin
     }
 
@@ -76,7 +76,7 @@ constructor(
      */
     @Suppress("UNCHECKED_CAST")
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
-        val currentPosition = environment.getCurrentPosition(node)
+        val currentPosition = environment.getCurrentPosition(targetNode)
         /*
          * environment is euclidean, so if it has obstacles it must be an
          * EnvironmentWithObstacles<*, *, Euclidean2DPosition>. Since generic types can't be checked at runtime, this

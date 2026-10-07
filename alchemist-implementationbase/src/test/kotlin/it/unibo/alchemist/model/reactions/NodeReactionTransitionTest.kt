@@ -15,6 +15,7 @@ import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.conditions.ConcentrationChanged
@@ -37,10 +38,9 @@ class NodeReactionTransitionTest {
     @Test
     fun `the chemical policy base rejects conditions without explicit rate semantics`() {
         val node = mockk<Node<Any>>()
-        val condition = ObservableValidityCondition(node, observe(true))
-        assertFailsWith<IllegalArgumentException> {
-            ChemicalNodeReaction(node, ExponentialTime(1.0, mockk(relaxed = true))).conditions = listOf(condition)
-        }
+        val reaction = ChemicalNodeReaction(node, ExponentialTime(1.0, mockk(relaxed = true)))
+        val condition = ObservableValidityCondition(reaction, observe(true))
+        assertFailsWith<IllegalArgumentException> { reaction.conditions = listOf(condition) }
     }
 
     @Test
@@ -204,7 +204,7 @@ class NodeReactionTransitionTest {
             0.5
         }
         val reaction = GenericReaction(node, ExponentialTime(1.0, randomGenerator)).apply {
-            conditions = listOf(ConcentrationChanged(node, molecule))
+            conditions = listOf(ConcentrationChanged(this, molecule))
         }
         reaction.initializationComplete(Time.ZERO, environment)
         assertTrue(reaction.nextOccurrence.current.isInfinite)
@@ -233,7 +233,7 @@ class NodeReactionTransitionTest {
             0.5
         }
         val reaction = GenericReaction(node, ExponentialTime(1.0, randomGenerator)).apply {
-            conditions = listOf(ObservableValidityCondition(node, validity))
+            conditions = listOf(ObservableValidityCondition(this, validity))
         }
         reaction.initializationComplete(Time.ZERO, environment)
         assertEquals(0, samples)
@@ -250,7 +250,7 @@ class NodeReactionTransitionTest {
         every { fixture.environment.simulationOrNull } returns mockk(relaxed = true)
         val validity = observe(true, emitOnDistinct = false)
         val reaction = GenericReaction(fixture.node, ExponentialTime(1.0, fixture.randomGenerator)).apply {
-            conditions = listOf(ObservableValidityCondition(fixture.node, validity))
+            conditions = listOf(ObservableValidityCondition(this, validity))
         }
         fun invalidate(valid: Boolean, currentTime: Double) {
             validity.current = valid
@@ -295,11 +295,15 @@ class NodeReactionTransitionTest {
         }
     }
 
-    private class ObservableValidityCondition<T>(node: Node<T>, validity: MutableObservable<Boolean>) :
-        AbstractCondition<T>(node) {
+    private class ObservableValidityCondition<T>(
+        reaction: Reaction<T>,
+        private val validity: MutableObservable<Boolean>,
+    ) : AbstractCondition<T>(reaction) {
         init {
             setValidity(validity)
         }
+
+        override fun cloneCondition(newReaction: Reaction<T>) = ObservableValidityCondition(newReaction, validity)
     }
 
     private data class ExponentialFixture(

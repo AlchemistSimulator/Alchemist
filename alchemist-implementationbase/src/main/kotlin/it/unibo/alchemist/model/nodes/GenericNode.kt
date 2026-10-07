@@ -18,9 +18,11 @@ import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observables.ObservableMutableList
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
 import javax.annotation.Nonnull
@@ -37,7 +39,6 @@ open class GenericNode<T> @JvmOverloads constructor(
      */
     val environment: Environment<T, *>,
     final override val id: Int = idFromEnv(environment),
-    final override val reactions: MutableList<Reaction<T>> = ArrayList(),
     /**
      * The node's molecules.
      */
@@ -47,11 +48,16 @@ open class GenericNode<T> @JvmOverloads constructor(
 
     override val observableContents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
 
+    private val observableReactions = ObservableMutableList<Reaction<T>>()
+
+    final override val reactions: ObservableList<Reaction<T>> = observableReactions
+
     override val observeMoleculeCount: Observable<Int> = observableContents.map { it.size }
 
     final override fun addReaction(reaction: Reaction<T>) {
-        if (reaction !in reactions) {
-            reactions.add(reaction)
+        require(reaction.host === this) { "$reaction is hosted by ${reaction.host}, not by $this" }
+        if (reaction !in observableReactions.current) {
+            observableReactions.add(reaction)
             ifRegisteredInEnvironment { it.reactionAdded(reaction) }
         }
     }
@@ -59,7 +65,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
         this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
         this.contents.forEach(it::setConcentration)
-        this.reactions.filterIsInstance<NodeReaction<T>>().forEach { reaction ->
+        this.reactions.current.filterIsInstance<NodeReaction<T>>().forEach { reaction ->
             it.addReaction(reaction.cloneOnNewNode(it, currentTime))
         }
     }
@@ -98,7 +104,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     final override fun removeReaction(reaction: Reaction<T>) {
-        if (reactions.remove(reaction)) {
+        if (observableReactions.remove(reaction)) {
             ifRegisteredInEnvironment { it.reactionRemoved(reaction) }
             reaction.dispose()
         }
@@ -122,8 +128,8 @@ open class GenericNode<T> @JvmOverloads constructor(
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
 
     override fun dispose() {
-        reactions.forEach(Disposable::dispose)
-        reactions.clear()
+        observableReactions.current.forEach(Disposable::dispose)
+        observableReactions.clear()
         observableContents.dispose()
         observeMoleculeCount.dispose()
     }

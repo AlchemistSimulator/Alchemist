@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -36,4 +36,4 @@ fun <T> Reaction<T>.toGraphQLReactionSurrogate(host: Node<T>) = ReactionSurrogat
  * Converts a [NodeReaction] to a [ReactionSurrogate].
  * @return a [ReactionSurrogate] for this [NodeReaction]
  */
-fun <T> NodeReaction<T>.toGraphQLReactionSurrogate() = toGraphQLReactionSurrogate(node)
+fun <T> NodeReaction<T>.toGraphQLReactionSurrogate() = toGraphQLReactionSurrogate(host)

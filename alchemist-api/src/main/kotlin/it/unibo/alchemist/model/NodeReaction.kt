@@ -16,9 +16,9 @@ package it.unibo.alchemist.model
  */
 interface NodeReaction<T> : Reaction<T> {
     /**
-     * @return The [Node] in which this [NodeReaction] executes.
+     * The [Node] hosting this reaction.
      */
-    val node: Node<T>
+    override val host: Node<T>
 
     /**
      * Clones this reaction's program on a new node, for example when nodes are created at runtime.

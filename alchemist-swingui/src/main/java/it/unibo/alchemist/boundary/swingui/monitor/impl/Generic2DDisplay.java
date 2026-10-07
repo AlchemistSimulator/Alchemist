@@ -937,7 +937,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                                 final P p = currentEnv.getCurrentPosition(n);
                                 final P finalPos = p.plus(envEnding.minus(envOrigin.getCoordinates()).getCoordinates());
                                 engine.schedule(() -> {
-                                    currentEnv.moveNodeToPosition(n, finalPos);
+                                    currentEnv.moveNodeTo(n, finalPos);
                                     update(currentEnv, engine.getTime());
                                 });
                             }

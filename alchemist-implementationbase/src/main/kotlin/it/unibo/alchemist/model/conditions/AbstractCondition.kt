@@ -10,25 +10,21 @@
 package it.unibo.alchemist.model.conditions
 
 import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 
-/** Base implementation of a reactive [Condition]. */
-open class AbstractCondition<T>(private val node: Node<T>) : Condition<T> {
+/**
+ * Base implementation of a reactive [Condition] owned by [reaction], independent of the kind of host.
+ */
+abstract class AbstractCondition<T>(override val reaction: Reaction<T>) : Condition<T> {
     private var validity: Observable<Boolean> = observe(true)
 
-    override fun getNode(): Node<T> = node
-
-    override fun isValid(): Observable<Boolean> = validity
+    final override val isValid: Observable<Boolean> get() = validity
 
     override fun dispose() {
         validity.dispose()
     }
-
-    override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): Condition<T> =
-        throw UnsupportedOperationException("${javaClass.simpleName} has no support for cloning.")
 
     /**
      * Installs the observable backing [isValid].
@@ -40,5 +36,5 @@ open class AbstractCondition<T>(private val node: Node<T>) : Condition<T> {
         validity = newValidity.map { it }
     }
 
-    override fun toString(): String = javaClass.simpleName
+    override fun toString(): String = this::class.simpleName ?: "<anonymous ${this::class}>"
 }

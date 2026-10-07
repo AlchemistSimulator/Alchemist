@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.distribution.DiracDeltaDistribution
@@ -24,31 +23,27 @@ import org.apache.commons.math3.random.RandomGenerator
  * provided [environment] supports obstacle handling.
  *
  * @param T the concentration type.
- * @param node the node to move.
- * @param reaction the reaction that contains this action.
+ * @param reaction the reaction that contains this action, whose node moves.
  * @param environment the environment containing the node.
  * @param randomGenerator the random generator used to pick directions.
  * @param distance the distance to travel before choosing a new direction.
  * @param speed the walking speed.
  */
 class ConstantDistanceRandomWalk<T>(
-    node: Node<T>,
     reaction: NodeReaction<T>,
     environment: Environment<T, Euclidean2DPosition>,
     randomGenerator: RandomGenerator,
     private val distance: Double,
     speed: Double,
 ) : GenericRandomWalker<T>(
-    node,
     reaction,
     environment,
     randomGenerator,
     speed,
     DiracDeltaDistribution(distance),
 ) {
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) = ConstantDistanceRandomWalk(
-        node,
-        reaction,
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>) = ConstantDistanceRandomWalk(
+        newReaction,
         environment,
         randomGenerator,
         distance,

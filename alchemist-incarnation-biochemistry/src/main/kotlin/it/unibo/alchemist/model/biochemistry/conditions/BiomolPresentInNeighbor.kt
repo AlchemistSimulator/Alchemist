@@ -25,15 +25,15 @@ import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDoubl
  *
  * @param molecule      the molecule to check
  * @param concentration the minimum concentration
- * @param node          the local node
+ * @param reaction      the reaction owning this condition
  * @param environment   the environment
  */
 class BiomolPresentInNeighbor(
     private val environment: Environment<Double, *>,
-    node: Node<Double>,
+    reaction: NodeReaction<Double>,
     private val molecule: Biomolecule,
     private val concentration: Double,
-) : AbstractNeighborCondition<Double>(environment, node) {
+) : AbstractNeighborCondition<Double>(environment, reaction) {
 
     private val requiredMolecules = concentration.toMoleculeCount(this)
 
@@ -59,17 +59,15 @@ class BiomolPresentInNeighbor(
             }
         } ?: observe(0.0)
 
-    override fun cloneCondition(
-        newNode: Node<Double>,
-        newReaction: NodeReaction<Double>,
-    ): AbstractNeighborCondition<Double> = BiomolPresentInNeighbor(environment, newNode, molecule, concentration)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Double>): BiomolPresentInNeighbor =
+        BiomolPresentInNeighbor(environment, newReaction, molecule, concentration)
 
     override fun toString(): String = "$molecule >= $concentration in neighbor"
 
     private fun setUpObservability() {
         setValidity(
             observeValidNeighbors().map { validNeighbors ->
-                val current = environment.getNeighborhood(super.getNode()).current
+                val current = environment.getNeighborhood(targetNode).current
                 validNeighbors
                     .takeIf { it.isNotEmpty() }?.entries
                     ?.filter { it.key.asPropertyOrNull<Double, CellProperty<*>>() != null }

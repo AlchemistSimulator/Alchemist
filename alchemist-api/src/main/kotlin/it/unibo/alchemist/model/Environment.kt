@@ -203,10 +203,12 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     fun makePosition(coordinates: List<Number>): P = makePosition(*coordinates.toTypedArray())
 
     /**
-     * This method moves a [node] in the environment to some [newPosition].
-     * If node movement is unsupported, it does nothing.
+     * Moves [node] to [position]. If node movement is unsupported, it does nothing.
+     *
+     * Every movement goes through this function, including relative movements in a [EuclideanEnvironment]:
+     * environments constraining movements (walls, obstacles, physics) override it.
      */
-    fun moveNodeToPosition(node: Node<T>, newPosition: P)
+    fun moveNodeTo(node: Node<T>, position: P)
 
     /**
      * Removes [node].

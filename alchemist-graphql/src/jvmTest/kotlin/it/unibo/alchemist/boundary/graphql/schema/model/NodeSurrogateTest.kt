@@ -42,8 +42,8 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
         fun <T : Any> checkNodeSurrogate(node: Node<T>, nodeSurrogate: NodeSurrogate<T>) {
             assertEquals(node.id, nodeSurrogate.id, "Node ID mismatch")
             assertEquals(node.moleculeCount, nodeSurrogate.moleculeCount, "Molecule count mismatch")
-            assertEquals(node.reactions.size, nodeSurrogate.reactions().size, "Reaction count mismatch")
-            node.reactions.forEach { reaction ->
+            assertEquals(node.reactions.current.size, nodeSurrogate.reactions().size, "Reaction count mismatch")
+            node.reactions.current.forEach { reaction ->
                 checkReactionSurrogate(node, reaction.toGraphQLReactionSurrogate(node))
             }
             node.contents.forEach { (molecule, concentration) ->

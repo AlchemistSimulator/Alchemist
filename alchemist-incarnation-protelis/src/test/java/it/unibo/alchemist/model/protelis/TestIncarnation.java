@@ -234,8 +234,8 @@ class TestIncarnation {
         final CountingDistribution survivingDistribution = new CountingDistribution();
         final GenericReaction<Object> removedSend = new GenericReaction<>(node, new CountingDistribution());
         final GenericReaction<Object> survivingSend = new GenericReaction<>(node, survivingDistribution);
-        removedSend.setConditions(List.of(new ComputationalRoundComplete(node, programAction)));
-        survivingSend.setConditions(List.of(new ComputationalRoundComplete(node, programAction)));
+        removedSend.setConditions(List.of(new ComputationalRoundComplete(removedSend, programAction)));
+        survivingSend.setConditions(List.of(new ComputationalRoundComplete(survivingSend, programAction)));
         removedSend.initializationComplete(Time.ZERO, environment);
         survivingSend.initializationComplete(Time.ZERO, environment);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,18 +11,17 @@ package it.unibo.alchemist.model.reactions
 
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
 
 class TestEventAction<T, P : Position<P>>(
     private val environment: Environment<T, P>,
-    node: Node<T>,
-) : AbstractAction<T>(node) {
+    reaction: Reaction<T>,
+) : AbstractAction<T>(reaction) {
     private var executed = false
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> = TestEventAction(environment, node)
+    override fun cloneAction(newReaction: Reaction<T>): Action<T> = TestEventAction(environment, newReaction)
 
     override fun execute() {
         when (executed) {

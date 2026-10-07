@@ -62,7 +62,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) :
     }
 
     override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        if (reaction == null || reaction is NodeReaction<*> && reaction.node == node) {
+        if (reaction == null || reaction is NodeReaction<*> && reaction.host == node) {
             val content =
                 """
                 |$POSITION
@@ -72,7 +72,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) :
                 |${node.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString(System.lineSeparator())}
                 |
                 |$PROGRAM
-                |${node.reactions.joinToString(System.lineSeparator()) { it.toString() }}
+                |${node.reactions.current.joinToString(System.lineSeparator()) { it.toString() }}
                 """.trimMargin()
             stringLength = content.length + MARGIN
             currentText = content

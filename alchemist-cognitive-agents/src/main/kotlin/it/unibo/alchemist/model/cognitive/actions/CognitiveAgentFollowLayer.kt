@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
@@ -39,11 +38,11 @@ open class CognitiveAgentFollowLayer(
 
     override fun nextPosition(): Euclidean2DPosition = followScalarField.nextPosition()
 
-    override fun cloneAction(node: Node<Number>, reaction: NodeReaction<Number>): CognitiveAgentFollowLayer =
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Number>): CognitiveAgentFollowLayer =
         CognitiveAgentFollowLayer(
             environment,
-            reaction,
-            node.pedestrianProperty,
+            newReaction,
+            newReaction.host.pedestrianProperty,
             targetMolecule,
         )
 }

@@ -101,7 +101,7 @@ public final class DrawSmartcam implements Effect {
     ) {
         final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));
         graphics.setColor(Color.BLUE);
-        node.getReactions()
+        node.getReactions().getCurrent()
             .stream()
             .flatMap(r -> r.getActions().stream())
             .filter(a -> a instanceof CameraSee)

@@ -8,24 +8,24 @@
  */
 package it.unibo.alchemist.model.scafi.conditions
 
-import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.conditions.AbstractLocalCondition
 import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
 import it.unibo.alchemist.model.scafi.actions.RunScafiProgram
-import it.unibo.alchemist.model.scafi.properties.ScafiDevice
-import it.unibo.alchemist.model.{Condition, Node, NodeReaction}
+import it.unibo.alchemist.model.{Condition, NodeReaction}
 
-final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_, _])
-    extends AbstractCondition(device.getNode) {
+final class ScafiComputationalRoundComplete[T](reaction: NodeReaction[T], val program: RunScafiProgram[_, _])
+    extends AbstractLocalCondition[T](reaction) {
   setValidity(program.observeComputationalCycleComplete.map(valid => java.lang.Boolean.valueOf(valid)))
 
-  override def cloneCondition(node: Node[T], reaction: NodeReaction[T]): Condition[T] = {
+  override protected def cloneOnNodeReaction(newReaction: NodeReaction[T]): Condition[T] = {
+    val node = newReaction.getHost
     ScafiIncarnationUtils.runInScafiDeviceContext[T, Condition[T]](
       node,
       getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName,
       device => {
         val possibleRefs: Iterable[RunScafiProgram[_, _]] = ScafiIncarnationUtils.allScafiProgramsFor(device.getNode)
         if (possibleRefs.size == 1) {
-          new ScafiComputationalRoundComplete(device, possibleRefs.head)
+          new ScafiComputationalRoundComplete(newReaction, possibleRefs.head)
         } else {
           throw new IllegalStateException(
             "There must be one and one only unconfigured " + classOf[Nothing].getSimpleName
@@ -34,8 +34,6 @@ final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val p
       }
     )
   }
-
-  override def getNode: Node[T] = super.getNode
 
   override def toString: String = program.asMolecule.getName + " completed round"
 }

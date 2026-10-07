@@ -13,17 +13,17 @@ import arrow.core.getOrElse
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.conditions.AbstractLocalCondition
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
 
 /** A condition satisfied when at least one neighbor has a positive reaction-specific selection weight. */
-abstract class AbstractNeighborCondition<T>(private val environment: Environment<T, *>, node: Node<T>) :
-    AbstractCondition<T>(node) {
+abstract class AbstractNeighborCondition<T>(environment: Environment<T, *>, reaction: NodeReaction<T>) :
+    AbstractLocalCondition<T>(reaction) {
 
     private val validNeighbors: Observable<Map<Node<T>, Double>> = environment
-        .getNeighborhood(node)
+        .getNeighborhood(targetNode)
         .switchMap { neighborhood ->
             neighborhood.neighbors
                 .map { neighbor -> observeNeighborWeight(neighbor).map { neighbor to it } }
@@ -31,9 +31,7 @@ abstract class AbstractNeighborCondition<T>(private val environment: Environment
                 .map { it.getOrElse(::emptyMap) }
         }
 
-    abstract override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): AbstractNeighborCondition<T>
-
-    protected fun getEnvironment(): Environment<T, *> = environment
+    abstract override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): AbstractNeighborCondition<T>
 
     /** Current eligible neighbors and their selection weights. */
     fun getValidNeighbors(): Map<Node<T>, Double> = validNeighbors.current

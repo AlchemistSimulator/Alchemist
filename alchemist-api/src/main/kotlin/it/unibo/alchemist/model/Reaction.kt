@@ -59,6 +59,12 @@ interface Reaction<T> :
     val canExecute: Observable<Boolean>
 
     /**
+     * The model entity hosting this reaction, fixed for the lifetime of the reaction.
+     * A host only registers reactions whose host is the host itself.
+     */
+    val host: ReactionHost<T>
+
+    /**
      * Executes this reaction.
      */
     fun execute()

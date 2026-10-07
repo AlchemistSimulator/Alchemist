@@ -10,20 +10,19 @@
 package it.unibo.alchemist.model.biochemistry.conditions
 
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.conditions.AbstractLocalCondition
 import it.unibo.alchemist.model.observation.Observable
 
 /** A condition requiring at least [requiredQuantity] units of [molecule] in its node. */
 open class GenericMoleculePresent<T : Number>(
-    node: Node<T>,
+    reaction: NodeReaction<T>,
     private val molecule: Molecule,
     /** Required quantity configured for this condition. */
     val requiredQuantity: T,
-) : AbstractCondition<T>(node) {
+) : AbstractLocalCondition<T>(reaction) {
 
-    private val nodeQuantity: Observable<Double> = node.observeConcentration(molecule).map { concentration ->
+    private val nodeQuantity: Observable<Double> = targetNode.observeConcentration(molecule).map { concentration ->
         concentration.fold(ifEmpty = { 0.0 }, ifSome = Number::toDouble)
     }
 
@@ -32,8 +31,8 @@ open class GenericMoleculePresent<T : Number>(
         setValidity(nodeQuantity.map { it >= requiredQuantity.toDouble() })
     }
 
-    override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): GenericMoleculePresent<T> =
-        GenericMoleculePresent(newNode, molecule, requiredQuantity)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): GenericMoleculePresent<T> =
+        GenericMoleculePresent(newReaction, molecule, requiredQuantity)
 
     /** Observable quantity consumed by the owning biochemical reaction's mass-action law. */
     open val quantity: Observable<Double> get() = nodeQuantity

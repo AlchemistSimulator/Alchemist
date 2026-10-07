@@ -28,16 +28,15 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingService<GeoPosition, O>>(
     environment: MapEnvironment<T, O, S>,
-    node: Node<T>,
     reaction: NodeReaction<T>,
     speed: Double,
     val positionGenerator: Polygon<GeoPosition>,
 ) : MoveOnMap<T, O, S>(
     environment,
-    node,
+    reaction,
     { current, final -> PolygonalChain(current, final) },
     ConstantSpeed(reaction, speed),
-    object : ChangeTargetOnCollision<T, GeoPosition>({ environment.getCurrentPosition(node) }) {
+    object : ChangeTargetOnCollision<T, GeoPosition>({ environment.getCurrentPosition(reaction.host) }) {
         override fun chooseTarget() = positionGenerator
             .stream()
             .findFirst()
@@ -49,9 +48,8 @@ class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingSer
     constructor(
         randomGenerator: RandomGenerator,
         environment: MapEnvironment<T, O, S>,
-        node: Node<T>,
         reaction: NodeReaction<T>,
         speed: Double,
         polygonCoordinates: List<List<Number>>,
-    ) : this (environment, node, reaction, speed, Polygon(environment, randomGenerator, 1, polygonCoordinates))
+    ) : this (environment, reaction, speed, Polygon(environment, randomGenerator, 1, polygonCoordinates))
 }

@@ -60,7 +60,7 @@ class TestEuclideanPhysics2DEnvironment {
     fun `Cannot move into other nodes`() {
         environment.addNode(node1, Euclidean2DPosition(0.0, 0.0))
         environment.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
-        environment.moveNodeToPosition(node2, environment.getCurrentPosition(node1))
+        environment.moveNodeTo(node2, environment.getCurrentPosition(node1))
         val distance = environment.getCurrentPosition(node1).distanceTo(environment.getCurrentPosition(node2))
         distance.shouldBeAbout(getNodeRadius(node1) + getNodeRadius(node2))
     }
@@ -88,7 +88,7 @@ class TestEuclideanPhysics2DEnvironment {
         environment.addNode(node2, Euclidean2DPosition(6.0, 2.0))
         val target = Euclidean2DPosition(8.0, 2.0)
         val node2toTarget = environment.getCurrentPosition(node2).distanceTo(target)
-        environment.moveNodeToPosition(node1, target)
+        environment.moveNodeTo(node1, target)
         environment
             .getCurrentPosition(node1)
             .distanceTo(target)
@@ -101,7 +101,7 @@ class TestEuclideanPhysics2DEnvironment {
         environment.addNode(node2, Euclidean2DPosition(8.0, 1.0))
         environment.addNode(node3, Euclidean2DPosition(8.0, 2.5))
         val target = Euclidean2DPosition(8.0, 2.0)
-        environment.moveNodeToPosition(node1, target)
+        environment.moveNodeTo(node1, target)
         assertTrue(environment.getCurrentPosition(node1).distanceTo(target) > getNodeRadius(node1))
     }
 

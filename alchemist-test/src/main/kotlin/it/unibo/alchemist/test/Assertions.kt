@@ -39,7 +39,7 @@ private fun <T> Iterable<T>.ebeEquals(other: Iterable<T>, elementComparator: (T,
 
 infix fun Condition<*>.shouldEqual(other: Condition<*>) {
     assertEquals(other::class, this::class, "Condition types don't match")
-    assertEquals(other.isValid().current, isValid().current, "Condition validity doesn't match")
+    assertEquals(other.isValid.current, isValid.current, "Condition validity doesn't match")
 }
 
 infix fun Action<*>.shouldEqual(other: Action<*>) {
@@ -71,7 +71,7 @@ infix fun Node<*>.shouldEqual(other: Node<*>) {
     assertEquals(other.contents, contents)
     assertEquals(other.properties.size, properties.size)
     properties.ebeEquals(other.properties) { expected, actual -> actual shouldEqual expected }
-    reactions.ebeEquals(other.reactions) { expected, actual -> actual shouldEqual expected }
+    reactions.current.ebeEquals(other.reactions.current) { expected, actual -> actual shouldEqual expected }
 }
 
 infix fun LinkingRule<*, *>.shouldEqual(other: LinkingRule<*, *>) {
@@ -94,7 +94,7 @@ infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<
     nodes.current.ebeEquals(other.nodes.current) { expected, actual ->
         actual shouldEqual expected
     }
-    reactions.ebeEquals(other.reactions) { expected, actual -> actual shouldEqual expected }
+    reactions.current.ebeEquals(other.reactions.current) { expected, actual -> actual shouldEqual expected }
     layers.toList().sortedBy { (molecule, _) -> molecule.toString() }.ebeEquals(
         other.layers.toList().sortedBy { (molecule, _) -> molecule.toString() },
     ) { expected, actual ->

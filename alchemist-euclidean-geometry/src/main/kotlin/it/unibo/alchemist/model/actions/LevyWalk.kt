@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.distribution.ParetoDistribution
@@ -24,7 +23,6 @@ import org.apache.commons.math3.random.RandomGenerator
 class LevyWalk<T>
 @JvmOverloads
 constructor(
-    node: Node<T>,
     reaction: NodeReaction<T>,
     environment: Environment<T, Euclidean2DPosition>,
     randomGenerator: RandomGenerator,
@@ -33,13 +31,12 @@ constructor(
     private val scale: Double = 1.0,
     private val shape: Double = 1.0,
 ) : GenericRandomWalker<T>(
-    node,
     reaction,
     environment,
     randomGenerator,
     speed,
     ParetoDistribution(randomGenerator, scale, shape),
 ) {
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) =
-        LevyWalk(node, reaction, environment, randomGenerator, speed, scale, shape)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>) =
+        LevyWalk(newReaction, environment, randomGenerator, speed, scale, shape)
 }

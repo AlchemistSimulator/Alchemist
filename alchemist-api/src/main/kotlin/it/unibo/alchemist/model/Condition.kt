@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 
 /**
- * A prerequisite over model state associated with a [Node].
+ * A prerequisite over model state owned by a [Reaction].
  *
  * Recurring reactions normally observe condition validity to gate scheduling. A reaction with occurrence-time
  * semantics may read the same validity only when it fires. Reaction families requiring additional scheduling state
@@ -23,23 +23,26 @@ import it.unibo.alchemist.model.observation.Observable
  */
 interface Condition<T> : Disposable {
     /**
-     * Creates an equivalent condition for [newNode] and [newReaction].
+     * The reaction owning this condition.
+     * Its [Reaction.host] is the model entity hosting the condition, which may differ from the node it targets, if any.
      */
-    fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): Condition<T>
+    val reaction: Reaction<T>
 
     /**
-     * The node owning this condition.
+     * Creates an equivalent condition owned by [newReaction], such as a reaction cloned onto a new node.
+     * A condition targeting the host of its reaction targets the host of [newReaction], which must then be a [Node];
+     * a condition targeting any other node keeps its target.
      */
-    fun getNode(): Node<T>
+    fun cloneCondition(newReaction: Reaction<T>): Condition<T>
 
     /**
      * The live validity of this condition.
      */
-    fun isValid(): Observable<Boolean>
+    val isValid: Observable<Boolean>
 
     /**
      * Signals that the owning reaction is about to fire.
      * Used to implement conditions latched to changes that occur in-between reaction executions.
      */
-    fun reactionReady() = Unit
+    fun beforeReactionFires() = Unit
 }

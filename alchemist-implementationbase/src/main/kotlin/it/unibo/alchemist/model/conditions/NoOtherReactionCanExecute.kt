@@ -10,39 +10,40 @@
 package it.unibo.alchemist.model.conditions
 
 import arrow.core.getOrElse
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 
 /**
  * The condition is valid if all the other reactions having at least one condition can not execute.
  * This condition can be used only in a single reaction per node,
  * as multiple instances would lead to undecidable situations.
  */
-class NoOtherReactionCanExecute<T>(node: Node<T>, private val myReaction: NodeReaction<T>) :
-    AbstractCondition<T>(node) {
+class NoOtherReactionCanExecute<T>(reaction: NodeReaction<T>) : AbstractLocalCondition<T>(reaction) {
     init {
         require(
-            node.reactions
+            targetNode.reactions.current
                 .asSequence()
                 .flatMap { it.conditions }
                 .none { it is NoOtherReactionCanExecute<T> },
         ) {
             val className = this::class.simpleName
             "Violation of the $className contract. Only a single $className per node can get built. " +
-                "Double creation at node $node, reaction $myReaction"
+                "Double creation at node $targetNode, reaction $reaction"
         }
 
         setValidity(
-            node.reactions
-                .filterNot { it == myReaction }
-                .filter { it.conditions.isNotEmpty() }
-                .map { it.canExecute }
-                .combineLatest { reactionsCanExecute -> reactionsCanExecute.none { it } }
-                .map { it.getOrElse { true } },
+            targetNode.reactions.switchMap { reactions ->
+                reactions
+                    .filterNot { it == reaction }
+                    .filter { it.conditions.isNotEmpty() }
+                    .map { it.canExecute }
+                    .combineLatest { reactionsCanExecute -> reactionsCanExecute.none { it } }
+                    .map { it.getOrElse { true } }
+            },
         )
     }
 
-    override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>) =
-        NoOtherReactionCanExecute(newNode, newReaction)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): NoOtherReactionCanExecute<T> =
+        NoOtherReactionCanExecute(newReaction)
 }

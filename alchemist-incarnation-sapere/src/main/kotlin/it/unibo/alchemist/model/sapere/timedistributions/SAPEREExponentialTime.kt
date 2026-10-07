@@ -26,9 +26,8 @@ import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.lang.HashString
 
 /** An exponential generator whose rate is computed from a SAPERE match expression. */
-@JvmSuppressWildcards
 class SAPEREExponentialTime(private val rateEquation: String, start: Time, randomGenerator: RandomGenerator) :
-    ExponentialTime<@JvmSuppressWildcards List<ILsaMolecule>>(Double.NaN, start, randomGenerator),
+    ExponentialTime<List<ILsaMolecule>>(Double.NaN, start, randomGenerator),
     SAPERETimeDistribution {
 
     /** Builds a generator starting at time zero. */

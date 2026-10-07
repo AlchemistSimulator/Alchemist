@@ -13,7 +13,6 @@ import arrow.core.getOrElse
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
@@ -22,21 +21,21 @@ import it.unibo.alchemist.model.observables.util.Observables.switchMap
  * A condition that evaluates whether at least one neighbor of a node has the specified [concentration]
  * of a given [molecule][target].
  *
- * @param node the node for which the condition is being evaluated.
+ * @param reaction the reaction owning this condition, whose node is evaluated.
  * @param environment the environment containing the node and its neighborhood.
  * @param target the molecule to check in the neighborhood
  * @param concentration the target concentration of the molecule to be checked in the neighborhood
  * @param T the type of concentration
  */
 class NeighborHasConcentration<T>(
-    node: Node<T>,
+    reaction: NodeReaction<T>,
     val environment: Environment<T, *>,
     val target: Molecule,
     val concentration: T,
-) : AbstractCondition<T>(node) {
+) : AbstractLocalCondition<T>(reaction) {
 
     init {
-        val validity = environment.getNeighborhood(node).switchMap { neighborhood ->
+        val validity = environment.getNeighborhood(targetNode).switchMap { neighborhood ->
             neighborhood.neighbors.map { it.observeConcentration(target) }
                 .combineLatest { neighborsConcentrations ->
                     neighborsConcentrations.any { it.isSome { nConc -> nConc == concentration } }
@@ -45,6 +44,6 @@ class NeighborHasConcentration<T>(
         setValidity(validity)
     }
 
-    override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): Condition<T> =
-        NeighborHasConcentration(newNode, environment, target, concentration)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): Condition<T> =
+        NeighborHasConcentration(newReaction, environment, target, concentration)
 }

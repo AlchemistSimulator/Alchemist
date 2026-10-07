@@ -49,22 +49,22 @@ class BiochemicalReactionSchedulingTest {
         val destination = incarnation.createNode(randomGenerator, environment, null)
         val molecule = incarnation.createMolecule("token")
         destination.setConcentration(molecule, 2.0)
-        val condition = BiomolPresentInCell(source, molecule, 1.0)
         val reaction = BiochemicalNodeReaction(
             source,
             ExponentialTime(1.0, randomGenerator),
             environment,
             randomGenerator,
         ).apply {
-            conditions = listOf(condition)
+            conditions = listOf(BiomolPresentInCell(this, molecule, 1.0))
         }
         val clonedReaction = reaction.cloneOnNewNode(destination, Time.ZERO)
         val clonedCondition = assertIs<BiomolPresentInCell>(clonedReaction.conditions.single())
-        assertSame(destination, clonedCondition.getNode())
+        assertSame(clonedReaction, clonedCondition.reaction)
+        assertSame(destination, clonedCondition.targetNode)
         assertEquals(1.0, clonedCondition.requiredQuantity)
         assertEquals(2.0, clonedCondition.quantity.current)
         assertFailsWith<IllegalArgumentException> {
-            reaction.conditions = listOf(mockk<Condition<Double>>())
+            reaction.conditions = listOf(mockk<Condition<Double>> { every { this@mockk.reaction } returns reaction })
         }
     }
 
@@ -126,13 +126,14 @@ class BiochemicalReactionSchedulingTest {
         environmentNode.setConcentration(molecule, 2.0)
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
         assertTrue(environment.addNode(environmentNode, Euclidean2DPosition(0.5, 0.0)))
-        val condition = BiomolPresentInEnv(environment, node, molecule, 1.0)
         val reaction = BiochemicalNodeReaction(
             node,
             ExponentialTime(1.0, randomGenerator),
             environment,
             randomGenerator,
-        ).apply { conditions = listOf(condition) }
+        )
+        val condition = BiomolPresentInEnv(environment, reaction, molecule, 1.0)
+        reaction.conditions = listOf(condition)
         reaction.initializationComplete(Time.ZERO, environment)
         val initialOccurrence = reaction.nextOccurrence.current
         environmentNode.setConcentration(molecule, 4.0)
@@ -192,9 +193,9 @@ class BiochemicalReactionSchedulingTest {
     @Test
     fun `fractional stoichiometry is rejected when configuring mass action`() {
         val randomGenerator = mockk<RandomGenerator>(relaxed = true)
-        val (_, node, molecule, _, reaction) = createFixture(randomGenerator)
+        val (_, _, molecule, _, reaction) = createFixture(randomGenerator)
         assertFailsWith<IllegalArgumentException> {
-            reaction.conditions = listOf(GenericMoleculePresent(node, molecule, 1.5))
+            reaction.conditions = listOf(GenericMoleculePresent(reaction, molecule, 1.5))
         }
     }
 
@@ -215,11 +216,12 @@ class BiochemicalReactionSchedulingTest {
         ).apply {
             conditions = listOf(
                 mockk<TensionPresent>(relaxed = true).also {
+                    every { it.reaction } returns this
                     every { it.observeMechanicalState() } returns observe(MechanicalState(true, 0.0))
-                    every { it.isValid() } returns observe(true)
+                    every { it.isValid } returns observe(true)
                     every { it.getTension() } returns 0.0
                 },
-                GenericMoleculePresent(node, malformedMolecule, 1.0),
+                GenericMoleculePresent(this, malformedMolecule, 1.0),
             )
         }
         reaction.initializationComplete(Time.ZERO, environment)
@@ -237,9 +239,10 @@ class BiochemicalReactionSchedulingTest {
                 BiochemicalNodeReaction(node, ExponentialTime(1.0, randomGenerator), environment, randomGenerator)
             reaction.conditions = factors.map { factor ->
                 mockk<TensionPresent>().also {
+                    every { it.reaction } returns reaction
                     every { it.observeMechanicalState() } returns
                         observe(MechanicalState(true, factor))
-                    every { it.isValid() } returns observe(true)
+                    every { it.isValid } returns observe(true)
                     every { it.getTension() } returns factor
                 }
             }
@@ -262,14 +265,15 @@ class BiochemicalReactionSchedulingTest {
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
         val molecule = assertIs<Biomolecule>(incarnation.createMolecule("token"))
         val level = observe(2.0)
-        val condition = BiomolPresentInEnv(environment, node, molecule, 1.0)
-        environment.addLayer(molecule) { level }
         val reaction = BiochemicalNodeReaction(
             node,
             ExponentialTime(1.0, randomGenerator),
             environment,
             randomGenerator,
-        ).apply { conditions = listOf(condition) }
+        )
+        val condition = BiomolPresentInEnv(environment, reaction, molecule, 1.0)
+        environment.addLayer(molecule) { level }
+        reaction.conditions = listOf(condition)
         node.addReaction(reaction)
         return LayerFixture(randomGenerator, environment, node, level, condition, reaction)
     }
@@ -281,13 +285,14 @@ class BiochemicalReactionSchedulingTest {
         val molecule = incarnation.createMolecule("token")
         node.setConcentration(molecule, 1.0)
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
-        val condition = GenericMoleculePresent(node, molecule, 1.0)
         val reaction = BiochemicalNodeReaction(
             node,
             ExponentialTime(1.0, randomGenerator),
             environment,
             randomGenerator,
-        ).apply { conditions = listOf(condition) }
+        )
+        val condition = GenericMoleculePresent(reaction, molecule, 1.0)
+        reaction.conditions = listOf(condition)
         return BiochemicalFixture(environment, node, molecule, condition, reaction)
     }
 

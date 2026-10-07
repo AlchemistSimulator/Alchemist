@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
@@ -40,7 +39,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @property radius the radius of the circle from which target points are sampled.
  */
 open class CognitiveAgentWander<T>(
-    private val environment: Physics2DEnvironment<T>,
+    override val environment: Physics2DEnvironment<T>,
     reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     protected val randomGenerator: RandomGenerator,
@@ -57,8 +56,8 @@ open class CognitiveAgentWander<T>(
     },
 ) {
     private val heading by lazy {
-        environment.setHeading(node, randomGenerator.random2DVersor(environment));
-        { environment.getHeading(node) }
+        environment.setHeading(targetNode, randomGenerator.random2DVersor(environment));
+        { environment.getHeading(targetNode) }
     }
 
     override fun nextPosition(): Euclidean2DPosition = heading()
@@ -67,8 +66,14 @@ open class CognitiveAgentWander<T>(
         .randomElement(randomGenerator)
         .coerceAtMost(maxWalk)
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>) =
-        CognitiveAgentWander(environment, reaction, node.pedestrianProperty, randomGenerator, offset, radius)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>) = CognitiveAgentWander(
+        environment,
+        newReaction,
+        newReaction.host.pedestrianProperty,
+        randomGenerator,
+        offset,
+        radius,
+    )
 }
 
 /**

@@ -35,5 +35,5 @@ class CognitiveBehavior<T, V, A>(node: Node<T>, timeDistribution: TimeDistributi
         makeClone(node, currentTime) { CognitiveBehavior<T, V, A>(node, it) }
 
     override fun refreshReactionState(currentTime: Time, environment: Environment<T, *>) =
-        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
+        host.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
 }

@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
@@ -33,12 +32,12 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
 abstract class AbstractLayerAction(
-    protected val environment: Euclidean2DEnvironment<Number>,
+    override val environment: Euclidean2DEnvironment<Number>,
     reaction: NodeReaction<Number>,
     pedestrian: PedestrianProperty<Number>,
     protected val targetMolecule: Molecule,
 ) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    abstract override fun cloneAction(node: Node<Number>, reaction: NodeReaction<Number>): AbstractLayerAction
+    abstract override fun cloneOnNodeReaction(newReaction: NodeReaction<Number>): AbstractLayerAction
 
     /**
      * @returns the layer containing [targetMolecule] or fails.

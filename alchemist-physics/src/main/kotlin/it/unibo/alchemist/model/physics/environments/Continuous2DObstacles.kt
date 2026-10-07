@@ -126,8 +126,8 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
         return rtree.size() == initialSize - 1
     }
 
-    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        super<AbstractLimitedContinuous2D>.moveNodeToPosition(node, newPosition)
+    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) =
+        super<AbstractLimitedContinuous2D>.moveNodeTo(node, position)
 
     private fun toGeometry(o: RectObstacle2D<Euclidean2DPosition>): Rectangle =
         Geometries.rectangle(o.minX, o.minY, o.maxX, o.maxY)

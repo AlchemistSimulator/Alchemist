@@ -95,7 +95,12 @@ class TestNeighborhoodReactionsPropensities {
     @Test
     fun `neighbor mass-action quantities must be integer counts`() {
         assertFailsWith<IllegalArgumentException> {
-            BiomolPresentInNeighbor(environment, centralNode, BIOMOLECULE, 1.5)
+            BiomolPresentInNeighbor(
+                environment,
+                BiochemicalNodeReaction(centralNode, TIME, environment, RANDOM),
+                BIOMOLECULE,
+                1.5,
+            )
         }
     }
 }

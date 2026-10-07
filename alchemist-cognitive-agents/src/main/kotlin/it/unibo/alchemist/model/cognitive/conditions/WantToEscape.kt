@@ -9,19 +9,22 @@
 
 package it.unibo.alchemist.model.cognitive.conditions
 
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.properties.CognitiveProperty
-import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.conditions.AbstractLocalCondition
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
  * The intention of the pedestrian to evacuate or not.
  */
-open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(node: Node<T>) : AbstractCondition<T>(node) {
+open class WantToEscape<T, S : Vector<S>, A : Transformation<S>>(reaction: NodeReaction<T>) :
+    AbstractLocalCondition<T>(reaction) {
     init {
-        val escapeDecision = getNode().asProperty<T, CognitiveProperty<T>>().cognitiveModel.escapeDecision
+        val escapeDecision = targetNode.asProperty<T, CognitiveProperty<T>>().cognitiveModel.escapeDecision
         setValidity(escapeDecision)
     }
+
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): WantToEscape<T, S, A> = WantToEscape(newReaction)
 }

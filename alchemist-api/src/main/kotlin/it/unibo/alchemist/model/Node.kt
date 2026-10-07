@@ -11,6 +11,7 @@ package it.unibo.alchemist.model
 import arrow.core.Option
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableMap
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
@@ -113,7 +114,7 @@ interface Node<T> :
      *
      * @return the list of rections belonging to this node
      */
-    override val reactions: List<Reaction<T>>
+    override val reactions: ObservableList<Reaction<T>>
 
     override fun hashCode(): Int
 

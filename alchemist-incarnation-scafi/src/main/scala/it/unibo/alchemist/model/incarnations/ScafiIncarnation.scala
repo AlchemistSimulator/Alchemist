@@ -72,12 +72,11 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
             ].getName + " action: " + scafiProgramsList
           )
         }
-        new SendScafiMessage[T, P](environment, device, reaction.asInstanceOf[NodeReaction[T]], scafiProgramsList.head)
+        new SendScafiMessage[T, P](environment, reaction.asInstanceOf[NodeReaction[T]], scafiProgramsList.head)
       } else {
         require(param != null, "Unsupported program: null")
         val action = new RunScafiProgram[T, P](
           notNull(environment, "environment"),
-          notNull(node, "node"),
           notNull(reaction.asInstanceOf[NodeReaction[T]], "reaction"),
           notNull(randomGenerator, "random generator"),
           notNull(param.toString, "action parameter")
@@ -110,7 +109,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
   ): Condition[T] = runInScafiDeviceContext[T, Condition[T]](
     node,
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
-    device => {
+    _ => {
       val alreadyConfgiured = ScafiIncarnationUtils
         .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])
         .map(_.asInstanceOf[ScafiComputationalRoundComplete[T]])
@@ -129,7 +128,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
             classOf[ScafiComputationalRoundComplete[_]].getName + " condition: " + scafiProgramList
         )
       }
-      new ScafiComputationalRoundComplete(device, scafiProgramList.head).asInstanceOf[Condition[T]]
+      new ScafiComputationalRoundComplete(reaction.asInstanceOf[NodeReaction[T]], scafiProgramList.head).asInstanceOf[Condition[T]]
     }
   )
 
@@ -206,7 +205,7 @@ object ScafiIncarnationUtils {
   private def isScafiNode[T](node: Node[T]): Boolean = node.asPropertyOrNull[ScafiDevice[T]](classOf[ScafiDevice[T]]) != null
 
   def allActions[T, P <: Position[P], C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
-    node.getReactions.asScala
+    node.getReactions.getCurrent.asScala
       .flatMap(_.getActions.asScala)
       .collect { case action if klass.isInstance(action) => action.asInstanceOf[C] }
 
@@ -215,7 +214,7 @@ object ScafiIncarnationUtils {
 
   def allConditionsFor[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Condition[T]] =
     for {
-      reaction <- node.getReactions.asScala
+      reaction <- node.getReactions.getCurrent.asScala
       condition <- reaction.getConditions.asScala if conditionClass.isInstance(condition)
     } yield condition
 

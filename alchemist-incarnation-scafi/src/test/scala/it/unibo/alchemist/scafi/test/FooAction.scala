@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,11 +9,12 @@
 
 package it.unibo.alchemist.scafi.test
 
-import it.unibo.alchemist.model.actions.AbstractAction
+import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
-import it.unibo.alchemist.model.{Action, Node, NodeReaction}
+import it.unibo.alchemist.model.{Action, NodeReaction}
 
-class FooAction(val node: Node[Any], moleculeName: String) extends AbstractAction[Any](node) {
-  override def cloneAction(node: Node[Any], reaction: NodeReaction[Any]): Action[Any] = new FooAction(node, moleculeName)
-  override def execute(): Unit = node.getConcentration(new SimpleMolecule(moleculeName))
+class FooAction(reaction: NodeReaction[Any], moleculeName: String) extends AbstractLocalAction[Any](reaction) {
+  override protected def cloneOnNodeReaction(newReaction: NodeReaction[Any]): Action[Any] =
+    new FooAction(newReaction, moleculeName)
+  override def execute(): Unit = getTargetNode.getConcentration(new SimpleMolecule(moleculeName))
 }

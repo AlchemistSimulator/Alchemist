@@ -10,19 +10,19 @@
 package it.unibo.alchemist.model.conditions
 
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 
 /** A condition that becomes valid when the concentration of [target] changes. */
-class ConcentrationChanged<T>(node: Node<T>, private val target: Molecule) : AbstractCondition<T>(node) {
+class ConcentrationChanged<T>(reaction: NodeReaction<T>, private val target: Molecule) :
+    AbstractLocalCondition<T>(reaction) {
     private val resets = observe(0L)
-    private var previous: T? = node.getConcentration(target)
+    private var previous: T? = targetNode.getConcentration(target)
     private var changed = false
 
     init {
         setValidity(
-            node.observeConcentration(target).mergeWith(resets) { concentration, _ ->
+            targetNode.observeConcentration(target).mergeWith(resets) { concentration, _ ->
                 if (!changed) {
                     val current = concentration.getOrNull()
                     if (current != previous) {
@@ -35,10 +35,10 @@ class ConcentrationChanged<T>(node: Node<T>, private val target: Molecule) : Abs
         )
     }
 
-    override fun cloneCondition(newNode: Node<T>, newReaction: NodeReaction<T>): ConcentrationChanged<T> =
-        ConcentrationChanged(newNode, target)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): ConcentrationChanged<T> =
+        ConcentrationChanged(newReaction, target)
 
-    override fun reactionReady() {
+    override fun beforeReactionFires() {
         changed = false
         resets.current++
     }

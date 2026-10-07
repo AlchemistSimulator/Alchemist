@@ -39,15 +39,15 @@ class ObservableLayerTest {
         val value = environment.observeLayerValue(LAYER, node)
         val received = mutableListOf<Any?>()
         val subscription = value.subscribe(invokeOnSubscription = false) { received += it }
-        environment.moveNodeToPosition(node, environment.makePosition(-2, -2))
+        environment.moveNodeTo(node, environment.makePosition(-2, -2))
         assertEquals(emptyList(), received)
-        environment.moveNodeToPosition(node, environment.makePosition(1, 1))
+        environment.moveNodeTo(node, environment.makePosition(1, 1))
         assertEquals(listOf<Any?>(HIGH), received)
-        environment.moveNodeToPosition(node, environment.makePosition(1, -1))
+        environment.moveNodeTo(node, environment.makePosition(1, -1))
         assertEquals(listOf<Any?>(HIGH, LOW), received)
         assertEquals(LOW, value.current)
         subscription.dispose()
-        environment.moveNodeToPosition(node, environment.makePosition(2, 2))
+        environment.moveNodeTo(node, environment.makePosition(2, 2))
         assertEquals(listOf<Any?>(HIGH, LOW), received)
     }
 
@@ -62,7 +62,7 @@ class ObservableLayerTest {
         val received = mutableListOf<Any?>()
         val subscription = value.subscribe { received += it }
         layer.scale.current = 3.0
-        environment.moveNodeToPosition(node, environment.makePosition(1, 0))
+        environment.moveNodeTo(node, environment.makePosition(1, 0))
         assertEquals(listOf<Any?>(2.0, 6.0, 3.0), received)
         subscription.dispose()
         layer.scale.current = 5.0

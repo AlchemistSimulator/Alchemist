@@ -36,7 +36,7 @@ internal class TestTargetMapWalker {
         environment = OSMEnvironment(INCARNATION, TESTMAP, true, true).apply { linkingRule = NoLinks() }
         node = INCARNATION.createNode(MersenneTwister(), environment, null)
         reaction = GenericReaction(node, DiracComb(1.0))
-        val walker = TargetMapWalker(environment, node, reaction, TRACK, INTERACTING)
+        val walker = TargetMapWalker(environment, reaction, TRACK, INTERACTING)
         reaction.actions = listOf(walker)
         node.addReaction(reaction)
         environment.addNode(node, STARTPOSITION)

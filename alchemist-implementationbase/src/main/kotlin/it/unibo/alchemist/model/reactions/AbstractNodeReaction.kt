@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.timedistributions.WeibullTime
  * @param T concentration type
  */
 abstract class AbstractNodeReaction<T>(
-    final override val node: Node<T>,
+    final override val host: Node<T>,
     final override val timeDistribution: TimeDistribution<T>,
 ) : AbstractReaction<T>(timeDistribution.startTime),
     NodeReaction<T>,
@@ -75,9 +75,8 @@ abstract class AbstractNodeReaction<T>(
      * Populates a freshly constructed specialized reaction with cloned actions and conditions.
      */
     protected fun <R : AbstractNodeReaction<T>> prepareClone(result: R, currentTime: Time): R = result.also { clone ->
-        val destination = clone.node
-        clone.conditions = conditions.map { condition -> condition.cloneCondition(destination, clone) }
-        clone.actions = actions.map { action -> action.cloneAction(destination, clone) }
+        clone.conditions = conditions.map { condition -> condition.cloneCondition(clone) }
+        clone.actions = actions.map { action -> action.cloneAction(clone) }
         clone.newlyInstantiatedAt = currentTime
     }
 

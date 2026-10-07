@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -36,7 +36,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     /**
      * The [ProtelisDevice] required to run Protelis.
      */
-    val device: ProtelisDevice<*> = event.node.asProperty(),
+    val device: ProtelisDevice<*> = event.host.asProperty(),
     /**
      * The action this network manager is associated with.
      */

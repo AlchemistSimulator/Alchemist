@@ -32,8 +32,6 @@ import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableSet
 import java.util.Objects
 import java.util.function.Consumer
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import org.danilopianini.util.SpatialIndex
 
 /**
@@ -52,7 +50,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     internalIndex: SpatialIndex<Node<T>>,
 ) : Environment<T, P> {
     private val nodeList = ObservableMutableList<Node<T>>()
-    private val environmentReactions = LinkedHashSet<Reaction<T>>()
+    private val environmentReactions = ObservableMutableList<Reaction<T>>()
     final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
         private set
 
@@ -79,8 +77,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      */
     private val activeRangeQueries = LinkedHashSet<RangeQuery>()
 
-    override val reactions: ImmutableList<Reaction<T>>
-        get() = environmentReactions.toImmutableList()
+    override val reactions: ObservableList<Reaction<T>> = environmentReactions
 
     override val nodes: ObservableList<Node<T>> = nodeList
 
@@ -129,7 +126,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     override fun addReaction(reaction: Reaction<T>) {
-        if (environmentReactions.add(reaction)) {
+        require(reaction.host === this) { "$reaction is hosted by ${reaction.host}, not by $this" }
+        if (reaction !in environmentReactions.current) {
+            environmentReactions.add(reaction)
             ifAttachedToSimulation { it.reactionAdded(reaction) }
         }
     }
@@ -155,7 +154,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             spatialIndex.insert(node, *actualPosition.coordinates)
             nodeList.add(node)
             refreshNeighborhoodsAround(node)
-            ifAttachedToSimulation { simulation -> node.reactions.forEach(simulation::reactionAdded) }
+            ifAttachedToSimulation { simulation -> node.reactions.current.forEach(simulation::reactionAdded) }
             nodeAdded(node, actualPosition, currentNeighborhoodOf(node))
             true
         }
@@ -341,7 +340,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     override fun removeNode(node: Node<T>) {
-        val reactions = node.reactions.toList()
+        val reactions = node.reactions.current
         /*
          * Dispose the node, and with it its reactions and their subscriptions, before its position and neighborhood
          * leave the model: a reaction observing its own node would otherwise receive the removal emission and query a

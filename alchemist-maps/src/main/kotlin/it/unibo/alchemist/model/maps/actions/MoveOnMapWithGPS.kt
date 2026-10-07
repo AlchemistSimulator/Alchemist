@@ -13,7 +13,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 import it.unibo.alchemist.boundary.gps.loaders.TraceLoader
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.RoutingService
 import it.unibo.alchemist.model.RoutingServiceOptions
 import it.unibo.alchemist.model.maps.GPSTrace
@@ -30,15 +30,15 @@ import java.util.concurrent.TimeUnit
  */
 open class MoveOnMapWithGPS<T, O : RoutingServiceOptions<O>, S : RoutingService<GeoPosition, O>>(
     environment: MapEnvironment<T, O, S>,
-    node: Node<T>,
+    reaction: NodeReaction<T>,
     routingStrategy: RoutingStrategy<T, GeoPosition>,
     speedSelectionStrategy: SpeedSelectionStrategy<T, GeoPosition>,
     targetSelectionStrategy: TargetSelectionStrategy<T, GeoPosition>,
     protected val trace: GPSTrace,
-) : MoveOnMap<T, O, S>(environment, node, routingStrategy, speedSelectionStrategy, targetSelectionStrategy) {
+) : MoveOnMap<T, O, S>(environment, reaction, routingStrategy, speedSelectionStrategy, targetSelectionStrategy) {
     constructor(
         environment: MapEnvironment<T, O, S>,
-        node: Node<T>,
+        reaction: NodeReaction<T>,
         routingStrategy: RoutingStrategy<T, GeoPosition>,
         speedSelectionStrategy: SpeedSelectionStrategy<T, GeoPosition>,
         targetSelectionStrategy: TargetSelectionStrategy<T, GeoPosition>,
@@ -48,7 +48,7 @@ open class MoveOnMapWithGPS<T, O : RoutingServiceOptions<O>, S : RoutingService<
         vararg normalizerArgs: Any?,
     ) : this(
         environment,
-        node,
+        reaction,
         routingStrategy,
         speedSelectionStrategy,
         targetSelectionStrategy,

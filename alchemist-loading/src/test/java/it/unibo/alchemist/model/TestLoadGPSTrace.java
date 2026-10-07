@@ -76,7 +76,7 @@ class TestLoadGPSTrace {
         final Environment<T, GeoPosition> environment = simulation.getEnvironment();
         assertTrue(environment.getNodeCount().getCurrent() > 0);
         environment.getNodes().getCurrent().forEach(node -> {
-            final var reactions = node.getReactions();
+            final var reactions = node.getReactions().getCurrent();
             assertFalse(reactions.isEmpty());
             reactions.forEach(reaction -> {
                 assertTrue(reaction.getConditions().isEmpty());

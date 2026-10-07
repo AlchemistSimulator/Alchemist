@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.cognitive.SteeringAction
@@ -41,8 +40,14 @@ class CognitiveAgentCombineSteering<T, P, A>(
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P> {
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentCombineSteering<T, P, A> =
-        CognitiveAgentCombineSteering(environment, reaction, node.pedestrianProperty, actions, steerStrategy)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentCombineSteering<T, P, A> =
+        CognitiveAgentCombineSteering(
+            environment,
+            newReaction,
+            newReaction.host.pedestrianProperty,
+            actions,
+            steerStrategy,
+        )
 
     override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).coerceAtMost(maxWalk)
 }

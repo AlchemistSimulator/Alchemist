@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
@@ -35,13 +34,12 @@ open class CognitiveAgentFlee<T, P, A>(
           A : Transformation<P> {
     private val danger: P = environment.makePosition(*coords.toTypedArray())
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentFlee<T, P, A> =
-        CognitiveAgentFlee(
-            environment,
-            reaction,
-            node.pedestrianProperty,
-            *danger.coordinates,
-        )
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentFlee<T, P, A> = CognitiveAgentFlee(
+        environment,
+        newReaction,
+        newReaction.host.pedestrianProperty,
+        *danger.coordinates,
+    )
 
     override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)
 }

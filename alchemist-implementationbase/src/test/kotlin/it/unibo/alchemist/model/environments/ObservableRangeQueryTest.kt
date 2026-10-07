@@ -31,8 +31,8 @@ class ObservableRangeQueryTest {
         val visible = environment.observeNodesWithinRange(environment.makePosition(0, 0), 1.0)
         val subscription = visible.subscribe { }
         assertEquals(setOf(inside), visible.current)
-        environment.moveNodeToPosition(outside, environment.makePosition(0, 0.5))
-        environment.moveNodeToPosition(inside, environment.makePosition(5, 5))
+        environment.moveNodeTo(outside, environment.makePosition(0, 0.5))
+        environment.moveNodeTo(inside, environment.makePosition(5, 5))
         assertEquals(setOf(outside), visible.current)
         subscription.dispose()
     }
@@ -45,9 +45,9 @@ class ObservableRangeQueryTest {
         val visible = environment.observeNodesWithinRange(center, 1.0)
         val subscription = visible.subscribe { }
         assertEquals(setOf(near), visible.current)
-        environment.moveNodeToPosition(center, environment.makePosition(10, 0.5))
+        environment.moveNodeTo(center, environment.makePosition(10, 0.5))
         assertEquals(setOf(far), visible.current)
-        environment.moveNodeToPosition(center, environment.makePosition(10, 0.2))
+        environment.moveNodeTo(center, environment.makePosition(10, 0.2))
         assertEquals(setOf(far), visible.current)
         subscription.dispose()
     }
@@ -62,9 +62,9 @@ class ObservableRangeQueryTest {
         val subscriptions = listOf(removedRange.subscribe { }, survivingRange.subscribe { })
         assertEquals(setOf(member), survivingRange.current)
         environment.removeNode(removedCenter)
-        environment.moveNodeToPosition(member, environment.makePosition(20, 0))
+        environment.moveNodeTo(member, environment.makePosition(20, 0))
         assertEquals(emptySet(), survivingRange.current)
-        environment.moveNodeToPosition(member, environment.makePosition(10, 0.5))
+        environment.moveNodeTo(member, environment.makePosition(10, 0.5))
         assertEquals(setOf(member), survivingRange.current)
         subscriptions.forEach { it.dispose() }
     }

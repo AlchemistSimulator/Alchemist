@@ -36,13 +36,12 @@ class EventSchedulingTest {
         val node = mockk<Node<Any>>(relaxed = true)
         val (environment, setTime) = environmentWithMutableTime()
         val validity = observe(false, emitOnDistinct = false)
-        val condition = ObservableValidityCondition(node, validity)
         val distribution = SequenceDistribution(2.0, 5.0)
-        val action = mockk<Action<Any>>(relaxed = true)
-        val event = ConditionalEvent(node, distribution).apply {
-            conditions = listOf(condition)
-            actions = listOf(action)
-        }
+        val event = ConditionalEvent(node, distribution)
+        val condition = ObservableValidityCondition(event, validity)
+        val action = mockk<Action<Any>>(relaxed = true) { every { reaction } returns event }
+        event.conditions = listOf(condition)
+        event.actions = listOf(action)
         every { node.removeReaction(event) } answers { firstArg<Reaction<Any>>().dispose() }
 
         event.initializationComplete(Time.ZERO, environment)
@@ -77,14 +76,12 @@ class EventSchedulingTest {
     fun `an absolute event checks conditions only at its occurrence and always unregisters`() {
         listOf(false, true).forEach { validityAtOccurrence ->
             val host = mockk<ReactionHost<Any>>(relaxed = true)
-            val node = mockk<Node<Any>>()
             val validity = observe(!validityAtOccurrence)
-            val condition = ObservableValidityCondition(node, validity)
-            val action = mockk<Action<Any>>(relaxed = true)
-            val event = AbsoluteEvent(host, DoubleTime(10.0)).apply {
-                conditions = listOf(condition)
-                actions = listOf(action)
-            }
+            val event = AbsoluteEvent(host, DoubleTime(10.0))
+            val condition = ObservableValidityCondition(event, validity)
+            val action = mockk<Action<Any>>(relaxed = true) { every { reaction } returns event }
+            event.conditions = listOf(condition)
+            event.actions = listOf(action)
             every { host.removeReaction(event) } answers { firstArg<Reaction<Any>>().dispose() }
             event.initializationComplete(Time.ZERO, mockk(relaxed = true))
             assertEquals(DoubleTime(10.0), event.nextOccurrence.current)
@@ -114,8 +111,10 @@ class EventSchedulingTest {
         assertEquals(DoubleTime(12.0), clone.nextOccurrence.current)
     }
 
-    private class ObservableValidityCondition<T>(node: Node<T>, validity: MutableObservable<Boolean>) :
-        AbstractCondition<T>(node) {
+    private class ObservableValidityCondition<T>(
+        reaction: Reaction<T>,
+        private val validity: MutableObservable<Boolean>,
+    ) : AbstractCondition<T>(reaction) {
         var readySignals = 0
             private set
 
@@ -123,7 +122,9 @@ class EventSchedulingTest {
             setValidity(validity)
         }
 
-        override fun reactionReady() {
+        override fun cloneCondition(newReaction: Reaction<T>) = ObservableValidityCondition(newReaction, validity)
+
+        override fun beforeReactionFires() {
             readySignals++
         }
     }

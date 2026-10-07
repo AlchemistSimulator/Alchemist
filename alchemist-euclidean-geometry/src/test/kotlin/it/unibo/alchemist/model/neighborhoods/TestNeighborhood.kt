@@ -65,12 +65,12 @@ class TestNeighborhood {
         val received = mutableListOf<Neighborhood<Int>>()
         val subscription = observable.subscribe(invokeOnSubscription = false) { received += it }
         try {
-            environment.moveNodeToPosition(far, environment.makePosition(0, 0.5))
+            environment.moveNodeTo(far, environment.makePosition(0, 0.5))
             assertEquals(listOf(near), published.neighbors)
             val afterApproach = received.last()
             assertNotSame(published, afterApproach)
             assertEquals(setOf(near, far), afterApproach.neighbors.toSet())
-            environment.moveNodeToPosition(near, environment.makePosition(5, 0))
+            environment.moveNodeTo(near, environment.makePosition(5, 0))
             assertEquals(listOf(near), published.neighbors)
             assertEquals(setOf(near, far), afterApproach.neighbors.toSet())
             val afterDeparture = received.last()

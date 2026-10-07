@@ -43,7 +43,7 @@ internal class TestNodeCloning<P : Position<P>> {
             environment.getNodeByID(0).apply {
                 setConcentration(SOURCEMOL, false)
                 setConcentration(ENABLEDMOL, true)
-                environment.moveNodeToPosition(this, environment.makePosition(-30.72191619873047, -9.75))
+                environment.moveNodeTo(this, environment.makePosition(-30.72191619873047, -9.75))
             }
             environment.makeNode(-34.62321853637695, -6.039149761199951, true, false)
             environment.makeNode(-33.585994720458987, -1.3899999856948853, true, true)

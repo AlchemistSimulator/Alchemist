@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.cognitive.actions
 
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.reactions.SteeringBehavior
@@ -29,16 +28,23 @@ import kotlin.reflect.jvm.jvmName
  * @property proximityRange the distance at which an obstacle is perceived by the node
  */
 class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Euclidean2DPosition>, T>(
-    private val environment: Environment2DWithObstacles<W, T>,
-    override val reaction: SteeringBehavior<T>,
+    override val environment: Environment2DWithObstacles<W, T>,
+    reaction: SteeringBehavior<T>,
     pedestrian: PedestrianProperty<T>,
     private val proximityRange: Double,
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
-        check(reaction is SteeringBehavior<T>) {
-            "steering behavior needed but found ${this.reaction::class.run { simpleName ?: jvmName } }"
+    private val steeringBehavior: SteeringBehavior<T> = reaction
+
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
+        check(newReaction is SteeringBehavior<T>) {
+            "steering behavior needed but found ${newReaction::class.run { simpleName ?: jvmName } }"
         }
-        return CognitiveAgentObstacleAvoidance(environment, reaction, node.pedestrianProperty, proximityRange)
+        return CognitiveAgentObstacleAvoidance(
+            environment,
+            newReaction,
+            newReaction.host.pedestrianProperty,
+            proximityRange,
+        )
     }
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->
@@ -57,9 +63,9 @@ class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Eu
     }
 
     /**
-     * Computes the target of the node, delegating to [reaction].steerStrategy.computeTarget.
+     * Computes the target of the node, delegating to the steering strategy of the owning [SteeringBehavior].
      */
-    private fun target(): Euclidean2DPosition = with(reaction) {
+    private fun target(): Euclidean2DPosition = with(steeringBehavior) {
         steerStrategy.computeTarget(steerActions().filterNot { it is CognitiveAgentObstacleAvoidance<*, *> })
     }
 }

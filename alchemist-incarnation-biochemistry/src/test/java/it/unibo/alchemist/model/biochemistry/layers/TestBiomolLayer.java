@@ -62,7 +62,7 @@ class TestBiomolLayer {
         );
         cellNode.addReaction(underTest);
         final NodeReaction<Double> movement = new GenericReaction<>(cellNode, new DiracComb<>(100d));
-        movement.setActions(List.of(new BrownianMove<>(environment, cellNode, rand, 10)));
+        movement.setActions(List.of(new BrownianMove<>(environment, movement, cellNode, rand, 10)));
         cellNode.addReaction(movement);
         cellNode.setConcentration(a, 0d);
         environment.setLinkingRule(

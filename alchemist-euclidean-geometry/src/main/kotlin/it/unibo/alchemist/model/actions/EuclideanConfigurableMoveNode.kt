@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
@@ -29,20 +28,20 @@ import it.unibo.alchemist.model.movestrategies.speed.GloballyConstantSpeed
  * @param T the concentration type.
  * @param P the [Position] type used for spatial coordinates and vectors.
  * @param environment the [Environment] executing the simulation.
- * @param node the [Node] executing this [Action].
+ * @param reaction the reaction executing this [Action].
  * @param routingStrategy the [RoutingStrategy] selected for this action.
  * @param targetSelectionStrategy the [TargetSelectionStrategy] selected for this action.
  * @param speedSelectionStrategy the [SpeedSelectionStrategy] selected for this action.
  */
 open class EuclideanConfigurableMoveNode<T, P>(
     environment: Environment<T, P>,
-    node: Node<T>,
+    reaction: NodeReaction<T>,
     routingStrategy: RoutingStrategy<T, P>,
     targetSelectionStrategy: TargetSelectionStrategy<T, P>,
     speedSelectionStrategy: SpeedSelectionStrategy<T, P>,
 ) : AbstractConfigurableMoveNode<T, P>(
     environment,
-    node,
+    reaction,
     routingStrategy,
     targetSelectionStrategy,
     speedSelectionStrategy,
@@ -51,7 +50,6 @@ open class EuclideanConfigurableMoveNode<T, P>(
      * Secondary constructor that uses a [GloballyConstantSpeed].
      *
      * @param environment the [Environment] executing the simulation.
-     * @param node the [Node] executing this [Action].
      * @param reaction the reaction executing this [Action].
      * @param routingStrategy the [RoutingStrategy] selected for this action.
      * @param targetSelectionStrategy the [TargetSelectionStrategy] selected for this action.
@@ -60,14 +58,13 @@ open class EuclideanConfigurableMoveNode<T, P>(
      */
     constructor(
         environment: Environment<T, P>,
-        node: Node<T>,
         reaction: NodeReaction<T>,
         routingStrategy: RoutingStrategy<T, P>,
         targetSelectionStrategy: TargetSelectionStrategy<T, P>,
         speed: Double,
     ) : this (
         environment,
-        node,
+        reaction,
         routingStrategy,
         targetSelectionStrategy,
         GloballyConstantSpeed(reaction, speed),
@@ -85,9 +82,9 @@ open class EuclideanConfigurableMoveNode<T, P>(
     override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
         (target - current).coerceAtMost(maxWalk)
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): Action<T> = EuclideanConfigurableMoveNode(
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): Action<T> = EuclideanConfigurableMoveNode(
         environment,
-        node,
+        newReaction,
         routingStrategy,
         targetSelectionStrategy,
         speedSelectionStrategy,

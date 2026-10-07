@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,35 +8,30 @@
  */
 package it.unibo.alchemist.model.protelis.actions
 
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.NodeReaction
-import it.unibo.alchemist.model.actions.AbstractAction
+import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
-import java.util.Objects
 
 /**
  * Action that broadcasts the content of a Protelis program to neighbours.
  *
- * @param node the local node hosting the action
  * @param reaction the reaction triggering this action
  * @property protelisProgram the [RunProtelisProgram] whose data will be sent
  */
-class SendToNeighbor(node: Node<Any>, reaction: NodeReaction<Any>, val protelisProgram: RunProtelisProgram<*>) :
-    AbstractAction<Any>(node) {
-    private val reaction: NodeReaction<Any> = Objects.requireNonNull<NodeReaction<Any>>(reaction)
-
-    override fun cloneAction(node: Node<Any>, reaction: NodeReaction<Any>): SendToNeighbor {
-        val device: ProtelisDevice<*> = node.asProperty()
+class SendToNeighbor(reaction: NodeReaction<Any>, val protelisProgram: RunProtelisProgram<*>) :
+    AbstractLocalAction<Any>(reaction) {
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Any>): SendToNeighbor {
+        val device: ProtelisDevice<*> = newReaction.host.asProperty()
         val possibleRefs: List<RunProtelisProgram<*>> = device.allProtelisPrograms()
         check(possibleRefs.size == 1) {
             "There must be one and one only unconfigured " + RunProtelisProgram::class.simpleName
         }
-        return SendToNeighbor(node, this.reaction, possibleRefs[0])
+        return SendToNeighbor(newReaction, possibleRefs[0])
     }
 
     override fun execute() {
-        val protelisDevice = node.asProperty<ProtelisDevice<*>>(ProtelisDevice::class.java)
+        val protelisDevice = targetNode.asProperty<ProtelisDevice<*>>(ProtelisDevice::class.java)
         val mgr = protelisDevice.getNetworkManager(this.protelisProgram)
         mgr.simulateMessageArrival(reaction.nextOccurrence.current.toDouble())
         protelisProgram.prepareForComputationalCycle()

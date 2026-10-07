@@ -62,7 +62,7 @@ class EngineTest : FreeSpec({
         LambdaNodeReaction(nodeA, DiracComb(1.0)) {
             nodeA.setConcentration(molN, 1.0)
         }.apply {
-            conditions = listOf(NeighborHasConcentration(nodeA, environment, molM, 1.0))
+            conditions = listOf(NeighborHasConcentration(this, environment, molM, 1.0))
             nodeA.addReaction(this)
         }
 

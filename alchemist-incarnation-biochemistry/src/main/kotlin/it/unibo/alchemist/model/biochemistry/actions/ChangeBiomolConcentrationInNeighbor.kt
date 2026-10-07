@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -26,16 +26,16 @@ import org.apache.commons.math3.random.RandomGenerator
 class ChangeBiomolConcentrationInNeighbor(
     randomGenerator: RandomGenerator,
     environment: Environment<Double, *>,
-    node: Node<Double>,
+    reaction: NodeReaction<Double>,
     val molecule: Biomolecule,
     val deltaConcentration: Double,
-) : AbstractNeighborAction<Double>(node, environment, randomGenerator) {
+) : AbstractNeighborAction<Double>(reaction, environment, randomGenerator) {
 
-    override fun cloneAction(newNode: Node<Double>, newReaction: NodeReaction<Double>) =
-        ChangeBiomolConcentrationInNeighbor(randomGenerator, environment, newNode, molecule, deltaConcentration)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Double>) =
+        ChangeBiomolConcentrationInNeighbor(randomGenerator, environment, newReaction, molecule, deltaConcentration)
 
     override fun execute() {
-        val validNeighbors = environment.getNeighborhood(node).current.filter {
+        val validNeighbors = environment.getNeighborhood(targetNode).current.filter {
             it.asPropertyOrNull<Double, CellProperty<Euclidean2DPosition>>() != null &&
                 (deltaConcentration > 0 || it.getConcentration(molecule) >= deltaConcentration)
         }
@@ -44,8 +44,8 @@ class ChangeBiomolConcentrationInNeighbor(
         }
     }
 
-    override fun execute(targetNode: Node<Double>) {
-        targetNode.setConcentration(molecule, targetNode.getConcentration(molecule) + deltaConcentration)
+    override fun execute(neighbor: Node<Double>) {
+        neighbor.setConcentration(molecule, neighbor.getConcentration(molecule) + deltaConcentration)
     }
 
     override fun toString(): String = if (deltaConcentration >= 0) {

@@ -471,7 +471,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     `AbsoluteEvent` valid execution, invalid expiry, fixed scheduler visibility, and removal.
   - [x] Cover SAPERE match revalidation, including match changes while validity remains true.
   - [x] Complete exponential Protelis-send sample-count coverage.
-- [x] Make the engine treat an infinite scheduler head as quiescence. It must not call `execute`, `reactionReady`,
+- [x] Make the engine treat an infinite scheduler head as quiescence. It must not call `execute`, `beforeReactionFires`,
   `updateSchedulingAfterFiring`, or `stepDone`, and must not increment the simulation step merely to discover that no finite
   reaction is available.
 - [x] **EXCEPTIONAL PATH REMOVAL:** after validity-gated `nextOccurrence` and infinite-head quiescence are complete,
@@ -547,6 +547,20 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 - [ ] Audit every condition and reaction for non-observable reads that affect validity, specialized invalidation,
   or scheduling.
+  - [x] Conditions audited (2026-10-06). Validity is fully observable for `ContainsMolecule`,
+    `MoleculeHasConcentration`, `ConcentrationChanged`, `NeighborHasConcentration`, `GenericMoleculePresent` and its
+    biochemical subclasses, `BiomolPresentInEnv`, `EnvPresent`, `JunctionPresentInCell`, `WantToEscape`,
+    `ComputationalRoundComplete`, `ScafiComputationalRoundComplete`, and the SAPERE conditions, whose validity the
+    owning reaction's match computation publishes.
+  - [x] `NoOtherReactionCanExecute` snapshotted `node.reactions` at construction, so reactions added later never
+    invalidated it. `ReactionHost.reactions` is now an observable list, and the condition switches over it; its
+    single-instance check still sees only the reactions present when it is built.
+  - [ ] `TensionPresent` observes nodes within `maxDiameterAmongCircularDeformableCells` as read at construction;
+    larger cells added afterwards widen the interaction range without widening the observed range.
+  - [ ] `NeighborhoodPresent` and `BiomolPresentInNeighbor` read neighbor properties without observing them; node
+    properties are effectively fixed after creation, so decide whether property changes must be observable.
+    `BiomolPresentInNeighbor` validity also re-reads concentrations already covered by its observed weights.
+  - [ ] Audit reactions.
 - [ ] For every source formerly present in a condition dependency set, verify an explicit destination: condition
   validity or a specialized reaction-owned invalidation signal.
 - [ ] Cover node contents, molecule presence, neighborhoods, positions, node counts, ranges, layers, and global state.
@@ -625,6 +639,24 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 - [x] Keep observable collection APIs reactive-only: expose ordinary reads through immutable `current` snapshots,
   retain explicit mutation functions on mutable implementations, and reject mutation through `current`.
+- [x] Make reaction ownership coherent. `Reaction.host` is fixed and hosts register only their own reactions;
+  `Condition.reaction` and `Action.reaction` replace `getNode`, reactions accept only conditions and actions they own,
+  and cloning takes only the new reaction (`cloneCondition(newReaction)`, `cloneAction(newReaction)`).
+  `Condition.isValid` is a property and `reactionReady` is `beforeReactionFires`.
+  - [x] Host-neutral bases `AbstractCondition`/`AbstractAction`; node-targeted `AbstractNodeCondition`/`AbstractNodeAction`
+    take `(reaction, node)` and retarget on clone (the old host becomes the new host, which must be a node; other
+    targets are kept); `AbstractLocalCondition`/`AbstractLocalAction` require a `NodeReaction` and work on its node.
+    `AbstractMoveNode` is local and shares `Environment.applyMovement` with the node-targeted `BrownianMove`.
+  - [x] Migrate implementationbase, geometry, physics, maps, smartcam, cognitive agents, biochemistry, Protelis, and
+    Scafi, porting the touched Java classes to Kotlin. YAML and biochemistry-DSL injection also provide the `Reaction`.
+  - [x] Migrate SAPERE, fixing `LsaAllNeighborsAction` and `SAPEREWalker` cloning and the always-failing `LsaChangeArgument`.
+    `SAPEREIncarnation`, `SAPERENodeReaction`, and their Java tests are Kotlin too, so no `@JvmSuppressWildcards` is
+    needed to reconcile Kotlin declaration-site variance with Java.
+- [x] Make movement part of the environment API: `Environment.moveNodeTo` (absolute, formerly `moveNodeToPosition`)
+  and `EuclideanEnvironment.moveNodeBy` (relative, formerly `moveNode`), which goes through `moveNodeTo`. Movement
+  constraints live in `moveNodeTo`, so they apply to absolute movements too: `EnvironmentWithDynamics` body
+  alignment, and `BioRect2DEnvironment` junction cleanup, which used to crash with a
+  `ClassCastException` whenever a cell with junctions moved. Dropped the unused and buggy `MuseumHall`.
 - [ ] Migrate remaining Java APIs to Kotlin one type at a time; Java files modified significantly in earlier
   phases must already have been ported as part of those changes.
 - [ ] Never leave duplicate fully qualified Java and Kotlin declarations during a port.
@@ -685,6 +717,8 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-07: Made reaction ownership coherent across hosts, reactions, conditions, and actions.
+- 2026-10-06: Made reaction-host membership observable and fixed `NoOtherReactionCanExecute` for later reactions.
 - 2026-10-06: Completed observable layers with custom-layer, YAML, and scheduling documentation.
 - 2026-10-06: Passed the actual insertion position to environment node-addition hooks; clarified `AbstractEnvironment` member names.
 - 2026-10-06: Rebuilt live range queries in `AbstractEnvironment`, fixing stale and inactive queries; dropped the range-query cache.

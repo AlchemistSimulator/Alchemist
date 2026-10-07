@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
@@ -36,10 +35,10 @@ class CognitiveAgentCohesion<T, P, A>(
 ) : AbstractGroupSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P> {
-    private val socialGroup = node.asProperty<T, SocialProperty<T>>().group.members
+    private val socialGroup = targetNode.asProperty<T, SocialProperty<T>>().group.members
 
-    override fun cloneAction(node: Node<T>, reaction: NodeReaction<T>): CognitiveAgentCohesion<T, P, A> =
-        CognitiveAgentCohesion(environment, reaction, node.pedestrianProperty)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentCohesion<T, P, A> =
+        CognitiveAgentCohesion(environment, newReaction, newReaction.host.pedestrianProperty)
 
     override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 

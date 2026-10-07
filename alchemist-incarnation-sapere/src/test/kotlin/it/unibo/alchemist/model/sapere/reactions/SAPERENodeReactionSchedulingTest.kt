@@ -49,7 +49,7 @@ class SAPERENodeReactionSchedulingTest {
     @Test
     fun `a new match reschedules even while condition validity remains true`() {
         val (randomGenerator, environment, node, reaction) = fixture()
-        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), node))
+        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), reaction))
         reaction.initializationComplete(DoubleTime(0.0), environment)
         assertTrue(reaction.nextOccurrence.current.isInfinite)
         verify(exactly = 0) { randomGenerator.nextDouble() }
@@ -72,7 +72,7 @@ class SAPERENodeReactionSchedulingTest {
             firstArg<Reaction<List<ILsaMolecule>>>().updateSchedulingAfterInvalidation(now)
         }
         environment.simulation = simulation
-        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), node))
+        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), reaction))
         reaction.initializationComplete(Time.ZERO, environment)
         assertEquals(Time.INFINITY, reaction.nextOccurrence.current)
         verify(exactly = 0) { randomGenerator.nextDouble() }
@@ -91,7 +91,7 @@ class SAPERENodeReactionSchedulingTest {
         val (randomGenerator, environment, source, reaction) = fixture()
         val destination = LsaNode(environment)
         assertTrue(environment.addNode(destination, Euclidean2DPosition(5.0, 0.0)))
-        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), source))
+        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), reaction))
         reaction.initializationComplete(Time.ZERO, environment)
         val clone = reaction.cloneOnNewNode(destination, Time.ZERO)
         clone.initializationComplete(Time.ZERO, environment)
@@ -127,7 +127,7 @@ class SAPERENodeReactionSchedulingTest {
     fun `invalid match propensities are rejected before sampling`() {
         listOf("0 - N" to 1, "N / N" to 0).forEach { (rate, value) ->
             val (rng, environment, node, reaction) = fixture(rate)
-            reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), node))
+            reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), reaction))
             node.setConcentration(LsaMolecule("token, $value"))
             assertFailsWith<IllegalStateException> {
                 reaction.initializationComplete(DoubleTime(0.0), environment)
@@ -139,7 +139,7 @@ class SAPERENodeReactionSchedulingTest {
     @Test
     fun `an unresolved match propensity is rejected at the reaction boundary`() {
         val (randomGenerator, environment, node, reaction) = fixture("Missing")
-        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), node))
+        reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), reaction))
         node.setConcentration(LsaMolecule("token, 1"))
         assertFailsWith<IllegalStateException> {
             reaction.initializationComplete(DoubleTime(0.0), environment)
@@ -174,11 +174,11 @@ class SAPERENodeReactionSchedulingTest {
         verify(exactly = 2) { randomGenerator.nextDouble() }
         neighbor.setConcentration(LsaMolecule("gradient, 1, 1"))
         verify(exactly = 3) { randomGenerator.nextDouble() }
-        environment.moveNodeToPosition(neighbor, Euclidean2DPosition(0.75, 0.0))
+        environment.moveNodeTo(neighbor, Euclidean2DPosition(0.75, 0.0))
         verify(exactly = 4) { randomGenerator.nextDouble() }
-        environment.moveNodeToPosition(neighbor, Euclidean2DPosition(2.0, 0.0))
+        environment.moveNodeTo(neighbor, Euclidean2DPosition(2.0, 0.0))
         verify(exactly = 6) { randomGenerator.nextDouble() }
-        environment.moveNodeToPosition(neighbor, Euclidean2DPosition(0.5, 0.0))
+        environment.moveNodeTo(neighbor, Euclidean2DPosition(0.5, 0.0))
         verify(exactly = 7) { randomGenerator.nextDouble() }
         environment.removeNode(neighbor)
         verify(exactly = 8) { randomGenerator.nextDouble() }

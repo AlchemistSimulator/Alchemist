@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.BiochemistryParseException;
@@ -169,7 +170,6 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
         private final Factory factory;
         private final @Nonnull RandomGenerator rand;
-        private final @Nonnull Node<Double> node;
         private final @Nullable CellProperty<Euclidean2DPosition> cell;
         private final @Nonnull Environment<Double, P> environment;
         private final @Nonnull NodeReaction<Double> reaction;
@@ -190,10 +190,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             @Nonnull final Environment<Double, P> environment
         ) {
             this.rand = rand;
-            this.node = currentNode;
-            this.cell = node.asPropertyOrNull(CellProperty.class);
+            this.cell = currentNode.asPropertyOrNull(CellProperty.class);
             this.environment = environment;
-            reaction = new BiochemicalNodeReaction(node, timeDistribution, this.environment, rand);
+            reaction = new BiochemicalNodeReaction(currentNode, timeDistribution, this.environment, rand);
             factory = new FactoryBuilder()
                     .withAutoBoxing()
                     .withBooleanIntConversions()
@@ -204,8 +203,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             factory.registerSingleton(Incarnation.class, incarnation);
             factory.registerSingleton(Environment.class, environment);
             factory.registerSingleton(TimeDistribution.class, timeDistribution);
-            factory.registerSingleton(Node.class, node);
+            factory.registerSingleton(Node.class, currentNode);
             factory.registerSingleton(NodeReaction.class, reaction);
+            factory.registerSingleton(Reaction.class, reaction);
             factory.registerSingleton(RandomGenerator.class, rand);
             factory.registerImplicit(String.class, Double.class, incarnation::createConcentration);
             factory.registerImplicit(String.class, Molecule.class, incarnation::createMolecule);
@@ -257,10 +257,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
              * is undefined and can lead to unwanted behavior.
              */
             if (neighborActionPresent && biomolConditionsInNeighbor.isEmpty()) {
-                conditionList.add(new NeighborhoodPresent<>(environment, node));
+                conditionList.add(new NeighborhoodPresent<>(environment, reaction));
             }
             if (envActionPresent && !envConditionPresent) {
-                conditionList.add(new EnvPresent(environment, node));
+                conditionList.add(new EnvPresent(environment, reaction));
             }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
@@ -275,8 +275,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInCell, biomol, concentration);
-                conditionList.add(new BiomolPresentInCell(node, biomol, concentration));
-                actionList.add(new ChangeBiomolConcentrationInCell(node, biomol, -concentration));
+                conditionList.add(new BiomolPresentInCell(reaction, biomol, concentration));
+                actionList.add(new ChangeBiomolConcentrationInCell(reaction, biomol, -concentration));
             }
             return reaction;
         }
@@ -288,8 +288,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv<>(environment, node, biomol, concentration));
-                actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, environment, rand));
+                conditionList.add(new BiomolPresentInEnv<>(environment, reaction, biomol, concentration));
+                actionList.add(new ChangeBiomolConcentrationInEnv(reaction, biomol, environment, rand));
                 envConditionPresent = true;
             }
             return reaction;
@@ -303,8 +303,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInNeighbor, biomol, concentration);
-                conditionList.add(new BiomolPresentInNeighbor(environment, node, biomol, concentration));
-                actionList.add(new ChangeBiomolConcentrationInNeighbor(rand, environment, node, biomol, -concentration));
+                conditionList.add(new BiomolPresentInNeighbor(environment, reaction, biomol, concentration));
+                actionList.add(new ChangeBiomolConcentrationInNeighbor(rand, environment, reaction, biomol, -concentration));
             }
             return reaction;
         }
@@ -317,7 +317,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInCell(node, biomol, concentration));
+                    actionList.add(new ChangeBiomolConcentrationInCell(reaction, biomol, concentration));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE));
                 }
@@ -333,7 +333,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInEnv(environment, node, biomol, concentration, rand));
+                    actionList.add(new ChangeBiomolConcentrationInEnv(environment, reaction, biomol, concentration, rand));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE));
                 }
@@ -350,7 +350,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInNeighbor(rand, environment, node, biomol, concentration));
+                    actionList.add(new ChangeBiomolConcentrationInNeighbor(rand, environment, reaction, biomol, concentration));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE));
                 }
@@ -396,8 +396,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 }
             });
             if (cell != null) {
-                actionList.add(new AddJunctionInCell(environment, node, j, rand));
-                actionList.add(new AddJunctionInNeighbor<>(environment, node, reverseJunction(j), rand));
+                actionList.add(new AddJunctionInCell(environment, reaction, j, rand));
+                actionList.add(new AddJunctionInNeighbor<>(environment, reaction, reverseJunction(j), rand));
             } else {
                 throw new UnsupportedOperationException(
                         "Junctions are supported ONLY in nodes with " + CellProperty.class.getSimpleName()
@@ -424,8 +424,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             }
             junctionList.forEach(j -> {
                 if (cell != null) {
-                    actionList.add(new RemoveJunctionInCell(environment, node, j, rand));
-                    actionList.add(new RemoveJunctionInNeighbor(environment, node, reverseJunction(j), rand));
+                    actionList.add(new RemoveJunctionInCell(environment, reaction, j, rand));
+                    actionList.add(new RemoveJunctionInNeighbor(environment, reaction, reverseJunction(j), rand));
                 } else {
                     throw new UnsupportedOperationException(
                             "Junctions are supported ONLY in node with " + CellProperty.class.getSimpleName()
@@ -461,7 +461,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             if (cell != null) {
                 final Junction j = createJunction(context.junction());
                 junctionList.add(j);
-                conditionList.add(new JunctionPresentInCell(environment, node, j));
+                conditionList.add(new JunctionPresentInCell(environment, reaction, j));
                 return reaction;
             } else {
                 throw new UnsupportedOperationException(

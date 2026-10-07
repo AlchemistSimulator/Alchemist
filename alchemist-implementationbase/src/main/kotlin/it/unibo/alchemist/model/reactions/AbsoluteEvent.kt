@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.observation.Observable
  * @param host model entity hosting the event
  * @param occurrence absolute occurrence time
  */
-class AbsoluteEvent<T>(private val host: ReactionHost<T>, val occurrence: Time) : AbstractReaction<T>(occurrence) {
+class AbsoluteEvent<T>(override val host: ReactionHost<T>, val occurrence: Time) : AbstractReaction<T>(occurrence) {
 
     override val canExecute: Observable<Boolean> = observe(true)
 
@@ -36,7 +36,7 @@ class AbsoluteEvent<T>(private val host: ReactionHost<T>, val occurrence: Time) 
     }
 
     override fun execute() {
-        if (conditions.all { it.isValid().current }) {
+        if (conditions.all { it.isValid.current }) {
             super.execute()
         }
         host.removeReaction(this)

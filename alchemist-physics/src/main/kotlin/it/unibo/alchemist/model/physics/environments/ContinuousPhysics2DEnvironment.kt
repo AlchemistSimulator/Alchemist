@@ -93,15 +93,14 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     }
 
     /**
-     * Moves the [node] to the [farthestPositionReachable] towards the desired [newPosition]. If the node is shapeless,
-     * it is simply moved to [newPosition].
+     * Moves the [node] to the [farthestPositionReachable] towards the desired [position]. If the node is shapeless,
+     * it is simply moved to [position].
      */
-    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        if (getShape(node) != adimensional) {
-            super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
-        } else {
-            super.moveNodeToPosition(node, newPosition)
-        }
+    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) = if (getShape(node) != adimensional) {
+        super.moveNodeTo(node, farthestPositionReachable(node, position))
+    } else {
+        super.moveNodeTo(node, position)
+    }
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's

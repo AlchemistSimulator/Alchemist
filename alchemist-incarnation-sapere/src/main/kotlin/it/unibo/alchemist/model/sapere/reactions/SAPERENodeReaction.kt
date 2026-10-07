@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.sapere.ILsaAction
 import it.unibo.alchemist.model.sapere.ILsaCondition
 import it.unibo.alchemist.model.sapere.ILsaMolecule
 import it.unibo.alchemist.model.sapere.ILsaNode
+import it.unibo.alchemist.model.sapere.conditions.LsaNeighborhoodCondition
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
@@ -87,6 +88,13 @@ class SAPERENodeReaction(
     }
 
     override fun performModelMutation() {
+        if (sapereConditions.none { it is LsaNeighborhoodCondition }) {
+            /*
+             * No condition filters the neighbors, so the neighborhood affects neither validity nor rate, and it is not
+             * a scheduling input: the actions get the neighbors at firing time, not those of the last refresh.
+             */
+            validNodes = currentNeighbors()
+        }
         if (possibleMatches.isEmpty()) {
             executeActions(null)
         } else {
@@ -101,6 +109,9 @@ class SAPERENodeReaction(
         }
     }
 
+    private fun currentNeighbors(): List<ILsaNode> =
+        environment.getNeighborhood(host).current.neighbors.filterIsInstance<ILsaNode>()
+
     private fun executeActions(matches: Map<HashString, ITreeNode<*>>?) {
         sapereActions.forEach { action ->
             action.setExecutionContext(matches, validNodes)
@@ -113,10 +124,14 @@ class SAPERENodeReaction(
     }
 
     private fun selectMatchIndex(): Int = when {
-        // With infinite propensity, the last match added is the one that generated the infinite value.
-        totalPropensity == Double.POSITIVE_INFINITY -> possibleMatches.lastIndex
-        // With a numeric rate, the choice is just random.
-        numericRate -> randomGenerator.nextInt(possibleMatches.size)
+        // With a numeric rate, all matches share the same propensity: an infinite one fires the last match,
+        // a finite one a random match.
+        numericRate -> when (totalPropensity) {
+            Double.POSITIVE_INFINITY -> possibleMatches.lastIndex
+            else -> randomGenerator.nextInt(possibleMatches.size)
+        }
+        // The evaluation of propensities stops at the first infinite one: that match fires.
+        totalPropensity == Double.POSITIVE_INFINITY -> propensities.lastIndex
         // Otherwise, the matches are selected randomly, weighted by their propensities.
         else -> selectWeightedMatchIndex()
     }
@@ -141,7 +156,7 @@ class SAPERENodeReaction(
 
     override fun refreshReactionState(currentTime: Time, environment: Environment<List<ILsaMolecule>, *>) {
         // Valid nodes must be re-initialized at every refresh.
-        val nodes = this.environment.getNeighborhood(host).current.neighbors.mapTo(mutableListOf()) { it as ILsaNode }
+        val nodes = currentNeighbors()
         validNodes = nodes
         if (conditions.isEmpty()) {
             totalPropensity = baseRate
@@ -166,18 +181,13 @@ class SAPERENodeReaction(
             totalPropensity = possibleMatches.size * baseRate
         } else {
             val distribution = checkNotNull(sapereTimeDistribution)
-            val matchPropensities = mutableListOf<Double>()
-            propensities = matchPropensities
-            for (match in possibleMatches) {
-                distribution.setMatches(match)
-                val propensity = distribution.rate
-                check(!propensity.isNaN() && propensity >= 0.0) { "Invalid SAPERE propensity for match: $propensity" }
-                matchPropensities += propensity
-                totalPropensity += propensity
-                if (totalPropensity == Double.POSITIVE_INFINITY) {
-                    return
-                }
-            }
+            // An infinite propensity makes the following matches irrelevant: they are not evaluated.
+            val finite = possibleMatches.asSequence()
+                .map { match -> distribution.propensityOf(match) }
+                .takeWhile { it != Double.POSITIVE_INFINITY }
+                .toList()
+            propensities = if (finite.size < possibleMatches.size) finite + Double.POSITIVE_INFINITY else finite
+            totalPropensity = propensities.sum()
         }
     }
 
@@ -226,4 +236,15 @@ class SAPERENodeReaction(
         .takeIf { it >= 0 }
         ?: propensities.indexOfFirst { it > 0 }.takeIf { it >= 0 }
         ?: error("Positive SAPERE propensity without a positive match")
+
+    private companion object {
+        /**
+         * The propensity of [match], which becomes the installed match of this distribution.
+         */
+        @JvmStatic
+        private fun SAPERETimeDistribution.propensityOf(match: Map<HashString, ITreeNode<*>>): Double {
+            setMatches(match)
+            return rate.also { check(!it.isNaN() && it >= 0.0) { "Invalid SAPERE propensity for match: $it" } }
+        }
+    }
 }

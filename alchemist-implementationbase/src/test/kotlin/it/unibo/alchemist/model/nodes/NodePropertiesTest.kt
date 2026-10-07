@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.nodes
 
+import io.mockk.every
+import io.mockk.mockk
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.SupportedIncarnations
@@ -25,14 +27,15 @@ class NodePropertiesTest {
     private val environment =
         Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow())
 
-    private class TestProperty(override val node: Node<Any>) : NodeProperty<Any> {
-        override fun cloneOnNewNode(node: Node<Any>) = TestProperty(node)
+    private fun propertyOf(node: Node<Any>): NodeProperty<Any> = mockk {
+        every { this@mockk.node } returns node
+        every { cloneOnNewNode(any()) } answers { propertyOf(firstArg()) }
     }
 
     @Test
     fun `properties are added during the node setup`() {
         val node = GenericNode(environment)
-        val property = TestProperty(node)
+        val property = propertyOf(node)
         node.addProperty(property)
         environment.addNode(node, environment.makePosition(0, 0))
         assertEquals(listOf<NodeProperty<Any>>(property), node.properties)
@@ -42,13 +45,13 @@ class NodePropertiesTest {
     fun `properties cannot be added once the node is in the environment`() {
         val node = GenericNode(environment)
         environment.addNode(node, environment.makePosition(0, 0))
-        assertFailsWith<IllegalStateException> { node.addProperty(TestProperty(node)) }
+        assertFailsWith<IllegalStateException> { node.addProperty(propertyOf(node)) }
         assertTrue(node.properties.isEmpty())
     }
 
     @Test
     fun `cloned nodes receive the properties of the original`() {
-        val node = GenericNode(environment).apply { addProperty(TestProperty(this)) }
+        val node = GenericNode(environment).apply { addProperty(propertyOf(this)) }
         environment.addNode(node, environment.makePosition(0, 0))
         val clone = node.cloneNode(Time.ZERO)
         assertFalse(clone in environment)

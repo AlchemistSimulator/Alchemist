@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.cognitive.reactions
 
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Time
@@ -34,6 +33,12 @@ class CognitiveBehavior<T, V, A>(node: Node<T>, timeDistribution: TimeDistributi
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
         makeClone(node, currentTime) { CognitiveBehavior<T, V, A>(node, it) }
 
-    override fun refreshReactionState(currentTime: Time, environment: Environment<T, *>) =
+    /**
+     * Executes the actions, then advances the cognitive model by one step.
+     * The model advances only when the reaction fires, never when it is merely rescheduled.
+     */
+    override fun performModelMutation() {
+        super.performModelMutation()
         host.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
+    }
 }

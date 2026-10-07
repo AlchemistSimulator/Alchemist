@@ -9,9 +9,14 @@
 
 package it.unibo.alchemist.model.environments
 
+import arrow.core.None
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.combineLatest
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,6 +28,32 @@ class ObservableRangeQueryTest {
 
     private fun nodeAt(x: Number, y: Number): Node<Any> =
         GenericNode(environment).also { environment.addNode(it, environment.makePosition(x, y)) }
+
+    @Test
+    fun `removing a node observed through a range query is safe`() {
+        val center = nodeAt(0, 0)
+        val near = nodeAt(0.5, 0)
+        val positions = environment.observeNodesWithinRange(center, 1.0)
+            .combineLatest(environment::getPosition) { it.toList() }
+        val subscription = positions.subscribe { }
+        environment.removeNode(near)
+        assertEquals(emptyList(), positions.current)
+        subscription.dispose()
+    }
+
+    @Test
+    fun `removing a node observed through a neighborhood is safe`() {
+        environment.linkingRule = ConnectWithinDistance(1.0)
+        val center = nodeAt(0, 0)
+        val near = nodeAt(0.5, 0)
+        val positions = environment.getNeighborhood(center).switchMap { neighborhood ->
+            neighborhood.neighbors.map(environment::getPosition).combineLatest { it }
+        }
+        val subscription = positions.subscribe { }
+        environment.removeNode(near)
+        assertEquals(None, positions.current)
+        subscription.dispose()
+    }
 
     @Test
     fun `a position-centered range tracks nodes entering and leaving it`() {

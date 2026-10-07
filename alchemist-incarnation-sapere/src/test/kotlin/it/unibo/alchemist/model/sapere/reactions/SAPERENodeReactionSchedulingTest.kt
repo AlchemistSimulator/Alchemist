@@ -168,30 +168,78 @@ class SAPERENodeReactionSchedulingTest {
         )
         reaction.initializationComplete(DoubleTime(0.0), environment)
         verify(exactly = 0) { randomGenerator.nextDouble() }
+        // Nodes outside the neighborhood are not observed at all.
+        val distant = LsaNode(environment)
+        assertTrue(environment.addNode(distant, Euclidean2DPosition(5.0, 0.0)))
+        distant.setConcentration(LsaMolecule("gradient, 1, 1"))
+        environment.removeNode(distant)
+        verify(exactly = 0) { randomGenerator.nextDouble() }
         val neighbor = LsaNode(environment)
         assertTrue(environment.addNode(neighbor, Euclidean2DPosition(0.5, 0.0)))
         assertTrue(environment.getNeighborhood(node).current.neighbors.contains(neighbor))
-        verify(exactly = 2) { randomGenerator.nextDouble() }
+        verify(exactly = 1) { randomGenerator.nextDouble() }
         neighbor.setConcentration(LsaMolecule("gradient, 1, 1"))
-        verify(exactly = 3) { randomGenerator.nextDouble() }
+        verify(exactly = 2) { randomGenerator.nextDouble() }
         environment.moveNodeTo(neighbor, Euclidean2DPosition(0.75, 0.0))
-        verify(exactly = 4) { randomGenerator.nextDouble() }
+        verify(exactly = 3) { randomGenerator.nextDouble() }
         environment.moveNodeTo(neighbor, Euclidean2DPosition(2.0, 0.0))
-        verify(exactly = 6) { randomGenerator.nextDouble() }
+        verify(exactly = 5) { randomGenerator.nextDouble() }
         environment.moveNodeTo(neighbor, Euclidean2DPosition(0.5, 0.0))
-        verify(exactly = 7) { randomGenerator.nextDouble() }
+        verify(exactly = 6) { randomGenerator.nextDouble() }
         environment.removeNode(neighbor)
-        verify(exactly = 8) { randomGenerator.nextDouble() }
+        verify(exactly = 7) { randomGenerator.nextDouble() }
         environment.linkingRule = ClosestN(1)
         val closest = LsaNode(environment)
         val replacement = LsaNode(environment)
         assertTrue(environment.addNode(closest, Euclidean2DPosition(0.5, 0.0)))
-        verify(exactly = 9) { randomGenerator.nextDouble() }
+        verify(exactly = 8) { randomGenerator.nextDouble() }
         assertTrue(environment.addNode(replacement, Euclidean2DPosition(0.75, 0.0)))
-        verify(exactly = 9) { randomGenerator.nextDouble() }
+        verify(exactly = 8) { randomGenerator.nextDouble() }
         environment.removeNode(closest)
         assertTrue(environment.getNeighborhood(node).current.neighbors.contains(replacement))
-        verify(exactly = 10) { randomGenerator.nextDouble() }
+        verify(exactly = 9) { randomGenerator.nextDouble() }
+    }
+
+    @Test
+    fun `a match with infinite propensity is the one that fires`() {
+        val (randomGenerator, environment, node) = fixture()
+        // With rate 1/N, the match with N = 0 has infinite propensity, even if it is not the last match.
+        node.setConcentration(LsaMolecule("token, 0"))
+        node.setConcentration(LsaMolecule("token, 1"))
+        val reaction = SAPEREIncarnation<Euclidean2DPosition>().createReaction(
+            randomGenerator,
+            environment,
+            node,
+            SAPEREExponentialTime("1 / N", randomGenerator),
+            "{token, N} --> {picked, N}",
+        )
+        reaction.initializationComplete(Time.ZERO, environment)
+        assertEquals(Double.POSITIVE_INFINITY, (reaction as SAPERENodeReaction).rate)
+        reaction.execute()
+        assertTrue(node.contains(LsaMolecule("picked, 0")))
+        assertTrue(node.contains(LsaMolecule("token, 1")))
+    }
+
+    @Test
+    fun `neighbor actions target the neighbors at firing time`() {
+        val (randomGenerator, environment, node) = fixture()
+        environment.linkingRule = ConnectWithinDistance(1.0)
+        // As in the engine, invalidations are applied after the mutation completes, not while the reaction fires.
+        environment.simulation = mockk<Simulation<List<ILsaMolecule>, Euclidean2DPosition>>(relaxed = true)
+        node.setConcentration(LsaMolecule("token"))
+        val reaction = SAPEREIncarnation<Euclidean2DPosition>().createReaction(
+            randomGenerator,
+            environment,
+            node,
+            SAPEREExponentialTime("1", randomGenerator),
+            "{token} --> {token} +{msg}",
+        )
+        reaction.initializationComplete(Time.ZERO, environment)
+        // The neighbor arrives after the last refresh, without changing the matches of the reaction.
+        val neighbor = LsaNode(environment)
+        assertTrue(environment.addNode(neighbor, Euclidean2DPosition(0.5, 0.0)))
+        reaction.execute()
+        assertTrue(neighbor.contains(LsaMolecule("msg")))
     }
 
     private fun fixture(rate: String = "2"): Fixture {

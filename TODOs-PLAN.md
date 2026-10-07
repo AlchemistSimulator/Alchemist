@@ -545,7 +545,7 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 
 ## Phase 9: complete observable model migration
 
-- [ ] Audit every condition and reaction for non-observable reads that affect validity, specialized invalidation,
+- [x] Audit every condition and reaction for non-observable reads that affect validity, specialized invalidation,
   or scheduling.
   - [x] Conditions audited (2026-10-06). Validity is fully observable for `ContainsMolecule`,
     `MoleculeHasConcentration`, `ConcentrationChanged`, `NeighborHasConcentration`, `GenericMoleculePresent` and its
@@ -563,7 +563,21 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
     its environment (checked through the new `Environment.contains`), so these reads are correct by construction.
     `BiomolPresentInNeighbor` validity no longer re-reads the cell property, neighborhood membership, and
     concentrations its observed weights already account for.
-  - [ ] Audit reactions.
+  - [x] Reactions audited (2026-10-07). The generic reactions, events, `ChemicalNodeReaction`, and
+    `PhysicsUpdate` schedule on observed validity and fixed rates; `BiochemicalNodeReaction` subscribes to every input
+    its validity and rate read; `SAPEREGradient` observes its source, context, position, and surrounding LSA spaces;
+    `SteeringBehavior`, Protelis, and Scafi read model state only when firing. Two fixes:
+    - `SAPERENodeReaction` gave its actions the neighbors of the last refresh: without neighborhood conditions, the
+      neighborhood is not a scheduling input, so neighbor actions now get the neighbors at firing time.
+    - `CognitiveBehavior` advanced the cognitive model while refreshing, hence on invalidations and clone
+      initialization too; it now advances the model only when firing.
+    - `SAPERENodeReaction` fired the last match instead of the one with infinite propensity whenever the latter was
+      not the last match.
+    - `SAPEREGradient` observed the position and LSA space of every node in the environment, a quadratic cost; it
+      now observes only its node and the neighbors, switching them as the neighborhood changes.
+    - Removing a node notified the observers of its position, which then failed, whenever they reached it through a
+      neighborhood or a range query (as `TensionPresent` does). Removal now drops the position last, once the node
+      has left the node list, the neighborhoods, and the range queries.
 - [ ] For every source formerly present in a condition dependency set, verify an explicit destination: condition
   validity or a specialized reaction-owned invalidation signal.
 - [ ] Cover node contents, molecule presence, neighborhoods, positions, node counts, ranges, layers, and global state.
@@ -720,6 +734,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-07: Audited reactions; fixed stale SAPERE neighbor actions and off-schedule cognitive updates.
 - 2026-10-07: Fixed node properties at setup and simplified `BiomolPresentInNeighbor` validity.
 - 2026-10-07: Made the deformable-cell interaction range observable, fixing stale `TensionPresent` ranges.
 - 2026-10-07: Made reaction ownership coherent across hosts, reactions, conditions, and actions.

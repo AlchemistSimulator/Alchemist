@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.observables.CompositeDisposable;
-import it.unibo.alchemist.model.observables.util.ObservableLists;
+import it.unibo.alchemist.model.observables.util.Observables;
 import it.unibo.alchemist.model.observation.Disposable;
 import it.unibo.alchemist.model.observation.MutableObservable;
 import it.unibo.alchemist.model.observation.Observable;
@@ -230,21 +230,22 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         );
     }
 
-    private static <P extends Position<? extends P>> Observable<List<NodeState>> observeNeighborState(
+    private static <P extends Position<? extends P>> Observable<?> observeNeighborState(
             final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node
     ) {
-        // Observe every node, not just current neighbors: a remote node can move into this neighborhood.
-        final Observable<List<NodeState>> nodeStates =
-            ObservableLists.INSTANCE.combineLatest(
-                environment.getNodes(),
-                currentNode -> observeNodeState(environment, node, currentNode),
-                ignored -> currentSpatialSnapshot(environment, node)
-            );
-        // Topology and node state are independent invalidation sources; either requires a fresh spatial snapshot.
-        return environment.getNeighborhood(node).mergeWith(
-            nodeStates,
-            (ignoredNeighborhood, ignoredNodeStates) -> currentSpatialSnapshot(environment, node)
+        /*
+         * The gradient depends only on the node and its neighbors. The neighborhood emits whenever a node enters or
+         * leaves it, switching the observed nodes accordingly.
+         */
+        return Observables.switchMap(
+            environment.getNeighborhood(node),
+            neighborhood -> Observables.combineLatest(
+                Stream.concat(Stream.of(node), neighborhood.getNeighbors().stream())
+                    .map(currentNode -> observeNodeState(environment, node, currentNode))
+                    .toList(),
+                states -> states
+            )
         );
     }
 
@@ -263,22 +264,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         }
         // The center's relevant LSAs have their own narrow observables; only its position belongs here.
         return position.map(currentPosition -> new NodeState(node.getId(), currentPosition, List.of()));
-    }
-
-    private static <P extends Position<? extends P>> List<NodeState> currentSpatialSnapshot(
-            final Environment<List<ILsaMolecule>, P> environment,
-            final ILsaNode center
-    ) {
-        // Snapshot only published state; topology-changing moves may emit again after the neighborhood catches up.
-        return Stream.concat(Stream.of(center), environment.getNeighborhood(center).getCurrent().getNeighbors().stream())
-            .map(currentNode -> new NodeState(
-                currentNode.getId(),
-                environment.getCurrentPosition(currentNode),
-                currentNode != center && currentNode instanceof final ILsaNode lsaNode
-                    ? List.copyOf(lsaNode.observeLsaSpace().getCurrent())
-                    : List.of()
-            ))
-            .toList();
     }
 
     @Override

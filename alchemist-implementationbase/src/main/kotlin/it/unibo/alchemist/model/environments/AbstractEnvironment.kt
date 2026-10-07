@@ -352,7 +352,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         val position = requireNotNull(nodesToPositions.current[node.id]) { "Node position cannot be null." }
         spatialIndex.remove(node, *position.coordinates)
         nodeList.remove(node)
-        nodesToPositions.remove(node.id)
         val neigh = requireNotNull(neighborhoods.remove(node.id)) { "Node neighborhood cannot be null." }
         // A locally consistent rule only loses the removed node; any other rule may rewire the remaining topology.
         if (linkingRule.isLocallyConsistent()) {
@@ -368,6 +367,12 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             }
         }
         updateRangeQueries(node, null)
+        /*
+         * The position goes last. Observers reach a node's position through the node list, a neighborhood, or a range
+         * query: once the node has left all of them, they no longer observe its position, which can then go away
+         * without notifying anyone about a node that no longer exists.
+         */
+        nodesToPositions.remove(node.id)
         ifAttachedToSimulation { simulation -> reactions.forEach(simulation::reactionRemoved) }
         nodeRemoved(node, neigh)
     }

@@ -36,8 +36,7 @@ abstract class AbstractNodeReaction<T>(
 
     private var newlyInstantiatedAt: Time? = null
 
-    override val rate: Double
-        get() = timeDistribution.defaultReactionRate
+    override val rate: Double get() = timeDistribution.defaultReactionRate
 
     /**
      * @return a [String] representation of the rate

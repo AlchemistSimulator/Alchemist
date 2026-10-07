@@ -38,6 +38,13 @@ object ObservableLists {
      * Transforms an [ObservableList] of type [T] into a single [Observable] of type
      * [arrow.core.Option]<[O]> by fusing the individual observables obtained from each item in the list.
      *
+     * The emissions are merged, as in the `flatMap` operator of the
+     * [ReactiveX convention](https://reactivex.io/documentation/operators/flatmap.html): the result emits the value of
+     * whichever mapped observable emitted, and the current value of the observables of elements joining the list.
+     * Observables of elements leaving the list are unsubscribed. Merging has no single current value:
+     * [Observable.current] is the current value of the observable of the first element of the list.
+     * To follow only the observable selected by the latest value, use [Observables.switchMap] instead.
+     *
      * @param T The type of elements in the [ObservableList].
      * @param O The type of the resulting fused observable.
      * @param map A function that maps each element of the source [ObservableList] to an [Observable] of type [O].

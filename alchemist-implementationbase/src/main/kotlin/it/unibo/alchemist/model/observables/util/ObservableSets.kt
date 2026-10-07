@@ -42,6 +42,13 @@ object ObservableSets {
      * Transforms an [ObservableSet] of type [T] into a single [Observable] of type
      * [arrow.core.Option]<[O]> by fusing the individual observables obtained from each item in the set.
      *
+     * The emissions are merged, as in the `flatMap` operator of the
+     * [ReactiveX convention](https://reactivex.io/documentation/operators/flatmap.html): the result emits the value of
+     * whichever mapped observable emitted, and the current value of the observables of elements joining the set.
+     * Observables of elements leaving the set are unsubscribed. Merging has no single current value:
+     * [Observable.current] is the current value of the observable of the first element of the set.
+     * To follow only the observable selected by the latest value, use [Observables.switchMap] instead.
+     *
      * The resulting observable is **total**:
      * - If the set is empty, it emits (and its [Observable.current] is) [arrow.core.None]
      * - If the set is non-empty, it emits [arrow.core.Some] values coming from any mapped observable

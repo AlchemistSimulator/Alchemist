@@ -598,7 +598,10 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   - Reaction-level inbound dependencies: `SAPEREGradient` (source, context, gradient, movement) observes its source and
     context LSAs, its position, and the neighbors' positions and LSA spaces; `PhysicalBlendedSteering` (physics) is
     clock-driven and reads the physical state when firing, so it needs no scheduling input.
-- [ ] Cover node contents, molecule presence, neighborhoods, positions, node counts, ranges, layers, and global state.
+- [x] Cover node contents, molecule presence, neighborhoods, positions, node counts, ranges, layers, and global state.
+  `ObservableNodeStateTest` covers concentrations, presence, and molecule counts; `ObservableEnvironmentStateTest`
+  neighborhoods, positions, the node list and count, and host reactions; `ObservableRangeQueryTest` and
+  `ObservableLayerTest` cover ranges and layers.
 - [x] Make layers observable:
   - [x] Define a typed API for observing a layer's value at a position, including the semantics of static layers,
     mutable layer values, and disposal.
@@ -752,6 +755,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-07: Covered every observable node and environment input with emission tests.
 - 2026-10-07: Verified an explicit observable destination for every former condition dependency.
 - 2026-10-07: Audited reactions; fixed stale SAPERE neighbor actions and off-schedule cognitive updates.
 - 2026-10-07: Fixed node properties at setup and simplified `BiomolPresentInNeighbor` validity.

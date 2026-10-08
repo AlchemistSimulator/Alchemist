@@ -8,297 +8,200 @@
  */
 package it.unibo.alchemist.core
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldNotContain
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.types.shouldBeInstanceOf
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
 import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.ReactionHost
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
-import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.conditions.NeighborHasConcentration
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.observables.CompositeDisposable
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.reactions.AbsoluteEvent
-import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 import it.unibo.alchemist.model.reactions.ConditionalEvent
 import it.unibo.alchemist.model.reactions.GenericReaction
-import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
-import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.coroutines.delay
+import java.util.concurrent.TimeUnit
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertIs
+import kotlin.test.assertNotSame
+import kotlin.test.assertTrue
 
-private class RecordingScheduler<T> : Scheduler<T> {
-    val reactions = mutableListOf<Reaction<T>>()
-    val updates = mutableListOf<Reaction<T>>()
-    var updateBeforeAdd = false
-    var throwOnAdd = false
-
-    override fun addReaction(reaction: Reaction<T>) {
-        reactions += reaction
-        if (throwOnAdd) {
-            reactions.remove(reaction)
-            error("synthetic scheduler failure")
-        }
-    }
-
-    override fun getNext(): Reaction<T>? = reactions.minByOrNull { it.nextOccurrence.current }
-
-    override fun removeReaction(reaction: Reaction<T>) {
-        reaction.nextOccurrence.observers.size shouldBe 0
-        reactions.remove(reaction)
-    }
-
-    override fun updateReaction(reaction: Reaction<T>) {
-        if (reaction !in reactions) {
-            updateBeforeAdd = true
-        }
-        updates += reaction
-    }
-}
-
-private class EmittingNodeReaction(
-    node: Node<Double>,
-    distribution: TimeDistribution<Double> = DiracComb(1.0),
-) : AbstractNodeReaction<Double>(node, distribution) {
-    var emitOnExecute = false
-    var onExecute: () -> Unit = {}
-    var executions = 0
-    var disposed = false
-
-    override fun dispose() {
-        disposed = true
-        super.dispose()
-    }
-
-    override fun performModelMutation() {
-        executions++
-        onExecute()
-        if (emitOnExecute) {
-            emit(DoubleTime(4.0), DoubleTime(5.0))
-        }
-    }
-
-    fun emit(vararg times: Time) = times.forEach(::setNextOccurrence)
-
-    override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): NodeReaction<Double> =
-        error("Not needed in test")
-}
-
-private class CountingInvalidationReaction(
-    node: Node<Double>,
-    private val inputs: List<MutableObservable<Int>>,
-    private val onInvalidation: () -> Unit = {},
-    val distribution: CountingDistribution = CountingDistribution(),
-) : AbstractNodeReaction<Double>(node, distribution) {
-    var invalidations = 0
-        private set
-
-    override fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
-        inputs.forEach { input ->
-            subscriptions.add(
-                input.subscribe(invokeOnSubscription = false) {
-                    schedulingInputChanged()
-                },
-            )
-        }
-    }
-
-    override fun scheduleAfterInvalidation(currentTime: Time) {
-        invalidations++
-        onInvalidation()
-        super.scheduleAfterInvalidation(currentTime)
-    }
-
-    override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): NodeReaction<Double> =
-        error("Not needed in test")
-}
-
-private class CountingDistribution : TimeDistribution<Double> {
-    var samples = 0
-        private set
-
-    override fun sample(): Time = DoubleTime((++samples).toDouble())
-
-    override fun newInstanceOn(node: Node<Double>): TimeDistribution<Double> = CountingDistribution()
-}
-
-private class CountingAction(reaction: Reaction<Double>, private val executions: MutableList<Action<Double>>) :
-    AbstractAction<Double>(reaction) {
-    override fun cloneAction(newReaction: Reaction<Double>): Action<Double> = CountingAction(newReaction, executions)
-
-    override fun execute() {
-        executions += this
-    }
-}
-
-private class InvalidCondition(reaction: Reaction<Double>) : AbstractCondition<Double>(reaction) {
-    var readySignals = 0
-        private set
-
-    init {
-        setValidity(observe(false))
-    }
-
-    override fun cloneCondition(newReaction: Reaction<Double>) = InvalidCondition(newReaction)
-
-    override fun beforeReactionFires() {
-        readySignals++
-    }
-}
-
-private class TestEngine<T, P : it.unibo.alchemist.model.Position<out P>>(
-    environment: Environment<T, P>,
-    scheduler: Scheduler<T>,
-) : Engine<T, P>(environment, scheduler) {
+private class TestEngine<T, P : Position<out P>>(environment: Environment<T, P>, scheduler: Scheduler<T>) :
+    Engine<T, P>(environment, scheduler) {
     fun initializeForTest() = initialize()
 
     fun stepForTest() = doStep()
 
-    fun drainCommand() = processCommand(commands.poll())
-
     fun drainCommands() {
         while (commands.isNotEmpty()) {
-            drainCommand()
+            processCommand(commands.poll())
         }
     }
 }
 
-/** An initialized engine over an environment with one node, plus two reactions not yet added to their hosts. */
-private class RunningHosts {
-    val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-    val node = GenericNode(environment).also { environment.addNode(it, environment.makePosition(0, 0)) }
-    val scheduler = RecordingScheduler<Double>()
-    val engine = TestEngine(environment, scheduler).apply { initializeForTest() }
-    val nodeReaction = EmittingNodeReaction(node)
-    val environmentReaction = AbsoluteEvent<Double>(environment, DoubleTime(2.0))
-}
+class EngineSchedulingSubscriptionTest {
+    private val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+    private val node = GenericNode(environment)
 
-class EngineSchedulingSubscriptionTest : FreeSpec({
-    fun fixture(): Triple<Continuous2DEnvironment<Double>, GenericNode<Double>, EmittingNodeReaction> {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val node = GenericNode(environment)
-        val reaction = EmittingNodeReaction(node)
-        node.addReaction(reaction)
-        environment.addNode(node, environment.makePosition(0, 0))
-        return Triple(environment, node, reaction)
+    // The real scheduler, spied to verify calls; every removal must follow the disposal of the engine subscription.
+    private val scheduler = spyk(ArrayIndexedPriorityQueue<Double>()).apply {
+        every { removeReaction(any()) } answers {
+            assertEquals(0, firstArg<Reaction<Double>>().nextOccurrence.observers.size)
+            callOriginal()
+        }
+    }
+    private val engine = TestEngine(environment, scheduler)
+
+    private fun Node<Double>.place(x: Number = 0, y: Number = 0) {
+        environment.addNode(this, environment.makePosition(x, y))
     }
 
-    "initial registration does not update before scheduler add" {
-        val (environment, _, reaction) = fixture()
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
-        engine.initializeForTest()
-        scheduler.updateBeforeAdd shouldBe false
-        scheduler.updates shouldNotContain reaction
+    private fun Reaction<Double>.isScheduled() = this in scheduler.tree
+
+    /** A reaction whose scheduling is driven by the test through [emit]. */
+    private fun mockReaction(
+        hostedBy: ReactionHost<Double> = node,
+        firstOccurrence: Time = DoubleTime(1.0),
+        executable: Boolean = true,
+    ): Reaction<Double> {
+        val occurrence = observe(firstOccurrence)
+        val eligibility = observe(executable)
+        return mockk(relaxed = true) {
+            every { host } returns hostedBy
+            every { nextOccurrence } returns occurrence
+            every { canExecute } returns eligibility
+        }
     }
 
-    "an infinite scheduler head is quiescent and is not consumed as a step" {
-        val (environment, _, reaction) = fixture()
-        reaction.conditions = listOf(InvalidCondition(reaction))
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+    private fun Reaction<Double>.emit(vararg times: Time) {
+        // mockReaction backs the next occurrence with a mutable observable.
+        val occurrence = nextOccurrence as MutableObservable<Time>
+        times.forEach { occurrence.current = it }
+    }
+
+    /** Reports [inputs] changes to the engine, as reactions do for their scheduling inputs. */
+    private fun Reaction<Double>.invalidatedBy(vararg inputs: Observable<*>) = inputs.forEach { input ->
+        input.subscribe(invokeOnSubscription = false) { engine.reactionInvalidated(this) }
+    }
+
+    /** A time distribution sampling 1, 2, 3, ... */
+    private fun countingDistribution(): TimeDistribution<Double> {
+        var samples = 0
+        return mockk(relaxed = true) {
+            every { sample() } answers { DoubleTime((++samples).toDouble()) }
+        }
+    }
+
+    private fun mockAction(owner: Reaction<Double>): Action<Double> = mockk(relaxed = true) {
+        every { reaction } returns owner
+        every { cloneAction(any()) } answers { mockAction(firstArg()) }
+    }
+
+    @Test
+    fun `initial registration does not update before scheduler add`() {
+        val reaction = mockReaction().also(node::addReaction)
+        node.place()
         engine.initializeForTest()
-        reaction.nextOccurrence.current shouldBe Time.INFINITY
+        verify(exactly = 1) { scheduler.addReaction(reaction) }
+        verify(exactly = 0) { scheduler.updateReaction(reaction) }
+    }
+
+    @Test
+    fun `an infinite scheduler head is quiescent and is not consumed as a step`() {
+        val reaction = mockReaction(firstOccurrence = Time.INFINITY, executable = false).also(node::addReaction)
+        node.place()
+        engine.initializeForTest()
         engine.stepForTest()
-        engine.time shouldBe Time.ZERO
-        engine.step shouldBe 0L
-        reaction.executions shouldBe 0
-        scheduler.updates shouldNotContain reaction
+        assertEquals(Time.ZERO, engine.time)
+        assertEquals(0L, engine.step)
+        verify(exactly = 0) { reaction.execute() }
+        verify(exactly = 0) { scheduler.updateReaction(reaction) }
     }
 
-    "each next occurrence emission updates the active scheduler entry" {
-        val (environment, _, reaction) = fixture()
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+    @Test
+    fun `each next occurrence emission updates the active scheduler entry`() {
+        val reaction = mockReaction().also(node::addReaction)
+        node.place()
         engine.initializeForTest()
-        reaction.emit(DoubleTime(1.0), DoubleTime(2.0))
-        scheduler.updates.count { it === reaction } shouldBe 2
-        reaction.emitOnExecute = true
+        reaction.emit(DoubleTime(1.5), DoubleTime(2.0))
+        verify(exactly = 2) { scheduler.updateReaction(reaction) }
+        every { reaction.execute() } answers { reaction.emit(DoubleTime(4.0), DoubleTime(5.0)) }
         engine.stepForTest()
-        scheduler.updates.count { it === reaction } shouldBe 5
+        verify(exactly = 4) { scheduler.updateReaction(reaction) }
     }
 
-    "each model mutation refreshes an affected reaction once" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val node = GenericNode(environment)
+    @Test
+    fun `each model mutation refreshes an affected reaction once`() {
         val inputs = List(2) { observe(0, emitOnDistinct = false) }
-        val source = EmittingNodeReaction(node).apply {
-            onExecute = { inputs.forEach { it.current++ } }
-        }
-        val target = CountingInvalidationReaction(node, inputs)
-        node.addReaction(source)
-        node.addReaction(target)
-        environment.addNode(node, environment.makePosition(0, 0))
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+        val source = mockReaction(firstOccurrence = DoubleTime(0.5)).also(node::addReaction)
+        every { source.execute() } answers { inputs.forEach { input -> input.current++ } }
+        val target = mockReaction().also(node::addReaction)
+        node.place()
         engine.initializeForTest()
+        target.invalidatedBy(*inputs.toTypedArray())
         engine.schedule { inputs.forEach { it.current++ } }
-        engine.drainCommand()
-        target.invalidations shouldBe 1
-        target.distribution.samples shouldBe 1
-        scheduler.updates.count { it === target } shouldBe 1
+        engine.drainCommands()
+        verify(exactly = 1) { target.updateSchedulingAfterInvalidation(any()) }
         engine.stepForTest()
-        target.invalidations shouldBe 2
-        target.distribution.samples shouldBe 2
-        scheduler.updates.count { it === target } shouldBe 2
+        verify(exactly = 2) { target.updateSchedulingAfterInvalidation(any()) }
     }
 
-    "dirty reactions retain first-invalidation order" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val node = GenericNode(environment)
+    @Test
+    fun `dirty reactions retain first-invalidation order`() {
         val input = observe(0)
         val refreshOrder = mutableListOf<Int>()
         val reactions = List(8) { index ->
-            CountingInvalidationReaction(node, listOf(input), { refreshOrder += index }).also(node::addReaction)
+            mockReaction().also { reaction ->
+                every { reaction.updateSchedulingAfterInvalidation(any()) } answers { refreshOrder += index }
+                node.addReaction(reaction)
+            }
         }
-        environment.addNode(node, environment.makePosition(0, 0))
-        val engine = TestEngine(environment, RecordingScheduler())
+        node.place()
         engine.initializeForTest()
+        reactions.forEach { it.invalidatedBy(input) }
         engine.schedule { input.current++ }
-        engine.drainCommand()
-        refreshOrder shouldBe reactions.indices.toList()
+        engine.drainCommands()
+        assertEquals(reactions.indices.toList(), refreshOrder)
     }
 
-    "topology changes gate a neighborhood-dependent reaction exactly when its validity changes" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+    @Test
+    fun `topology changes gate a neighborhood-dependent reaction exactly when its validity changes`() {
         environment.linkingRule = ConnectWithinDistance(1.0)
         val molecule = Biomolecule("M")
-        val center = GenericNode(environment)
         val peer = GenericNode(environment).apply { setConcentration(molecule, 1.0) }
-        val distribution = CountingDistribution()
-        val reaction = GenericReaction(center, distribution).apply {
+        val distribution = countingDistribution()
+        val reaction = GenericReaction(node, distribution).apply {
             conditions = listOf(NeighborHasConcentration(this, environment, molecule, 1.0))
         }
-        center.addReaction(reaction)
-        environment.addNode(center, environment.makePosition(0, 0))
-        environment.addNode(peer, environment.makePosition(5, 0))
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+        node.addReaction(reaction)
+        node.place()
+        peer.place(5, 0)
         engine.initializeForTest()
         fun mutate(mutation: () -> Unit) {
             engine.schedule(mutation)
-            engine.drainCommand()
+            engine.drainCommands()
         }
         fun assertScheduling(finite: Boolean, samples: Int, updates: Int) {
-            reaction.nextOccurrence.current.isFinite shouldBe finite
-            distribution.samples shouldBe samples
-            scheduler.updates.count { it === reaction } shouldBe updates
+            assertEquals(finite, reaction.nextOccurrence.current.isFinite)
+            verify(exactly = samples) { distribution.sample() }
+            verify(exactly = updates) { scheduler.updateReaction(reaction) }
         }
         assertScheduling(finite = false, samples = 0, updates = 0)
         // A neighbor with the molecule moves into range.
@@ -321,263 +224,231 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
         mutate { environment.removeNode(peer) }
         assertScheduling(finite = false, samples = 3, updates = 6)
         val newcomer = GenericNode(environment).apply { setConcentration(molecule, 1.0) }
-        mutate { environment.addNode(newcomer, environment.makePosition(0, 0.5)) }
+        mutate { newcomer.place(0, 0.5) }
         assertScheduling(finite = true, samples = 4, updates = 7)
         // An environment-wide topology change.
         mutate { environment.linkingRule = ConnectWithinDistance(0.1) }
         assertScheduling(finite = false, samples = 4, updates = 8)
     }
 
-    "a reaction removed during a model mutation is not refreshed" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val node = GenericNode(environment)
+    @Test
+    fun `a reaction removed during a model mutation is not refreshed`() {
         val input = observe(0)
-        val target = CountingInvalidationReaction(node, listOf(input))
-        val source = EmittingNodeReaction(node).apply {
-            onExecute = {
-                input.current++
-                node.removeReaction(target)
-            }
+        val target = mockReaction().also(node::addReaction)
+        val source = mockReaction(firstOccurrence = DoubleTime(0.5)).also(node::addReaction)
+        every { source.execute() } answers {
+            input.current++
+            node.removeReaction(target)
         }
-        node.addReaction(source)
-        node.addReaction(target)
-        environment.addNode(node, environment.makePosition(0, 0))
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+        node.place()
         engine.initializeForTest()
+        target.invalidatedBy(input)
         engine.stepForTest()
-        target.invalidations shouldBe 0
-        engine.drainCommand()
-        scheduler.reactions shouldNotContain target
+        verify(exactly = 0) { target.updateSchedulingAfterInvalidation(any()) }
+        engine.drainCommands()
+        assertFalse(target.isScheduled())
     }
 
-    "removal disposes the subscription before scheduler removal" {
-        val (environment, _, reaction) = fixture()
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+    @Test
+    fun `removal disposes the subscription before scheduler removal`() {
+        val reaction = mockReaction().also(node::addReaction)
+        node.place()
         engine.initializeForTest()
         engine.reactionRemoved(reaction)
-        engine.drainCommand()
-        val updatesBeforeEmission = scheduler.updates.count { it === reaction }
+        engine.drainCommands()
         reaction.emit(DoubleTime(4.0))
-        scheduler.reactions shouldNotContain reaction
-        scheduler.updates.count { it === reaction } shouldBe updatesBeforeEmission
-        reaction.disposed shouldBe true
+        assertFalse(reaction.isScheduled())
+        verify(exactly = 1) { scheduler.removeReaction(reaction) }
+        verify(exactly = 0) { scheduler.updateReaction(reaction) }
+        verify { reaction.dispose() }
     }
 
-    "a successful event is unregistered and removed from its node without an infinite update" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val node = GenericNode(environment)
+    @Test
+    fun `a successful event is unregistered and removed from its node without an infinite update`() {
         val event = AbsoluteEvent<Double>(node, Time.ZERO)
         node.addReaction(event)
-        environment.addNode(node, environment.makePosition(0, 0))
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+        node.place()
         engine.initializeForTest()
         engine.stepForTest()
-        engine.drainCommand()
-        scheduler.reactions shouldNotContain event
-        scheduler.updates shouldNotContain event
-        node.reactions.current shouldNotContain event
-        event.nextOccurrence.observers.size shouldBe 0
+        engine.drainCommands()
+        assertFalse(event.isScheduled())
+        verify(exactly = 0) { scheduler.updateReaction(event) }
+        assertFalse(event in node.reactions.current)
+        assertEquals(0, event.nextOccurrence.observers.size)
     }
 
-    "a successful environment-hosted event uses the same removal path" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+    @Test
+    fun `a successful environment-hosted event uses the same removal path`() {
         val event = AbsoluteEvent<Double>(environment, Time.ZERO)
         environment.addReaction(event)
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
         engine.initializeForTest()
         engine.stepForTest()
-        engine.drainCommand()
-        scheduler.reactions shouldNotContain event
-        scheduler.updates shouldNotContain event
-        environment.reactions.current shouldNotContain event
-        event.nextOccurrence.observers.size shouldBe 0
+        engine.drainCommands()
+        assertFalse(event.isScheduled())
+        verify(exactly = 0) { scheduler.updateReaction(event) }
+        assertFalse(event in environment.reactions.current)
+        assertEquals(0, event.nextOccurrence.observers.size)
     }
 
-    "events of both hosts execute once and leave no scheduling state or clonable trace" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val node = GenericNode(environment)
-        val executions = mutableListOf<Action<Double>>()
-        val distribution = CountingDistribution()
-        val absolute = AbsoluteEvent<Double>(node, DoubleTime(0.5)).apply {
-            actions = listOf(CountingAction(this, executions))
-        }
-        val conditional = ConditionalEvent(node, distribution).apply {
-            actions = listOf(CountingAction(this, executions))
-        }
-        val environmentEvent = AbsoluteEvent<Double>(environment, DoubleTime(3.0)).apply {
-            actions = listOf(CountingAction(this, executions))
-        }
+    @Test
+    fun `events of both hosts execute once and leave no scheduling state or clonable trace`() {
+        val distribution = countingDistribution()
+        val absolute = AbsoluteEvent<Double>(node, DoubleTime(0.5))
+        val conditional = ConditionalEvent(node, distribution)
+        val environmentEvent = AbsoluteEvent<Double>(environment, DoubleTime(3.0))
+        val events = listOf(absolute, conditional, environmentEvent)
+        val actions = events.map { event -> mockAction(event).also { event.actions = listOf(it) } }
         node.addReaction(absolute)
         node.addReaction(conditional)
         environment.addReaction(environmentEvent)
-        environment.addNode(node, environment.makePosition(0, 0))
-        val events = listOf(absolute, conditional, environmentEvent)
+        node.place()
         val clonedBeforeFiring = node.cloneNode(Time.ZERO).reactions.current
-        clonedBeforeFiring.size shouldBe 1
-        clonedBeforeFiring.single().shouldBeInstanceOf<ConditionalEvent<Double>>()
-        clonedBeforeFiring.single() shouldNotBe conditional
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+        assertEquals(1, clonedBeforeFiring.size)
+        assertIs<ConditionalEvent<Double>>(clonedBeforeFiring.single())
+        assertNotSame(conditional, clonedBeforeFiring.single())
         engine.initializeForTest()
         repeat(events.size) {
             engine.stepForTest()
-            engine.drainCommand()
+            engine.drainCommands()
         }
-        executions.size shouldBe events.size
-        engine.step shouldBe events.size.toLong()
-        distribution.samples shouldBe 1
+        actions.forEach { verify(exactly = 1) { it.execute() } }
+        assertEquals(events.size.toLong(), engine.step)
+        verify(exactly = 1) { distribution.sample() }
         events.forEach { event ->
-            scheduler.reactions shouldNotContain event
-            scheduler.updates shouldNotContain event
-            event.nextOccurrence.observers.size shouldBe 0
+            assertFalse(event.isScheduled())
+            verify(exactly = 0) { scheduler.updateReaction(event) }
+            assertEquals(0, event.nextOccurrence.observers.size)
         }
-        node.reactions.current.shouldBeEmpty()
-        environment.reactions.current.shouldBeEmpty()
-        node.cloneNode(DoubleTime(3.0)).reactions.current.shouldBeEmpty()
+        assertTrue(node.reactions.current.isEmpty())
+        assertTrue(environment.reactions.current.isEmpty())
+        assertTrue(node.cloneNode(DoubleTime(3.0)).reactions.current.isEmpty())
         engine.stepForTest()
-        executions.size shouldBe events.size
-        engine.step shouldBe events.size.toLong()
+        actions.forEach { verify(exactly = 1) { it.execute() } }
+        assertEquals(events.size.toLong(), engine.step)
     }
 
-    "an absolute event expires at its occurrence when its conditions are invalid" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val node = GenericNode(environment)
+    @Test
+    fun `an absolute event expires at its occurrence when its conditions are invalid`() {
         val event = AbsoluteEvent<Double>(node, Time.ZERO)
-        val condition = InvalidCondition(event)
+        val condition = mockk<Condition<Double>>(relaxed = true) {
+            every { reaction } returns event
+            every { isValid } returns observe(false)
+        }
         event.conditions = listOf(condition)
         node.addReaction(event)
-        environment.addNode(node, environment.makePosition(0, 0))
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+        node.place()
         engine.initializeForTest()
-        event.nextOccurrence.current shouldBe Time.ZERO
-        event.canExecute.current shouldBe true
+        assertEquals(Time.ZERO, event.nextOccurrence.current)
+        assertTrue(event.canExecute.current)
         engine.stepForTest()
-        engine.drainCommand()
-        engine.step shouldBe 1L
-        condition.readySignals shouldBe 0
-        scheduler.reactions shouldNotContain event
-        node.reactions.current shouldNotContain event
+        engine.drainCommands()
+        assertEquals(1L, engine.step)
+        verify(exactly = 0) { condition.beforeReactionFires() }
+        assertFalse(event.isScheduled())
+        assertFalse(event in node.reactions.current)
     }
 
-    "runtime host mutations synchronize scheduler membership for both host types" {
-        RunningHosts().run {
+    @Test
+    fun `runtime host mutations synchronize scheduler membership for both host types`() {
+        node.place()
+        engine.initializeForTest()
+        val nodeReaction = mockReaction()
+        val environmentReaction = mockReaction(hostedBy = environment)
+        node.addReaction(nodeReaction)
+        environment.addReaction(environmentReaction)
+        engine.drainCommands()
+        assertTrue(nodeReaction.isScheduled())
+        assertTrue(environmentReaction.isScheduled())
+        node.removeReaction(nodeReaction)
+        environment.removeReaction(environmentReaction)
+        engine.drainCommands()
+        assertFalse(nodeReaction.isScheduled())
+        assertFalse(environmentReaction.isScheduled())
+    }
+
+    @Test
+    fun `reactions added and removed within one mutation are never initialized`() {
+        node.place()
+        engine.initializeForTest()
+        val transientNode = GenericNode(environment)
+        val reactions = listOf(mockReaction(), mockReaction(hostedBy = environment), mockReaction(transientNode))
+        val (nodeReaction, environmentReaction, transientNodeReaction) = reactions
+        transientNode.addReaction(transientNodeReaction)
+        engine.schedule {
             node.addReaction(nodeReaction)
-            engine.drainCommand()
-            environment.addReaction(environmentReaction)
-            engine.drainCommand()
-            scheduler.reactions shouldContain nodeReaction
-            scheduler.reactions shouldContain environmentReaction
             node.removeReaction(nodeReaction)
-            engine.drainCommand()
+            environment.addReaction(environmentReaction)
             environment.removeReaction(environmentReaction)
-            engine.drainCommand()
-            scheduler.reactions shouldNotContain nodeReaction
-            scheduler.reactions shouldNotContain environmentReaction
+            transientNode.place(1, 1)
+            environment.removeNode(transientNode)
+        }
+        engine.drainCommands()
+        reactions.forEach { reaction ->
+            verify(exactly = 0) { reaction.initializationComplete(any(), any()) }
+            verify(exactly = 0) { scheduler.addReaction(reaction) }
+            assertEquals(0, reaction.nextOccurrence.observers.size)
         }
     }
 
-    "reactions added and removed within one mutation are never scheduled" {
-        RunningHosts().run {
-            val transientNode = GenericNode(environment)
-            val transientNodeReaction = EmittingNodeReaction(transientNode)
-            transientNode.addReaction(transientNodeReaction)
-            engine.schedule {
-                node.addReaction(nodeReaction)
-                node.removeReaction(nodeReaction)
-                environment.addReaction(environmentReaction)
-                environment.removeReaction(environmentReaction)
-                environment.addNode(transientNode, environment.makePosition(1, 1))
-                environment.removeNode(transientNode)
-            }
-            engine.drainCommands()
-            val transientReactions = listOf(nodeReaction, environmentReaction, transientNodeReaction)
-            transientReactions.forEach { reaction ->
-                scheduler.reactions shouldNotContain reaction
-                scheduler.updates shouldNotContain reaction
-                reaction.nextOccurrence.observers.size shouldBe 0
-            }
-        }
-    }
-
-    "reactions added before initialization are scheduled once and can be removed afterwards" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
-        val node = GenericNode(environment)
-        val reaction = EmittingNodeReaction(node)
-        node.addReaction(reaction)
-        environment.addNode(node, environment.makePosition(0, 0))
+    @Test
+    fun `reactions added before initialization are scheduled once and can be removed afterwards`() {
+        val reaction = mockReaction().also(node::addReaction)
+        node.place()
         engine.initializeForTest()
         engine.drainCommands()
-        scheduler.reactions.count { it === reaction } shouldBe 1
+        verify(exactly = 1) { scheduler.addReaction(reaction) }
         node.removeReaction(reaction)
         engine.drainCommands()
-        scheduler.reactions shouldNotContain reaction
-        reaction.nextOccurrence.observers.size shouldBe 0
+        assertFalse(reaction.isScheduled())
     }
 
-    "runtime node membership synchronizes each hosted reaction" {
-        val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+    @Test
+    fun `runtime node membership synchronizes each hosted reaction`() {
         engine.initializeForTest()
-        val node = GenericNode(environment)
-        val reaction = EmittingNodeReaction(node)
-        node.addReaction(reaction)
-        environment.addNode(node, environment.makePosition(0, 0))
-        engine.drainCommand()
-        scheduler.reactions shouldContain reaction
+        val reaction = mockReaction().also(node::addReaction)
+        node.place()
+        engine.drainCommands()
+        assertTrue(reaction.isScheduled())
         environment.removeNode(node)
-        engine.drainCommand()
-        scheduler.reactions shouldNotContain reaction
-        reaction.disposed shouldBe true
+        engine.drainCommands()
+        assertFalse(reaction.isScheduled())
+        verify { reaction.dispose() }
     }
 
-    "duplicate registration is rejected" {
-        val (environment, _, _) = fixture()
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+    @Test
+    fun `duplicate registration is rejected`() {
+        node.addReaction(mockReaction())
+        node.place()
         engine.initializeForTest()
-        shouldThrow<IllegalStateException> { engine.initializeForTest() }
+        assertFailsWith<IllegalStateException> { engine.initializeForTest() }
     }
 
-    "failed scheduler registration propagates without an engine subscription" {
-        val (environment, _, reaction) = fixture()
-        val scheduler = RecordingScheduler<Double>().also {
-            it.throwOnAdd = true
-        }
-        val engine = TestEngine(environment, scheduler)
-        shouldThrow<IllegalStateException> { engine.initializeForTest() }
-        reaction.nextOccurrence.observers.size shouldBe 0
-        scheduler.reactions shouldNotContain reaction
-        reaction.disposed shouldBe false
+    @Test
+    fun `failed scheduler registration propagates without an engine subscription`() {
+        val reaction = mockReaction().also(node::addReaction)
+        node.place()
+        every { scheduler.addReaction(any()) } throws IllegalStateException("synthetic scheduler failure")
+        assertFailsWith<IllegalStateException> { engine.initializeForTest() }
+        assertEquals(0, reaction.nextOccurrence.observers.size)
+        assertFalse(reaction.isScheduled())
+        verify(exactly = 0) { reaction.dispose() }
     }
 
-    "running-engine callbacks are confined to the simulation thread" {
-        val (environment, _, reaction) = fixture()
-        val scheduler = RecordingScheduler<Double>()
-        val engine = TestEngine(environment, scheduler)
+    @Test
+    fun `running-engine callbacks are confined to the simulation thread`() {
+        val reaction = mockReaction().also(node::addReaction)
+        node.place()
         val worker = Thread(engine::run)
         worker.start()
         try {
-            val deadline = System.nanoTime() + 5_000_000_000L
-            while (engine.status != Status.READY && System.nanoTime() < deadline) {
-                delay(10.milliseconds)
-            }
-            engine.status shouldBe Status.READY
-            scheduler.reactions shouldContain reaction
-            val updatesBeforeEmission = scheduler.updates.size
-            shouldThrow<IllegalStateException> { reaction.emit(DoubleTime(3.0)) }
-            scheduler.updates.size shouldBe updatesBeforeEmission
+            assertEquals(Status.READY, engine.waitFor(Status.READY, 5, TimeUnit.SECONDS))
+            assertTrue(reaction.isScheduled())
+            assertFailsWith<IllegalStateException> { reaction.emit(DoubleTime(3.0)) }
+            verify(exactly = 0) { scheduler.updateReaction(reaction) }
         } finally {
             engine.terminate()
             worker.join(5_000)
-            worker.isAlive shouldBe false
+            assertFalse(worker.isAlive)
         }
     }
-})
+}

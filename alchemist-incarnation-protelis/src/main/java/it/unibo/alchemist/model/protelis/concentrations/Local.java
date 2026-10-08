@@ -11,6 +11,8 @@ package it.unibo.alchemist.model.protelis.concentrations;
 
 import it.unibo.alchemist.model.Concentration;
 
+import java.util.Objects;
+
 /**
  */
 public final class Local implements Concentration<Object> {
@@ -70,7 +72,7 @@ public final class Local implements Concentration<Object> {
 
     @Override
     public int hashCode() {
-        return content.hashCode();
+        return Objects.hashCode(content);
     }
 
 }

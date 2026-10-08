@@ -149,7 +149,7 @@ through a
 
 | Mandatory keys | Optional keys                                                                                                                           |
 |----------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `incarnation`  | `deployments`, `environment`, `export`, `layers`, `launcher`, `network-model`, `remote-dependencies`, `seeds`, `terminate`, `variables` |
+| `incarnation`  | `deployments`, `engine`, `environment`, `export`, `layers`, `launcher`, `network-model`, `remote-dependencies`, `seeds`, `terminate`, `variables` |
 
 #### Examples
 
@@ -341,6 +341,19 @@ Same as [parameters](#parameters)
 
 ---
 
+### `engine`
+
+**Type**: SpecMap
+
+Builds the {{% api package="core" class="Simulation" %}} executing the scenario
+using the [arbitrary class loading system](#arbitrary-class-loading-system);
+the environment is provided as a contextual parameter.
+If left unspecified, defaults to the reactive {{% api package="core" class="Engine" %}},
+which is the only engine shipped with Alchemist.
+See [the engine configuration guide](/howtos/execution/engine/).
+
+---
+
 ### `environment`
 
 **Type**: SpecMap
@@ -350,6 +363,7 @@ using the same syntax of [arbitrary class loading system](#arbitrary-class-loadi
 
 If left unspecified, defaults to a bidimensional Euclidean manifold:
 {{% api package="model.environments" class="Continuous2DEnvironment" %}}.
+Reactions hosted by the environment are declared in [`global-programs`](#environmentglobal-programs).
 
 **Type**: SpecMap
 
@@ -363,6 +377,30 @@ If left unspecified, defaults to a bidimensional Euclidean manifold:
   {{<code path="src/test/resources/website-snippets/envtype-fullyqualified-protelis.yml" >}}
 * Explicitly builds a {{% api package="model.environments" class="Continuous2DEnvironment" %}} explicitly specifying that no parameters but the contextual ones should be used
   {{<code path="src/test/resources/website-snippets/envtype-explicitparameters-protelis.yml" >}}
+
+---
+
+### `environment.global-programs`
+
+**Type**: Traversable of SpecMap
+
+Reactions hosted by the environment rather than by a node.
+Each entry builds a {{% api class="Reaction" %}} whose host is the environment
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+[Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/) describes how reaction hosts
+own their reactions.
+
+**(Multi)Spec**
+
+| Mandatory keys | Optional keys                                             |
+|----------------|-----------------------------------------------------------|
+| `type`         | `parameters`, `conditions`, `time-distribution`, `actions` |
+
+#### Examples
+
+* Replacement of the reaction updating the physics of an
+  {{% api package="model.cognitive.environments" class="EnvironmentWithDynamics" %}}
+  {{<code path="src/test/resources/website-snippets/customize-physics-update-rate3.yml" >}}
 
 ---
 

@@ -38,11 +38,13 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
 
     /**
      * Add a [terminator] indicating whether the simulation should be considered finished.
+     * The simulation finishes as soon as any of the terminators is satisfied.
      */
     fun addTerminator(terminator: TerminationPredicate<T, P>)
 
     /**
      * Add a [terminator] indicating whether the simulation should be considered finished.
+     * The simulation finishes as soon as any of the terminators is satisfied.
      */
     fun addTerminator(terminator: (Environment<T, P>) -> Boolean) = addTerminator(TerminationPredicate(terminator))
 
@@ -185,7 +187,7 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     val sizeInDistanceUnits: DoubleArray
 
     /**
-     * Return true if all the terminators are true.
+     * Whether any of the terminators is satisfied.
      */
     val isTerminated: Boolean
 

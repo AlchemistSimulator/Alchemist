@@ -6,7 +6,6 @@ org.yaml.snakeyaml.emitter
 org.yaml.snakeyaml.env
 org.yaml.snakeyaml.error
 org.yaml.snakeyaml.events
-org.yaml.snakeyaml.extensions.compactnotation
 org.yaml.snakeyaml.inspector
 org.yaml.snakeyaml.introspector
 org.yaml.snakeyaml.nodes

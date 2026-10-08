@@ -25,8 +25,11 @@ dependencies {
     implementation(alchemist("implementationbase"))
     implementation(alchemist("physics"))
     implementation(libs.resourceloader)
-    implementation(libs.bundles.scala)
-    implementation(libs.bundles.scalacache)
+    implementation(libs.scala3.library)
+    implementation(libs.guava)
+    implementation(libs.slf4j)
+
+    runtimeOnly(libs.scala3.repl)
 
     testCompileOnly(libs.spotbugs.annotations)
     testImplementation(alchemist("engine"))
@@ -47,7 +50,7 @@ val scalafmtVersion = scalafmtConfiguration.readLines()
 spotless {
     scala {
         target("src/**/*.scala")
-        scalafmt(scalafmtVersion).configFile(scalafmtConfiguration).scalaMajorVersion("2.13")
+        scalafmt(scalafmtVersion).configFile(scalafmtConfiguration)
     }
 }
 

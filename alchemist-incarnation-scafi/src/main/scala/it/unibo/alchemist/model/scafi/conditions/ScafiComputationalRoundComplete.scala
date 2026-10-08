@@ -13,27 +13,22 @@ import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
 import it.unibo.alchemist.model.scafi.actions.RunScafiProgram
 import it.unibo.alchemist.model.{Condition, NodeReaction}
 
-final class ScafiComputationalRoundComplete[T](reaction: NodeReaction[T], val program: RunScafiProgram[_, _])
-    extends AbstractLocalCondition[T](reaction) {
+final class ScafiComputationalRoundComplete[T](reaction: NodeReaction[T], val program: RunScafiProgram[?, ?])
+    extends AbstractLocalCondition[T](reaction):
   setValidity(program.observeComputationalCycleComplete.map(valid => java.lang.Boolean.valueOf(valid)))
 
-  override protected def cloneOnNodeReaction(newReaction: NodeReaction[T]): Condition[T] = {
+  override protected def cloneOnNodeReaction(newReaction: NodeReaction[T]): Condition[T] =
     val node = newReaction.getHost
     ScafiIncarnationUtils.runInScafiDeviceContext[T, Condition[T]](
       node,
       getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName,
-      device => {
-        val possibleRefs: Iterable[RunScafiProgram[_, _]] = ScafiIncarnationUtils.allScafiProgramsFor(device.getNode)
-        if (possibleRefs.size == 1) {
-          new ScafiComputationalRoundComplete(newReaction, possibleRefs.head)
-        } else {
+      device =>
+        val possibleRefs: Iterable[RunScafiProgram[?, ?]] = ScafiIncarnationUtils.allScafiProgramsFor(device.getNode)
+        if possibleRefs.size == 1 then new ScafiComputationalRoundComplete(newReaction, possibleRefs.head)
+        else
           throw new IllegalStateException(
             "There must be one and one only unconfigured " + classOf[Nothing].getSimpleName
           )
-        }
-      }
     )
-  }
 
   override def toString: String = program.asMolecule.getName + " completed round"
-}

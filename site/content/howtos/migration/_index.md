@@ -8,8 +8,6 @@ summary = "How to port simulations and their extensions across Alchemist version
 
 ### Porting simulations and their extensions across Alchemist versions
 
-# Migration
-
 ## Contents
 
 {{% children description="true" depth="30" %}}

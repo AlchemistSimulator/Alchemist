@@ -12,11 +12,11 @@ import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.observables.util.MutableObservables
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.{Time as AlchemistTime, *}
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.*
 import it.unibo.alchemist.model.scafi.nodes.SimpleNodeManager
-import it.unibo.alchemist.model.{Time => AlchemistTime, _}
-import it.unibo.alchemist.scala.PimpMyAlchemist._
+import it.unibo.alchemist.scala.PimpMyAlchemist.*
 import it.unibo.scafi.space.Point3D
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.FastMath
@@ -33,7 +33,7 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
     randomGenerator: RandomGenerator,
     programName: String,
     retentionTime: Double
-) extends RunScafiProgram[Any, P](environment, reaction, randomGenerator, programName, retentionTime) {
+) extends RunScafiProgram[Any, P](environment, reaction, randomGenerator, programName, retentionTime):
 
   def this(
       environment: Environment[Any, P],
@@ -48,7 +48,6 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
       programName,
       FastMath.nextUp(1.0 / RunScafiProgram.recurrenceRate(reaction))
     )
-}
 
 sealed class RunScafiProgram[T, P <: Position[P]](
     environment: Environment[T, P],
@@ -56,7 +55,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     randomGenerator: RandomGenerator,
     programName: String,
     retentionTime: Double
-) extends AbstractLocalAction[T](reaction) {
+) extends AbstractLocalAction[T](reaction):
 
   def this(
       environment: Environment[T, P],
@@ -74,25 +73,25 @@ sealed class RunScafiProgram[T, P <: Position[P]](
 
   import RunScafiProgram.NeighborData
   private val node: Node[T] = reaction.getHost
-  val program: ScafiIncarnationForAlchemist.Context with ScafiIncarnationForAlchemist.ContextOps => ScafiIncarnationForAlchemist.Export with ScafiIncarnationForAlchemist.ExportOps =
+  val program: CONTEXT => EXPORT =
     ResourceLoader.classForName(programName).getDeclaredConstructor().newInstance().asInstanceOf[CONTEXT => EXPORT]
   val programNameMolecule = new SimpleMolecule(programName)
   lazy val nodeManager = new SimpleNodeManager(node)
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
   private val commonNames = new ScafiIncarnationForAlchemist.StandardSensorNames {}
   private val _completed = MutableObservables.observe[Boolean](false)
+
   def asMolecule: SimpleMolecule = programNameMolecule
 
   override protected def cloneOnNodeReaction(newReaction: NodeReaction[T]): RunScafiProgram[T, P] =
     new RunScafiProgram(environment, newReaction, randomGenerator, programName, retentionTime)
 
-  override def execute(): Unit = {
-    import scala.jdk.CollectionConverters._
-    implicit def euclideanToPoint(point: P): Point3D = point.getDimensions match {
+  override def execute(): Unit =
+    import scala.jdk.CollectionConverters.*
+    implicit def euclideanToPoint(point: P): Point3D = point.getDimensions match
       case 1 => Point3D(point.getCoordinate(0), 0, 0)
       case 2 => Point3D(point.getCoordinate(0), point.getCoordinate(1), 0)
       case 3 => Point3D(point.getCoordinate(0), point.getCoordinate(1), point.getCoordinate(2))
-    }
     val position: P = environment.getCurrentPosition(node)
     // NB: We assume it.unibo.alchemist.model.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
@@ -104,24 +103,25 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       .get
     def alchemistTimeToNanos(time: AlchemistTime): Long = (time.toDouble * 1_000_000_000).toLong
     val currentTime: Long = alchemistTimeToNanos(alchemistCurrentTime)
-    if (!neighborhoodManager.contains(node.getId)) {
+    if !neighborhoodManager.contains(node.getId) then
       neighborhoodManager += node.getId -> NeighborData(factory.emptyExport(), position, Double.NaN)
-    }
-    neighborhoodManager = neighborhoodManager.filter { case (id, data) =>
-      id == node.getId || data.executionTime >= alchemistCurrentTime - retentionTime
-    }
+    neighborhoodManager = neighborhoodManager.filter:
+      case (id, data) =>
+        id == node.getId || data.executionTime >= alchemistCurrentTime - retentionTime
     val deltaTime: Long =
       currentTime - neighborhoodManager.get(node.getId).map(d => alchemistTimeToNanos(d.executionTime)).getOrElse(0L)
-    val localSensors = node.getContents.asScala.map { case (k, v) => k.getName -> v }
+    val localSensors = node.getContents.asScala
+      .map:
+        case (k, v) => k.getName -> v
 
     val neighborhoodSensors = scala.collection.mutable.Map[CNAME, Map[ID, Any]]()
     val exports: Iterable[(ID, EXPORT)] = neighborhoodManager.view.mapValues(_.exportData)
-    val context = new ContextImpl(node.getId, exports, localSensors, Map.empty) {
+    val context = new ContextImpl(node.getId, exports, localSensors, Map.empty):
       override def nbrSense[T](nsns: CNAME)(nbr: ID): Option[T] =
         neighborhoodSensors
           .getOrElseUpdate(
             nsns,
-            nsns match {
+            nsns match
               case commonNames.NBR_LAG =>
                 neighborhoodManager.mapValuesStrict[FiniteDuration](nbr =>
                   FiniteDuration(alchemistTimeToNanos(alchemistCurrentTime - nbr.executionTime), TimeUnit.NANOSECONDS)
@@ -146,12 +146,11 @@ sealed class RunScafiProgram[T, P <: Position[P]](
                 neighborhoodManager.mapValuesStrict(nbr =>
                   alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime
                 )
-            }
           )
           .get(nbr)
           .map(_.asInstanceOf[T])
 
-      override def sense[T](lsns: String): Option[T] = (lsns match {
+      override def sense[T](lsns: String): Option[T] = (lsns match
         case LSNS_ALCHEMIST_COORDINATES => Some(position.getCoordinates)
         case commonNames.LSNS_DELTA_TIME => Some(FiniteDuration(deltaTime, TimeUnit.NANOSECONDS))
         case commonNames.LSNS_POSITION =>
@@ -159,8 +158,8 @@ sealed class RunScafiProgram[T, P <: Position[P]](
           Some(
             Point3D(
               position.getCoordinate(0),
-              if (k >= 2) position.getCoordinate(1) else 0,
-              if (k >= 3) position.getCoordinate(2) else 0
+              if k >= 2 then position.getCoordinate(1) else 0,
+              if k >= 3 then position.getCoordinate(2) else 0
             )
           )
         case commonNames.LSNS_TIMESTAMP => Some(currentTime)
@@ -176,14 +175,12 @@ sealed class RunScafiProgram[T, P <: Position[P]](
         case LSNS_ALCHEMIST_RANDOM => Some(randomGenerator)
         case LSNS_ALCHEMIST_TIMESTAMP => Some(alchemistCurrentTime)
         case _ => localSensors.get(lsns)
-      }).map(_.asInstanceOf[T])
-    }
+      ).map(_.asInstanceOf[T])
     val computed = program(context)
     node.setConcentration(programName, computed.root[T]())
     val toSend = NeighborData(computed, position, alchemistCurrentTime)
     neighborhoodManager = neighborhoodManager + (node.getId -> toSend)
     _completed.update(_ => true)
-  }
 
   def sendExport(id: ID, exportData: NeighborData[P]): Unit = neighborhoodManager += id -> exportData
 
@@ -195,17 +192,12 @@ sealed class RunScafiProgram[T, P <: Position[P]](
 
   def prepareForComputationalCycle: Unit = _completed.update(_ => false)
 
-}
-
-object RunScafiProgram {
-  private[actions] def recurrenceRate[T](reaction: NodeReaction[T]): Double = reaction match {
-    case recurring: TimeDistributedReaction[_] => recurring.getRate
+object RunScafiProgram:
+  private[actions] def recurrenceRate[T](reaction: NodeReaction[T]): Double = reaction match
+    case recurring: TimeDistributedReaction[?] => recurring.getRate
     case _ => throw new IllegalArgumentException(s"$reaction does not expose a recurrence rate")
-  }
 
   case class NeighborData[P <: Position[P]](exportData: EXPORT, position: P, executionTime: AlchemistTime)
 
-  implicit class RichMap[K, V](map: Map[K, V]) {
+  implicit class RichMap[K, V](map: Map[K, V]):
     def mapValuesStrict[T](f: V => T): Map[K, T] = map.map(tp => tp._1 -> f(tp._2))
-  }
-}

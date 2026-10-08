@@ -1,8 +1,0 @@
-$dokka.format:javadoc-v1
-$dokka.linkExtension:html
-$dokka.location:com.google.devtools.ksp.processing/Dependencies.Companion///PointingToDeclaration/com/google/devtools/ksp/processing/Dependencies.Companion.html
-com.google.devtools.ksp
-com.google.devtools.ksp.processing
-com.google.devtools.ksp.symbol
-com.google.devtools.ksp.visitor
-

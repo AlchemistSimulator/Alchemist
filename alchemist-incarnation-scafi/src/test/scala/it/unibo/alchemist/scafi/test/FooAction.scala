@@ -13,8 +13,7 @@ import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.{Action, NodeReaction}
 
-class FooAction(reaction: NodeReaction[Any], moleculeName: String) extends AbstractLocalAction[Any](reaction) {
+class FooAction(reaction: NodeReaction[Any], moleculeName: String) extends AbstractLocalAction[Any](reaction):
   override protected def cloneOnNodeReaction(newReaction: NodeReaction[Any]): Action[Any] =
-    new FooAction(newReaction, moleculeName)
-  override def execute(): Unit = getTargetNode.getConcentration(new SimpleMolecule(moleculeName))
-}
+    FooAction(newReaction, moleculeName)
+  override def execute(): Unit = getTargetNode.getConcentration(SimpleMolecule(moleculeName))

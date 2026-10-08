@@ -8,8 +8,6 @@ summary = "Execution of multiple simulations, locally or in a distributed enviro
 
 ### Run batches, locally or in a distributed fashion
 
-# Execution
-
 ## Contents
 
 {{% children description="true" depth="30" %}}

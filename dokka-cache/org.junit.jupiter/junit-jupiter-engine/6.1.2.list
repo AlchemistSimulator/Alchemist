@@ -1,9 +1,0 @@
-module:org.junit.jupiter.engine
-org.junit.jupiter.engine
-org.junit.jupiter.engine.config
-org.junit.jupiter.engine.descriptor
-org.junit.jupiter.engine.discovery
-org.junit.jupiter.engine.discovery.predicates
-org.junit.jupiter.engine.execution
-org.junit.jupiter.engine.extension
-org.junit.jupiter.engine.support

@@ -9,7 +9,7 @@ on:
 
 jobs:
   update-ancillary-files:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     concurrency:
       group: javadoc-io-${{ github.workflow }}-${{ github.event.number || github.ref }}
     steps:
@@ -17,7 +17,7 @@ jobs:
         uses: danysk/action-checkout@e9de212326294d8149a4bd74c85db6c6bc2b6da3 # 0.2.31
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - uses: DanySK/build-check-deploy-gradle-action@18990807de3888eb35e6ee3eda4a84abecc3a25d # 4.0.42
+      - uses: DanySK/build-check-deploy-gradle-action@b0d5606ce1a3a97a6bfe9fa531401f0780e6e76e # 4.0.48
         with:
           pre-build-command: rm -rf dokka-cache
           build-command: |

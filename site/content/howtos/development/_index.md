@@ -8,8 +8,6 @@ summary = "How to work on Alchemist itself and contribute to the project, hence 
 
 ### Guides for the project contributors
 
-# Developing Alchemist
-
 ## Contents
 
 {{% children description="true" depth="30" %}}

@@ -76,3 +76,8 @@ relativeURLs = true
     name = "<i class='fas fa-balance-scale'></i> License"
     url = "/license/"
     weight = 40
+
+# Expose the repository root to shortcodes as assets/alchemist (readFile does not follow symlinks)
+[[module.mounts]]
+  source = ".."
+  target = "assets/alchemist"

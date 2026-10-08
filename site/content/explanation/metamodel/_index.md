@@ -61,6 +61,10 @@ The behavior of the system is described in terms of reactions. As such, here's a
 
 ![Alchemist reaction](/images/simulator/reaction.svg)
 
+In the general model, conditions gate a reaction through their validity;
+only specialized reaction families derive their rate from the typed state of the conditions they accept
+(see [Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/)).
+
 
 ### Incarnations
 

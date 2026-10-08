@@ -49,6 +49,8 @@ configured exponential rate and the typed state of its conditions.
 Molecule quantities determine mass-action factors, neighbor conditions provide selection weights, and mechanical
 conditions contribute tension-dependent factors.
 Changes to these inputs refresh scheduling even when condition validity remains true.
+It is a Markovian reaction: the general rules for preserving and rescaling its pending occurrence are described in
+[Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/#reactive-invalidation).
 
 The binomial mass-action calculation requires discrete molecule counts: local, neighboring, and extracellular
 quantities must be non-negative integers no greater than `Int.MAX_VALUE`.

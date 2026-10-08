@@ -86,7 +86,8 @@ It also defines:
 
 * Means for translating strings into named entities (molecules)
 * Means for obtaining a number when given a node, a molecule and a string representing a property
-* Means for building incarnation-specific model entities given an appropriate context and a parameter String
+* Means for building incarnation-specific nodes, time distributions, reactions, conditions, and actions,
+  given the entity hosting or owning them (the environment, a node, or a reaction) and a parameter String
 
 These functionalities are required in order to support a uniform access to different incarnations.
 

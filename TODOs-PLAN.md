@@ -708,15 +708,19 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
 - [ ] Migrate remaining Java APIs to Kotlin one type at a time; Java files modified significantly in earlier
   phases must already have been ported as part of those changes.
 - [ ] Never leave duplicate fully qualified Java and Kotlin declarations during a port.
-- [ ] Finalize the `ListSet` replacements and ordered immutable collection choices without weakening uniqueness
-  guarantees or exposing internally mutable collections.
-- [ ] Remove the `org.danilopianini:javalib-java7:0.6.1` declarations from build files and version catalogs.
-- [ ] Verify that no source references `ListSet` and that `javalib-java7` is absent from compile and runtime
-  dependency graphs, including as an accidental transitive dependency.
+- [x] Finalize the `ListSet` replacements and ordered immutable collection choices without weakening uniqueness
+  guarantees or exposing internally mutable collections. No source references `ListSet`, and the unused `listset`
+  catalog entry is removed.
+- [x] Remove the `org.danilopianini:javalib-java7:0.6.1` declarations from build files and version catalogs, except
+  for the Swing UI: decided to keep it there until the Swing UI is removed.
+- [x] Verify that no source references `ListSet` and that `javalib-java7` is absent from compile and runtime
+  dependency graphs outside the Swing UI: it is declared only by `alchemist-swingui`, and the classes from
+  `org.danilopianini.lang`/`util` used elsewhere come from `boilerplate` and `java-quadtree`.
 - [ ] Preserve intentional Java and Scala interoperation or document source-breaking replacements.
 - [ ] Remove compatibility shims only after all repository consumers migrate.
 - [ ] Update public documentation and migration notes for all breaking API changes.
-- [ ] Remove the remaining Swing UI `org.danilopianini:javalib-java7:0.6.1` dependency.
+- [ ] Remove the remaining Swing UI `org.danilopianini:javalib-java7:0.6.1` dependency. Deferred: it goes away with
+  the Swing UI.
 
 ## Phase 12: audit documentation coherence
 

@@ -718,7 +718,9 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   `org.danilopianini.lang`/`util` used elsewhere come from `boilerplate` and `java-quadtree`.
 - [ ] Preserve intentional Java and Scala interoperation or document source-breaking replacements.
 - [ ] Remove compatibility shims only after all repository consumers migrate.
-- [ ] Update public documentation and migration notes for all breaking API changes.
+- [x] Update public documentation and migration notes for all breaking API changes: the how-to
+  `howtos/migration/reactive-engine` maps the reactive-engine changes to their replacements; Kotlin API
+  changes are documented together with the ports that introduce them.
 - [ ] Remove the remaining Swing UI `org.danilopianini:javalib-java7:0.6.1` dependency. Deferred: it goes away with
   the Swing UI.
 
@@ -731,19 +733,31 @@ Current repository-wide Phase 2 frontier from `./gradlew --parallel build`:
   method and property names in inline code.
 - [x] Keep the reaction-scheduling page limited to shared model contracts and move incarnation-specific policies to
   their respective incarnation documentation.
-- [ ] Audit all website content for present-state prose. Remove statements framed around mechanisms that are absent,
+- [x] Audit all website content for present-state prose. Remove statements framed around mechanisms that are absent,
   were removed, or belonged to earlier architectures; retain historical comparisons only in explicitly historical
   or migration-oriented pages.
-- [ ] Audit all website references to public Alchemist types and replace bare or code-formatted class names with
+- [x] Audit all website references to public Alchemist types and replace bare or code-formatted class names with
   package-correct Hugo `api` shortcodes. Check that every generated target exists and that similarly named types
   resolve unambiguously.
-- [ ] Cross-check the website against public KDoc/Javadoc, YAML and CLI references, examples, diagrams, and current
+- [x] Cross-check the website against public KDoc/Javadoc, YAML and CLI references, examples, diagrams, and current
   implementation terminology. Resolve contradictory behavior, duplicated ownership descriptions, stale names,
   broken internal links, misleading summaries, and examples that no longer exercise the documented API.
-- [ ] Keep each concept in its canonical documentation section and link to it from adjacent pages. In particular,
+- [x] Keep each concept in its canonical documentation section and link to it from adjacent pages. In particular,
   keep scheduling semantics and ownership in the model scheduling page and engine-loop details in the engine page.
-- [ ] Run the Hugo build and its linked API-documentation/snippet checks after the audit, then record any intentional
-  historical terminology and remaining external blockers here.
+  Audit completed (2026-10-08) for the reactive-engine documentation: the engine how-to (with a migration notice for
+  the removed `BatchEngine`), termination (terminators combined in OR, checked after every executed reaction), the
+  physics how-to (`PhysicsUpdate` as an environment-hosted reaction declared in `global-programs`), the biochemistry
+  scheduling links, the YAML reference sections `engine` and `environment.global-programs`, and the migration how-to
+  `howtos/migration/reactive-engine`. Intentional historical terminology: the `BatchEngine` notice in
+  the engine how-to and the migration how-to.
+- [ ] Apply the corrections the audit found in pages unrelated to the reactive engine (YAML and CLI references,
+  monitors, export, repeatability, smartcam, GPS, Swing, quickstart and Gradle setup, MultiVesta, biochemistry DSL);
+  deferred to a follow-up branch.
+- [x] Run the Hugo build and its linked API-documentation/snippet checks after the audit, then record any intentional
+  historical terminology and remaining external blockers here. `hugoBuild` renders the site without errors (only
+  Hugo deprecation warnings from the theme and configuration), the website snippets pass their tests, and every
+  internal link and `api` shortcode of the audited pages resolves; the historical terminology is recorded above.
+  No external blockers.
 
 ## Validation protocol
 
@@ -772,6 +786,7 @@ Use repository Gradle tasks from the repository root.
 
 ## Progress log
 
+- 2026-10-08: Completed the reactive-engine documentation audit, with migration notes and a successful Hugo build.
 - 2026-10-07: Added deterministic scaling checks for invalidation fan-out and subscriptions.
 - 2026-10-07: Completed the per-module reaction audit; documented the execution-time occurrence contract.
 - 2026-10-07: Covered every observable node and environment input with emission tests.

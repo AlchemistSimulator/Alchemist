@@ -39,6 +39,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     private final double radius;
     private final double interaction;
     private final double speed;
+    private final double maximumStep;
 
     /**
      * @param environment
@@ -78,7 +79,8 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
         if (!(reaction instanceof final TimeDistributedReaction<?> timeDistributedReaction)) {
             throw new IllegalArgumentException(reaction + " does not expose a recurrence rate");
         }
-        this.speed = speed / timeDistributedReaction.getRate();
+        this.speed = speed;
+        this.maximumStep = speed / timeDistributedReaction.getRate();
         this.interaction = interaction;
     }
 
@@ -95,7 +97,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
                 }
             }
         }
-        return Math.max(speed / (crowd * interaction + 1), MINIMUM_DISTANCE_WALKED);
+        return Math.max(maximumStep / (crowd * interaction + 1), MINIMUM_DISTANCE_WALKED);
     }
 
     @Nonnull

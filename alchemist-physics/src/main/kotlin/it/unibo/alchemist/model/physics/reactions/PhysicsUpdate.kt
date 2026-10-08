@@ -22,7 +22,9 @@ import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
 import it.unibo.alchemist.model.timedistributions.WeibullTime
 
 /**
- * A global reaction responsible for updating a [Dynamics2DEnvironment].
+ * A reaction hosted by a [Dynamics2DEnvironment], advancing its physics at every occurrence.
+ * Without an explicit [timeDistribution] or rate, it fires 30 times per time unit; environments may install their own
+ * instance with a different rate (`EnvironmentWithDynamics` uses a rate of 1, unless the simulation provides one).
  */
 class PhysicsUpdate<T>(
     /** The physics environment advanced by this reaction. */

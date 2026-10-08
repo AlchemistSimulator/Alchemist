@@ -150,7 +150,7 @@ public final class InfiniteHalls<T> extends AbstractLimitedContinuous2D<T> {
     @Override
     protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         if (allowed(nx, ny)) {
-            return makePosition(nx - ox, ny - oy);
+            return makePosition(nx, ny);
         }
         final int snx = (int) (ox / s);
         final int sny = (int) (oy / s);
@@ -174,7 +174,7 @@ public final class InfiniteHalls<T> extends AbstractLimitedContinuous2D<T> {
             } else if (y > s) {
                 nym = sny * s + s;
             }
-        } else if (oxm >= si && oxm <= sf && oym <= si && oxm <= sf) {
+        } else if (oxm >= si && oxm <= sf && oym >= si && oym <= sf) {
             // Main room
             if (x < si) {
                 nxm = snx * s + si;

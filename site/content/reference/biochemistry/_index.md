@@ -6,9 +6,11 @@ summary = "Reference documentation of the reactions language for the biochemistr
 +++
 
 ## The Biochemistry DSL
-Biochemistry programs are written in a and human-readable syntax.
-Valid programs can be written directly into 
-Those simple reactions can be fed directly as [`program`](/reference/yaml/#programprogram) in the YAML file.
+Biochemistry programs are written in a simple and human-readable syntax.
+Programs are fed directly as [`program`](/reference/yaml/#programprogram) in the YAML file, and turned into
+{{% api package="model.biochemistry.reactions" class="BiochemicalNodeReaction" %}}s by the incarnation.
+How such reactions are scheduled is explained in the
+[biochemistry incarnation explanation](/explanation/biochemistry/#scheduling).
 
 ### Reactions
 A reaction rule can be set using the symbol ``-->`` according to chemistry equations,

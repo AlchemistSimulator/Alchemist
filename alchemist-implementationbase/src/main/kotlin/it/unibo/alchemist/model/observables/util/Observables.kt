@@ -135,6 +135,7 @@ object Observables {
         override fun startMonitoring(lazy: Boolean) {
             val callback: (C) -> Unit = { current ->
                 reconcile(
+                    owner = this,
                     sources = sources,
                     current = current,
                     map = map,
@@ -146,6 +147,7 @@ object Observables {
             this@combineLatestCollection.onChange(this, !lazy, callback)
             if (lazy) {
                 reconcile(
+                    owner = this,
                     sources = sources,
                     current = ArrayList(this@combineLatestCollection.current) as C,
                     map = map,
@@ -157,7 +159,7 @@ object Observables {
 
         override fun stopMonitoring() {
             this@combineLatestCollection.stopWatching(this)
-            sources.values.forEach { it.stopWatching(this@combineLatestCollection) }
+            sources.forEach { (key, source) -> source.stopWatching(this to key) }
             sources.clear()
         }
     }
@@ -188,6 +190,7 @@ object Observables {
         override fun startMonitoring(lazy: Boolean) {
             val callback: (C) -> Unit = { current ->
                 reconcile(
+                    owner = this,
                     sources = sources,
                     current = current,
                     map = map,
@@ -203,6 +206,7 @@ object Observables {
             this@flatMapCollection.onChange(this, !lazy, callback)
             if (lazy) {
                 reconcile(
+                    owner = this,
                     sources = sources,
                     current = ArrayList(this@flatMapCollection.current) as C,
                     map = map,
@@ -214,13 +218,18 @@ object Observables {
 
         override fun stopMonitoring() {
             this@flatMapCollection.stopWatching(this)
-            sources.values.forEach { it.stopWatching(this@flatMapCollection) }
+            sources.forEach { (key, source) -> source.stopWatching(this to key) }
             sources.clear()
         }
     }
 
+    /*
+     * Each element subscribes to its observable under the pair (owner, element), so that neither other observables
+     * derived from the same collection nor other elements mapped to the same observable share the registration.
+     */
     @JvmStatic
-    private fun <T, O> Observable<out Collection<T>>.reconcile(
+    private fun <T, O> reconcile(
+        owner: Observable<*>,
         sources: MutableMap<T, Observable<O>>,
         current: Collection<T>,
         map: (T) -> Observable<O>,
@@ -229,11 +238,11 @@ object Observables {
         invokeOnRegistration: Boolean = true,
     ) {
         val currentSet = current.toSet()
-        (sources.keys - currentSet).forEach { sources.remove(it)?.stopWatching(this) }
+        (sources.keys - currentSet).forEach { key -> sources.remove(key)?.stopWatching(owner to key) }
         (currentSet - sources.keys).forEach { key ->
             with(map(key)) {
                 sources[key] = this
-                onChange(this@reconcile, invokeOnRegistration, doOnChange)
+                onChange(owner to key, invokeOnRegistration, doOnChange)
             }
         }
         postCleanup()

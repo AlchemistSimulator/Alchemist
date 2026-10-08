@@ -28,18 +28,18 @@ import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
 sealed class DefaultRunScafiProgram[P <: Position[P]](
-  environment: Environment[Any, P],
-  reaction: NodeReaction[Any],
-  randomGenerator: RandomGenerator,
-  programName: String,
-  retentionTime: Double
-) extends RunScafiProgram[Any, P](environment, reaction, randomGenerator, programName, retentionTime) {
-
-  def this(
     environment: Environment[Any, P],
     reaction: NodeReaction[Any],
     randomGenerator: RandomGenerator,
-    programName: String
+    programName: String,
+    retentionTime: Double
+) extends RunScafiProgram[Any, P](environment, reaction, randomGenerator, programName, retentionTime) {
+
+  def this(
+      environment: Environment[Any, P],
+      reaction: NodeReaction[Any],
+      randomGenerator: RandomGenerator,
+      programName: String
   ) =
     this(
       environment,
@@ -51,18 +51,18 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
 }
 
 sealed class RunScafiProgram[T, P <: Position[P]](
-  environment: Environment[T, P],
-  reaction: NodeReaction[T],
-  randomGenerator: RandomGenerator,
-  programName: String,
-  retentionTime: Double
-) extends AbstractLocalAction[T](reaction) {
-
-  def this(
     environment: Environment[T, P],
     reaction: NodeReaction[T],
     randomGenerator: RandomGenerator,
-    programName: String
+    programName: String,
+    retentionTime: Double
+) extends AbstractLocalAction[T](reaction) {
+
+  def this(
+      environment: Environment[T, P],
+      reaction: NodeReaction[T],
+      randomGenerator: RandomGenerator,
+      programName: String
   ) =
     this(
       environment,

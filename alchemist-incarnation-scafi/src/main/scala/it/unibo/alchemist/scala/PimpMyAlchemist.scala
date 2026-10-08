@@ -33,5 +33,7 @@ object PimpMyAlchemist {
   implicit def double2Time(time: Double): Time = new DoubleTime(time)
   implicit def molecule2String(molecule: Molecule): String = molecule.toString
   implicit def string2Molecule(str: String): Molecule = new SimpleMolecule(str)
-  implicit def function2CacheLoader[F, T](f: F => T): CacheLoader[F, T] = new CacheLoader[F, T] { def load(key: F): T = f(key) }
+  implicit def function2CacheLoader[F, T](f: F => T): CacheLoader[F, T] = new CacheLoader[F, T] {
+    def load(key: F): T = f(key)
+  }
 }

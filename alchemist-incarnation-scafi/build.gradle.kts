@@ -12,7 +12,7 @@ import Libs.alchemist
 plugins {
     `java-library`
     scala
-    alias(libs.plugins.scalafmt)
+    alias(libs.plugins.spotless)
 }
 
 dependencies {
@@ -32,6 +32,23 @@ dependencies {
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("loading"))
     testImplementation(libs.bundles.scalatest)
+}
+
+/*
+ * Scala sources are formatted by Scalafmt through Spotless, with the version and rules of the root .scalafmt.conf.
+ */
+val scalafmtConfiguration = rootProject.file(".scalafmt.conf")
+val scalafmtVersion = scalafmtConfiguration.readLines()
+    .map { it.trim() }
+    .single { it.startsWith("version") }
+    .substringAfter("=")
+    .trim()
+
+spotless {
+    scala {
+        target("src/**/*.scala")
+        scalafmt(scalafmtVersion).configFile(scalafmtConfiguration).scalaMajorVersion("2.13")
+    }
 }
 
 publishing.publications {

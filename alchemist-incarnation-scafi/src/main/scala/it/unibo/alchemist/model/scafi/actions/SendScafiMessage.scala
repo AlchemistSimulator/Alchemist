@@ -18,16 +18,16 @@ import java.util.stream.Collectors
 import scala.jdk.CollectionConverters._
 
 class SendScafiMessage[T, P <: Position[P]](
-  environment: Environment[T, P],
-  reaction: NodeReaction[T],
-  val program: RunScafiProgram[T, P]
+    environment: Environment[T, P],
+    reaction: NodeReaction[T],
+    val program: RunScafiProgram[T, P]
 ) extends AbstractLocalAction[T](reaction) {
   assert(program != null, "Program cannot be null")
 
   /**
-   * This method allows to clone this action on a new reaction, sending the messages of the only [[RunScafiProgram]]
-   * of its node. It may result useful to support runtime creation of nodes with the same reaction programming, e.g.
-   * for morphogenesis.
+   * This method allows to clone this action on a new reaction, sending the messages of the only [[RunScafiProgram]] of
+   * its node. It may result useful to support runtime creation of nodes with the same reaction programming, e.g. for
+   * morphogenesis.
    *
    * @param newReaction
    *   The reaction that will own the cloned action

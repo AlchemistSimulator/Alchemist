@@ -748,10 +748,13 @@ Use repository Gradle tasks from the repository root.
 - [x] During each phase, run the narrow compile and test tasks for touched modules.
 - [x] When Kotlin changes, run `./gradlew --parallel ktlintFormat` before final verification.
 - [x] When Scala in `alchemist-incarnation-scafi` changes, run
-  `./gradlew --parallel alchemist-incarnation-scafi:scalafmtAll`.
-- [ ] Repair Scafi formatting verification: `alchemist-incarnation-scafi:scalafmtAll` currently returns Gradle
-  success while its embedded Scalafmt runner reports the configured version `3.11.5` as invalid. Until corrected,
-  successful Scala compilation and the full build do not prove that the formatter actually ran.
+  `./gradlew --parallel alchemist-incarnation-scafi:spotlessApply`.
+- [x] Repair Scafi formatting verification: the former `alchemist-incarnation-scafi:scalafmtAll` returned Gradle
+  success while its embedded Scalafmt runner reported the configured version `3.11.5` as invalid. The
+  `cz.augi.gradle.scalafmt` plugin bundles `scalafmt-dynamic` 2.7.5, which rejects multi-digit version components, and
+  no later `scalafmt-dynamic` release supports both such versions and the deprecated API the plugin calls. Scala
+  sources are now formatted by Scalafmt through Spotless, reading `.scalafmt.conf`: `spotlessApply` formats them, and
+  `spotlessCheck`, part of `check`, verifies the formatting.
 - [x] Re-run affected module verification after formatting.
 - [x] For every change, audit the existing documentation affected by it, update that documentation in the same
   change, and run the relevant documentation verification tasks when KDoc, Javadoc, website content, snippets, or

@@ -37,6 +37,13 @@ open class Engine<T, P : Position<out P>>(
     private val dirtyReactions = mutableSetOf<Reaction<T>>()
 
     /*
+     * Hosts dispose removed reactions immediately, while engine registration is deferred to a queued command.
+     * Tracking the additions whose command is still queued lets a removal cancel them,
+     * instead of initializing a reaction that has already been disposed.
+     */
+    private val pendingAdditions = mutableSetOf<Reaction<T>>()
+
+    /*
      * A model mutation may synchronously trigger multiple, possibly nested observable cascades.
      * We do not want to reschedule/resample from intermediate model states, thus,
      * this variable stores the depth and refreshDirtyReactions() gets called only when
@@ -47,6 +54,8 @@ open class Engine<T, P : Position<out P>>(
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
     override fun initialize() {
+        // Initialization registers every hosted reaction, superseding the additions queued before the run started.
+        pendingAdditions.clear()
         environment.reactions.current.forEach(::scheduleReaction)
         environment.nodes.current.forEach { it.reactions.current.forEach(::scheduleReaction) }
     }
@@ -84,14 +93,21 @@ open class Engine<T, P : Position<out P>>(
     }
 
     override fun reactionAdded(reactionToAdd: Reaction<T>) {
-        schedule { scheduleReaction(reactionToAdd) }
+        pendingAdditions.add(reactionToAdd)
+        schedule {
+            if (pendingAdditions.remove(reactionToAdd)) {
+                scheduleReaction(reactionToAdd)
+            }
+        }
     }
 
     override fun reactionRemoved(reactionToRemove: Reaction<T>) {
         if (modelMutationDepth > 0) {
             dirtyReactions.remove(reactionToRemove)
         }
-        schedule { removeReactionIfScheduled(reactionToRemove) }
+        if (!pendingAdditions.remove(reactionToRemove)) {
+            schedule { removeReactionIfScheduled(reactionToRemove) }
+        }
     }
 
     override fun reactionInvalidated(reactionToUpdate: Reaction<T>) {
@@ -150,6 +166,7 @@ open class Engine<T, P : Position<out P>>(
         }
         schedulingSubscriptions.clear()
         dirtyReactions.clear()
+        pendingAdditions.clear()
         // Reactions belong to the environment; afterRun only releases engine-owned subscriptions.
     }
 

@@ -171,6 +171,22 @@ private class TestEngine<T, P : it.unibo.alchemist.model.Position<out P>>(
     fun stepForTest() = doStep()
 
     fun drainCommand() = processCommand(commands.poll())
+
+    fun drainCommands() {
+        while (commands.isNotEmpty()) {
+            drainCommand()
+        }
+    }
+}
+
+/** An initialized engine over an environment with one node, plus two reactions not yet added to their hosts. */
+private class RunningHosts {
+    val environment = Continuous2DEnvironment(BiochemistryIncarnation())
+    val node = GenericNode(environment).also { environment.addNode(it, environment.makePosition(0, 0)) }
+    val scheduler = RecordingScheduler<Double>()
+    val engine = TestEngine(environment, scheduler).apply { initializeForTest() }
+    val nodeReaction = EmittingNodeReaction(node)
+    val environmentReaction = AbsoluteEvent<Double>(environment, DoubleTime(2.0))
 }
 
 class EngineSchedulingSubscriptionTest : FreeSpec({
@@ -449,26 +465,60 @@ class EngineSchedulingSubscriptionTest : FreeSpec({
     }
 
     "runtime host mutations synchronize scheduler membership for both host types" {
+        RunningHosts().run {
+            node.addReaction(nodeReaction)
+            engine.drainCommand()
+            environment.addReaction(environmentReaction)
+            engine.drainCommand()
+            scheduler.reactions shouldContain nodeReaction
+            scheduler.reactions shouldContain environmentReaction
+            node.removeReaction(nodeReaction)
+            engine.drainCommand()
+            environment.removeReaction(environmentReaction)
+            engine.drainCommand()
+            scheduler.reactions shouldNotContain nodeReaction
+            scheduler.reactions shouldNotContain environmentReaction
+        }
+    }
+
+    "reactions added and removed within one mutation are never scheduled" {
+        RunningHosts().run {
+            val transientNode = GenericNode(environment)
+            val transientNodeReaction = EmittingNodeReaction(transientNode)
+            transientNode.addReaction(transientNodeReaction)
+            engine.schedule {
+                node.addReaction(nodeReaction)
+                node.removeReaction(nodeReaction)
+                environment.addReaction(environmentReaction)
+                environment.removeReaction(environmentReaction)
+                environment.addNode(transientNode, environment.makePosition(1, 1))
+                environment.removeNode(transientNode)
+            }
+            engine.drainCommands()
+            val transientReactions = listOf(nodeReaction, environmentReaction, transientNodeReaction)
+            transientReactions.forEach { reaction ->
+                scheduler.reactions shouldNotContain reaction
+                scheduler.updates shouldNotContain reaction
+                reaction.nextOccurrence.observers.size shouldBe 0
+            }
+        }
+    }
+
+    "reactions added before initialization are scheduled once and can be removed afterwards" {
         val environment = Continuous2DEnvironment(BiochemistryIncarnation())
-        val node = GenericNode(environment)
-        environment.addNode(node, environment.makePosition(0, 0))
         val scheduler = RecordingScheduler<Double>()
         val engine = TestEngine(environment, scheduler)
+        val node = GenericNode(environment)
+        val reaction = EmittingNodeReaction(node)
+        node.addReaction(reaction)
+        environment.addNode(node, environment.makePosition(0, 0))
         engine.initializeForTest()
-        val nodeReaction = EmittingNodeReaction(node)
-        val environmentReaction = AbsoluteEvent<Double>(environment, DoubleTime(2.0))
-        node.addReaction(nodeReaction)
-        engine.drainCommand()
-        environment.addReaction(environmentReaction)
-        engine.drainCommand()
-        scheduler.reactions shouldContain nodeReaction
-        scheduler.reactions shouldContain environmentReaction
-        node.removeReaction(nodeReaction)
-        engine.drainCommand()
-        environment.removeReaction(environmentReaction)
-        engine.drainCommand()
-        scheduler.reactions shouldNotContain nodeReaction
-        scheduler.reactions shouldNotContain environmentReaction
+        engine.drainCommands()
+        scheduler.reactions.count { it === reaction } shouldBe 1
+        node.removeReaction(reaction)
+        engine.drainCommands()
+        scheduler.reactions shouldNotContain reaction
+        reaction.nextOccurrence.observers.size shouldBe 0
     }
 
     "runtime node membership synchronizes each hosted reaction" {

@@ -16,6 +16,8 @@ import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.ObservableMutableMap.ObservableMapExtensions.upsertValue
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
 
@@ -104,7 +106,10 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
      * @return an [Observable] set of the node linked with current node.
      */
     fun observeNeighborLinkWithJunction(junction: Junction): Observable<Set<Node<Double>>> =
-        junctions[junction].map { maybeMap -> maybeMap.map { it.current.keys }.getOrElse { LinkedHashSet() } }
+        junctions[junction].switchMap { maybeLinks ->
+            // Follow the links inside the junction, as they change without replacing the junction entry.
+            maybeLinks.fold({ observe(emptySet()) }) { links -> links.map { it.keys } }
+        }
 
     /**
      * Returns set of [Node]s which are linked by a junction with the current [node].

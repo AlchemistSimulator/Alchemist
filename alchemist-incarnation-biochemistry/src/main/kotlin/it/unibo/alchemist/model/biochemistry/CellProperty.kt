@@ -75,9 +75,10 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
 
         val inner = junctions[junction].currentOrNull()
         inner?.let {
-            when (it[neighbor].current.getOrElse { 0 }) {
+            when (val links = it[neighbor].current.getOrElse { 0 }) {
+                0 -> Unit
                 1 -> it.remove(neighbor)
-                else -> it[neighbor].currentOrNull()?.minus(1)
+                else -> it[neighbor] = links - 1
             }
             if (it.current.isEmpty()) {
                 junctions.remove(junction)

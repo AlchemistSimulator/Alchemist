@@ -35,4 +35,26 @@ class CellPropertyTest {
         cell.removeJunction(junction, neighbors.last())
         assertEquals(emptySet(), linked)
     }
+
+    @Test
+    fun `a neighbor linked twice stays linked until both junctions are removed`() {
+        val neighbor = neighbors.first()
+        repeat(2) { cell.addJunction(junction, neighbor) }
+        assertEquals(2, cell.junctionsCount)
+        cell.removeJunction(junction, neighbor)
+        assertEquals(1, cell.junctionsCount)
+        assertEquals(setOf(neighbor), cell.getNeighborLinkWithJunction(junction))
+        cell.removeJunction(junction, neighbor)
+        assertEquals(0, cell.junctionsCount)
+        assertEquals(emptySet(), cell.getNeighborLinkWithJunction(junction))
+    }
+
+    @Test
+    fun `removing a junction towards an unlinked neighbor keeps the existing links`() {
+        val (linkedNeighbor, unlinkedNeighbor) = neighbors
+        cell.addJunction(junction, linkedNeighbor)
+        cell.removeJunction(junction, unlinkedNeighbor)
+        assertEquals(1, cell.junctionsCount)
+        assertEquals(setOf(linkedNeighbor), cell.getNeighborLinkWithJunction(junction))
+    }
 }

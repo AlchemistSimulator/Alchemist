@@ -25,11 +25,9 @@ class ConcentrationChanged<T>(reaction: NodeReaction<T>, private val target: Mol
     init {
         setValidity(
             targetNode.observeConcentration(target).mergeWith(resets) { concentration, _ ->
-                if (!changed) {
-                    if (concentration != previous) {
-                        changed = true
-                        previous = concentration
-                    }
+                if (!changed && concentration != previous) {
+                    changed = true
+                    previous = concentration
                 }
                 changed
             },

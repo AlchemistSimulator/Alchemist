@@ -122,9 +122,10 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
         observingCallbacks.remove(registrant)
         with(keyObservables.iterator()) {
             while (hasNext()) {
-                val (_, obs) = next()
+                val (key, obs) = next()
                 obs.stopWatching(registrant)
-                if (obs.observers.isEmpty()) {
+                // Observables of present keys hold their values: only unobserved, absent keys can be dropped.
+                if (obs.observers.isEmpty() && key !in backingMap) {
                     remove()
                 }
             }

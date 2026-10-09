@@ -23,11 +23,12 @@ import kotlinx.collections.immutable.toPersistentList
  * updates, and observation of modifications to the list.
  *
  * @param T The type of elements maintained by this list.
+ * @param initial The elements this list initially contains.
  */
-class ObservableMutableList<T> : ObservableList<T> {
+class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = emptyList()) : ObservableList<T> {
 
-    private var backing: PersistentList<T> = persistentListOf()
-    private val sizeObservable = observe(0)
+    private var backing: PersistentList<T> = initial.toPersistentList()
+    private val sizeObservable = observe(backing.size)
 
     override val size: Observable<Int> = sizeObservable
 
@@ -164,9 +165,7 @@ class ObservableMutableList<T> : ObservableList<T> {
          *
          * @return An instance of `ObservableMutableList` containing all elements from the original list.
          */
-        fun <T> List<T>.toObservableList(): ObservableMutableList<T> = ObservableMutableList<T>().also {
-            it.addAll(this)
-        }
+        fun <T> List<T>.toObservableList(): ObservableMutableList<T> = ObservableMutableList(this)
 
         /**
          * Creates a new [ObservableMutableList] and populates it with the specified items.
@@ -175,8 +174,6 @@ class ObservableMutableList<T> : ObservableList<T> {
          * The items are provided as a variable number of arguments.
          * @return A new [ObservableMutableList] containing the specified items.
          */
-        operator fun <T> invoke(vararg items: T): ObservableMutableList<T> = ObservableMutableList<T>().apply {
-            backing = items.toList().toPersistentList()
-        }
+        operator fun <T> invoke(vararg items: T): ObservableMutableList<T> = ObservableMutableList(items.toList())
     }
 }

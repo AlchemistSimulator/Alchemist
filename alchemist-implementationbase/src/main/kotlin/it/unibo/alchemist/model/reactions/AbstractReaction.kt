@@ -195,7 +195,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
     }
 
     override fun toString(): String = buildString {
-        append(javaClass.simpleName)
+        append(this@AbstractReaction::class.simpleName ?: "<anonymous ${AbstractReaction::class.simpleName}>")
         append('@')
         append(nextOccurrence.current)
         append(':')

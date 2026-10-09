@@ -156,35 +156,5 @@ interface Observable<T> : Disposable {
          * @return The current value of the observable, or `null` if it is not set.
          */
         fun <T> Observable<Option<T>>.currentOrNull(): T? = current.getOrNull()
-
-        /**
-         * Converts this [Observable] into a [MutableObservable] of the same type [T].
-         * If this observable is already mutable, this observable is returned; however,
-         * if it does not, a new, separate observable will be created, therefore, no
-         * observers are shared between this and the returned observable.
-         *
-         * @return a mutable version of this observable.
-         */
-        fun <T> Observable<T>.asMutable(): MutableObservable<T> =
-            this as? MutableObservable<T> ?: object : MutableObservable<T> {
-                override var current: T = this@asMutable.current
-                    get() = this@asMutable.current
-
-                override var observers: List<Any> = emptyList()
-
-                override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = mutableMapOf()
-
-                override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
-                    observers += registrant
-                    observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-                    this@asMutable.onChange(this to registrant, invokeOnRegistration, callback)
-                }
-
-                override fun stopWatching(registrant: Any) {
-                    observers -= registrant
-                    observingCallbacks.remove(registrant)
-                    this@asMutable.stopWatching(this to registrant)
-                }
-            }
     }
 }

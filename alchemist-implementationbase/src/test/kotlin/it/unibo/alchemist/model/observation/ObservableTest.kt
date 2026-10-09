@@ -27,7 +27,6 @@ import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observables.util.ObservableSets.flatMap
 import it.unibo.alchemist.model.observables.util.ObservableSets.merge
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
-import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.asMutable
 import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
 
 class ObservableTest : FunSpec({
@@ -212,10 +211,10 @@ class ObservableTest : FunSpec({
         test("`combineLatest` should emit combined value when any source changes") {
             val a = observe(1)
             val b = observe(10)
-            val collected: MutableObservable<Option<String>> =
+            val collected: Observable<Option<String>> =
                 listOf<Observable<Int>>(a, b).combineLatest { values ->
                     "${values[0]}-${values[1]}"
-                }.asMutable()
+                }
             val emissions = mutableListOf<String>()
             collected.onChange(this) { emissions.add(it.getOrElse { "" }) }
             a.update { it + 1 }
@@ -226,10 +225,10 @@ class ObservableTest : FunSpec({
         test("`combineLatest` should be idempotent wrt collected result") {
             val a = observe(0)
             val b = observe(0)
-            val collected: MutableObservable<Option<Int>> =
+            val collected: Observable<Option<Int>> =
                 listOf<Observable<Int>>(a, b).combineLatest { values ->
                     (values[0] + values[1]) % 2
-                }.asMutable()
+                }
             var emissions = -1
             collected.onChange(this) { emissions++ }
             repeat(5) { _ ->
@@ -241,10 +240,10 @@ class ObservableTest : FunSpec({
         test("`combineLatest` should unsubscribe sources when last observer stops watching") {
             val a = observe(1)
             val b = observe(2)
-            val collected: MutableObservable<Option<Int>> =
+            val collected: Observable<Option<Int>> =
                 listOf<Observable<Int>>(a, b).combineLatest { values ->
                     values.sum()
-                }.asMutable()
+                }
             val registrant = "collector-observer"
             a.observers.size shouldBe 0
             b.observers.size shouldBe 0

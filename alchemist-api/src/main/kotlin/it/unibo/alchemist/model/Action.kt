@@ -23,8 +23,8 @@ interface Action<T> {
 
     /**
      * Creates an equivalent action owned by [newReaction], such as a reaction cloned onto a new node.
-     * A action targeting the host of its reaction targets the host of [newReaction], which must then be a [Node];
-     * a action targeting any other node keeps its target.
+     * An action targeting the host of its reaction targets the host of [newReaction], which must then be a [Node];
+     * an action targeting any other node keeps its target.
      */
     fun cloneAction(newReaction: Reaction<T>): Action<T>
 

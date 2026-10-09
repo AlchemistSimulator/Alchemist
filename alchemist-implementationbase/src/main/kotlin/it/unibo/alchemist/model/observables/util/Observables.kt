@@ -88,7 +88,7 @@ object Observables {
                 this@switchMap.onChange(this, !lazy, ::switchInner)
                 if (lazy) {
                     // a manual switch to set up inner subscription without emitting is required if lazy
-                    switchInner(this@switchMap.current, invokeOnRegistration = cached.getOrNull() != null)
+                    switchInner(this@switchMap.current, invokeOnRegistration = cached.isSome())
                 }
             }
 
@@ -152,7 +152,7 @@ object Observables {
                     current = ArrayList(this@combineLatestCollection.current) as C,
                     map = map,
                     doOnChange = { updateAndNotify(computeFresh()) },
-                    invokeOnRegistration = cached.getOrNull() != null,
+                    invokeOnRegistration = cached.isSome(),
                 )
             }
         }
@@ -211,7 +211,7 @@ object Observables {
                     current = ArrayList(this@flatMapCollection.current) as C,
                     map = map,
                     doOnChange = { updateAndNotify(it.some()) },
-                    invokeOnRegistration = cached.getOrNull() != null,
+                    invokeOnRegistration = cached.isSome(),
                 )
             }
         }

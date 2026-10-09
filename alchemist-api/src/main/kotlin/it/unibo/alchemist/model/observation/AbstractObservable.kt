@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.observation
 
 import arrow.core.Option
+import arrow.core.getOrElse
 import arrow.core.none
 import arrow.core.some
 import java.util.Collections
@@ -34,16 +35,8 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
         get() = callbacks.keys.toList()
     private var isListening = false
 
-    @Suppress("UNCHECKED_CAST")
     override val current: T
-        get() {
-            val maybeCached = cached.getOrNull()
-            return if (isListening && maybeCached != null) {
-                maybeCached
-            } else {
-                computeFresh()
-            }
-        }
+        get() = if (isListening) cached.getOrElse { computeFresh() } else computeFresh()
 
     override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
         val wasEmpty = callbacks.isEmpty()
@@ -117,8 +110,11 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
     protected abstract fun computeFresh(): T
 
     protected fun updateAndNotify(newValue: T) {
-        val changed = cached.getOrNull()?.let { it != newValue } ?: true
-        if (!emitOnDistinct || changed) {
+        val hasChanged = cached.fold(
+            ifEmpty = { true },
+            ifSome = { it != newValue }
+        )
+        if (!emitOnDistinct || hasChanged) {
             cached = newValue.some()
             callbacks.values.flatten().forEach { it(newValue) }
         }

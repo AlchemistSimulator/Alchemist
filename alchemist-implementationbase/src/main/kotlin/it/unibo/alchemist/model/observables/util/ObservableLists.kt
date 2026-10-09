@@ -25,14 +25,14 @@ object ObservableLists {
      * Combines the content of an `ObservableList` into a single observable by applying a mapping function
      * to each element and aggregating the results.
      *
-     * @param map A function that maps each element of the `ObservableList` to an `Observable`.
+     * @param transformer A function that maps each element of the `ObservableList` to an `Observable`.
      * @param aggregator A function that aggregates the mapped results into a single value.
      * @return An `Observable` emitting the aggregated result of the mapped content from the `ObservableList`.
      */
     fun <T, R, O> ObservableList<T>.combineLatest(
-        map: (T) -> Observable<R>,
+        transformer: (T) -> Observable<R>,
         aggregator: (List<R>) -> O,
-    ): Observable<O> = combineLatestCollection(map, aggregator)
+    ): Observable<O> = combineLatestCollection(transformer, aggregator)
 
     /**
      * Transforms an [ObservableList] of type [T] into a single [Observable] of type
@@ -47,10 +47,12 @@ object ObservableLists {
      *
      * @param T The type of elements in the [ObservableList].
      * @param O The type of the resulting fused observable.
-     * @param map A function that maps each element of the source [ObservableList] to an [Observable] of type [O].
+     * @param transformer A function that maps each element of the source [ObservableList] to an [Observable]
+     * of type [O].
      * @return An [Observable] of type [arrow.core.Option]<[O]> that is safe to use on empty lists.
      */
-    fun <T, O> ObservableList<T>.flatMap(map: (T) -> Observable<O>): Observable<Option<O>> = flatMapCollection(map)
+    fun <T, O> ObservableList<T>.flatMap(transformer: (T) -> Observable<O>): Observable<Option<O>> =
+        flatMapCollection(transformer)
 
     /**
      * Converts this [ObservableList] of [observables][Observable] into a unique observable.

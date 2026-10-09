@@ -115,19 +115,20 @@ object Observables {
         }
 
     /**
-     * Maps every element of the current collection to an observable through [map], and aggregates their current
+     * Maps every element of the current collection to an observable through `transformer`, and aggregates their current
      * values through [aggregator]. The result is recomputed whenever the collection changes or any mapped
      * observable emits; observables of elements leaving the collection are unsubscribed.
      */
     @JvmStatic
     internal fun <T, C : Collection<T>, R, O> Observable<C>.combineLatestCollection(
-        map: (T) -> Observable<R>,
+        transformer: (T) -> Observable<R>,
         aggregator: (List<R>) -> O,
     ): Observable<O> = object : AbstractObservable<O>() {
 
         private val sources = mutableMapOf<T, Observable<R>>()
 
-        override fun computeFresh(): O = aggregator(this@combineLatestCollection.current.map { map(it).current })
+        override fun computeFresh(): O =
+            aggregator(this@combineLatestCollection.current.map { key -> (sources[key] ?: transformer(key)).current })
 
         override fun startMonitoring() = startMonitoring(false)
 
@@ -138,7 +139,7 @@ object Observables {
                     owner = this,
                     sources = sources,
                     current = current,
-                    map = map,
+                    transformer = transformer,
                     doOnChange = { updateAndNotify(computeFresh()) },
                     postCleanup = { updateAndNotify(computeFresh()) },
                 )
@@ -150,7 +151,7 @@ object Observables {
                     owner = this,
                     sources = sources,
                     current = ArrayList(this@combineLatestCollection.current) as C,
-                    map = map,
+                    transformer = transformer,
                     doOnChange = { updateAndNotify(computeFresh()) },
                     invokeOnRegistration = cached.isSome(),
                 )
@@ -165,8 +166,8 @@ object Observables {
     }
 
     /**
-     * Maps every element of the current collection to an observable through [map], and merges their emissions, in
-     * the sense of the `flatMap` operator of the
+     * Maps every element of the current collection to an observable through `transformer`, and merges their
+     * emissions, in the sense of the `flatMap` operator of the
      * [ReactiveX convention](https://reactivex.io/documentation/operators/flatmap.html): the result emits the value
      * of whichever mapped observable emitted, as well as the current value of observables joining the collection.
      * Observables of elements leaving the collection are unsubscribed, and an empty collection emits
@@ -175,12 +176,12 @@ object Observables {
      */
     @JvmStatic
     internal fun <T, C : Collection<T>, O> Observable<C>.flatMapCollection(
-        map: (T) -> Observable<O>,
+        transformer: (T) -> Observable<O>,
     ): Observable<Option<O>> = object : AbstractObservable<Option<O>>() {
         private val sources = mutableMapOf<T, Observable<O>>()
 
         override fun computeFresh(): Option<O> = this@flatMapCollection.current.firstOrNull()
-            ?.let { key -> sources[key]?.current ?: map(key).current }
+            ?.let { key -> sources[key]?.current ?: transformer(key).current }
             ?.some()
             ?: none()
 
@@ -193,7 +194,7 @@ object Observables {
                     owner = this,
                     sources = sources,
                     current = current,
-                    map = map,
+                    transformer = transformer,
                     doOnChange = { updateAndNotify(it.some()) },
                     postCleanup = {
                         if (this@flatMapCollection.current.isEmpty()) {
@@ -209,7 +210,7 @@ object Observables {
                     owner = this,
                     sources = sources,
                     current = ArrayList(this@flatMapCollection.current) as C,
-                    map = map,
+                    transformer = transformer,
                     doOnChange = { updateAndNotify(it.some()) },
                     invokeOnRegistration = cached.isSome(),
                 )
@@ -232,7 +233,7 @@ object Observables {
         owner: Observable<*>,
         sources: MutableMap<T, Observable<O>>,
         current: Collection<T>,
-        map: (T) -> Observable<O>,
+        transformer: (T) -> Observable<O>,
         doOnChange: (O) -> Unit,
         postCleanup: () -> Unit = {},
         invokeOnRegistration: Boolean = true,
@@ -240,7 +241,7 @@ object Observables {
         val currentSet = current.toSet()
         (sources.keys - currentSet).forEach { key -> sources.remove(key)?.stopWatching(owner to key) }
         (currentSet - sources.keys).forEach { key ->
-            with(map(key)) {
+            with(transformer(key)) {
                 sources[key] = this
                 onChange(owner to key, invokeOnRegistration, doOnChange)
             }

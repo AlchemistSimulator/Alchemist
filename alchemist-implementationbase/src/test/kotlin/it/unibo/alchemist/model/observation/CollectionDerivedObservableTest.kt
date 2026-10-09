@@ -21,7 +21,7 @@ class CollectionDerivedObservableTest {
     private val shared = observe(1)
     private val elements = ObservableMutableList("a", "b")
 
-    private fun sum() = elements.combineLatest(map = { shared }, aggregator = { it.sum() })
+    private fun sum() = elements.combineLatest(transformer = { shared }, aggregator = { it.sum() })
 
     private fun <T> Observable<T>.latest(): () -> T? {
         var latest: T? = null
@@ -51,5 +51,15 @@ class CollectionDerivedObservableTest {
         elements.remove("b")
         shared.current = 2
         assertEquals(2, total())
+    }
+
+    @Test
+    fun `a combined observable reads the observables it monitors when elements map to fresh ones`() {
+        val created = mutableListOf<MutableObservable<Int>>()
+        val total = elements
+            .combineLatest(transformer = { observe(1).also(created::add) }, aggregator = { it.sum() })
+            .latest()
+        created.filter { it.observers.isNotEmpty() }.forEach { it.current = 5 }
+        assertEquals(10, total())
     }
 }

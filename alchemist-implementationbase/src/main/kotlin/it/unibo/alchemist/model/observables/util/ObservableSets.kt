@@ -29,14 +29,14 @@ object ObservableSets {
      * or some of the values (which are in turn observables) emit a changes, triggering the re-evaluation
      * of the [aggregation][aggregator] function.
      *
-     * @param map A function that maps each element of the `ObservableSet` to an `Observable`.
+     * @param transformer A function that maps each element of the `ObservableSet` to an `Observable`.
      * @param aggregator A function that aggregates the mapped results into a single value.
      * @return An `Observable` emitting the aggregated result of the mapped content from the `ObservableSet`.
      */
     fun <T, R, O> ObservableSet<T>.combineLatest(
-        map: (T) -> Observable<R>,
+        transformer: (T) -> Observable<R>,
         aggregator: (Iterable<R>) -> O,
-    ): Observable<O> = combineLatestCollection(map, aggregator)
+    ): Observable<O> = combineLatestCollection(transformer, aggregator)
 
     /**
      * Transforms an [ObservableSet] of type [T] into a single [Observable] of type
@@ -55,10 +55,12 @@ object ObservableSets {
      *
      * @param T The type of elements in the [ObservableSet].
      * @param O The type of the resulting fused observable.
-     * @param map A function that maps each element of the source [ObservableSet] to an [Observable] of type [O].
+     * @param transformer A function that maps each element of the source [ObservableSet] to an [Observable]
+     * of type [O].
      * @return An [Observable] of type [arrow.core.Option]<[O]> that is safe to use on empty sets.
      */
-    fun <T, O> ObservableSet<T>.flatMap(map: (T) -> Observable<O>): Observable<Option<O>> = flatMapCollection(map)
+    fun <T, O> ObservableSet<T>.flatMap(transformer: (T) -> Observable<O>): Observable<Option<O>> =
+        flatMapCollection(transformer)
 
     /**
      * Converts this [ObservableSet] of [observables][Observable] into a unique observable that emits

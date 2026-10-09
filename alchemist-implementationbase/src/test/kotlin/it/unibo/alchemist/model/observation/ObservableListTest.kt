@@ -143,7 +143,7 @@ class ObservableListTest : FunSpec({
                 "c" to observe(3),
             )
             val combined = list.combineLatest(
-                map = { sources[it] ?: observe(-1) },
+                transformer = { sources[it] ?: observe(-1) },
                 aggregator = { it.sum() },
             )
             var currentSum = 0

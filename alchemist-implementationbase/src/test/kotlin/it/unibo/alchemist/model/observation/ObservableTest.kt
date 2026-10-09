@@ -274,7 +274,7 @@ class ObservableTest : FunSpec({
                 val set = ObservableMutableSet<String>()
                 val inner = mutableMapOf<String, MutableObservable<Int>>()
                 fun observableFor(key: String): Observable<Int> = inner.getOrPut(key) { observe(0) }
-                val combined = set.combineLatest(map = ::observableFor, aggregator = { values -> values.sum() })
+                val combined = set.combineLatest(transformer = ::observableFor, aggregator = { values -> values.sum() })
                 val seen = mutableListOf<Int>()
                 combined.onChange(this) { seen.add(it) }
                 seen[0] shouldBe 0
@@ -293,7 +293,7 @@ class ObservableTest : FunSpec({
                 fun observableFor(key: String): Observable<Int> = inner.getOrPut(key) { observe(0) }
                 set.add("x")
                 set.add("y")
-                val combined = set.combineLatest(map = ::observableFor, aggregator = { values -> values.sum() })
+                val combined = set.combineLatest(transformer = ::observableFor, aggregator = { values -> values.sum() })
                 val registrant = "test-registrant"
                 combined.onChange(registrant) { }
                 inner.getValue("x").observers.shouldHaveSize(1)

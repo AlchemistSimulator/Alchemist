@@ -116,7 +116,7 @@ class LazinessTest : FunSpec({
             val set = ObservableMutableSet(1, 2)
             var aggregations = 0
             val combined = set.combineLatest(
-                map = { observe(it) },
+                transformer = { observe(it) },
                 aggregator = {
                     aggregations++
                     it.sum()
@@ -130,7 +130,7 @@ class LazinessTest : FunSpec({
             val set = ObservableMutableSet("a")
             val inner = observe(10)
             val combined = set.combineLatest(
-                map = { inner },
+                transformer = { inner },
                 aggregator = { it.sum() },
             )
             var lastSeen: Int? = null

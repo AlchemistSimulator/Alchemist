@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.biochemistry
 
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -56,5 +57,17 @@ class CellPropertyTest {
         cell.removeJunction(junction, unlinkedNeighbor)
         assertEquals(1, cell.junctionsCount)
         assertEquals(setOf(linkedNeighbor), cell.getNeighborLinkWithJunction(junction))
+    }
+
+    @Test
+    fun `molecules held by a junction are released only when one of its links is removed`() {
+        val held = Biomolecule("held")
+        val loaded = Junction("A-B", mapOf(held to 1.0), emptyMap())
+        val (linkedNeighbor, unlinkedNeighbor) = neighbors
+        cell.addJunction(loaded, linkedNeighbor)
+        cell.removeJunction(loaded, unlinkedNeighbor)
+        assertEquals(0.0, cell.node.getConcentration(held))
+        cell.removeJunction(loaded, linkedNeighbor)
+        assertEquals(1.0, cell.node.getConcentration(held))
     }
 }

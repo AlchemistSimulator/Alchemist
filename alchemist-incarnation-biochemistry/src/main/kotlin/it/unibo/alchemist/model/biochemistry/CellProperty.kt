@@ -76,7 +76,8 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
         val inner = junctions[junction].currentOrNull()
         inner?.let {
             when (val links = it[neighbor].current.getOrElse { 0 }) {
-                0 -> Unit
+                // No link towards neighbor: nothing is removed, so no molecule is released.
+                0 -> return
                 1 -> it.remove(neighbor)
                 else -> it[neighbor] = links - 1
             }

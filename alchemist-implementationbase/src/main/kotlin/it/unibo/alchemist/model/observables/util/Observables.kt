@@ -132,7 +132,6 @@ object Observables {
 
         override fun startMonitoring() = startMonitoring(false)
 
-        @Suppress("UNCHECKED_CAST")
         override fun startMonitoring(lazy: Boolean) {
             val callback: (C) -> Unit = { current ->
                 reconcile(
@@ -144,13 +143,12 @@ object Observables {
                     postCleanup = { updateAndNotify(computeFresh()) },
                 )
             }
-
             this@combineLatestCollection.onChange(this, !lazy, callback)
             if (lazy) {
                 reconcile(
                     owner = this,
                     sources = sources,
-                    current = ArrayList(this@combineLatestCollection.current) as C,
+                    current = this@combineLatestCollection.current,
                     transformer = transformer,
                     doOnChange = { updateAndNotify(computeFresh()) },
                     invokeOnRegistration = cached.isSome(),
@@ -187,7 +185,6 @@ object Observables {
 
         override fun startMonitoring() = startMonitoring(false)
 
-        @Suppress("UNCHECKED_CAST")
         override fun startMonitoring(lazy: Boolean) {
             val callback: (C) -> Unit = { current ->
                 reconcile(
@@ -203,13 +200,12 @@ object Observables {
                     },
                 )
             }
-
             this@flatMapCollection.onChange(this, !lazy, callback)
             if (lazy) {
                 reconcile(
                     owner = this,
                     sources = sources,
-                    current = ArrayList(this@flatMapCollection.current) as C,
+                    current = this@flatMapCollection.current,
                     transformer = transformer,
                     doOnChange = { updateAndNotify(it.some()) },
                     invokeOnRegistration = cached.isSome(),

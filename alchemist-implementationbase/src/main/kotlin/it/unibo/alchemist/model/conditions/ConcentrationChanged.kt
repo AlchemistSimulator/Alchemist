@@ -17,17 +17,18 @@ import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 class ConcentrationChanged<T>(reaction: NodeReaction<T>, private val target: Molecule) :
     AbstractLocalCondition<T>(reaction) {
     private val resets = observe(0L)
-    private var previous: T? = targetNode.getConcentration(target)
+
+    // Options, because an absent molecule must neither read as the default nor as a present null.
+    private var previous = targetNode.observeConcentration(target).current
     private var changed = false
 
     init {
         setValidity(
             targetNode.observeConcentration(target).mergeWith(resets) { concentration, _ ->
                 if (!changed) {
-                    val current = concentration.getOrNull()
-                    if (current != previous) {
+                    if (concentration != previous) {
                         changed = true
-                        previous = current
+                        previous = concentration
                     }
                 }
                 changed

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,7 +16,7 @@ import it.unibo.alchemist.build.testShadowJar
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.LocalDateTime
-import org.jetbrains.kotlin.daemon.common.toHexString
+import org.gradle.jvm.toolchain.JvmVendorSpec.ADOPTIUM
 import org.panteleyev.jpackage.ImageType
 import org.panteleyev.jpackage.ImageType.DEB
 import org.panteleyev.jpackage.ImageType.DMG
@@ -267,10 +267,18 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
         mainJar = tasks.shadowJar.flatMap { it.archiveFileName }
         mainClass = application.mainClass.get()
         verbose = true
-        runtimeImage = javaToolchains.launcherFor {
-            languageVersion = JavaLanguageVersion.of(multiJvm.latestLts)
-            vendor = JvmVendorSpec.ADOPTIUM
-        }.map { it.metadata.installationPath }
+        runtimeImage = providers.provider {
+            val version = JavaLanguageVersion.of(multiJvm.latestLts)
+            // Prefer Temurin; fall back to any vendor when no Temurin can be found or downloaded.
+            runCatching {
+                javaToolchains.launcherFor {
+                    languageVersion = version
+                    vendor = ADOPTIUM
+                }.get()
+            }.getOrElse {
+                javaToolchains.launcherFor { languageVersion = version }.get()
+            }.metadata.installationPath
+        }
         icon = project.projectDir.resolve("package-settings/logo.png")
         linux {
             linuxShortcut = true

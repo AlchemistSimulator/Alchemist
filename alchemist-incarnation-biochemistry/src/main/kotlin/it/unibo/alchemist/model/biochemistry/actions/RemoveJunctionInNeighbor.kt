@@ -50,7 +50,7 @@ class RemoveJunctionInNeighbor(
     override fun execute(neighbor: Node<Double>) {
         if (neighbor.asPropertyOrNull<Double, CellProperty<*>>() == null) {
             throw UnsupportedOperationException(
-                "Can't add Junction in a node with no ${CellProperty::class.simpleName}",
+                "Can't remove Junction in a node with no ${CellProperty::class.simpleName}",
             )
         }
         neighbor.asProperty<Double, CellProperty<*>>().removeJunction(

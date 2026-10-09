@@ -51,8 +51,6 @@ class TestFeelsTransmission<T> {
             loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-without-layer.yml")
                 .also { assertTrue(it.getEnvironment().layers.isEmpty(), "Expected empty layers") }
                 .startSimulation()
-//        println("Without layer aggregate danger: ${aggregateDangerWithoutLayer.perceivedDanger()}")
-//        println("With layer aggregate danger: ${aggregateDangerWithLayer.perceivedDanger()}")
         assertTrue(
             aggregateDangerWithLayer.perceivedDanger() > aggregateDangerWithoutLayer.perceivedDanger(),
             "Danger perception should be higher with a danger layer",

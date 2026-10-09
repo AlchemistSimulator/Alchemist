@@ -112,7 +112,7 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
     protected fun updateAndNotify(newValue: T) {
         val hasChanged = cached.fold(
             ifEmpty = { true },
-            ifSome = { it != newValue }
+            ifSome = { it != newValue },
         )
         if (!emitOnDistinct || hasChanged) {
             cached = newValue.some()

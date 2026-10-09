@@ -58,8 +58,7 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
      * @param value The value associated with the specified key.
      */
     fun put(key: K, value: V) {
-        val previous = backingMap[key]
-        if (previous != value) {
+        if (backingMap.valueWouldBeNewOrChanged(key, value)) {
             backingMap = backingMap.put(key, value)
             getAsMutable(key).update { value.some() }
             notifyMapObservers()
@@ -100,18 +99,15 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
             }
             changed = true
         }
-
         if (from.isNotEmpty()) {
             from.forEach { (key, value) ->
-                val previous = backingMap[key]
-                if (previous != value) {
+                if (backingMap.valueWouldBeNewOrChanged(key, value)) {
                     backingMap = backingMap.put(key, value)
                     getAsMutable(key).update { value.some() }
                     changed = true
                 }
             }
         }
-
         if (changed) {
             notifyMapObservers()
         }
@@ -163,6 +159,15 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
      * Simple utility function for the ObservableMaps.
      */
     companion object ObservableMapExtensions {
+
+        /*
+         * Keys with nullable values must check the case in which null is added as an element,
+         * so the key is present, but the value is undistinguishable from the absence.
+         * With this method, the double check is executed only if a null value is explicitly passed
+         * AND the key is associated with null.
+         */
+        private fun <K, V> Map<K, V>.valueWouldBeNewOrChanged(key: K, newValue: V) =
+            get(key) != newValue || newValue == null && key !in keys
 
         /**
          * Inserts or updates a key-value pair in the ObservableMutableMap. If the key already exists,

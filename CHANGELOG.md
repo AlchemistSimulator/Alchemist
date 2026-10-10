@@ -1,3 +1,34 @@
+## [43.1.40](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.39...43.1.40) (2026-10-10)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.10.0-19.3.0 ([#5646](https://github.com/AlchemistSimulator/Alchemist/issues/5646)) ([1f8efc5](https://github.com/AlchemistSimulator/Alchemist/commit/1f8efc5f3044b464fe3291b530f8a6f8b86739ba))
+* **deps:** update dependency com.google.guava:guava to v33.7.2-jre ([#5625](https://github.com/AlchemistSimulator/Alchemist/issues/5625)) ([0eeab76](https://github.com/AlchemistSimulator/Alchemist/commit/0eeab765c5ac603ad24da7e2c157e038d99c8707))
+* **deps:** update dependency com.graphhopper:graphhopper-core to v11.1 ([#5626](https://github.com/AlchemistSimulator/Alchemist/issues/5626)) ([4ca9a71](https://github.com/AlchemistSimulator/Alchemist/commit/4ca9a71a835c54f79b3ef17d53a0b485bd8ec3bc))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.197 ([bee6fad](https://github.com/AlchemistSimulator/Alchemist/commit/bee6fad1859201f01c01febfc41fc3bab2324a13))
+* **deps:** update dependency org.apache.commons:commons-lang3 to v3.21.0 ([3bb2d69](https://github.com/AlchemistSimulator/Alchemist/commit/3bb2d690fe86d79c28824d4ec95ce0a1754703c6))
+* **deps:** update gradle to v9.8.1 ([#5636](https://github.com/AlchemistSimulator/Alchemist/issues/5636)) ([5559b53](https://github.com/AlchemistSimulator/Alchemist/commit/5559b53feb1ca2ffe2cc2fd234f1bcac8d283d59))
+* **deps:** update plugin gitsemver to v7.0.25 ([539ff6d](https://github.com/AlchemistSimulator/Alchemist/commit/539ff6d44ef383192302314090384f71aacd282b))
+* **deps:** update plugin multijvmtesting to v4.5.7 ([#5598](https://github.com/AlchemistSimulator/Alchemist/issues/5598)) ([9760782](https://github.com/AlchemistSimulator/Alchemist/commit/9760782751ac81e3c25b2e77b9da0472af3b2a56))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.26 ([#5637](https://github.com/AlchemistSimulator/Alchemist/issues/5637)) ([744664e](https://github.com/AlchemistSimulator/Alchemist/commit/744664e00035f12bcf0b2e12668e4b64ea152dbe))
+* **deps:** update plugin spotless to v8.10.4 ([#5643](https://github.com/AlchemistSimulator/Alchemist/issues/5643)) ([42b5e00](https://github.com/AlchemistSimulator/Alchemist/commit/42b5e00765c7995626146d0d0149200252dbc435))
+* **deps:** update scala3 to v3.10.0 ([ad2cbbe](https://github.com/AlchemistSimulator/Alchemist/commit/ad2cbbee591ccbabab850b4d26c5c9b48432faed))
+
+### Build and continuous integration
+
+* **deps:** update actions/download-artifact action to v8.0.2 ([#5634](https://github.com/AlchemistSimulator/Alchemist/issues/5634)) ([20c43a5](https://github.com/AlchemistSimulator/Alchemist/commit/20c43a5d91d9d5d47957ad7f33299cb1f3522e0a))
+* **deps:** update actions/setup-node action to v7.1.0 ([#5639](https://github.com/AlchemistSimulator/Alchemist/issues/5639)) ([d5c7c29](https://github.com/AlchemistSimulator/Alchemist/commit/d5c7c29c17d90d98bd3da26604c509b9ab18092f))
+* **deps:** update actions/upload-artifact action to v7.0.2 ([da2860e](https://github.com/AlchemistSimulator/Alchemist/commit/da2860e738c7db7b91f59e49ff26ddbe2e2b6d90))
+* **full:** if resolution of Temurin via Foojay fails, use any other vendor ([9217f1e](https://github.com/AlchemistSimulator/Alchemist/commit/9217f1e8a013942512a2f11c0c6ec253f8937e2c))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([d6e6df7](https://github.com/AlchemistSimulator/Alchemist/commit/d6e6df776d83155abca7d11b8aa341ab226dfb4b))
+* **build:** update the javadoc.io cache ([3d06984](https://github.com/AlchemistSimulator/Alchemist/commit/3d069842e8c2579ccf08abaf25bffe89c9a2e429))
+* **build:** update the javadoc.io cache ([6998224](https://github.com/AlchemistSimulator/Alchemist/commit/6998224c022cb0a73eb3e84ed3def8ecbf30ceda))
+* **build:** update the javadoc.io cache ([03fe06b](https://github.com/AlchemistSimulator/Alchemist/commit/03fe06bb552b2db99781ce6b4d411c4ddb3d467b))
+* **deps-dev:** bump handlebars from 4.7.9 to 4.7.10 ([ee29260](https://github.com/AlchemistSimulator/Alchemist/commit/ee292608267e831f071200f058411fe27632ae94))
+
 ## [43.1.39](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.38...43.1.39) (2026-10-01)
 
 ### Dependency updates

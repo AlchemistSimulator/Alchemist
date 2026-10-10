@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.cognitive.properties.OrientingProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.test.loadYamlSimulation
@@ -44,9 +45,9 @@ class TestOrientingBehavior<T, P> :
          */
         fun assertPedestriansReached(environment: Environment<T, P>, tolerance: Double, vararg coords: Number) {
             val target = environment.makePosition(*coords)
-            environment.nodes
+            environment.nodes.current
                 .orienting()
-                .forEach { p -> environment.getPosition(p).distanceTo(target) shouldBeLessThan tolerance }
+                .forEach { p -> environment.getCurrentPosition(p).distanceTo(target) shouldBeLessThan tolerance }
         }
 
         /**
@@ -56,7 +57,7 @@ class TestOrientingBehavior<T, P> :
          */
         fun runSimulation(simulation: String, tolerance: Double, steps: Long, vararg coords: Number) {
             loadYamlSimulation<T, P>(simulation).startSimulation(
-                onceInitialized = { it.nodes shouldNot beEmpty() },
+                onceInitialized = { it.nodes.current shouldNot beEmpty() },
                 whenFinished = { environment, _, _ -> assertPedestriansReached(environment, tolerance, *coords) },
                 steps = steps,
             )
@@ -67,9 +68,9 @@ class TestOrientingBehavior<T, P> :
             val previousPositions: MutableCollection<P?> = CircularFifoQueue(expectedSize)
             loadYamlSimulation<T, P>("explore.yml").startSimulation(
                 steps = 500,
-                onceInitialized = { it.nodes.size shouldBe 1 },
+                onceInitialized = { it.nodes.current.size shouldBe 1 },
                 atEachStep = { environment: Environment<T, P>, _, _, _ ->
-                    val currentPosition = environment.getPosition(environment.nodes.first())
+                    val currentPosition = environment.getCurrentPosition(environment.nodes.current.first())
                     previousPositions.add(currentPosition)
                     if (previousPositions.size == expectedSize) {
                         previousPositions.distinct() shouldNotBe 1
@@ -90,9 +91,11 @@ class TestOrientingBehavior<T, P> :
             loadYamlSimulation<T, P>("follow-route.yml").startSimulation(
                 atEachStep = { environment: Environment<T, P>, _, _, _ ->
                     if (environment is Euclidean2DEnvironmentWithGraph<*, T, *, *>) {
-                        val node = environment.nodes.first()
+                        val node = environment.nodes.current.first()
                         val waypointToSkip = environment.makePosition(70, 105)
-                        environment.getPosition(node).shouldNotBeIn(environment.graph.nodeContaining(waypointToSkip))
+                        environment.getCurrentPosition(
+                            node,
+                        ).shouldNotBeIn(environment.graph.nodeContaining(waypointToSkip))
                     }
                 },
                 whenFinished = { environment, _, _ -> assertPedestriansReached(environment, 1.0, 85, 80) },
@@ -131,9 +134,9 @@ class TestOrientingBehavior<T, P> :
             loadYamlSimulation<T, P>("congestion-avoidance.yml").startSimulation(
                 atEachStep = { environment: Environment<T, P>, _, _, _ ->
                     if (environment is Euclidean2DEnvironmentWithGraph<*, T, *, *> && !corridorTaken) {
-                        val node = environment.nodes.orienting().first()
+                        val node = environment.nodes.current.orienting().first()
                         val corridorToTake = environment.graph.nodeContaining(environment.makePosition(35.0, 31.0))
-                        corridorTaken = corridorToTake?.contains(environment.getPosition(node)) ?: false
+                        corridorTaken = corridorToTake?.contains(environment.getCurrentPosition(node)) ?: false
                     }
                 },
                 whenFinished = { environment, _, _ ->

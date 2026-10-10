@@ -13,10 +13,9 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -39,7 +38,7 @@ internal class TestConcurrency {
         val node = GenericNode(environment)
         environment.linkingRule = NoLinks()
         val timeDistribution = DiracComb<Double>(1.0)
-        val reaction = Event(node, timeDistribution)
+        val reaction = GenericReaction(node, timeDistribution)
         node.addReaction(reaction)
         environment.addNode(node, environment.makePosition(0, 0))
         val inWaitCount = 100
@@ -59,12 +58,10 @@ internal class TestConcurrency {
         val latch = CountDownLatch(inWaitCount)
         val waitList: List<Future<Status?>> =
             generateSequence {
-                container.submit<Status?>(
-                    Callable {
-                        latch.countDown()
-                        simulation.waitFor(Status.RUNNING, 1, TimeUnit.MINUTES)
-                    },
-                )
+                container.submit<Status?> {
+                    latch.countDown()
+                    simulation.waitFor(Status.RUNNING, 1, TimeUnit.MINUTES)
+                }
             }.take(inWaitCount)
                 .toList()
         Assertions.assertTrue(latch.await(1, TimeUnit.MINUTES))

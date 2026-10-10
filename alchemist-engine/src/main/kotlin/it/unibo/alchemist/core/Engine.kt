@@ -8,34 +8,11 @@
  */
 package it.unibo.alchemist.core
 
-import com.google.common.collect.ImmutableList
-import com.google.common.collect.Sets
-import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.model.Actionable
-import it.unibo.alchemist.model.Context
-import it.unibo.alchemist.model.Dependency
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Neighborhood
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.Time
-import java.util.ArrayDeque
-import java.util.Optional
-import java.util.Queue
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.locks.Condition
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReentrantLock
-import java.util.function.BooleanSupplier
+import it.unibo.alchemist.model.observation.Disposable
 import org.jooq.lambda.fi.lang.CheckedRunnable
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 /**
  * Represents a simulation engine that manages execution and scheduling.
@@ -45,590 +22,174 @@ import org.slf4j.LoggerFactory
  * @param P the position type, extending [Position]
  * @param environment the simulation environment
  * @property scheduler the scheduler managing event execution
+ *
+ * Scheduling observables must emit on the simulation thread. Model mutations from other threads
+ * must be submitted through [Simulation.schedule].
+ * Reaction execution and scheduled commands form invalidation transactions that refresh each affected reaction
+ * once before the next scheduler selection.
  */
 open class Engine<T, P : Position<out P>>(
     private val environment: Environment<T, P>,
     protected val scheduler: Scheduler<T>,
-) : Simulation<T, P> {
+) : AbstractEngine<T, P>(environment) {
 
-    private val statusLock: Lock = ReentrantLock()
+    private val schedulingSubscriptions = mutableMapOf<Reaction<T>, Disposable>()
+    private val dirtyReactions = mutableSetOf<Reaction<T>>()
 
-    /** Lock for synchronizing access to the simulation status. */
-    @Volatile private var status: Status = Status.INIT
-
-    /** Tracks errors that occurred during simulation execution. */
-    private var error: Optional<Throwable> = Optional.empty()
-
-    /** Current simulation time. */
-    protected var currentTime: Time = Time.ZERO
-        @Synchronized get
-
-        @Synchronized set
-
-    /** Current simulation step count. */
-    protected var currentStep: Long = 0
-        @Synchronized get
-
-        @Synchronized set
-
-    /** Thread executing the simulation. */
-    private var simulationThread: Thread? = null
-
-    /** Locks associated with each simulation status. */
-    protected val statusLocks: Map<Status, SynchBox> = Status.entries.associateWith { SynchBox() }
-
-    /** Queue of scheduled simulation commands. */
-    private val commands: BlockingQueue<CheckedRunnable> = LinkedBlockingQueue()
-
-    /** Queue of updates to be processed after execution. */
-    protected val afterExecutionUpdates: Queue<Update> = ArrayDeque()
-
-    /** Manages dependencies between reactions in the simulation. */
-    protected val dependencyGraph: DependencyGraph<T>
-
-    /** List of registered output monitors for simulation events. */
-    protected val monitors: MutableList<OutputMonitor<T, P>> = CopyOnWriteArrayList()
-
-    /**
-     * Constructs a simulation with a default scheduler.
-     *
-     * This constructor initializes the simulation with a default [ArrayIndexedPriorityQueue].
-     * If you need a custom [DependencyGraph] or [Scheduler], use the other constructor.
-     *
-     * @param environment the simulation environment
+    /*
+     * Hosts dispose removed reactions immediately, while engine registration is deferred to a queued command.
+     * Tracking the additions whose command is still queued lets a removal cancel them,
+     * instead of initializing a reaction that has already been disposed.
      */
+    private val pendingAdditions = mutableSetOf<Reaction<T>>()
+
+    /*
+     * A model mutation may synchronously trigger multiple, possibly nested observable cascades.
+     * We do not want to reschedule/resample from intermediate model states, thus,
+     * this variable stores the depth and refreshDirtyReactions() gets called only when
+     * the outermost mutation is complete, so that reactions reschedule once from the final mutated state.
+     */
+    private var modelMutationDepth = 0
+
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
-    init {
-        LOGGER.trace("Engine created")
-        environment.simulation = this
-        dependencyGraph = JGraphTDependencyGraph(environment)
+    override fun initialize() {
+        // Initialization registers every hosted reaction, superseding the additions queued before the run started.
+        pendingAdditions.clear()
+        environment.reactions.current.forEach(::scheduleReaction)
+        environment.nodes.current.forEach { it.reactions.current.forEach(::scheduleReaction) }
     }
 
-    /**
-     * Adds an output monitor to track simulation events.
-     *
-     * @param op the [OutputMonitor] to add
-     */
-    override fun addOutputMonitor(op: OutputMonitor<T, P>) {
-        monitors.add(op)
-    }
-
-    /** Ensures that the method is called from the simulation thread. */
-    private fun checkCaller() {
-        check(this::class.java == BatchEngine::class.java || Thread.currentThread() == simulationThread) {
-            "This method must be called from the simulation thread."
-        }
-    }
-
-    private fun <R> doOnStatus(action: () -> R): R = statusLock.run {
-        lock()
-        try {
-            action()
-        } finally {
-            unlock()
-        }
-    }
-
-    /**
-     * Performs a single step of the simulation.
-     */
-    protected open fun doStep() {
+    override fun doStep() {
         val nextEvent = scheduler.getNext() ?: run {
-            newStatus(Status.TERMINATED)
+            terminate()
             LOGGER.info("No more reactions.")
             return
         }
-        val scheduledTime = nextEvent.tau
+        val scheduledTime = nextEvent.nextOccurrence.current
         check(scheduledTime >= time) {
             "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
         }
-        currentTime = scheduledTime
-        if (scheduledTime.isFinite && nextEvent.canExecute()) {
-            nextEvent.conditions.forEach { it.reactionReady() }
-            nextEvent.execute()
-            var toUpdate: Set<Actionable<T>> = dependencyGraph.outboundDependencies(nextEvent)
-            if (afterExecutionUpdates.isNotEmpty()) {
-                afterExecutionUpdates.forEach { it.performChanges() }
-                afterExecutionUpdates.clear()
-                toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(nextEvent))
-            }
-            toUpdate.forEach { updateReaction(it) }
+        if (!scheduledTime.isFinite) {
+            terminate()
+            LOGGER.info("No finite reactions remain.")
+            return
         }
-        nextEvent.update(time, true, environment)
-        scheduler.updateReaction(nextEvent)
+        currentTime = scheduledTime
+        check(nextEvent.canExecute.current) {
+            "$nextEvent exposed a finite next occurrence while reporting that it could not execute"
+        }
+        modelMutation {
+            nextEvent.execute()
+            // Successful execution owns post-firing advancement, which supersedes invalidations caused by its actions.
+            dirtyReactions.remove(nextEvent)
+        }
         monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
         if (environment.isTerminated) {
-            newStatus(Status.TERMINATED)
+            terminate()
             LOGGER.info("Termination condition reached.")
         }
         currentStep = step + 1
     }
 
-    /** @return the simulation environment. */
-    override fun getEnvironment(): Environment<T, P> = environment
-
-    /** @return the last error encountered, if any. */
-    override fun getError(): Optional<Throwable> = error
-
-    /** @return the current simulation status. */
-    override fun getStatus(): Status = status
-
-    /** @return the current step (thread-safe). */
-    @Synchronized override fun getStep(): Long = currentStep
-
-    /** @return the current simulation time (thread-safe). */
-    @Synchronized override fun getTime(): Time = currentTime
-
-    /**
-     * Moves the simulation forward until the given step is reached.
-     *
-     * @param step the target step to execute up to.
-     * @return a [CompletableFuture] that completes once the step is reached.
-     */
-    override fun goToStep(step: Long): CompletableFuture<Unit> = pauseWhen { getStep() >= step }
-
-    /**
-     * Moves the simulation forward until the given time is reached.
-     *
-     * @param t the target simulation time.
-     * @return a [CompletableFuture] that completes once the time is reached.
-     */
-    override fun goToTime(t: Time): CompletableFuture<Unit> = pauseWhen { time >= t }
-
-    /**
-     * Registers a newly added neighbor.
-     *
-     * @param node the reference node
-     * @param n the neighbor node
-     */
-    override fun neighborAdded(node: Node<T>, n: Node<T>) {
-        checkCaller()
-        afterExecutionUpdates.add(NeighborAdded(node, n))
-    }
-
-    /**
-     * Registers a removed neighbor.
-     *
-     * @param node the reference node
-     * @param n the removed neighbor node
-     */
-    override fun neighborRemoved(node: Node<T>, n: Node<T>) {
-        checkCaller()
-        afterExecutionUpdates.add(NeighborRemoved(node, n))
-    }
-
-    /**
-     * Updates the simulation status.
-     *
-     * @param next the new status to set
-     * @return a future that completes when the status is updated
-     */
-    protected open fun newStatus(next: Status): CompletableFuture<Unit> {
-        val future = CompletableFuture<Unit>()
+    override fun reactionAdded(reactionToAdd: Reaction<T>) {
+        pendingAdditions.add(reactionToAdd)
         schedule {
-            doOnStatus {
-                if (next.isReachableFrom(status)) {
-                    status = next
-                    lockForStatus(next).releaseAll()
-                }
-                future.complete(null)
+            if (pendingAdditions.remove(reactionToAdd)) {
+                scheduleReaction(reactionToAdd)
             }
         }
-        return future
     }
 
-    /**
-     * Handles the addition of a new node.
-     *
-     * @param node the newly added node
-     */
-    override fun nodeAdded(node: Node<T>) {
+    override fun reactionRemoved(reactionToRemove: Reaction<T>) {
+        if (modelMutationDepth > 0) {
+            dirtyReactions.remove(reactionToRemove)
+        }
+        if (!pendingAdditions.remove(reactionToRemove)) {
+            schedule { removeReactionIfScheduled(reactionToRemove) }
+        }
+    }
+
+    override fun reactionInvalidated(reactionToUpdate: Reaction<T>) {
         checkCaller()
-        afterExecutionUpdates.add(NodeAddition(node))
+        check(schedulingSubscriptions.containsKey(reactionToUpdate)) {
+            "Reaction $reactionToUpdate was invalidated without being scheduled"
+        }
+        if (modelMutationDepth == 0) {
+            modelMutation { dirtyReactions.add(reactionToUpdate) }
+        } else {
+            dirtyReactions.add(reactionToUpdate)
+        }
     }
 
-    /**
-     * Handles node movement.
-     *
-     * @param node the moved node
-     */
-    override fun nodeMoved(node: Node<T>) {
+    override fun processCommand(command: CheckedRunnable) = modelMutation {
+        super.processCommand(command)
+    }
+
+    private fun scheduleReaction(reaction: Reaction<T>) {
+        // The scheduler, subscription map, and their callbacks are all owned by the simulation thread.
         checkCaller()
-        afterExecutionUpdates.add(Movement(node))
-    }
-
-    /**
-     * Handles the removal of a node.
-     *
-     * @param node the removed node
-     * @param oldNeighborhood the node's neighborhood before removal (used for reverse dependencies)
-     */
-    override fun nodeRemoved(node: Node<T>, oldNeighborhood: Neighborhood<T>) {
-        checkCaller()
-        afterExecutionUpdates.add(NodeRemoval(node))
-    }
-
-    /** Pauses the simulation. */
-    override fun pause(): CompletableFuture<Unit> = newStatus(Status.PAUSED)
-
-    /** Resumes the simulation. */
-    override fun play(): CompletableFuture<Unit> = newStatus(Status.RUNNING)
-
-    /**
-     * Registers a newly added reaction.
-     *
-     * @param reactionToAdd the reaction to add
-     */
-    override fun reactionAdded(reactionToAdd: Actionable<T>) {
-        reactionChanged(ReactionAddition(reactionToAdd))
-    }
-
-    /**
-     * Registers a removed reaction.
-     *
-     * @param reactionToRemove the reaction to remove
-     */
-    override fun reactionRemoved(reactionToRemove: Actionable<T>) {
-        reactionChanged(ReactionRemoval(reactionToRemove))
-    }
-
-    /**
-     * Handles reaction changes.
-     *
-     * @param update the update describing the reaction change
-     */
-    private fun reactionChanged(update: AbstractUpdateOnReaction) {
-        checkCaller()
-        afterExecutionUpdates.add(update)
-    }
-
-    /** Retrieves the reactions that require updates after execution. */
-    private fun reactionsToUpdateAfterExecution(): Sequence<Actionable<T>> =
-        afterExecutionUpdates.asSequence().flatMap { it.reactionsToUpdate }.distinct()
-
-    private fun processCommand(command: CheckedRunnable) {
-        command.run()
-        val updated = mutableSetOf<Actionable<T>>()
-        reactionsToUpdateAfterExecution().forEach {
-            updated.add(it)
-            updateReaction(it)
+        check(!schedulingSubscriptions.containsKey(reaction)) {
+            "Reaction $reaction was scheduled more than once"
         }
-        afterExecutionUpdates.forEach { it.performChanges() }
-        afterExecutionUpdates.clear()
-        reactionsToUpdateAfterExecution().forEach { if (it !in updated) updateReaction(it) }
-    }
-
-    /**
-     * @param op the OutputMonitor to add
-     */
-    override fun removeOutputMonitor(op: OutputMonitor<T, P>) {
-        monitors.remove(op)
-    }
-
-    private fun processCommandsWhileIn(status: Status) {
-        while (this.status == status) {
-            processCommand(commands.take())
-        }
-    }
-
-    /**
-     * Runs the simulation.
-     */
-    @Suppress("TooGenericExceptionCaught")
-    override fun run() {
-        synchronized(environment) {
-            try {
-                LOGGER.info("Starting engine {} with scheduler {}", javaClass, scheduler.javaClass)
-                simulationThread = Thread.currentThread()
-                environment.globalReactions.forEach { reactionAdded(it) }
-                environment.forEach { node -> node.reactions.forEach { scheduleReaction(it) } }
-                status = Status.READY
-                LOGGER.trace("Thread {} started running.", Thread.currentThread().id)
-                monitors.forEach { it.initialized(environment) }
-                processCommandsWhileIn(Status.READY)
-                while (status != Status.TERMINATED && time < Time.INFINITY) {
-                    while (commands.isNotEmpty()) {
-                        processCommand(commands.poll())
-                    }
-                    if (status == Status.RUNNING) {
-                        doStep()
-                    }
-                    processCommandsWhileIn(Status.PAUSED)
-                }
-            } catch (e: Throwable) { // NOPMD: forced by CheckedRunnable
-                error = Optional.of(e)
-                LOGGER.error("The simulation engine crashed.", e)
-            } finally {
-                status = Status.TERMINATED
-                commands.clear()
-                try {
-                    monitors.forEach { it.finished(environment, time, step) }
-                } catch (e: Throwable) { // NOPMD: we need to catch everything
-                    error.ifPresentOrElse({ it.addSuppressed(e) }, { error = Optional.of(e) })
-                }
-                afterRun()
-            }
-        }
-    }
-
-    /** Override this to execute custom logic after the simulation run. */
-    protected fun afterRun() = Unit
-
-    /**
-     * Pauses the simulation when the given condition is met.
-     *
-     * @param condition the condition to trigger the pause
-     * @return a [CompletableFuture] that completes when the simulation is paused
-     */
-    private fun pauseWhen(condition: BooleanSupplier): CompletableFuture<Unit> {
-        val future = CompletableFuture<Unit>()
-        val monitor = object : OutputMonitor<T, P> {
-            @Volatile
-            private var hasTriggered = false
-
-            override fun initialized(initializedEnvironment: Environment<T, P>) {
-                checkConditionAndPause()
-            }
-            override fun stepDone(
-                targetEnvironment: Environment<T, P>,
-                reaction: Actionable<T>?,
-                time: Time,
-                step: Long,
-            ) {
-                checkConditionAndPause()
-            }
-
-            private fun checkConditionAndPause() {
-                if (!hasTriggered && condition.asBoolean) {
-                    hasTriggered = true
-                    monitors.remove(this)
-                    pause().thenRun { future.complete(null) }
-                }
-            }
-        }
-        addOutputMonitor(monitor)
-        return future
-    }
-
-    /**
-     * Schedules a task for execution.
-     *
-     * @param runnable the task to execute
-     */
-    override fun schedule(runnable: CheckedRunnable) {
-        check(status != Status.TERMINATED) { "This simulation is terminated and cannot be resumed." }
-        commands.add(runnable)
-    }
-
-    /**
-     * Schedules a reaction by setting up dependencies and adding it to the scheduler.
-     *
-     * @param reaction the reaction to schedule
-     */
-    private fun scheduleReaction(reaction: Actionable<T>) {
-        dependencyGraph.createDependencies(reaction)
+        // Registration is fail-fast: AbstractEngine terminates and discards the scheduler if any step throws.
+        // Initialization computes the first occurrence before the scheduler reads it.
         reaction.initializationComplete(time, environment)
         scheduler.addReaction(reaction)
-    }
-
-    /** Terminates the simulation. */
-    override fun terminate(): CompletableFuture<Unit> = newStatus(Status.TERMINATED)
-
-    /** @return a string representation of the engine. */
-    override fun toString(): String = "${javaClass.simpleName} t: $time, s: $step"
-
-    /**
-     * Updates the given reaction, adjusting its scheduling if needed.
-     *
-     * @param r the reaction to update
-     */
-    protected fun updateReaction(r: Actionable<T>) {
-        val previousTau = r.tau
-        r.update(time, false, environment)
-        if (r.tau != previousTau) scheduler.updateReaction(r)
-    }
-
-    /**
-     * Retrieves the synchronization lock for a given status.
-     *
-     * @param futureStatus the status to obtain a lock for
-     * @return the corresponding synchronization lock
-     * @throws IllegalStateException if the requested status lock does not exist
-     */
-    private fun lockForStatus(futureStatus: Status): SynchBox = checkNotNull(statusLocks[futureStatus]) {
-        "Inconsistent state: the Alchemist engine tried to synchronize on a non-existing lock. " +
-            "Searching for status: $futureStatus, available locks: $statusLocks"
-    }
-
-    /**
-     * Waits for the simulation to reach a given status.
-     *
-     * @param next the [Status] the simulation should reach before returning
-     * @param timeout the maximum time to wait
-     * @param tu the [TimeUnit] defining the timeout
-     * @return the current simulation status
-     */
-    override fun waitFor(next: Status, timeout: Long, tu: TimeUnit): Status =
-        lockForStatus(next).waitFor(next, timeout, tu)
-
-    /** @return the list of registered output monitors. */
-    override fun getOutputMonitors(): List<OutputMonitor<T, P>> = ImmutableList.copyOf(monitors)
-
-    /**
-     * Represents a simulation update operation.
-     */
-    protected open inner class Update {
-        /** Performs the update. Override to implement specific behavior. */
-        open fun performChanges() {}
-
-        /** The reactions that require an update. */
-        open val reactionsToUpdate: Sequence<Actionable<T>> = emptySequence()
-    }
-
-    /**
-     * Handles node movement and updates affected reactions.
-     *
-     * @param sourceNode the node that moved
-     */
-    private inner class Movement(private val sourceNode: Node<T>) : Update() {
-        override val reactionsToUpdate: Sequence<Actionable<T>>
-            get() = getReactionsRelatedTo(sourceNode, environment.getNeighborhood(sourceNode)).filter {
-                it.inboundDependencies.any { dependency -> dependency.dependsOn(Dependency.MOVEMENT) }
-            }
-
-        private fun getReactionsRelatedTo(source: Node<T>, neighborhood: Neighborhood<T>): Sequence<Actionable<T>> =
-            sequenceOf(
-                source.reactions.asSequence(),
-                neighborhood.getNeighbors().asSequence()
-                    .flatMap { it.reactions.asSequence() }
-                    .filter { it.inputContext == Context.NEIGHBORHOOD },
-                dependencyGraph.globalInputContextReactions().asSequence(),
-            ).flatten()
-    }
-
-    /**
-     * Applies an update to all reactions of a node.
-     *
-     * @param sourceNode the node whose reactions should be updated
-     * @param reactionLevelOperation the update operation to apply to each reaction
-     */
-    private open inner class UpdateOnNode(
-        private val sourceNode: Node<T>,
-        private val reactionLevelOperation: (Reaction<T>) -> Update,
-    ) : Update() {
-        override fun performChanges() {
-            sourceNode.reactions.map(reactionLevelOperation).forEach { it.performChanges() }
-        }
-    }
-
-    private inner class NodeRemoval(sourceNode: Node<T>) : UpdateOnNode(sourceNode, { ReactionRemoval(it) })
-
-    private inner class NodeAddition(sourceNode: Node<T>) : UpdateOnNode(sourceNode, { ReactionAddition(it) })
-
-    /**
-     * Represents an update affecting a specific reaction.
-     *
-     * @property sourceReaction the reaction affected by this update
-     */
-    private open inner class AbstractUpdateOnReaction(val sourceReaction: Actionable<T>) : Update() {
-        override val reactionsToUpdate: Sequence<Actionable<T>> = sequenceOf(sourceReaction)
-    }
-
-    /** Handles the addition of a reaction. */
-    private inner class ReactionAddition(source: Actionable<T>) : AbstractUpdateOnReaction(source) {
-        override fun performChanges() {
-            this@Engine.scheduleReaction(sourceReaction)
-        }
-    }
-
-    /** Handles the removal of a reaction. */
-    private inner class ReactionRemoval(source: Actionable<T>) : AbstractUpdateOnReaction(source) {
-        override fun performChanges() {
-            dependencyGraph.removeDependencies(sourceReaction)
-            scheduler.removeReaction(sourceReaction)
-        }
-    }
-
-    /**
-     * Handles neighborhood changes, ensuring updates to relevant reactions.
-     *
-     * @property sourceNode the node initiating the change
-     * @property targetNode the node affected by the change
-     */
-    private open inner class NeighborhoodChanged(val sourceNode: Node<T>, val targetNode: Node<T>) : Update() {
-        override val reactionsToUpdate: Sequence<Actionable<T>>
-            get() {
-                val subjects = sequenceOf(sourceNode, targetNode)
-                val sourceNeighbors = environment.getNeighborhood(sourceNode).asSequence()
-                val targetNeighbors = environment.getNeighborhood(targetNode).asSequence()
-                val allSubjects = (subjects + sourceNeighbors + targetNeighbors).distinct()
-                return allSubjects.flatMap { it.reactions.asSequence() }.filter {
-                    it.inputContext ==
-                        Context.NEIGHBORHOOD
-                } +
-                    dependencyGraph.globalInputContextReactions().asSequence()
+        // Do not emit the current value on subscription: scheduler insertion already indexed it.
+        schedulingSubscriptions[reaction] =
+            reaction.nextOccurrence.subscribe(invokeOnSubscription = false) {
+                checkCaller()
+                scheduler.updateReaction(reaction)
             }
     }
 
-    /** Handles the addition of a neighbor. */
-    private inner class NeighborAdded(source: Node<T>, target: Node<T>) : NeighborhoodChanged(source, target) {
-        override fun performChanges() {
-            dependencyGraph.addNeighbor(sourceNode, targetNode)
+    private fun removeReaction(reaction: Reaction<T>) {
+        checkCaller()
+        dirtyReactions.remove(reaction)
+        checkNotNull(schedulingSubscriptions.remove(reaction)) {
+            "Reaction $reaction was removed without being scheduled"
+        }.dispose()
+        scheduler.removeReaction(reaction)
+        reaction.dispose()
+    }
+
+    private fun removeReactionIfScheduled(reaction: Reaction<T>) {
+        if (schedulingSubscriptions.containsKey(reaction)) {
+            removeReaction(reaction)
         }
     }
 
-    /** Handles the removal of a neighbor. */
-    private inner class NeighborRemoved(source: Node<T>, target: Node<T>) : NeighborhoodChanged(source, target) {
-        override fun performChanges() {
-            dependencyGraph.removeNeighbor(sourceNode, targetNode)
+    override fun afterRun() {
+        schedulingSubscriptions.values.forEach { handle ->
+            runCatching(handle::dispose).exceptionOrNull()?.let(::recordError)
         }
+        schedulingSubscriptions.clear()
+        dirtyReactions.clear()
+        pendingAdditions.clear()
+        // Reactions belong to the environment; afterRun only releases engine-owned subscriptions.
     }
 
-    /**
-     * Synchronization helper for status transitions.
-     */
-    protected inner class SynchBox {
-        private val queueLength = AtomicInteger()
-        private val statusReached: Condition = statusLock.newCondition()
-        private val allReleased: Condition = statusLock.newCondition()
-
-        /**
-         * Waits for the specified status until the timeout expires.
-         *
-         * @param next the target status
-         * @param timeout the maximum time to wait
-         * @param tu the time unit for the timeout
-         * @return the current status after waiting
-         */
-        fun waitFor(next: Status, timeout: Long, tu: TimeUnit): Status = doOnStatus {
-            var notTimedOut = true
-            while (notTimedOut && next != status && next.isReachableFrom(status)) {
-                try {
-                    queueLength.incrementAndGet()
-                    notTimedOut = statusReached.await(timeout, tu)
-                    queueLength.decrementAndGet()
-                } catch (e: InterruptedException) {
-                    LOGGER.info("Spurious wakeup?", e)
-                }
-            }
-            if (queueLength.get() == 0) allReleased.signal()
-            status
+    private inline fun <R> modelMutation(mutation: () -> R): R {
+        modelMutationDepth++
+        val result = mutation()
+        modelMutationDepth--
+        if (modelMutationDepth == 0) {
+            refreshDirtyReactions()
         }
+        return result
+    }
 
-        /** Releases all locks. */
-        fun releaseAll() {
-            doOnStatus {
-                while (queueLength.get() != 0) {
-                    statusReached.signalAll()
-                    allReleased.awaitUninterruptibly()
+    private fun refreshDirtyReactions() {
+        val refreshed = mutableSetOf<Reaction<T>>()
+        while (dirtyReactions.isNotEmpty()) {
+            val pending = dirtyReactions.toList()
+            dirtyReactions.clear()
+            pending.forEach { reaction ->
+                if (refreshed.add(reaction) && schedulingSubscriptions.containsKey(reaction)) {
+                    reaction.updateSchedulingAfterInvalidation(time)
                 }
             }
         }
-    }
-
-    private companion object {
-        /** Logger instance. */
-        val LOGGER: Logger = LoggerFactory.getLogger(Engine::class.java)
     }
 }

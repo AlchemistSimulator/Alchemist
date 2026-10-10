@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.movestrategies
 
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 
 /**
  * Base class for [TargetSelectionStrategy] offering automatic target change
@@ -65,5 +65,5 @@ abstract class ChangeTargetOnCollision<T, P : Position<P>>(
      */
     protected abstract fun chooseTarget(): P
 
-    abstract override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?): ChangeTargetOnCollision<T, P>
+    abstract override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): ChangeTargetOnCollision<T, P>
 }

@@ -37,7 +37,6 @@ import java.awt.geom.Arc2D;
 public final class DrawSmartcam implements Effect {
     private static final Logger LOGGER = LoggerFactory.getLogger(DrawSmartcam.class);
     private static final SimpleMolecule WANTED = new SimpleMolecule("wanted");
-    private static final long serialVersionUID = 1L;
     private boolean alreadyLogged;
 
     @Override
@@ -48,7 +47,7 @@ public final class DrawSmartcam implements Effect {
             final Wormhole2D<P> wormhole
     ) {
         final double zoom = wormhole.getZoom();
-        final Point viewPoint = wormhole.getViewPoint(environment.getPosition(node));
+        final Point viewPoint = wormhole.getViewPoint(environment.getCurrentPosition(node));
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {
@@ -102,7 +101,7 @@ public final class DrawSmartcam implements Effect {
     ) {
         final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));
         graphics.setColor(Color.BLUE);
-        node.getReactions()
+        node.getReactions().getCurrent()
             .stream()
             .flatMap(r -> r.getActions().stream())
             .filter(a -> a instanceof CameraSee)

@@ -26,9 +26,9 @@ class CloseToAlreadyDeployed<T, P : Position<P>>(
     variance: Double,
 ) : AbstractCloseTo<T, P>(randomGenerator, environment, nodeCount, variance) {
     override val sources =
-        environment.nodes
+        environment.nodes.current
             .asSequence()
-            .map { environment.getPosition(it) }
+            .map { environment.getCurrentPosition(it) }
             .map {
                 when (it) {
                     is GeoPosition -> doubleArrayOf(it.latitude, it.longitude)

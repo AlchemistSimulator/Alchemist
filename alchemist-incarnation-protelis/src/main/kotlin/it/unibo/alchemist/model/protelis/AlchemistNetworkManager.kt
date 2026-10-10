@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,10 +12,9 @@ import com.google.common.collect.ImmutableMap
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
-import java.io.Serializable
 import java.util.Collections
 import java.util.Objects
 import org.apache.commons.math3.distribution.RealDistribution
@@ -33,11 +32,11 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     /**
      * This reaction stores the time at which the neighbor state is read.
      */
-    val event: Reaction<Any>,
+    val event: NodeReaction<Any>,
     /**
      * The [ProtelisDevice] required to run Protelis.
      */
-    val device: ProtelisDevice<*> = event.node.asProperty(),
+    val device: ProtelisDevice<*> = event.host.asProperty(),
     /**
      * The action this network manager is associated with.
      */
@@ -51,20 +50,23 @@ class AlchemistNetworkManager @JvmOverloads constructor(
      * the distribution connecting the distance to the packet loss.
      */
     val distanceLossDistribution: RealDistribution? = null,
-) : NetworkManager,
-    Serializable {
+) : NetworkManager {
     private val environment: Environment<Any, *> = Objects.requireNonNull(program.environment)
     private val messages: MutableMap<DeviceUID, MessageInfo> = LinkedHashMap()
     private var toBeSent: Map<CodePath, Any> = emptyMap()
     private var neighborState = ImmutableMap.of<DeviceUID, Map<CodePath, Any>>()
     private var timeAtLastValidityCheck = Double.NEGATIVE_INFINITY
+    private val neighborDevices: Set<ProtelisDevice<*>>
+        get() = environment.getNeighborhood(device.node).current.neighbors
+            .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
+            .toSet()
 
     init {
         require(retentionTime.isNaN() || retentionTime >= 0) { "The retention time can't be negative." }
     }
 
     override fun getNeighborState(): ImmutableMap<DeviceUID, Map<CodePath, Any>> {
-        val currentTime = event.tau.toDouble()
+        val currentTime = event.nextOccurrence.current.toDouble()
         /*
          * If no time has passed, the last result is still valid, otherwise needs to be recomputed
          */
@@ -75,11 +77,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
                 val stateBuilder = ImmutableMap.builder<DeviceUID, Map<CodePath, Any>>()
                 val messagesIterator = messages.values.iterator()
                 val retainsNeighbors = retentionTime.isNaN()
-                val neighbors: Set<DeviceUID> = emptySet<DeviceUID>().takeUnless { retainsNeighbors }
-                    ?: environment.getNeighborhood(device.node)
-                        .neighbors
-                        .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
-                        .toSet()
+                val neighbors: Set<DeviceUID> = emptySet<DeviceUID>().takeUnless { retainsNeighbors } ?: neighborDevices
                 while (messagesIterator.hasNext()) {
                     val message = messagesIterator.next()
                     val messageIsValid =
@@ -119,8 +117,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     fun simulateMessageArrival(currentTime: Double) {
         if (toBeSent.isNotEmpty()) {
             val msg = MessageInfo(currentTime, device, toBeSent)
-            environment.getNeighborhood(device.node)
-                .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
+            neighborDevices
                 .forEach { neighborDevice ->
                     val destination = neighborDevice.getNetworkManager(program)
                     var packetArrives = true
@@ -141,14 +138,5 @@ class AlchemistNetworkManager @JvmOverloads constructor(
         }
     }
 
-    private data class MessageInfo(val time: Double, val source: DeviceUID, val payload: Map<CodePath, Any>) :
-        Serializable {
-        companion object {
-            private const val serialVersionUID = 2L
-        }
-    }
-
-    private companion object {
-        private const val serialVersionUID = 2L
-    }
+    private data class MessageInfo(val time: Double, val source: DeviceUID, val payload: Map<CodePath, Any>)
 }

@@ -58,6 +58,7 @@ node_modules/
 .hugo_build.lock
 .name
 .vscode
+.scalafmt.conf
 compiler.xml
 hs_err_pid*.log
 misc.xml

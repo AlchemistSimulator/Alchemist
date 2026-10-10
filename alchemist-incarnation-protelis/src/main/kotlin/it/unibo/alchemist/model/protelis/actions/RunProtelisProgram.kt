@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,29 +8,27 @@
  */
 package it.unibo.alchemist.model.protelis.actions
 
-import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Context
-import it.unibo.alchemist.model.Dependency
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
 import it.unibo.alchemist.util.RealDistributions
-import java.io.ObjectInputStream
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
-import org.danilopianini.util.ImmutableListSet
 import org.protelis.lang.ProtelisLoader
 import org.protelis.vm.ProtelisProgram
 import org.protelis.vm.ProtelisVM
 
 /**
- * An [Action] that executes a Protelis program.
+ * An [it.unibo.alchemist.model.Action] that executes a Protelis program.
  *
  * Requires the current [randomGenerator] and [environment], a valid [ProtelisDevice] ([device]),
  * and the local [reaction] hosting the computation.
@@ -49,18 +47,18 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     val randomGenerator: RandomGenerator,
     val environment: Environment<Any, P>,
     val device: ProtelisDevice<P>,
-    val reaction: Reaction<Any>,
+    reaction: NodeReaction<Any>,
     val originalProgram: String,
     val program: ProtelisProgram,
     val retentionTime: Double,
     val packetLossDistance: RealDistribution?,
-) : Action<Any> {
+) : AbstractLocalAction<Any>(reaction) {
     @JvmOverloads
     constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         program: ProtelisProgram,
         retentionTime: Double = Double.NaN,
     ) : this(
@@ -79,7 +77,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         program: ProtelisProgram,
         retentionTime: Double = Double.NaN,
         packetLossDistributionName: String,
@@ -105,7 +103,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         program: String,
         retentionTime: Double = Double.NaN,
     ) : this(
@@ -124,7 +122,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         device: ProtelisDevice<P>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         program: String,
         retentionTime: Double = Double.NaN,
         packetLossDistributionName: String,
@@ -146,19 +144,14 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     )
 
     /**
-     * The Alchemist [Node] hosting the [ProtelisDevice].
+     * An observable that emits updates indicating whether the computational cycle of a Protelis program
+     * has been completed.
      */
-    val node = device.node
-
-    /**
-     * @return true if the Program has finished its last computation,
-     * and is ready to send a new message (used for dependency management)
-     */
-    var isComputationalCycleComplete = false
-        private set
+    val computationalCycleIsComplete: Observable<Boolean>
+        field: MutableObservable<Boolean> = observe(false)
 
     private val name: Molecule =
-        node.reactions
+        targetNode.reactions.current
             .asSequence()
             .flatMap { it.actions.asSequence() }
             .filterIsInstance<RunProtelisProgram<*>>()
@@ -171,23 +164,20 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      *
      * @return the current [AlchemistExecutionContext]
      */
-    @Transient
-    var executionContext = device.executionContextOf(this)
-        private set
+    val executionContext = device.executionContextOf(this)
 
-    @Transient
-    private var vm: ProtelisVM = ProtelisVM(program, executionContext)
+    private val vm: ProtelisVM = ProtelisVM(program, executionContext)
 
     /**
      * @return the molecule associated with the execution of this program
      */
     fun asMolecule(): Molecule = name
 
-    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>): RunProtelisProgram<P> = RunProtelisProgram(
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Any>): RunProtelisProgram<P> = RunProtelisProgram(
         randomGenerator,
         environment,
-        node.asProperty(),
-        reaction,
+        newReaction.host.asProperty(),
+        newReaction,
         originalProgram = originalProgram,
         program = program,
         retentionTime = retentionTime,
@@ -207,45 +197,18 @@ class RunProtelisProgram<P : Position<P>> private constructor(
 
     override fun execute() {
         vm.runCycle()
-        node.setConcentration(name, vm.currentValue)
-        isComputationalCycleComplete = true
+        targetNode.setConcentration(name, vm.currentValue)
+        computationalCycleIsComplete.update { true }
     }
-
-    /*
-     * A Protelis program never writes in other nodes
-     */
-    override fun getContext() = Context.LOCAL
-
-    override fun getOutboundDependencies(): ImmutableListSet<Dependency> = ImmutableListSet.of(
-        Dependency.EVERY_MOLECULE,
-    )
 
     override fun hashCode() = name.hashCode()
 
     /**
-     * Resets the computation status (used for dependency management).
+     * Marks the computational cycle as incomplete before the next run.
      */
     fun prepareForComputationalCycle() {
-        isComputationalCycleComplete = false
+        computationalCycleIsComplete.update { false }
     }
 
-    /**
-     * Called reflectively by the Java serialization subsystem during deserialization.
-     * This method is intentionally private and may appear unused to static analyzers.
-     *
-     * After default deserialization, recreate transient components tied to the device.
-     */
-    @Suppress("unused")
-    private fun readObject(stream: ObjectInputStream) {
-        stream.defaultReadObject()
-        // After deserialization, recreate the components using the device
-        executionContext = device.executionContextOf(this)
-        vm = ProtelisVM(program, executionContext)
-    }
-
-    override fun toString(): String = name.toString() + "@" + node.id
-
-    private companion object {
-        private const val serialVersionUID = 2L
-    }
+    override fun toString(): String = name.toString() + "@" + targetNode.id
 }

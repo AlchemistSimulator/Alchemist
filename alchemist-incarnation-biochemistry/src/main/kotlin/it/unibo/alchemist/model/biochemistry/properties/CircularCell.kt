@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
+import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
 
@@ -26,7 +27,8 @@ constructor(
     environment: Environment<Double, Euclidean2DPosition>,
     override val node: Node<Double>,
     override val diameter: Double = 0.0,
-    override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
+    override val junctions: ObservableMutableMap<Junction, ObservableMutableMap<Node<Double>, Int>> =
+        ObservableMutableMap(),
 ) : AbstractNodeProperty<Double>(node),
     CircularCellProperty,
     CellProperty<Euclidean2DPosition> by Cell(environment, node, junctions) {

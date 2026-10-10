@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,64 +9,60 @@
 
 package it.unibo.alchemist.model.physics.reactions
 
-import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
-import it.unibo.alchemist.model.Condition
-import it.unibo.alchemist.model.Dependency
-import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.physics.PhysicsDependency
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.reactions.AbstractReaction
+import it.unibo.alchemist.model.timedistributions.AbstractDistribution
+import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.ListSet
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
+import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
+import it.unibo.alchemist.model.timedistributions.WeibullTime
 
 /**
- * A global Reaction responsible for updating the physics of an [Dynamics2DEnvironment].
+ * A reaction hosted by a [Dynamics2DEnvironment], advancing its physics at every occurrence.
+ * Without an explicit [timeDistribution] or rate, it fires 30 times per time unit; environments may install their own
+ * instance with a different rate (`EnvironmentWithDynamics` uses a rate of 1, unless the simulation provides one).
  */
 class PhysicsUpdate<T>(
-    /**
-     * The environment to update.
-     */
+    /** The physics environment advanced by this reaction. */
     val environment: Dynamics2DEnvironment<T>,
     override val timeDistribution: TimeDistribution<T> = DiracComb(DEFAULT_RATE),
-) : GlobalReaction<T> {
+) : AbstractReaction<T>(timeDistribution.startTime),
+    TimeDistributedReaction<T> {
 
-    constructor(
-        environment: Dynamics2DEnvironment<T>,
-        updateRate: Double,
-    ) : this(environment, DiracComb(updateRate))
+    constructor(environment: Dynamics2DEnvironment<T>, updateRate: Double) : this(environment, DiracComb(updateRate))
 
-    override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency)
-        get() = ImmutableListSet.copyOf(field)
+    override val host: Dynamics2DEnvironment<T> get() = environment
 
-    override val inboundDependencies: ListSet<out Dependency> = ListSet.of()
-        get() = ImmutableListSet.copyOf(field)
+    override val rate: Double get() = timeDistribution.expectedRate
 
-    override val rate: Double get() = timeDistribution.rate
+    override fun performModelMutation() = environment.updatePhysics(1 / rate)
 
-    override val tau: Time get() = timeDistribution.nextOccurence
-
-    override var actions: List<Action<T>> = listOf()
-
-    override var conditions: List<Condition<T>> = listOf()
-
-    override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)
-
-    override fun canExecute(): Boolean = conditions.all { it.isValid }
-
-    override fun execute() {
-        environment.updatePhysics(1 / rate)
-        timeDistribution.update(timeDistribution.nextOccurence, true, 1.0, environment)
+    override fun updateSchedulingAfterFiring(currentTime: Time) {
+        val sample = timeDistribution.sample()
+        check(sample.isFinite && sample >= Time.ZERO) { "$timeDistribution generated an invalid delay: $sample" }
+        setNextOccurrence(currentTime.plus(sample))
     }
 
-    override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
-
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+    override fun scheduleAfterInvalidation(currentTime: Time) = updateSchedulingAfterFiring(currentTime)
 
     private companion object {
         const val DEFAULT_RATE = 30.0
+
+        private val TimeDistribution<*>.startTime: Time
+            get() = (this as? AbstractDistribution<*>)?.startTime ?: Time.ZERO
+
+        private val TimeDistribution<*>.expectedRate: Double
+            get() = when (this) {
+                is DiracComb<*> -> frequency
+                is ExponentialTime<*> -> lambda
+                is AnyRealDistribution<*> -> mean
+                is WeibullTime<*> -> mean
+                is SimpleNetworkArrivals<*> -> expectedRate
+                else -> Double.NaN
+            }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.biochemistry.actions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -26,25 +26,26 @@ import org.apache.commons.math3.random.RandomGenerator
 class ChangeBiomolConcentrationInNeighbor(
     randomGenerator: RandomGenerator,
     environment: Environment<Double, *>,
-    node: Node<Double>,
+    reaction: NodeReaction<Double>,
     val molecule: Biomolecule,
     val deltaConcentration: Double,
-) : AbstractNeighborAction<Double>(node, environment, randomGenerator) {
-    override fun cloneAction(newNode: Node<Double>, newReaction: Reaction<Double>) =
-        ChangeBiomolConcentrationInNeighbor(randomGenerator, environment, newNode, molecule, deltaConcentration)
+) : AbstractNeighborAction<Double>(reaction, environment, randomGenerator) {
+
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Double>) =
+        ChangeBiomolConcentrationInNeighbor(randomGenerator, environment, newReaction, molecule, deltaConcentration)
 
     override fun execute() {
-        val neighborhood = environment.getNeighborhood(node)
-        val validNeighbors =
-            neighborhood.filter {
-                it.asPropertyOrNull<Double, CellProperty<Euclidean2DPosition>>() != null &&
-                    (deltaConcentration > 0 || it.getConcentration(molecule) >= deltaConcentration)
-            }
-        execute(validNeighbors.randomElement(randomGenerator))
+        val validNeighbors = environment.getNeighborhood(targetNode).current.filter {
+            it.asPropertyOrNull<Double, CellProperty<Euclidean2DPosition>>() != null &&
+                (deltaConcentration > 0 || it.getConcentration(molecule) >= deltaConcentration)
+        }
+        if (validNeighbors.isNotEmpty()) {
+            execute(validNeighbors.randomElement(randomGenerator))
+        }
     }
 
-    override fun execute(targetNode: Node<Double>) {
-        targetNode.setConcentration(molecule, targetNode.getConcentration(molecule) + deltaConcentration)
+    override fun execute(neighbor: Node<Double>) {
+        neighbor.setConcentration(molecule, neighbor.getConcentration(molecule) + deltaConcentration)
     }
 
     override fun toString(): String = if (deltaConcentration >= 0) {

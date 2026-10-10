@@ -19,37 +19,38 @@ conference tutorial.
 
 The world of Alchemist is composed of the following entities:
 
-* **Molecule**
+* **{{% api package="model" class="Molecule" %}}**
     * The name of a data item
     * If Alchemist were an imperative programming language, a *molecule* would be the concept of *variable name*
-* **Concentration**
+* **{{% api package="model" class="Concentration" %}}**
     * The value associated to a particular *molecule*
     * If Alchemist were an imperative programming language, a *concentration* would be the concept of *value associated to a variable*
-* **Node**
+* **{{% api package="model" class="Node" %}}**
     * A container of *molecules* and *reactions*, living inside an *environment*
-* **Environment**
-    * The Alchemist abstration for the space. It is a container for *nodes*, and it is able to tell:
+* **{{% api package="model" class="Environment" %}}**
+    * The Alchemist abstraction for space. It contains *nodes* and provides:
         1. Where the nodes are in the space - i.e. their *position*
         2. The distance between two *nodes*
         3. Optionally, support for moving *nodes*
-* **Linking rule**
+* **{{% api package="model" class="LinkingRule" %}}**
     * A function of the current status of the environment that associates to each *node* a *neighborhood*
-* **Neighborhood**
+* **{{% api package="model" class="Neighborhood" %}}**
     * An entity composed by a *node* (centre) and a set of *nodes* (neighbors)
-* **Reaction**
-    * Any event that can change the status of the *{{ anchor('environment', 'Environment') }}*
-    * Each *node* has a possibly empty set of *reactions*
-    * Each reaction is defined by a possibly empty list of *conditions*, one or more *actions* and a *{{ anchor('time distribution', 'TimeDistribution') }}*
-    * The frequency at which it happens depends on:
-        1. A static "rate" parameter
-        2. The value of each *condition*
-        3. A "rate equation", that combines the static rate and the value of conditions, giving back an "instantaneous rate"
-        4. A *time distribution*
-* **Condition**
-    * A function that takes the current *environment* as input and outputs a boolean and a number
-    * If the *condition* does not hold (i.e. its current output is ``false``), the *reaction* to which it is associated cannot run
-    * The outputed number may or may not influence the *reaction* speed (i.e. the average number of times the *reaction* "happens" per time unit), depending on the *reaction* and its *time distribution*.
-* **Action**
+* **{{% api package="model" class="Reaction" %}}**
+    * A scheduled model operation that can change the state of the environment
+    * Nodes and environments host possibly empty collections of reactions
+    * Each reaction owns conditions, actions, and its absolute, observable next-occurrence time
+    * A {{% api package="model" class="TimeDistributedReaction" %}} uses a
+      {{% api package="model" class="TimeDistribution" %}} to generate delay samples and applies its own policy to
+      samples and reactive model changes
+    * An {{% api package="model.reactions" class="AbsoluteEvent" %}} instead owns one fixed absolute occurrence
+    * [Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/) explains reactive
+      invalidation, scheduling transitions, specialized policies, and the boundary with the simulation engine
+* **{{% api package="model" class="Condition" %}}**
+    * A reactive prerequisite that exposes whether its owning reaction can execute
+    * Reactions publish a finite occurrence while all their conditions are valid
+    * Specialized reaction families may accept concrete condition types and read their domain state when deriving a rate
+* **{{% api package="model" class="Action" %}}**
     * Models a change in the environment.
 
 The following image is a visualization of such model:
@@ -60,6 +61,10 @@ The behavior of the system is described in terms of reactions. As such, here's a
 
 ![Alchemist reaction](/images/simulator/reaction.svg)
 
+In the general model, conditions gate a reaction through their validity;
+only specialized reaction families derive their rate from the typed state of the conditions they accept
+(see [Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/)).
+
 
 ### Incarnations
 
@@ -67,21 +72,22 @@ As you can see, names are given after classical chemistry terms.
 This is mostly for historical reasons: Alchemist has been initially conceived as a chemical-oriented multi-compartment
 stochastic simulation engine, able to support compartment (node) mobility while still retaining high performance.
 
-However, Alchemist is not limited to that. The key of its extensibility is in the very loose interpretation of
+Alchemist applies the same meta-model to broader domains through a deliberately loose interpretation of
 **molecule** and **concentration**. These two terms have a very precise definition in chemistry, but in Alchemist they
 are respectively
 
 1. a generic identifier, and
 2. a piece of data of some **type**
 
-An **incarnation** of Alchemist includes a **type** definition of **concentration**,
+An {{% api package="model" class="Incarnation" %}} includes a **type** definition of **concentration**,
 and possibly a set of specific conditions, actions and (rarely) environments and reactions that operate on such types.
 In other words, an incarnation is a concrete instance of the Alchemist meta-model.
-In addition, a proper Alchemist incarnation', 'Incarnation must also define:
+It also defines:
 
 * Means for translating strings into named entities (molecules)
 * Means for obtaining a number when given a node, a molecule and a string representing a property
-* Means for building incarnation-specific model entities given an appropriate context and a parameter String
+* Means for building incarnation-specific nodes, time distributions, reactions, conditions, and actions,
+  given the entity hosting or owning them (the environment, a node, or a reaction) and a parameter String
 
 These functionalities are required in order to support a uniform access to different incarnations.
 

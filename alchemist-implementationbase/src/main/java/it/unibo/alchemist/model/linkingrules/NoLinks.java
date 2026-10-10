@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * This rule guarantees that no links are created at all.
@@ -27,11 +27,12 @@ import java.io.Serial;
  */
 public class NoLinks<T, P extends Position<P>> extends AbstractLocallyConsistentLinkingRule<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = -711043794655618585L;
-
+    @Nonnull
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
+    public final Neighborhood<T> computeNeighborhood(
+        @Nonnull final Node<T> center,
+        @Nonnull final Environment<T, P> environment
+    ) {
         return Neighborhoods.make(environment, center);
     }
 

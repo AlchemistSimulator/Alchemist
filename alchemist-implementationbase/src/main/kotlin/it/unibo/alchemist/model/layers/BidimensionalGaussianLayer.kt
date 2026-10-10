@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -32,12 +32,11 @@ constructor(
     norm: Double,
     sigmaX: Double,
     sigmaY: Double = sigmaX,
-) : Layer<Double, P> {
+) : TimeInvariantLayer<Double, P>() {
     /**
      * The function on which the layer is based.
      */
-    val function =
-        BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
+    val function = BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
 
-    override fun getValue(p: P) = baseline + function.value(p.x, p.y)
+    override fun getValue(position: P) = baseline + function.value(position.x, position.y)
 }

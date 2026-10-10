@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,7 +13,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.primitives.Doubles;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.LinkingRule;
 import it.unibo.alchemist.model.Neighborhood;
@@ -25,7 +24,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.stream.SmallestN;
 import org.jooq.lambda.tuple.Tuple2;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -42,14 +41,11 @@ import java.util.stream.Stream;
  */
 public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 2L;
     private static final double CONNECTION_RANGE_TOLERANCE = 1.1;
     private final int nodeCount;
     private final int expectedNodes;
     private final int maxNodes;
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient Cache<Node<T>, Double> ranges;
+    private Cache<Node<T>, Double> ranges;
 
     /**
      * @param nodeCount
@@ -98,9 +94,10 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         return ranges;
     }
 
+    @Nonnull
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
-        if (environment.getNodeCount() < expectedNodes || !nodeIsEnabled(center)) {
+    public final Neighborhood<T> computeNeighborhood(@Nonnull final Node<T> center, final Environment<T, P> environment) {
+        if (environment.getNodeCount().getCurrent() < expectedNodes || !nodeIsEnabled(center)) {
             return Neighborhoods.make(environment, center);
         }
         return Neighborhoods.make(environment, center,
@@ -109,7 +106,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
                     /*
                      * Of all nodes but myself...
                      */
-                    environment.getNodes().parallelStream()
+                    environment.getNodes().getCurrent().parallelStream()
                         /*
                          * ...select those for which I'm on the closest n
                          */
@@ -130,13 +127,17 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         Set<Node<T>> inRange;
         final double maxRange = Doubles.max(environment.getSizeInDistanceUnits()) * 2;
         do {
-            inRange = (environment.getNodeCount() > nodeCount && currentRange < maxRange
+            inRange = (environment.getNodeCount().getCurrent() > nodeCount && currentRange < maxRange
                     ? nodesInRange(environment, center, currentRange).stream()
-                    : environment.getNodes().stream())
+                    : environment.getNodes().getCurrent().stream())
                         .filter(n -> !n.equals(center) && nodeIsEnabled(n))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
             currentRange *= 2;
-        } while (inRange.size() < nodeCount && inRange.size() < environment.getNodeCount() - 1 && currentRange < maxRange * 2);
+        } while (
+            inRange.size() < nodeCount
+                && inRange.size() < environment.getNodeCount().getCurrent() - 1
+                && currentRange < maxRange * 2
+        );
         if (inRange.isEmpty()) {
             return Stream.empty();
         }
@@ -166,11 +167,11 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
      * @param range the communication range
      * @return the set of nodes within the communication range
      */
-    protected final Set<Node<T>> nodesInRange(
+    protected final Set<? extends Node<T>> nodesInRange(
             final Environment<T, ?> environment,
             final Node<T> node, final double range
     ) {
-        return environment.getNodesWithinRange(node, range);
+        return new LinkedHashSet<>(environment.getNodesWithinRange(node, range));
     }
 
     /**
@@ -200,7 +201,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
              * would, on average, contain the number of required devices
              */
             return ranges().get(center, () -> {
-                final int nodes = environment.getNodeCount();
+                final int nodes = environment.getNodeCount().getCurrent();
                 if (nodes < nodeCount || nodes < 10) {
                     return Double.MAX_VALUE;
                 }

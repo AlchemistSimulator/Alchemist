@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,36 +10,23 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
-import java.io.Serializable
-import org.danilopianini.util.ListSet
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
+import it.unibo.alchemist.model.observation.ObservableSet
 
 /**
  * Interface for an environment.
  * Every environment must implement this specification.
  * [T] is the [Concentration] type, [P] is the [Position] type.
  */
-interface Environment<T, P : Position<out P>> :
-    Serializable,
-    Iterable<Node<T>> {
+@Suppress("TooManyFunctions")
+interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     /**
-     * Add a [Layer] to the [Environment].
+     * Associates [layer] with [molecule].
+     * Layers are part of the environment setup: association fails once the environment is attached to a simulation,
+     * and a molecule cannot be associated with more than one layer.
      */
     fun addLayer(molecule: Molecule, layer: Layer<T, P>)
-
-    /**
-     * Add a [GlobalReaction] to the [Environment].
-     */
-    fun addGlobalReaction(reaction: GlobalReaction<T>)
-
-    /**
-     * Remove a [GlobalReaction] from the [Environment].
-     */
-    fun removeGlobalReaction(reaction: GlobalReaction<T>)
-
-    /**
-     * Get the [Environment]'s [GlobalReaction]s.
-     */
-    val globalReactions: ListSet<GlobalReaction<T>>
 
     /**
      * Adds a new [node] to this environment in a specific [position].
@@ -51,11 +38,13 @@ interface Environment<T, P : Position<out P>> :
 
     /**
      * Add a [terminator] indicating whether the simulation should be considered finished.
+     * The simulation finishes as soon as any of the terminators is satisfied.
      */
     fun addTerminator(terminator: TerminationPredicate<T, P>)
 
     /**
      * Add a [terminator] indicating whether the simulation should be considered finished.
+     * The simulation finishes as soon as any of the terminators is satisfied.
      */
     fun addTerminator(terminator: (Environment<T, P>) -> Boolean) = addTerminator(TerminationPredicate(terminator))
 
@@ -81,19 +70,29 @@ interface Environment<T, P : Position<out P>> :
     fun getLayer(molecule: Molecule): Layer<T, P>?
 
     /**
+     * Observes the value of the [Layer] associated with [molecule] at the position of [node].
+     * The observable emits when [node] moves to a position where the value differs, and when the layer changes the
+     * value at the current position of [node]. Its value is `null` while no layer is associated with [molecule]; the
+     * layer is resolved when the value is computed, so observables created during setup see layers associated later.
+     */
+    fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T?>
+
+    /**
      * Return all the Layers in this [Environment].
      */
     val layers: Map<Molecule, Layer<T, P>>
 
     /**
-     * Returns the current [LinkingRule].
+     * The current [LinkingRule].
+     * Assigning a new rule recomputes and publishes the neighborhood of every node in the environment.
      */
     var linkingRule: LinkingRule<T, P>
 
     /**
-     * Given a [node], this method returns its neighborhood.
+     * Given a [node], this method returns an observable view of
+     * its neighborhood.
      */
-    fun getNeighborhood(node: Node<T>): Neighborhood<T>
+    fun getNeighborhood(node: Node<T>): Observable<Neighborhood<T>>
 
     /**
      * Allows accessing a [Node] in this [Environment] known its [id].
@@ -103,14 +102,19 @@ interface Environment<T, P : Position<out P>> :
     fun getNodeByID(id: Int): Node<T>
 
     /**
-     * Returns all the [Node]s that exist in current [Environment].
+     * An ordered [Observable] view of all the [Node]s that exist in current [Environment].
      */
-    val nodes: ListSet<Node<T>>
+    val nodes: ObservableList<Node<T>>
 
     /**
-     * Returns the number of [Node]s currently in the [Environment].
+     * Whether [node] is part of this environment.
      */
-    val nodeCount: Int
+    operator fun contains(node: Node<T>): Boolean = nodes.current.any { it === node }
+
+    /**
+     * Returns an [Observable] view of the number of [Node]s currently in the [Environment].
+     */
+    val nodeCount: Observable<Int>
 
     /**
      * Given a [node] this method returns a list of all the surrounding
@@ -120,7 +124,12 @@ interface Environment<T, P : Position<out P>> :
      * neighborhood if you are sure that all the nodes within the range are
      * connected to the center.
      */
-    fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>>
+    fun getNodesWithinRange(node: Node<T>, range: Double): List<Node<T>>
+
+    /**
+     * An [Observable] alternative to [getNodesWithinRange].
+     */
+    fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>>
 
     /**
      * Given a [position] this method returns a list of all the
@@ -128,7 +137,12 @@ interface Environment<T, P : Position<out P>> :
      * Note that this method
      * (depending on the implementation) might be not optimized.
      */
-    fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>>
+    fun getNodesWithinRange(position: P, range: Double): List<Node<T>>
+
+    /**
+     * An [Observable] alternative to [getNodesWithinRange].
+     */
+    fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>>
 
     /**
      * This method allows to know which are the smallest coordinates represented.
@@ -138,9 +152,14 @@ interface Environment<T, P : Position<out P>> :
     val offset: DoubleArray
 
     /**
-     * Calculates the position of a [node].
+     * Observe the position of a [node].
      */
-    fun getPosition(node: Node<T>): P
+    fun getPosition(node: Node<T>): Observable<P>
+
+    /**
+     * Retrieves [node]'s current position.
+     */
+    fun getCurrentPosition(node: Node<T>): P = getPosition(node).current
 
     /**
      * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise.
@@ -168,7 +187,7 @@ interface Environment<T, P : Position<out P>> :
     val sizeInDistanceUnits: DoubleArray
 
     /**
-     * Return true if all the terminators are true.
+     * Whether any of the terminators is satisfied.
      */
     val isTerminated: Boolean
 
@@ -191,10 +210,12 @@ interface Environment<T, P : Position<out P>> :
     fun makePosition(coordinates: List<Number>): P = makePosition(*coordinates.toTypedArray())
 
     /**
-     * This method moves a [node] in the environment to some [newPosition].
-     * If node movement is unsupported, it does nothing.
+     * Moves [node] to [position]. If node movement is unsupported, it does nothing.
+     *
+     * Every movement goes through this function, including relative movements in a [EuclideanEnvironment]:
+     * environments constraining movements (walls, obstacles, physics) override it.
      */
-    fun moveNodeToPosition(node: Node<T>, newPosition: P)
+    fun moveNodeTo(node: Node<T>, position: P)
 
     /**
      * Removes [node].

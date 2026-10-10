@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.test
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.ints.shouldBeExactly
@@ -16,6 +17,7 @@ import io.kotest.matchers.maps.haveSize
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.beOfType
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.launchers.DefaultLauncher
@@ -39,8 +41,16 @@ class RegressionTestOnRealCases : FreeSpec({
         loader.launcher should beOfType<DefaultLauncher>()
         (loader.launcher as DefaultLauncher).autoStart shouldBe false
     }
-    "it should be possible to run a parallel batch" {
+    "it should be possible to run a parameter batch through the default engine" {
         val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/batch-boostrap.yml"))
         loader.launch()
+    }
+    "the removed batch engine should produce a targeted compatibility error" {
+        val failure = shouldThrow<IllegalArgumentException> {
+            LoadAlchemist
+                .from(ResourceLoader.getResource("synthetic/removed-batch-engine.yml"))
+                .getDefault<Nothing, Nothing>()
+        }
+        failure.message shouldContain "BatchEngine has been removed"
     }
 })

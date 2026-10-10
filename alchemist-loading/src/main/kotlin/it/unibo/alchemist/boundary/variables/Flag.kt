@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.boundary.variables
 
-import java.io.Serial
 import java.util.stream.Stream
 
 /**
@@ -24,9 +23,4 @@ import java.util.stream.Stream
 data class Flag(override val default: Boolean) : AbstractPrintableVariable<Boolean>() {
 
     override fun stream(): Stream<Boolean> = Stream.of(true, false)
-
-    private companion object {
-        @Serial
-        private const val serialVersionUID = 1L
-    }
 }

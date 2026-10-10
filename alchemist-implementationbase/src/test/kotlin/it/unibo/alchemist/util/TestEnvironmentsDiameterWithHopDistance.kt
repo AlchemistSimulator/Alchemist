@@ -72,7 +72,7 @@ object TestEnvironmentsDiameterWithHopDistance {
             mustBeSegmented()
             mustHaveCoherentSubnetworks()
             mustHave(2.subnetworks())
-            nodes.forEach {
+            nodes.current.forEach {
                 assertEquals(1.0, diameterOfSubnetworkWithNode(it))
             }
         }
@@ -104,8 +104,8 @@ object TestEnvironmentsDiameterWithHopDistance {
             mustBeSegmented()
             mustHaveCoherentSubnetworks()
             mustHave(3.subnetworks())
-            assertEquals(2.0, diameterOfSubnetworkWithNode(nodes.first()))
-            assertEquals(0.0, diameterOfSubnetworkWithNode(nodes.last()))
+            assertEquals(2.0, diameterOfSubnetworkWithNode(nodes.current.first()))
+            assertEquals(0.0, diameterOfSubnetworkWithNode(nodes.current.last()))
         }
     }
 }

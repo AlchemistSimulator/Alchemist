@@ -16,8 +16,6 @@ import it.unibo.alchemist.model.linkingrules.AdaptiveRange;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 
-import java.io.Serial;
-
 /**
  * @param <P> position type
  * @param <T> concentration type
@@ -28,8 +26,6 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      * The default filter molecule.
      */
     public static final String DEFAULT_MOLECULETYPE = "infrastructure";
-    @Serial
-    private static final long serialVersionUID = 8301318269785386062L;
 
     private final ILsaMolecule moleculeType;
 

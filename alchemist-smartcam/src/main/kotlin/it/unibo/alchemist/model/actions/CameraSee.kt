@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,10 +9,8 @@
 
 package it.unibo.alchemist.model.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.VisibleNodeImpl
 import it.unibo.alchemist.model.physics.FieldOfView2D
@@ -28,7 +26,7 @@ import java.lang.Math.toRadians
 class CameraSee
 @JvmOverloads
 constructor(
-    node: Node<Any>,
+    reaction: NodeReaction<Any>,
     private val environment: Physics2DEnvironment<Any>,
     /**
      * Distance of the field of view.
@@ -40,29 +38,30 @@ constructor(
     val angle: Double,
     private val outputMolecule: Molecule = SimpleMolecule("vision"),
     private val filterByMolecule: Molecule? = null,
-) : AbstractAction<Any>(node) {
+) : AbstractLocalAction<Any>(reaction) {
     private val fieldOfView =
         FieldOfView2D(
             environment,
-            node,
+            reaction.host,
             distance,
             toRadians(angle),
         )
 
     init {
-        node.setConcentration(outputMolecule, emptyList<Any>())
+        targetNode.setConcentration(outputMolecule, emptyList<Any>())
     }
 
-    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
-        CameraSee(node, environment, distance, angle, outputMolecule, filterByMolecule)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Any>) =
+        CameraSee(newReaction, environment, distance, angle, outputMolecule, filterByMolecule)
 
     override fun execute() {
         var seen = fieldOfView.influentialNodes()
         filterByMolecule?.run {
             seen = seen.filter { it.contains(filterByMolecule) }
         }
-        node.setConcentration(outputMolecule, seen.map { VisibleNodeImpl(it, environment.getPosition(it)) })
+        targetNode.setConcentration(
+            outputMolecule,
+            seen.map { VisibleNodeImpl(it, environment.getCurrentPosition(it)) },
+        )
     }
-
-    override fun getContext() = Context.LOCAL
 }

@@ -9,13 +9,11 @@
 
 package it.unibo.alchemist.boundary;
 
-import java.io.Serializable;
-
 /**
  * Expresses a flat map operation over a double.
  */
 @FunctionalInterface
-public interface ExportFilter extends Serializable {
+public interface ExportFilter {
 
     /**
      * From a single value, builds a stream of values.

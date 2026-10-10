@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,9 +49,6 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      * Default Y starting position.
      */
     public static final double DEFAULT_DELTA_Y = 0d;
-
-    @Serial
-    private static final long serialVersionUID = 7820304584505654721L;
 
     /**
      * @param incarnation the incarnation to be used.

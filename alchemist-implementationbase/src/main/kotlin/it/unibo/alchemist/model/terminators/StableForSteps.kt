@@ -8,9 +8,6 @@
  */
 package it.unibo.alchemist.model.terminators
 
-import com.google.common.collect.Maps
-import com.google.common.collect.Table
-import com.google.common.collect.Tables
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -41,11 +38,11 @@ import java.util.function.Predicate
  * @property checkInterval the recurrence of the test
  * @property equalIntervals the number of [checkInterval] intervals required to be unchanged for [test] to return true
  */
-data class StableForSteps<T : Any, P : Position<P>>(private val checkInterval: Long, private val equalIntervals: Long) :
+data class StableForSteps<T, P : Position<P>>(private val checkInterval: Long, private val equalIntervals: Long) :
     TerminationPredicate<T, P> {
     private var success: Long = 0
     private var positions: Map<Node<T>, P> = emptyMap()
-    private var contents = makeTable<T>(0)
+    private var contents: Map<Node<T>, Map<Molecule, T>> = emptyMap()
 
     init {
         require(checkInterval > 0 && equalIntervals > 0) {
@@ -55,26 +52,13 @@ data class StableForSteps<T : Any, P : Position<P>>(private val checkInterval: L
 
     override fun invoke(environment: Environment<T, P>): Boolean {
         if (environment.simulation.step % checkInterval == 0L) {
-            val newPositions = environment.associateBy({ it }, { environment.getPosition(it) })
-            val newContents = makeTable<T>(environment.nodeCount)
-            environment.forEach { node ->
-                node.contents.forEach { (molecule, concentration) ->
-                    newContents.put(node, molecule, concentration)
-                }
-            }
+            val newPositions = environment.nodes.current.associateWith(environment::getCurrentPosition)
+            // Contents are copied, since concentrations may be null and nodes expose live views.
+            val newContents = environment.nodes.current.associateWith { it.contents.toMap() }
             success = if (newPositions == positions && newContents == contents) success + 1 else 0
             positions = newPositions
             contents = newContents
         }
         return success == equalIntervals
-    }
-
-    private companion object {
-        private fun <T : Any> makeTable(size: Int): Table<Node<T>, Molecule, T> =
-            Tables.newCustomTable<Node<T>, Molecule, T>(
-                Maps.newLinkedHashMapWithExpectedSize<Node<T>, Map<Molecule, T>>(size),
-            ) {
-                Maps.newLinkedHashMapWithExpectedSize(size)
-            }
     }
 }

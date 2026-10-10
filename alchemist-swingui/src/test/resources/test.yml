@@ -12,7 +12,7 @@ deployments:
           program: 0
         - program: send
         - time-distribution: 1
-          type: Event
+          type: GenericReaction
           actions:
             - type: BrownianMove
               parameters: [1]

@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.model.incarnations
 
+import arrow.core.Option
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -22,22 +22,24 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
+import it.unibo.alchemist.model.observation.ObservableMap
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete
 import it.unibo.alchemist.model.protelis.properties.ProtelisDevice
-import it.unibo.alchemist.model.reactions.ChemicalReaction
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
-import java.io.Serial
 import java.lang.ref.WeakReference
 import java.time.Duration
 import java.util.Objects
@@ -75,12 +77,12 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         node: Node<Any>?,
-        actionable: Actionable<Any>,
+        reaction: Reaction<Any>,
         additionalParameters: Any?,
     ): Action<Any> {
         val parameters = additionalParameters?.toString().orEmpty()
-        require(actionable is Reaction<*>) {
-            "The provided actionable must be an instance of ${Reaction::class.simpleName}"
+        require(reaction is NodeReaction<*>) {
+            "The provided actionable must be an instance of ${NodeReaction::class.simpleName}"
         }
         requireNotNull(additionalParameters)
         requireNotNull(node) {
@@ -92,7 +94,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             }
         return if (parameters.equals("send", ignoreCase = true)) {
             val alreadyDone =
-                node.reactions
+                node.reactions.current
                     .asSequence()
                     .flatMap { it.actions.asSequence() }
                     .filterIsInstance<SendToNeighbor>()
@@ -103,11 +105,11 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             check(pList.size == 1) {
                 "There are too many programs requiring a ${SendToNeighbor::class.qualifiedName} action: $pList"
             }
-            SendToNeighbor(node, actionable as Reaction<Any>, pList.first())
+            SendToNeighbor(reaction as NodeReaction<Any>, pList.first())
         } else {
             @Suppress("TooGenericExceptionCaught")
             try {
-                RunProtelisProgram(randomGenerator, environment, device, actionable as Reaction<Any>, parameters)
+                RunProtelisProgram(randomGenerator, environment, device, reaction as NodeReaction<Any>, parameters)
             } catch (exception: RuntimeException) {
                 throw IllegalArgumentException(
                     "Could not create the requested Protelis program: $additionalParameters",
@@ -132,10 +134,10 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
         node: Node<Any>?,
-        actionable: Actionable<Any>,
+        reaction: Reaction<Any>,
         additionalParameters: Any?,
     ): Condition<Any> {
-        if (actionable is Reaction<*>) {
+        if (reaction is NodeReaction<*>) {
             requireNotNull(node) {
                 "Global protelis programs are not supported"
             }
@@ -145,27 +147,26 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
-            val alreadyDone =
-                node.reactions
-                    .asSequence()
-                    .flatMap { r: Reaction<Any> -> r.conditions.asSequence() }
-                    .filter { c: Condition<Any> -> c is ComputationalRoundComplete }
-                    .map { c: Condition<Any> -> (c as ComputationalRoundComplete).program }
-                    .toSet()
+            val alreadyDone = node.reactions.current
+                .asSequence()
+                .flatMap { r: Reaction<Any> -> r.conditions.asSequence() }
+                .filter { c: Condition<Any> -> c is ComputationalRoundComplete }
+                .map { c: Condition<Any> -> (c as ComputationalRoundComplete).program }
+                .toSet()
             val pList: List<RunProtelisProgram<*>> = getIncomplete(node, alreadyDone)
             check(!pList.isEmpty()) {
                 "There is no program requiring a " +
-                    ComputationalRoundComplete::class.java.getSimpleName() +
+                    ComputationalRoundComplete::class.java.simpleName +
                     " condition"
             }
             check(pList.size <= 1) {
-                "There are too many programs requiring a " + ComputationalRoundComplete::class.java.getSimpleName() +
+                "There are too many programs requiring a " + ComputationalRoundComplete::class.java.simpleName +
                     " condition: " + pList
             }
-            return ComputationalRoundComplete(node, pList[0])
+            return ComputationalRoundComplete(reaction as NodeReaction<Any>, pList[0])
         }
         throw IllegalArgumentException(
-            "The provided actionable should be an instance of " + Reaction::class.java.getSimpleName(),
+            "The provided actionable should be an instance of " + NodeReaction::class.java.simpleName,
         )
     }
 
@@ -185,18 +186,10 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         node: Node<Any>,
         timeDistribution: TimeDistribution<Any>,
         parameter: Any?,
-    ): Reaction<Any> {
+    ): NodeReaction<Any> {
         val parameterString = parameter?.toString()
         val isSend = parameterString.equals("send", ignoreCase = true)
-        val result: Reaction<Any> =
-            if (isSend) {
-                ChemicalReaction(
-                    node,
-                    timeDistribution,
-                )
-            } else {
-                Event(node, timeDistribution)
-            }
+        val result: NodeReaction<Any> = GenericReaction(node, timeDistribution)
         parameter?.let {
             result.actions =
                 listOf(createAction(randomGenerator, environment, node, result, it))
@@ -353,45 +346,43 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     }
 
     private data object NoNode : Node<Any> {
-        @Serial
-        private const val serialVersionUID = 1L
-
         override val contents: MutableMap<Molecule, Any> get() = notImplemented()
+
+        override val observableContents: ObservableMap<Molecule, Any> get() = notImplemented()
 
         override val id: Int get() = notImplemented()
 
         override val moleculeCount: Int get() = notImplemented()
 
+        override val observeMoleculeCount: Observable<Int> get() = notImplemented()
+
         override val properties: List<NodeProperty<Any>> = emptyList()
 
-        override val reactions: List<Reaction<Any>> = emptyList()
-
-        override fun iterator(): MutableIterator<Reaction<Any>> = notImplemented()
+        override val reactions: ObservableList<Reaction<Any>> get() = notImplemented()
 
         override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
 
-        override fun addReaction(reactionToAdd: Reaction<Any>) = notImplemented<Unit>()
+        override fun addReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
         override fun cloneNode(currentTime: Time): Node<Any> = notImplemented()
 
         override fun contains(molecule: Molecule): Boolean = notImplemented()
 
+        override fun observeContains(molecule: Molecule): Observable<Boolean> = notImplemented()
+
         override fun getConcentration(molecule: Molecule): Any = notImplemented()
+
+        override fun observeConcentration(molecule: Molecule): Observable<Option<Any>> = notImplemented()
 
         override fun removeConcentration(moleculeToRemove: Molecule) = notImplemented<Unit>()
 
-        override fun removeReaction(reactionToRemove: Reaction<Any>) = notImplemented<Unit>()
+        override fun removeReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
         override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
 
-        override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
+        override fun dispose() = notImplemented<Unit>()
 
-        /**
-         * Ensures that deserialization of this sentinel object returns the canonical instance.
-         * Called reflectively by the Java serialization subsystem; kept private intentionally.
-         */
-        @Suppress("unused")
-        private fun readResolve(): Any = NoNode
+        override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
 
         private fun <A> notImplemented(): A =
             throw UnsupportedOperationException("Method can't be invoked in this context.")
@@ -419,7 +410,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         private fun getIncomplete(
             protelisNode: Node<*>,
             alreadyDone: Set<RunProtelisProgram<*>>,
-        ): List<RunProtelisProgram<*>> = protelisNode.reactions
+        ): List<RunProtelisProgram<*>> = protelisNode.reactions.current
             .asSequence()
             // Get the actions
             .flatMap { it.actions.asSequence() }

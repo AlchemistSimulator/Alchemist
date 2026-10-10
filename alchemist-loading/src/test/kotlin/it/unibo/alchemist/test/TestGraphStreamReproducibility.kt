@@ -57,9 +57,9 @@ class TestGraphStreamReproducibility :
                                 it,
                             )
                         }
-                        environment.nodes.map { node ->
-                            environment.getPosition(node).coordinates.toList() to
-                                environment.getNeighborhood(node).neighbors.map { it.id }
+                        environment.nodes.current.map { node ->
+                            environment.getCurrentPosition(node).coordinates.toList() to
+                                environment.getNeighborhood(node).current.neighbors.map { it.id }
                         }
                     }
                     val graphs1 = generateGraphs()

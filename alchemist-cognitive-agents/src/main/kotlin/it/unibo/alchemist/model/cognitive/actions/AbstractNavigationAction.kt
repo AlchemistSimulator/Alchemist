@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,12 +10,10 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.NavigationAction
 import it.unibo.alchemist.model.cognitive.NavigationStrategy
-import it.unibo.alchemist.model.cognitive.OrientingProperty
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.ARRIVED
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.CROSSING_DOOR
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.MOVING_TO_CROSSING_POINT_1
@@ -23,6 +21,8 @@ import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.Navig
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.MOVING_TO_FINAL
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.NEW_ROOM
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.START
+import it.unibo.alchemist.model.cognitive.properties.OrientingProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexShape
 import it.unibo.alchemist.model.geometry.Transformation
@@ -43,7 +43,7 @@ import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty
  */
 abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
     override val environment: EnvironmentWithGraph<*, T, P, A, N, E>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     NavigationAction<T, P, A, L, R, N, E>
@@ -51,7 +51,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
           A : Transformation<P>,
           L : ConvexShape<P, A>,
           N : ConvexShape<P, A> {
-    final override val navigatingNode = node
+    final override val navigatingNode = targetNode
 
     /**
      * The strategy used to navigate the environment.
@@ -76,7 +76,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * at present. This workaround allows to specify a minimum distance which is dependent on the node
      * shape. In the future, something better could be done.
      */
-    protected val minDistance: Double = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter
+    protected val minDistance: Double = targetNode.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter
 
     /**
      * @returns true if the distance to [pedestrianPosition] is smaller than or equal to [minDistance].
@@ -127,7 +127,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * Otherwise the first room containing [pedestrianPosition] is used.
      */
     protected open fun updateCachedVariables() {
-        pedestrianPosition = environment.getPosition(navigatingNode)
+        pedestrianPosition = environment.getCurrentPosition(navigatingNode)
         currentRoom =
             when {
                 (state == MOVING_TO_CROSSING_POINT_1 || state == MOVING_TO_FINAL) &&
@@ -223,7 +223,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
         /*
          * Always up to date current position.
          */
-            else -> environment.getPosition(navigatingNode)
+            else -> environment.getCurrentPosition(navigatingNode)
         }
 
     /**

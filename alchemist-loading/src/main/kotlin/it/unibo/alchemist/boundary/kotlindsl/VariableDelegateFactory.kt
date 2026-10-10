@@ -9,14 +9,13 @@
 
 package it.unibo.alchemist.boundary.kotlindsl
 
-import java.io.Serializable
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
  * Factory for variable delegates, which are used to implement the `by variable(...)` syntax in the DSL.
  */
-fun interface VariableDelegateFactory<V : Serializable> {
+fun interface VariableDelegateFactory<V : Any> {
 
     /**
      * Provides a delegate for a variable property.

@@ -62,8 +62,6 @@ class Euclidean2DPosition :
      * Constant values and utility methods for [Euclidean2DPosition].
      */
     companion object {
-        private const val serialVersionUID = 1L
-
         /**
          * Origin.
          */

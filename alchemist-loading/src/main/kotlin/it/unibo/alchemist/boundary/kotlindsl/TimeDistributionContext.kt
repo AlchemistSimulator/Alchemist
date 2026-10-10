@@ -12,21 +12,21 @@ package it.unibo.alchemist.boundary.kotlindsl
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * DSL scope for defining one or more [Reaction]s that share a common [TimeDistribution].
+ * DSL scope for defining one or more [NodeReaction]s that share a common [TimeDistribution].
  *
  * This scope is meant to be used via Kotlin context receivers: a [TimeDistribution] (and, for some operations,
  * additional objects such as [Node], [Incarnation], [Environment], and [RandomGenerator]) must be available
  * in the surrounding context.
  *
  * The provided helpers support two common workflows:
- * - registering an already-built [Reaction] on the current [Node];
- * - creating a [Reaction] from an incarnation-specific program descriptor and registering it on the current [Node].
+ * - registering an already-built [NodeReaction] on the current [Node];
+ * - creating a [NodeReaction] from an incarnation-specific program descriptor and registering it on the current [Node].
  *
  * In both cases, an optional configuration block can be provided to attach [it.unibo.alchemist.model.Action]s
  * and [it.unibo.alchemist.model.Condition]s via [ActionableContext].
@@ -55,7 +55,7 @@ interface TimeDistributionContext<T, P : Position<P>> {
      * @param block an optional configuration block for actions and conditions.
      */
     context(node: Node<T>)
-    fun <R : Reaction<T>> program(reaction: R, block: context(R) ActionableContext.() -> Unit = { }) {
+    fun <R : NodeReaction<T>> program(reaction: R, block: context(R) ActionableContext.() -> Unit = { }) {
         context(reaction) {
             ActionableContext.block()
         }
@@ -63,7 +63,7 @@ interface TimeDistributionContext<T, P : Position<P>> {
     }
 
     /**
-     * Creates a [Reaction] from an incarnation-specific program descriptor and registers it on the current [Node].
+     * Creates a [NodeReaction] from an incarnation-specific program descriptor and registers it on the current [Node].
      *
      * The [program] parameter is forwarded to [Incarnation.createReaction] and its meaning depends on the
      * concrete incarnation in use. A `null` descriptor delegates the choice of the program to the incarnation.
@@ -71,7 +71,7 @@ interface TimeDistributionContext<T, P : Position<P>> {
      * The created reaction uses the current [timeDistribution] context receiver, and is created within the
      * current [environment], using the provided [randomGenerator], and targeting the current [node].
      *
-     * The optional [block] is applied as described in [program]([Reaction], block) before the reaction is added
+     * The optional [block] is applied as described in [program]([NodeReaction], block) before the reaction is added
      * to the node.
      *
      * @param program the incarnation-specific reaction/program descriptor, possibly `null`.
@@ -84,7 +84,7 @@ interface TimeDistributionContext<T, P : Position<P>> {
         node: Node<T>,
         timeDistribution: TimeDistribution<T>
     )
-    fun program(program: String?, block: context(Reaction<T>) ActionableContext.() -> Unit = { }) = program(
+    fun program(program: String?, block: context(NodeReaction<T>) ActionableContext.() -> Unit = { }) = program(
         incarnation.createReaction(randomGenerator, environment, node, timeDistribution, program),
         block,
     )

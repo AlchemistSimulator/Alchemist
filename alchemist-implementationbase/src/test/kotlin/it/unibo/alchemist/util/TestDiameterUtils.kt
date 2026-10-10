@@ -54,8 +54,8 @@ fun <T> Environment<T, *>.mustBeSegmented() {
  */
 fun <T> Environment<T, *>.mustHaveCoherentSubnetworks() {
     val networks = allSubNetworksByNodeWithHopDistance()
-    assertEquals(nodes.size, networks.size)
-    assertEquals(nodes.sorted(), networks.values.flatMap { it.nodes }.distinct().sorted())
+    assertEquals(nodes.current.size, networks.size)
+    assertEquals(nodes.current.sorted(), networks.values.flatMap { it.nodes }.distinct().sorted())
     networks.forEach { (pivot, network) ->
         network.nodes.forEach { connectedNode ->
             assertContains(networks[connectedNode]?.nodes.orEmpty(), pivot)

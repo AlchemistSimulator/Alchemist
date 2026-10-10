@@ -25,12 +25,12 @@ class ScafiDevice[E](node: Node[E]) extends NodeProperty[E]:
    * missing SendScafiMessage actions.
    */
   def validateCommunicationConfiguration(): Unit =
-    val hasScafiPrograms = node.getReactions.asScala
+    val hasScafiPrograms = node.getReactions.getCurrent.asScala
       .flatMap(_.getActions.asScala)
       .exists(_.isInstanceOf[RunScafiProgram[?, ?]])
 
     if hasScafiPrograms then
-      val hasSendAction = node.getReactions.asScala
+      val hasSendAction = node.getReactions.getCurrent.asScala
         .flatMap(_.getActions.asScala)
         .exists(_.isInstanceOf[SendScafiMessage[?, ?]])
 

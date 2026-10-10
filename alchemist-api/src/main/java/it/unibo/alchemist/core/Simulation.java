@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,10 +10,7 @@
 package it.unibo.alchemist.core;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Neighborhood;
-import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
@@ -97,66 +94,6 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     CompletableFuture<Unit> goToTime(Time t);
 
     /**
-     * This method must get called in case a communication link connecting two
-     * nodes gets created during the simulation. This method provides dependency
-     * and scheduling times re-computation for all the reactions interested in
-     * such change.
-     *
-     * @param node the node
-     * @param n    the second node
-     */
-    void neighborAdded(Node<T> node, Node<T> n);
-
-    /**
-     * This method must get called in case a communication link connecting two
-     * nodes gets broken during the simulation. This method provides dependency
-     * and scheduling times re-computation for all the reactions interested in
-     * such change.
-     *
-     * @param node the node
-     * @param n    the second node
-     */
-    void neighborRemoved(Node<T> node, Node<T> n);
-
-    /**
-     * This method must get called in case a node is added to the environment
-     * during the simulation and after its neighborhood has been computed (or
-     * can be consistently computed by the simulated environment). This method
-     * provides dependency computation and is responsible of correctly
-     * scheduling the Node's new reactions.
-     *
-     * @param node the freshly added node
-     * @throws IllegalMonitorStateException
-     *             if the method gets called from a different thread than the
-     *             simulation thread
-     */
-    void nodeAdded(Node<T> node);
-
-    /**
-     * This method must get called in case a node is moved in the environment
-     * during the simulation and after its neighborhood has been computed (or
-     * can be consistently computed by the simulated environment). This method
-     * provides dependency computation and is responsible of correctly
-     * scheduling the Node's reactions.
-     *
-     * @param node the node
-     */
-    void nodeMoved(Node<T> node);
-
-    /**
-     * This method must get called in case a node is removed from the
-     * environment during the simulation and after its neighborhood has been
-     * computed (or can be consistently computed by the simulated environment).
-     * This method provides dependency computation and is responsible of
-     * correctly removing the Node's reactions from the scheduler.
-     *
-     * @param node            the freshly removed node
-     * @param oldNeighborhood the neighborhood of the node as it was before it was removed
-     *                        (used to calculate reverse dependencies)
-     */
-    void nodeRemoved(Node<T> node, Neighborhood<T> oldNeighborhood);
-
-    /**
      * Sends a pause command to the simulation.
      * There is no guarantee on when this command will be actually processed.
      *
@@ -173,22 +110,32 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     CompletableFuture<Unit> play();
 
     /**
-     * Adds a reaction during the simulation to the scheduler and start to execute it.
-     * The reaction addition is not propagated in the {@link Node} entity.
-     * To do that call also the method {@link Node#addReaction(Reaction)}.
+     * Notifies the simulation that a reaction host has registered a reaction.
+     * Model code should register the reaction through its host; the host invokes this callback after membership
+     * actually changes. Adding a node invokes this callback once for each reaction already hosted by that node;
+     * node and topology changes have no separate simulation callback.
      *
-     * @param reactionToAdd the reaction to add
+     * @param reactionToAdd the registered reaction
      */
-    void reactionAdded(Actionable<T> reactionToAdd);
+    void reactionAdded(Reaction<T> reactionToAdd);
 
     /**
-     * Removes a reaction during the simulation from the scheduler and stop to execute it.
-     * The reaction removal is not propagated in the {@link Node} entity.
-     * To do that call also the method {@link Node#removeReaction(Reaction)}.
+     * Notifies the simulation that a reaction host has unregistered a reaction.
+     * Model code should unregister the reaction through its host; the host invokes this callback after membership
+     * actually changes. Removing a node invokes this callback once for each hosted reaction before disposing it.
      *
-     * @param reactionToRemove the reaction to remove
+     * @param reactionToRemove the unregistered reaction
      */
-    void reactionRemoved(Actionable<T> reactionToRemove);
+    void reactionRemoved(Reaction<T> reactionToRemove);
+
+    /**
+     * Marks a reaction whose observed scheduling inputs changed.
+     * The notification is synchronous and must originate on the simulation thread. The engine refreshes each
+     * affected reaction once when the enclosing model mutation completes.
+     *
+     * @param reactionToUpdate the invalidated reaction
+     */
+    void reactionInvalidated(Reaction<T> reactionToUpdate);
 
     /**
      * Removes an {@link OutputMonitor} to this simulation. If the

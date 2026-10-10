@@ -9,11 +9,12 @@
 package it.unibo.alchemist.model.scafi.actions
 
 import it.unibo.alchemist.model.actions.AbstractLocalAction
-import it.unibo.alchemist.model.{Node, Position, Reaction}
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.observables.util.MutableObservables
+import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.{Time as AlchemistTime, *}
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ContextImpl, *}
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.*
 import it.unibo.alchemist.model.scafi.nodes.SimpleNodeManager
 import it.unibo.alchemist.scala.PimpMyAlchemist.*
 import it.unibo.scafi.space.Point3D
@@ -28,68 +29,62 @@ import scala.util.{Failure, Try}
 
 sealed class DefaultRunScafiProgram[P <: Position[P]](
     environment: Environment[Any, P],
-    node: Node[Any],
-    reaction: Reaction[Any],
+    reaction: NodeReaction[Any],
     randomGenerator: RandomGenerator,
     programName: String,
     retentionTime: Double
-) extends RunScafiProgram[Any, P](environment, node, reaction, randomGenerator, programName, retentionTime):
+) extends RunScafiProgram[Any, P](environment, reaction, randomGenerator, programName, retentionTime):
 
   def this(
       environment: Environment[Any, P],
-      node: Node[Any],
-      reaction: Reaction[Any],
+      reaction: NodeReaction[Any],
       randomGenerator: RandomGenerator,
       programName: String
   ) =
     this(
       environment,
-      node,
       reaction,
       randomGenerator,
       programName,
-      FastMath.nextUp(1.0 / reaction.getTimeDistribution.getRate)
+      FastMath.nextUp(1.0 / RunScafiProgram.recurrenceRate(reaction))
     )
 
 sealed class RunScafiProgram[T, P <: Position[P]](
     environment: Environment[T, P],
-    node: Node[T],
-    reaction: Reaction[T],
+    reaction: NodeReaction[T],
     randomGenerator: RandomGenerator,
     programName: String,
     retentionTime: Double
-) extends AbstractLocalAction[T](node):
+) extends AbstractLocalAction[T](reaction):
 
   def this(
       environment: Environment[T, P],
-      node: Node[T],
-      reaction: Reaction[T],
+      reaction: NodeReaction[T],
       randomGenerator: RandomGenerator,
       programName: String
   ) =
     this(
       environment,
-      node,
       reaction,
       randomGenerator,
       programName,
-      FastMath.nextUp(1.0 / reaction.getTimeDistribution.getRate)
+      FastMath.nextUp(1.0 / RunScafiProgram.recurrenceRate(reaction))
     )
 
   import RunScafiProgram.NeighborData
-  val program =
+  private val node: Node[T] = reaction.getHost
+  val program: CONTEXT => EXPORT =
     ResourceLoader.classForName(programName).getDeclaredConstructor().newInstance().asInstanceOf[CONTEXT => EXPORT]
   val programNameMolecule = new SimpleMolecule(programName)
   lazy val nodeManager = new SimpleNodeManager(node)
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
   private val commonNames = new ScafiIncarnationForAlchemist.StandardSensorNames {}
-  private var completed = false
-  declareDependencyTo(Dependency.EVERY_MOLECULE)
+  private val _completed = MutableObservables.observe[Boolean](false)
 
-  def asMolecule = programNameMolecule
+  def asMolecule: SimpleMolecule = programNameMolecule
 
-  override def cloneAction(node: Node[T], reaction: Reaction[T]) =
-    new RunScafiProgram(environment, node, reaction, randomGenerator, programName, retentionTime)
+  override protected def cloneOnNodeReaction(newReaction: NodeReaction[T]): RunScafiProgram[T, P] =
+    new RunScafiProgram(environment, newReaction, randomGenerator, programName, retentionTime)
 
   override def execute(): Unit =
     import scala.jdk.CollectionConverters.*
@@ -97,7 +92,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       case 1 => Point3D(point.getCoordinate(0), 0, 0)
       case 2 => Point3D(point.getCoordinate(0), point.getCoordinate(1), 0)
       case 3 => Point3D(point.getCoordinate(0), point.getCoordinate(1), point.getCoordinate(2))
-    val position: P = environment.getPosition(node)
+    val position: P = environment.getCurrentPosition(node)
     // NB: We assume it.unibo.alchemist.model.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
     val alchemistCurrentTime = Try(environment.getSimulation)
@@ -115,9 +110,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
         id == node.getId || data.executionTime >= alchemistCurrentTime - retentionTime
     val deltaTime: Long =
       currentTime - neighborhoodManager.get(node.getId).map(d => alchemistTimeToNanos(d.executionTime)).getOrElse(0L)
-    val localSensors = node
-      .getContents()
-      .asScala
+    val localSensors = node.getContents.asScala
       .map:
         case (k, v) => k.getName -> v
 
@@ -161,7 +154,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
         case LSNS_ALCHEMIST_COORDINATES => Some(position.getCoordinates)
         case commonNames.LSNS_DELTA_TIME => Some(FiniteDuration(deltaTime, TimeUnit.NANOSECONDS))
         case commonNames.LSNS_POSITION =>
-          val k = position.getDimensions()
+          val k = position.getDimensions
           Some(
             Point3D(
               position.getCoordinate(0),
@@ -187,17 +180,23 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     node.setConcentration(programName, computed.root[T]())
     val toSend = NeighborData(computed, position, alchemistCurrentTime)
     neighborhoodManager = neighborhoodManager + (node.getId -> toSend)
-    completed = true
+    _completed.update(_ => true)
 
   def sendExport(id: ID, exportData: NeighborData[P]): Unit = neighborhoodManager += id -> exportData
 
   def getExport(id: ID): Option[NeighborData[P]] = neighborhoodManager.get(id)
 
-  def isComputationalCycleComplete: Boolean = completed
+  def isComputationalCycleComplete: Boolean = _completed.getCurrent
 
-  def prepareForComputationalCycle: Unit = completed = false
+  def observeComputationalCycleComplete: Observable[Boolean] = _completed
+
+  def prepareForComputationalCycle: Unit = _completed.update(_ => false)
 
 object RunScafiProgram:
+  private[actions] def recurrenceRate[T](reaction: NodeReaction[T]): Double = reaction match
+    case recurring: TimeDistributedReaction[?] => recurring.getRate
+    case _ => throw new IllegalArgumentException(s"$reaction does not expose a recurrence rate")
+
   case class NeighborData[P <: Position[P]](exportData: EXPORT, position: P, executionTime: AlchemistTime)
 
   implicit class RichMap[K, V](map: Map[K, V]):

@@ -12,14 +12,15 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import java.util.concurrent.CyclicBarrier
@@ -38,31 +39,24 @@ private fun <T> Iterable<T>.ebeEquals(other: Iterable<T>, elementComparator: (T,
 
 infix fun Condition<*>.shouldEqual(other: Condition<*>) {
     assertEquals(other::class, this::class, "Condition types don't match")
-    assertEquals(other.context, context, "Condition contexts don't match")
-    assertEquals(other.isValid, isValid, "Condition validity doesn't match")
-    assertEquals(other.propensityContribution, propensityContribution)
-    assertEquals(other.inboundDependencies, inboundDependencies)
+    assertEquals(other.isValid.current, isValid.current, "Condition validity doesn't match")
 }
 
 infix fun Action<*>.shouldEqual(other: Action<*>) {
     assertEquals(other::class, this::class, "Action types don't match")
-    assertEquals(other.context, context, "Action contexts don't match")
-    assertEquals(other.outboundDependencies, outboundDependencies)
 }
 
 infix fun TimeDistribution<*>.shouldEqual(other: TimeDistribution<*>) {
     assertEquals(other::class, this::class, "TimeDistribution types don't match")
-    assertEquals(other.rate, rate)
-    assertEquals(other.nextOccurence, nextOccurence)
 }
 
-infix fun Actionable<*>.shouldEqual(other: Actionable<*>) {
+infix fun Reaction<*>.shouldEqual(other: Reaction<*>) {
     assertEquals(other::class, this::class, "Actionable types don't match")
-    assertEquals(other.inboundDependencies, inboundDependencies)
-    assertEquals(other.outboundDependencies, outboundDependencies)
-    assertEquals(other.rate, rate)
-    assertEquals(other.tau, tau)
-    timeDistribution shouldEqual other.timeDistribution
+    assertEquals(other.nextOccurrence.current, nextOccurrence.current)
+    if (this is TimeDistributedReaction<*> && other is TimeDistributedReaction<*>) {
+        assertEquals(other.rate, rate)
+        timeDistribution shouldEqual other.timeDistribution
+    }
     conditions.ebeEquals(other.conditions) { expected, actual -> actual shouldEqual expected }
     actions.ebeEquals(other.actions) { expected, actual -> actual shouldEqual expected }
 }
@@ -77,12 +71,12 @@ infix fun Node<*>.shouldEqual(other: Node<*>) {
     assertEquals(other.contents, contents)
     assertEquals(other.properties.size, properties.size)
     properties.ebeEquals(other.properties) { expected, actual -> actual shouldEqual expected }
-    reactions.ebeEquals(other.reactions) { expected, actual -> actual shouldEqual expected }
+    reactions.current.ebeEquals(other.reactions.current) { expected, actual -> actual shouldEqual expected }
 }
 
 infix fun LinkingRule<*, *>.shouldEqual(other: LinkingRule<*, *>) {
     assertEquals(other::class, this::class, "LinkingRule types don't match")
-    assertEquals(other.isLocallyConsistent, isLocallyConsistent)
+    assertEquals(other.isLocallyConsistent(), isLocallyConsistent())
 }
 
 infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<T, P>) {
@@ -94,13 +88,13 @@ infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<
     assertEquals(other.isTerminated, isTerminated)
     assertContentEquals(other.sizeInDistanceUnits, sizeInDistanceUnits)
     linkingRule shouldEqual other.linkingRule
-    val positions = nodes.sortedBy { it.id }.map { getPosition(it) }
-    val otherPositions = other.sortedBy { it.id }.map { getPosition(it) }
+    val positions = nodes.current.sortedBy { it.id }.map { getCurrentPosition(it) }
+    val otherPositions = other.nodes.current.sortedBy { it.id }.map(other::getCurrentPosition)
     positions.ebeEquals(otherPositions) { expected, actual -> assertEquals(expected, actual) }
-    nodes.ebeEquals(other.nodes) { expected, actual ->
+    nodes.current.ebeEquals(other.nodes.current) { expected, actual ->
         actual shouldEqual expected
     }
-    globalReactions.ebeEquals(other.globalReactions) { expected, actual -> actual shouldEqual expected }
+    reactions.current.ebeEquals(other.reactions.current) { expected, actual -> actual shouldEqual expected }
     layers.toList().sortedBy { (molecule, _) -> molecule.toString() }.ebeEquals(
         other.layers.toList().sortedBy { (molecule, _) -> molecule.toString() },
     ) { expected, actual ->
@@ -126,7 +120,7 @@ fun <T, P : Position<P>> Simulation<T, P>.equalsForSteps(other: Simulation<T, P>
     val actualThread = Thread.currentThread()
     val syncMonitor = object : OutputMonitor<T, P> {
         val barrier = CyclicBarrier(2)
-        override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+        override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
             barrier.await(1, TimeUnit.SECONDS)
             if (barrier.isBroken) {
                 error("Barrier broken while waiting for step $step to complete")

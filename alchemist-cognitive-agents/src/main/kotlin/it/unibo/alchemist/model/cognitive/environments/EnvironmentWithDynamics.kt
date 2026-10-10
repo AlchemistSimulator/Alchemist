@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,11 +9,13 @@
 
 package it.unibo.alchemist.model.cognitive.environments
 
-import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.observables.ObservableMutableList
+import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
@@ -63,6 +65,12 @@ constructor(
 
     private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
 
+    /*
+     * This environment hosts its own reactions instead of delegating membership to the backing environment:
+     * the reactions name this environment as their host, which the backing environment would reject.
+     */
+    private val hostedReactions = ObservableMutableList<Reaction<T>>()
+
     private var physicsUpdate = PhysicsUpdate(this, 1.0)
 
     private var physicsUpdateHasBeenOverriden: Boolean
@@ -80,23 +88,36 @@ constructor(
          * For further references: https://dyn4j.org/pages/advanced.html
          */
         world.settings.isAtRestDetectionEnabled = false
-        addGlobalReaction(physicsUpdate)
+        addReaction(physicsUpdate)
         physicsUpdateHasBeenOverriden = false
         obstacles.forEach { obstacle ->
             addObstacleToWorld(obstacle)
         }
     }
 
-    override fun addGlobalReaction(reaction: GlobalReaction<T>) {
+    override val reactions: ObservableList<Reaction<T>> get() = hostedReactions
+
+    override fun addReaction(reaction: Reaction<T>) {
+        require(reaction.host === this) { "$reaction is hosted by ${reaction.host}, not by $this" }
         if (reaction is PhysicsUpdate) {
             require(!physicsUpdateHasBeenOverriden) {
                 "${PhysicsUpdate::class.simpleName} reaction had been already overriden"
             }
-            removeGlobalReaction(physicsUpdate)
+            removeReaction(physicsUpdate)
             physicsUpdateHasBeenOverriden = true
             physicsUpdate = reaction
         }
-        backingEnvironment.addGlobalReaction(reaction)
+        if (reaction !in hostedReactions.current) {
+            hostedReactions.add(reaction)
+            simulationOrNull?.reactionAdded(reaction)
+        }
+    }
+
+    override fun removeReaction(reaction: Reaction<T>) {
+        if (hostedReactions.remove(reaction)) {
+            simulationOrNull?.reactionRemoved(reaction)
+            reaction.dispose()
+        }
     }
 
     private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {
@@ -147,10 +168,20 @@ constructor(
             }
     }
 
-    override fun moveNode(node: Node<T>, direction: Euclidean2DPosition) {
-        backingEnvironment.moveNode(node, direction)
-        moveNodeBodyToPosition(node, backingEnvironment.getPosition(node))
+    /**
+     * Moves [node] in the backing environment, which enforces its obstacles, then aligns its physical body.
+     */
+    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) {
+        backingEnvironment.moveNodeTo(node, position)
+        moveNodeBodyToPosition(node, backingEnvironment.getCurrentPosition(node))
     }
+
+    /*
+     * Interface delegation would run the default implementation inside the backing environment,
+     * moving the node through its moveNodeTo and leaving the physical body behind.
+     */
+    override fun moveNodeBy(node: Node<T>, displacement: Euclidean2DPosition) =
+        moveNodeTo(node, getCurrentPosition(node) + displacement)
 
     private fun addPhysicalProperties(body: PhysicsBody, radius: Double) {
         body.addFixture(Circle(radius))
@@ -171,11 +202,11 @@ constructor(
          * Make world and environment position consistent
          */
         nodeToBody.forEach { (node, body) ->
-            moveNodeToPosition(node, body.position)
+            backingEnvironment.moveNodeTo(node, body.position)
         }
     }
 
-    override fun getPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position
+    override fun getCurrentPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position
         ?: throw IllegalArgumentException("Unable to find $node's position in the environment.")
 
     private val PhysicsBody.position get() =

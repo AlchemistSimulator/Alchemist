@@ -9,15 +9,13 @@
 
 package it.unibo.alchemist.model;
 
-import java.io.Serializable;
-
 /**
  * This interface is a wrapper for concentrations.
  *
  * @param <T> concentration type
  */
 @FunctionalInterface
-public interface Concentration<T> extends Serializable {
+public interface Concentration<T> {
 
     /**
      * Allows accessing the content of the concentration.

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.Writer;
 import java.util.List;
 
@@ -96,9 +95,9 @@ public final class EffectSerializationFactory {
             .setPrettyPrinting();
         List.of(Effect.class, LayerToFunctionMapper.class).forEach(clazz -> {
             @SuppressWarnings("unchecked")
-            final var runtimeAdapterFactory = (RuntimeTypeAdapterFactory<Serializable>) RuntimeTypeAdapterFactory.of(clazz);
+            final var runtimeAdapterFactory = (RuntimeTypeAdapterFactory<Object>) RuntimeTypeAdapterFactory.of(clazz);
             @SuppressWarnings("unchecked")
-            final var legacyRuntimeAdapterFactory = (RuntimeTypeAdapterFactory<Serializable>) RuntimeTypeAdapterFactory.of(clazz);
+            final var legacyRuntimeAdapterFactory = (RuntimeTypeAdapterFactory<Object>) RuntimeTypeAdapterFactory.of(clazz);
             ClassPathScanner
                 .subTypesOf(clazz, clazz.getPackageName(), "it.unibo.alchemist")
                 .forEach(subtype -> {

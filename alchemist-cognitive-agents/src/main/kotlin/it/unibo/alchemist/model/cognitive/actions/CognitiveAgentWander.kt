@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,10 +10,9 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
@@ -40,8 +39,8 @@ import org.apache.commons.math3.random.RandomGenerator
  * @property radius the radius of the circle from which target points are sampled.
  */
 open class CognitiveAgentWander<T>(
-    private val environment: Physics2DEnvironment<T>,
-    reaction: Reaction<T>,
+    override val environment: Physics2DEnvironment<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     protected val randomGenerator: RandomGenerator,
     protected val offset: Double,
@@ -57,8 +56,8 @@ open class CognitiveAgentWander<T>(
     },
 ) {
     private val heading by lazy {
-        environment.setHeading(node, randomGenerator.random2DVersor(environment));
-        { environment.getHeading(node) }
+        environment.setHeading(targetNode, randomGenerator.random2DVersor(environment));
+        { environment.getHeading(targetNode) }
     }
 
     override fun nextPosition(): Euclidean2DPosition = heading()
@@ -67,8 +66,14 @@ open class CognitiveAgentWander<T>(
         .randomElement(randomGenerator)
         .coerceAtMost(maxWalk)
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        CognitiveAgentWander(environment, reaction, node.pedestrianProperty, randomGenerator, offset, radius)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>) = CognitiveAgentWander(
+        environment,
+        newReaction,
+        newReaction.host.pedestrianProperty,
+        randomGenerator,
+        offset,
+        radius,
+    )
 }
 
 /**

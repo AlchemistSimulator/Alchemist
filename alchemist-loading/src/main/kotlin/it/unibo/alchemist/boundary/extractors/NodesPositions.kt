@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.boundary.extractors
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 
 /**
@@ -22,28 +22,28 @@ import it.unibo.alchemist.model.Time
  */
 class NodesPositions<T, P : Position<P>>(private val environment: Environment<T, P>) : AbstractDoubleExtractor() {
     override val columnNames: List<String> by lazy {
-        (0 until environment.nodeCount).flatMap { nodeId ->
+        (0 until environment.nodeCount.current).flatMap { nodeId ->
             (0 until environment.dimensions).map { dimensionIndex ->
                 columnNameFormat(nodeId, Dimension(dimensionIndex))
             }
         }
     }
-    private val expectedNodesCount: Int by lazy { environment.nodeCount }
+    private val expectedNodesCount: Int by lazy { environment.nodeCount.current }
     private val maxNodeId: Int by lazy {
-        environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")
+        environment.nodes.current.maxOfOrNull { it.id } ?: error("No nodes in the environment")
     }
 
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<String, Double> {
         checkExtractCondition(environment)
-        return environment.nodes
+        return environment.nodes.current
             .flatMap {
                 val nodeId = it.id
-                val nodePosition = environment.getPosition(it)
+                val nodePosition = environment.getCurrentPosition(it)
                 nodePosition.coordinates.mapIndexed { index, coordinate ->
                     columnNameFormat(nodeId, Dimension(index)) to coordinate
                 }
@@ -51,10 +51,10 @@ class NodesPositions<T, P : Position<P>>(private val environment: Environment<T,
     }
 
     private fun <T> checkExtractCondition(environment: Environment<T, *>) {
-        require(expectedNodesCount == environment.nodeCount) {
+        require(expectedNodesCount == environment.nodeCount.current) {
             "The number of nodes in the environment is ${environment.nodeCount}, but $expectedNodesCount was expected"
         }
-        val currentMaxNodeId = environment.nodes.maxOfOrNull { it.id } ?: error("No nodes in the environment")
+        val currentMaxNodeId = environment.nodes.current.maxOfOrNull { it.id } ?: error("No nodes in the environment")
         require(maxNodeId == currentMaxNodeId) {
             """
             The maximum node ID in the environment is $currentMaxNodeId, but $maxNodeId was expected.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,10 +11,9 @@ package it.unibo.alchemist.model.cognitive.reactions
 
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.steering.Sum
-import it.unibo.alchemist.model.physics.PhysicsDependency
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -32,31 +31,27 @@ class PhysicalBlendedSteering<T>(
 ) : BlendedSteering<T>(environment, pedestrian, timeDistribution) {
     private var previouslyAppliedForce = Euclidean2DPosition.zero
 
-    private val physics = node.asProperty<T, PhysicalPedestrian2D<T>>()
+    private val physics = host.asProperty<T, PhysicalPedestrian2D<T>>()
 
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
-        Sum(environment, node, super.steerStrategy)
-
-    init {
-        addInboundDependency(PhysicsDependency)
-    }
+        Sum(environment, host, super.steerStrategy)
 
     /**
      * Update the node physical state.
      */
-    override fun execute() {
+    override fun performModelMutation() {
         (actions - steerActions()).forEach { it.execute() }
         val force = steerStrategy.computeNextPosition(steerActions())
         if (!physics.isFallen) {
             previouslyAppliedForce += force
             physics.checkAndPossiblyFall()
             val velocity = computeNewVelocity(force)
-            environment.setVelocity(node, velocity)
+            environment.setVelocity(host, velocity)
             if (velocity.magnitude > 0) {
-                environment.setHeading(node, velocity.normalized())
+                environment.setHeading(host, velocity.normalized())
             }
         } else {
-            environment.setVelocity(node, Euclidean2DPosition.zero)
+            environment.setVelocity(host, Euclidean2DPosition.zero)
         }
     }
 

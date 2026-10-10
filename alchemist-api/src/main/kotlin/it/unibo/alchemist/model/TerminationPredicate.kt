@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.model
 
-import java.io.Serializable
-
 /**
  * A predicate that determines whether a simulation should be terminated.
  * The predicate is evaluated at the end of each simulation step.
@@ -18,9 +16,7 @@ import java.io.Serializable
  * @param T the type of the concentration
  * @param P the type of the position
  */
-fun interface TerminationPredicate<T, P : Position<out P>> :
-    (Environment<T, P>) -> Boolean,
-    Serializable {
+fun interface TerminationPredicate<T, P : Position<out P>> : (Environment<T, P>) -> Boolean {
     override fun invoke(environment: Environment<T, P>): Boolean
 
     /**

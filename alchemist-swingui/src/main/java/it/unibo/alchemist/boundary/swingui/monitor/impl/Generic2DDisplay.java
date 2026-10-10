@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -24,12 +24,12 @@ import it.unibo.alchemist.boundary.wormhole.impl.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.WormholeSwing;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.core.Status;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Obstacle2D;
 import it.unibo.alchemist.model.Position2D;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.environments.Environment2DWithObstacles;
 import it.unibo.alchemist.model.times.DoubleTime;
@@ -391,7 +391,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
          */
         final List<Shape> obstacleShapes = obstacles.parallelStream()
             .map(this::convertObstacle)
-            .collect(Collectors.toList());
+            .toList();
         obstacleShapes.forEach(g::fill);
     }
 
@@ -483,7 +483,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             .map(node -> Optional.ofNullable(onView.get(node)))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .collect(Collectors.toList())
+            .toList()
             .forEach(point -> drawFriedEgg(g, point.x, point.y, Color.BLUE, Color.CYAN));
     }
 
@@ -703,7 +703,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     @Override
     public final void stepDone(
             @Nonnull final Environment<T, P> environment,
-            final Actionable<T> reaction,
+            final Reaction<T> reaction,
             @Nonnull final Time time,
             final long step
     ) {
@@ -758,9 +758,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             accessData();
             positions.clear();
             neighbors.clear();
-            environment.getNodes().parallelStream().forEach(node -> {
-                positions.put(node, environment.getPosition(node));
-                neighbors.put(node, environment.getNeighborhood(node));
+            environment.getNodes().getCurrent().parallelStream().forEach(node -> {
+                positions.put(node, environment.getCurrentPosition(node));
+                neighbors.put(node, environment.getNeighborhood(node).getCurrent());
             });
             releaseData();
             repaint();
@@ -934,10 +934,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             final P envEnding = wormhole.getEnvPoint(endingPoint);
                             final P envOrigin = wormhole.getEnvPoint(originPoint);
                             for (final Node<T> n : selectedNodes) {
-                                final P p = currentEnv.getPosition(n);
+                                final P p = currentEnv.getCurrentPosition(n);
                                 final P finalPos = p.plus(envEnding.minus(envOrigin.getCoordinates()).getCoordinates());
                                 engine.schedule(() -> {
-                                    currentEnv.moveNodeToPosition(n, finalPos);
+                                    currentEnv.moveNodeTo(n, finalPos);
                                     update(currentEnv, engine.getTime());
                                 });
                             }

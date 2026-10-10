@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
 
 /**
@@ -133,8 +134,6 @@ class SimpleNetworkArrivals<T> private constructor(
         accessPointIdentificator = accessPointIdentificator.isMeaningful,
     )
 
-    private var time: Time = startTime
-
     private val myNeighborhood
         get() = node.neighborhood
 
@@ -143,7 +142,7 @@ class SimpleNetworkArrivals<T> private constructor(
 
     /** Gets the neighbors of a node as a collection. */
     val Node<T>.neighborhood: Collection<Node<T>>
-        get() = environment.getNeighborhood(this).neighbors
+        get() = environment.getNeighborhood(this).current.neighbors
 
     /** Computes the effective bandwidth considering access point load balancing. */
     val bandwidth: Double
@@ -180,42 +179,30 @@ class SimpleNetworkArrivals<T> private constructor(
         get() = constantPropagationDelay
             ?: incarnation.getProperty(node, propagationDelayMolecule, propagationDelayProperty)
 
-    override fun updateStatus(currentTime: Time, executed: Boolean, rate: Double, environment: Environment<T, *>) {
-        /*
-         * To be revised once we have a better infrastructure of events and time distributions
-         */
-        if (rate == 0.0) {
-            time = Time.INFINITY
-        } else if (time.isInfinite) {
-            time = currentTime + propagationDelay + packetSize / bandwidth
-        }
-        setNextOccurrence(time)
-    }
+    override fun sample(): Time = DoubleTime(propagationDelay + packetSize / bandwidth)
 
-    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): SimpleNetworkArrivals<T> =
-        SimpleNetworkArrivals(
-            incarnation = incarnation,
-            environment = environment,
-            node = destination,
-            constantPropagationDelay = constantPropagationDelay,
-            propagationDelayMolecule = propagationDelayMolecule,
-            propagationDelayProperty = propagationDelayProperty,
-            constantPacketSize = constantPacketSize,
-            packetSizeMolecule = packetSizeMolecule,
-            packetSizeProperty = packetSizeProperty,
-            constantBandwidth = constantBandwidth,
-            bandwidthMolecule = bandwidthMolecule,
-            bandwidthProperty = bandwidthProperty,
-            accessPointIdentificator = accessPointIdentificator,
-            startTime = currentTime,
-        )
+    /** Expected number of arrivals per time unit for the current network state. */
+    val expectedRate: Double get() = 1 / (propagationDelay + packetSize / bandwidth)
 
-    override fun getRate(): Double = 1 / (propagationDelay + packetSize / bandwidth)
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = SimpleNetworkArrivals(
+        incarnation = incarnation,
+        environment = environment,
+        node = node,
+        constantPropagationDelay = constantPropagationDelay,
+        propagationDelayMolecule = propagationDelayMolecule,
+        propagationDelayProperty = propagationDelayProperty,
+        constantPacketSize = constantPacketSize,
+        packetSizeMolecule = packetSizeMolecule,
+        packetSizeProperty = packetSizeProperty,
+        constantBandwidth = constantBandwidth,
+        bandwidthMolecule = bandwidthMolecule,
+        bandwidthProperty = bandwidthProperty,
+        accessPointIdentificator = accessPointIdentificator,
+        startTime = startTime,
+    )
 
     private companion object {
         private val Molecule?.isMeaningful: Molecule?
             get() = this?.takeUnless { name.isNullOrBlank() }
-
-        private operator fun Time.plus(other: Double) = DoubleTime(toDouble() + other)
     }
 }

@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary
 
-import java.io.Serializable
 import java.util.stream.Stream
 import javax.annotation.Nonnull
 
@@ -19,9 +18,7 @@ import javax.annotation.Nonnull
  *
  * @param <V> value typ of the variable
 </V> */
-interface Variable<V : Serializable?> :
-    Serializable,
-    Iterable<V> {
+interface Variable<V> : Iterable<V> {
 
     @Nonnull
     override fun iterator(): MutableIterator<V> = stream().iterator()

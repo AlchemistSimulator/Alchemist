@@ -10,7 +10,6 @@
 package it.unibo.alchemist.boundary.variables
 
 import it.unibo.alchemist.boundary.DependentVariable
-import java.io.Serial
 
 /**
  * A numeric constant variable that always evaluates to the same [value].
@@ -23,9 +22,4 @@ import java.io.Serial
  */
 data class NumericConstant(val value: Number) : DependentVariable<Number> {
     override fun getWith(variables: Map<String, Any>): Number = value
-
-    private companion object {
-        @Serial
-        private const val serialVersionUID = 1L
-    }
 }

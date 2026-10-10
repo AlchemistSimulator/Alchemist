@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,9 +9,9 @@
 package it.unibo.alchemist.boundary.swingui.monitor.impl
 
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
@@ -61,18 +61,18 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) :
         stepDone(environment, null, Time.ZERO, 0L)
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
-        if (reaction == null || reaction is Reaction<*> && reaction.node == node) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
+        if (reaction == null || reaction is NodeReaction<*> && reaction.host == node) {
             val content =
                 """
                 |$POSITION
-                |${environment.getPosition(node)}
+                |${environment.getCurrentPosition(node)}
                 |
                 |$CONTENT
                 |${node.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString(System.lineSeparator())}
                 |
                 |$PROGRAM
-                |${node.reactions.joinToString(System.lineSeparator()) { it.toString() }}
+                |${node.reactions.current.joinToString(System.lineSeparator()) { it.toString() }}
                 """.trimMargin()
             stringLength = content.length + MARGIN
             currentText = content

@@ -8,15 +8,12 @@
  */
 package it.unibo.alchemist.model
 
-import java.io.Serializable
 import java.util.stream.Stream
 
 /**
  * @param <P> type of Position followed by [Route]
  */
-interface Route<P : Position<*>> :
-    Iterable<P>,
-    Serializable {
+interface Route<P : Position<*>> : Iterable<P> {
     /**
      * @return the length of the route
      */

@@ -9,15 +9,14 @@
 
 package it.unibo.alchemist.model.cognitive.reactions
 
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.cognitive.CognitiveProperty
+import it.unibo.alchemist.model.cognitive.properties.CognitiveProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.reactions.AbstractReaction
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 
 /**
  * Reaction representing a pedestrian's cognitive behavior.
@@ -29,10 +28,17 @@ import it.unibo.alchemist.model.reactions.AbstractReaction
  * @param timeDistribution the time distribution governing reaction execution.
  */
 class CognitiveBehavior<T, V, A>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
-    AbstractReaction<T>(node, timeDistribution)
+    AbstractNodeReaction<T>(node, timeDistribution)
     where V : Vector<V>, A : Transformation<V> {
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) = CognitiveBehavior(node, timeDistribution)
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
+        makeClone(node, currentTime) { CognitiveBehavior<T, V, A>(node, it) }
 
-    override fun updateInternalStatus(curTime: Time, executed: Boolean, environment: Environment<T, *>) =
-        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
+    /**
+     * Executes the actions, then advances the cognitive model by one step.
+     * The model advances only when the reaction fires, never when it is merely rescheduled.
+     */
+    override fun performModelMutation() {
+        super.performModelMutation()
+        host.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
+    }
 }

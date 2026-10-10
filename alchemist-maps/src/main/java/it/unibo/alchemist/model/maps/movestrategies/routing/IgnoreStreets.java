@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Route;
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.routes.PolygonalChain;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * This strategy ignores any information about the map, and connects the
@@ -26,11 +26,9 @@ import java.io.Serial;
  */
 public final class IgnoreStreets<T, P extends Position<P>> implements RoutingStrategy<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 2678088737744440021L;
-
+    @Nonnull
     @Override
-    public Route<P> computeRoute(final P currentPos, final P finalPos) {
+    public Route<P> computeRoute(@Nonnull final P currentPos, @Nonnull final P finalPos) {
         return new PolygonalChain<>(currentPos, finalPos);
     }
 

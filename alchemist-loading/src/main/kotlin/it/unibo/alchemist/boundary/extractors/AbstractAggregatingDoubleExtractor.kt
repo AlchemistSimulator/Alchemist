@@ -11,9 +11,9 @@ package it.unibo.alchemist.boundary.extractors
 
 import it.unibo.alchemist.boundary.ExportFilter
 import it.unibo.alchemist.boundary.exportfilters.CommonFilters
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.util.StatUtil
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
@@ -65,7 +65,7 @@ constructor(
 
     final override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<String, Double> = when {
@@ -90,7 +90,7 @@ constructor(
      */
     abstract fun <T> getData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<Node<T>, Double>

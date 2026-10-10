@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,10 +10,9 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
@@ -30,7 +29,7 @@ import it.unibo.alchemist.model.geometry.Vector
  */
 open class CognitiveAgentSeek<T, P, A>(
     environment: Environment<T, P>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     target: P,
 ) : CognitiveAgentArrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
@@ -38,11 +37,11 @@ open class CognitiveAgentSeek<T, P, A>(
           A : Transformation<P> {
     constructor(
         environment: Environment<T, P>,
-        reaction: Reaction<T>,
+        reaction: NodeReaction<T>,
         pedestrian: PedestrianProperty<T>,
         vararg coordinates: Number,
     ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeek<T, P, A> =
-        CognitiveAgentSeek(environment, reaction, node.pedestrianProperty, target)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentSeek<T, P, A> =
+        CognitiveAgentSeek(environment, newReaction, newReaction.host.pedestrianProperty, target)
 }

@@ -8,7 +8,7 @@ deployments:
         type: AnyRealDistribution
         parameters: [weibull, [1, 1]]
       type:
-        Event
+        GenericReaction
       conditions:
         - "{a}"
       actions: []

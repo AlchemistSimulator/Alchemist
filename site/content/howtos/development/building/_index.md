@@ -22,7 +22,7 @@ Depending on which scripting environment you are using the wrapper can be invoke
 The project can get build via Gradle:
 
 ```bash
-./gradlew assemble --parallel
+./gradlew assemble
 ```
 
 When imported in IntelliJ Idea as Gradle project, the IDE will use Gradle under the hood to run the necessary steps to perform compilation and packaging.
@@ -31,21 +31,21 @@ When imported in IntelliJ Idea as Gradle project, the IDE will use Gradle under 
 
 Testing can be executed by issuing
 ```bash
-./gradlew test --parallel
+./gradlew test
 ```
 
 ### Quality Assurance
 
 To perform a QA run
 ```bash
-./gradlew check --parallel
+./gradlew check
 ```
 
 ### Generating the website
 
 To generate the Alchemist website run
 ```bash
-./gradlew hugoBuild --parallel
+./gradlew hugoBuild
 ```
 ### Website preview
 

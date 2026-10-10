@@ -10,12 +10,12 @@
 package it.unibo.alchemist.model.biochemistry;
 
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
@@ -86,21 +86,28 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     }
 
     @Override
-    public Reaction<Double> createReaction(
+    public NodeReaction<Double> createReaction(
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
         final TimeDistribution<Double> timeDistribution,
         final @Nullable Object parameter
-        ) {
-        return new BiochemicalReactionBuilder<>(this, node, environment)
-            .randomGenerator(randomGenerator)
-            .timeDistribution(timeDistribution)
-            .program(
-                requireNonNull(parameter, "Biochemical reactions require String a parameter to get built")
-                    .toString()
-            )
-            .build();
+    ) {
+        if (timeDistribution instanceof final ExponentialTime<Double> exponentialDistribution) {
+            return new BiochemicalReactionBuilder<>(this, node, environment)
+                .randomGenerator(randomGenerator)
+                .timeDistribution(exponentialDistribution)
+                .program(
+                    requireNonNull(parameter, "Biochemical reactions require String a parameter to get built")
+                        .toString()
+                )
+                .build();
+        }
+        throw new IllegalArgumentException(
+            "Invalid time distribution: " + timeDistribution
+                + "(" + timeDistribution.getClass().getSimpleName() + "). Required: "
+                + ExponentialTime.class.getSimpleName()
+        );
     }
 
     @Override
@@ -108,7 +115,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final Actionable<Double> actionable,
+        final Reaction<Double> reaction,
         final @Nullable Object additionalParameters
     ) {
         return null;
@@ -119,7 +126,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final Actionable<Double> actionable,
+        final Reaction<Double> reaction,
         final @Nullable Object additionalParameters
     ) {
         return null;

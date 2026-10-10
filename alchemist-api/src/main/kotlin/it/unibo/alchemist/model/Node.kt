@@ -8,7 +8,11 @@
  */
 package it.unibo.alchemist.model
 
-import java.io.Serializable
+import arrow.core.Option
+import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
+import it.unibo.alchemist.model.observation.ObservableMap
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
@@ -20,21 +24,9 @@ import kotlin.reflect.jvm.jvmErasure
  * This interface must be implemented in every realization of node
 </T> */
 interface Node<T> :
-    Serializable,
-    Iterable<Reaction<T>>,
-    Comparable<Node<T>> {
-    /**
-     * Adds a reaction to this node.
-     * The reaction is added only in the node,
-     * but not in the [it.unibo.alchemist.core.Simulation] scheduler,
-     * so it will never be executed.
-     * To add the reaction also in the scheduler (and start to execute it),
-     * you have to call also the method
-     * [it.unibo.alchemist.core.Simulation.reactionAdded].
-     *
-     * @param reactionToAdd the reaction to be added
-     */
-    fun addReaction(reactionToAdd: Reaction<T>)
+    Comparable<Node<T>>,
+    Disposable,
+    ReactionHost<T> {
 
     /**
      * Creates a new Node which is a clone of the current Node. The new Node
@@ -61,6 +53,14 @@ interface Node<T> :
     operator fun contains(molecule: Molecule): Boolean
 
     /**
+     * Observes whether a node contains a [Molecule].
+     *
+     * @param molecule * the molecule to check
+     * @return emit true if the molecule is present, false otherwise
+     */
+    fun observeContains(molecule: Molecule): Observable<Boolean>
+
+    /**
      * Calculates the concentration of a molecule.
      *
      * @param molecule
@@ -70,9 +70,24 @@ interface Node<T> :
     fun getConcentration(molecule: Molecule): T
 
     /**
+     * Observe the concentration calculated with the given molecule.
+     * The result of this computation is wrapped into an [Option] and
+     * [some][arrow.core.Some] if the value is present, otherwise
+     * [none][arrow.core.None].
+     *
+     * @param molecule the molecule whose concentration will be returned
+     */
+    fun observeConcentration(molecule: Molecule): Observable<Option<T>>
+
+    /**
      * @return the molecule corresponding to the i-th position
      */
     val contents: Map<Molecule, T>
+
+    /**
+     * @return an observable view of the molecule corresponding to the i-th position
+     */
+    val observableContents: ObservableMap<Molecule, T>
 
     /**
      * @return an univocal id for this node in the environment
@@ -85,6 +100,11 @@ interface Node<T> :
     val moleculeCount: Int
 
     /**
+     * Observes the count of different molecules in this node.
+     */
+    val observeMoleculeCount: Observable<Int>
+
+    /**
      * @return a list of the node's properties/capabilities
      */
     val properties: List<NodeProperty<T>>
@@ -94,7 +114,7 @@ interface Node<T> :
      *
      * @return the list of rections belonging to this node
      */
-    val reactions: List<Reaction<T>>
+    override val reactions: ObservableList<Reaction<T>>
 
     override fun hashCode(): Int
 
@@ -104,18 +124,6 @@ interface Node<T> :
      * @param moleculeToRemove the molecule that should be removed
      */
     fun removeConcentration(moleculeToRemove: Molecule)
-
-    /**
-     * Removes a reaction from this node.
-     * The reaction is removed only in the node,
-     * but not in the [it.unibo.alchemist.core.Simulation] scheduler,
-     * so the scheduler will continue to execute the reaction.
-     * To remove the reaction also in the scheduler (and stop to execute it),
-     * you have to call also the method [it.unibo.alchemist.core.Simulation.reactionRemoved].
-     *
-     * @param reactionToRemove the reaction to be removed
-     */
-    fun removeReaction(reactionToRemove: Reaction<T>)
 
     /**
      * Sets the concentration of mol to c.
@@ -129,6 +137,9 @@ interface Node<T> :
 
     /**
      * Adds a capability to the node.
+     * Properties are part of the node setup: adding one fails once the node is in an environment,
+     * so properties can be read without being observed.
+     *
      * @param nodeProperty the capability you want to add to the node
      */
     fun addProperty(nodeProperty: NodeProperty<T>)

@@ -40,7 +40,7 @@ deployments:
         let distance = hypot(vector.get(0), vector.get(1))
         distanceTo(distance < 50)
     - program: send
-    - { type: Event, time-distribution: 1, actions: { type: LevyWalk, parameters: [*walk-speed] } }
+    - { type: GenericReaction, time-distribution: 1, actions: { type: LevyWalk, parameters: [*walk-speed] } }
 
 terminate:
   - type: AfterTime

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,9 +16,9 @@ import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
-import org.danilopianini.util.ListSet;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -42,8 +42,6 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
      * Default minimum range.
      */
     public static final double DEFAULT_MINRANGE = 1d;
-    @Serial
-    private static final long serialVersionUID = 8301318269785386062L;
     private final double defaultAdjustment;
     private final double minRange;
     private final double maxRange;
@@ -174,13 +172,17 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
         this(radius, DEFAULT_MINRANGE, DEFAULT_MAXRANGE, num, tolerance, adjustment);
     }
 
+    @Nonnull
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
+    public final Neighborhood<T> computeNeighborhood(
+        @Nonnull final Node<T> center,
+        @Nonnull final Environment<T, P> environment
+    ) {
         if (!ranges.containsKey(center.getId())) {
             ranges.put(center.getId(), getRange());
         }
         final double curRange = ranges.get(center.getId());
-        final ListSet<Node<T>> potentialNeighs = environment.getNodesWithinRange(center, curRange);
+        final List<Node<T>> potentialNeighs = environment.getNodesWithinRange(center, curRange);
         final Neighborhood<T> neigh = Neighborhoods.make(environment, center, potentialNeighs.stream()
                 .filter(neighbor -> !conditionForRemoval(environment, center, neighbor, curRange, ranges.get(neighbor.getId())))
                 .collect(Collectors.toList()));

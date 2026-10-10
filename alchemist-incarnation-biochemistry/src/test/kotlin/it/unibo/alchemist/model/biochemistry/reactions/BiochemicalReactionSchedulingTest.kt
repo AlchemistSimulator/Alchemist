@@ -1,0 +1,315 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.model.biochemistry.reactions
+
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import it.unibo.alchemist.model.Condition
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
+import it.unibo.alchemist.model.biochemistry.conditions.BiomolPresentInCell
+import it.unibo.alchemist.model.biochemistry.conditions.BiomolPresentInEnv
+import it.unibo.alchemist.model.biochemistry.conditions.GenericMoleculePresent
+import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent
+import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent.MechanicalState
+import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
+import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
+import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
+import org.apache.commons.math3.random.RandomGenerator
+import org.junit.jupiter.api.Test
+
+class BiochemicalReactionSchedulingTest {
+
+    @Test
+    fun `cloning preserves biochemical condition type and destination node`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation)
+        val source = incarnation.createNode(randomGenerator, environment, null)
+        val destination = incarnation.createNode(randomGenerator, environment, null)
+        val molecule = incarnation.createMolecule("token")
+        destination.setConcentration(molecule, 2.0)
+        val reaction = BiochemicalNodeReaction(
+            source,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        ).apply {
+            conditions = listOf(BiomolPresentInCell(this, molecule, 1.0))
+        }
+        val clonedReaction = reaction.cloneOnNewNode(destination, Time.ZERO)
+        val clonedCondition = assertIs<BiomolPresentInCell>(clonedReaction.conditions.single())
+        assertSame(clonedReaction, clonedCondition.reaction)
+        assertSame(destination, clonedCondition.targetNode)
+        assertEquals(1.0, clonedCondition.requiredQuantity)
+        assertEquals(2.0, clonedCondition.quantity.current)
+        assertFailsWith<IllegalArgumentException> {
+            reaction.conditions = listOf(mockk<Condition<Double>> { every { this@mockk.reaction } returns reaction })
+        }
+    }
+
+    @Test
+    fun `a cloned reaction follows only its destination quantities and stops after disposal`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
+        val (environment, source, molecule, _, reaction) = createFixture(randomGenerator)
+        val destination = BiochemistryIncarnation().createNode(randomGenerator, environment, null)
+        destination.setConcentration(molecule, 1.0)
+        assertTrue(environment.addNode(destination, Euclidean2DPosition(5.0, 0.0)))
+        reaction.initializationComplete(Time.ZERO, environment)
+        val clone = reaction.cloneOnNewNode(destination, Time.ZERO)
+        clone.initializationComplete(Time.ZERO, environment)
+        verify(exactly = 2) { randomGenerator.nextDouble() }
+        val sourceOccurrence = reaction.nextOccurrence.current
+        val cloneOccurrence = clone.nextOccurrence.current
+        source.setConcentration(molecule, 2.0)
+        assertEquals(sourceOccurrence * 0.5, reaction.nextOccurrence.current)
+        assertEquals(cloneOccurrence, clone.nextOccurrence.current)
+        destination.setConcentration(molecule, 2.0)
+        assertEquals(sourceOccurrence * 0.5, reaction.nextOccurrence.current)
+        assertEquals(cloneOccurrence * 0.5, clone.nextOccurrence.current)
+        clone.dispose()
+        destination.setConcentration(molecule, 4.0)
+        assertEquals(cloneOccurrence * 0.5, clone.nextOccurrence.current)
+        source.setConcentration(molecule, 4.0)
+        assertEquals(sourceOccurrence * 0.25, reaction.nextOccurrence.current)
+        verify(exactly = 2) { randomGenerator.nextDouble() }
+    }
+
+    @Test
+    fun `a quantity change updates rate while condition validity remains true`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
+        val fixture = createFixture(randomGenerator)
+        val (environment, node, molecule, condition, reaction) = fixture
+        reaction.initializationComplete(Time.ZERO, environment)
+        val initialOccurrence = reaction.nextOccurrence.current
+        verify(exactly = 1) { randomGenerator.nextDouble() }
+        node.setConcentration(molecule, 2.0)
+        assertEquals(2.0, condition.quantity.current)
+        assertTrue(reaction.canExecute.current)
+        assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
+        verify(exactly = 1) { randomGenerator.nextDouble() }
+    }
+
+    @Test
+    fun `an extracellular quantity change updates rate while condition validity remains true`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation).apply {
+            linkingRule = ConnectWithinDistance(1.0)
+        }
+        val node = incarnation.createNode(randomGenerator, environment, null)
+        val environmentNode = EnvironmentNodeImpl(environment)
+        val molecule = assertIs<Biomolecule>(incarnation.createMolecule("token"))
+        environmentNode.setConcentration(molecule, 2.0)
+        assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
+        assertTrue(environment.addNode(environmentNode, Euclidean2DPosition(0.5, 0.0)))
+        val reaction = BiochemicalNodeReaction(
+            node,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        )
+        val condition = BiomolPresentInEnv(environment, reaction, molecule, 1.0)
+        reaction.conditions = listOf(condition)
+        reaction.initializationComplete(Time.ZERO, environment)
+        val initialOccurrence = reaction.nextOccurrence.current
+        environmentNode.setConcentration(molecule, 4.0)
+        assertEquals(4.0, condition.quantity.current)
+        assertTrue(reaction.canExecute.current)
+        assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
+        verify(exactly = 1) { randomGenerator.nextDouble() }
+    }
+
+    @Test
+    fun `a time-varying layer drives the extracellular rate of a biochemical reaction`() {
+        val (randomGenerator, environment, _, level, condition, reaction) = layerFixture()
+        reaction.initializationComplete(Time.ZERO, environment)
+        val initialOccurrence = reaction.nextOccurrence.current
+        level.current = 4.0
+        assertEquals(4.0, condition.quantity.current)
+        assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
+        level.current = 0.0
+        assertTrue(reaction.nextOccurrence.current.isInfinite)
+        verify(exactly = 1) { randomGenerator.nextDouble() }
+    }
+
+    @Test
+    fun `a removed reaction or node stops observing a time-varying layer`() {
+        listOf<(Node<Double>, BiochemicalNodeReaction, BioRect2DEnvironment) -> Unit>(
+            { node, reaction, _ -> node.removeReaction(reaction) },
+            { node, _, environment -> environment.removeNode(node) },
+        ).forEach { remove ->
+            val (randomGenerator, environment, node, level, _, reaction) = layerFixture()
+            reaction.initializationComplete(Time.ZERO, environment)
+            assertTrue(level.observers.isNotEmpty())
+            val occurrence = reaction.nextOccurrence.current
+            remove(node, reaction, environment)
+            assertTrue(level.observers.isEmpty())
+            level.current = 4.0
+            assertEquals(occurrence, reaction.nextOccurrence.current)
+            verify(exactly = 1) { randomGenerator.nextDouble() }
+        }
+    }
+
+    @Test
+    fun `mass-action quantities must be non-negative integer counts`() {
+        listOf(
+            Double.NaN,
+            Double.POSITIVE_INFINITY,
+            -1.0,
+            1.5,
+            Int.MAX_VALUE.toDouble() + 1.0,
+        ).forEach { invalidQuantity ->
+            val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+            val (environment, node, molecule, _, reaction) = createFixture(randomGenerator)
+            reaction.initializationComplete(Time.ZERO, environment)
+            assertFailsWith<IllegalArgumentException> { node.setConcentration(molecule, invalidQuantity) }
+        }
+    }
+
+    @Test
+    fun `fractional stoichiometry is rejected when configuring mass action`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        val (_, _, molecule, _, reaction) = createFixture(randomGenerator)
+        assertFailsWith<IllegalArgumentException> {
+            reaction.conditions = listOf(GenericMoleculePresent(reaction, molecule, 1.5))
+        }
+    }
+
+    @Test
+    fun `a malformed later factor is validated after a zero factor`() {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation)
+        val node = incarnation.createNode(randomGenerator, environment, null)
+        val malformedMolecule = incarnation.createMolecule("malformed")
+        node.setConcentration(malformedMolecule, 1.0)
+        assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
+        val reaction = BiochemicalNodeReaction(
+            node,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        ).apply {
+            conditions = listOf(
+                mockk<TensionPresent>(relaxed = true).also {
+                    every { it.reaction } returns this
+                    every { it.observeMechanicalState() } returns observe(MechanicalState(true, 0.0))
+                    every { it.isValid } returns observe(true)
+                    every { it.getTension() } returns 0.0
+                },
+                GenericMoleculePresent(this, malformedMolecule, 1.0),
+            )
+        }
+        reaction.initializationComplete(Time.ZERO, environment)
+        assertFailsWith<IllegalArgumentException> { node.setConcentration(malformedMolecule, Double.NaN) }
+    }
+
+    @Test
+    fun `zero rate factors absorb infinity in either order without drawing`() {
+        listOf(listOf(0.0, Double.POSITIVE_INFINITY), listOf(Double.POSITIVE_INFINITY, 0.0)).forEach { factors ->
+            val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+            val incarnation = BiochemistryIncarnation()
+            val environment = BioRect2DEnvironment(incarnation)
+            val node = incarnation.createNode(randomGenerator, environment, null)
+            val reaction =
+                BiochemicalNodeReaction(node, ExponentialTime(1.0, randomGenerator), environment, randomGenerator)
+            reaction.conditions = factors.map { factor ->
+                mockk<TensionPresent>().also {
+                    every { it.reaction } returns reaction
+                    every { it.observeMechanicalState() } returns
+                        observe(MechanicalState(true, factor))
+                    every { it.isValid } returns observe(true)
+                    every { it.getTension() } returns factor
+                }
+            }
+            reaction.initializationComplete(Time.ZERO, environment)
+            assertEquals(0.0, reaction.rate)
+            assertTrue(reaction.nextOccurrence.current.isInfinite)
+            verify(exactly = 0) { randomGenerator.nextDouble() }
+        }
+    }
+
+    /**
+     * A node whose reaction depends on a time-varying extracellular layer, associated after the condition is built.
+     */
+    private fun layerFixture(): LayerFixture {
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } returns 0.5
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation)
+        val node = incarnation.createNode(randomGenerator, environment, null)
+        assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
+        val molecule = assertIs<Biomolecule>(incarnation.createMolecule("token"))
+        val level = observe(2.0)
+        val reaction = BiochemicalNodeReaction(
+            node,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        )
+        val condition = BiomolPresentInEnv(environment, reaction, molecule, 1.0)
+        environment.addLayer(molecule) { level }
+        reaction.conditions = listOf(condition)
+        node.addReaction(reaction)
+        return LayerFixture(randomGenerator, environment, node, level, condition, reaction)
+    }
+
+    private fun createFixture(randomGenerator: RandomGenerator): BiochemicalFixture {
+        val incarnation = BiochemistryIncarnation()
+        val environment = BioRect2DEnvironment(incarnation)
+        val node = incarnation.createNode(randomGenerator, environment, null)
+        val molecule = incarnation.createMolecule("token")
+        node.setConcentration(molecule, 1.0)
+        assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
+        val reaction = BiochemicalNodeReaction(
+            node,
+            ExponentialTime(1.0, randomGenerator),
+            environment,
+            randomGenerator,
+        )
+        val condition = GenericMoleculePresent(reaction, molecule, 1.0)
+        reaction.conditions = listOf(condition)
+        return BiochemicalFixture(environment, node, molecule, condition, reaction)
+    }
+
+    private data class LayerFixture(
+        val randomGenerator: RandomGenerator,
+        val environment: BioRect2DEnvironment,
+        val node: Node<Double>,
+        val level: MutableObservable<Double>,
+        val condition: BiomolPresentInEnv<Euclidean2DPosition>,
+        val reaction: BiochemicalNodeReaction,
+    )
+
+    private data class BiochemicalFixture(
+        val environment: BioRect2DEnvironment,
+        val node: Node<Double>,
+        val molecule: Molecule,
+        val condition: GenericMoleculePresent<Double>,
+        val reaction: BiochemicalNodeReaction,
+    )
+}

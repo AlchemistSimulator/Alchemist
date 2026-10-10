@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.movestrategies.target
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 import org.danilopianini.util.regex.Patterns
 import org.slf4j.LoggerFactory
@@ -42,7 +42,7 @@ open class FollowTarget<T, P : Position<P>>(
     /**
      * the current position.
      */
-    protected val currentPosition: P get() = environment.getPosition(node)
+    protected val currentPosition: P get() = environment.getCurrentPosition(node)
 
     override fun getTarget(): P {
         val conc = node.getConcentration(targetMolecule) ?: return currentPosition
@@ -106,11 +106,10 @@ open class FollowTarget<T, P : Position<P>>(
         else -> null
     } ?: conversionError(this)
 
-    override fun cloneIfNeeded(destination: Node<T>, reaction: Reaction<T>): FollowTarget<T, P> =
+    override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): FollowTarget<T, P> =
         FollowTarget(environment, destination, this.targetMolecule)
 
     private companion object {
-        private const val serialVersionUID = -446053307821810438L
         private val LOGGER = LoggerFactory.getLogger(FollowTarget::class.java)
     }
 }

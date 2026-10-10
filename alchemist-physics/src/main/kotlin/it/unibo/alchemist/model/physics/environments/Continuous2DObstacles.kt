@@ -13,14 +13,10 @@ import com.github.davidmoten.rtree.Entry
 import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry.Geometries
 import com.github.davidmoten.rtree.geometry.Rectangle
-import com.github.davidmoten.rtree.internal.EntryDefault
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serial
 
 /**
  * A 2D continuous environment that supports rectangular obstacles and prevents nodes from moving through them.
@@ -34,9 +30,6 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
 
     private companion object {
         private const val TOLERANCE_MULTIPLIER = 0.01
-
-        @Serial
-        private const val serialVersionUID = 69931743897405107L
     }
 
     private var rtree: RTree<RectObstacle2D<Euclidean2DPosition>, Rectangle> = RTree.create()
@@ -133,27 +126,8 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
         return rtree.size() == initialSize - 1
     }
 
-    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        super<AbstractLimitedContinuous2D>.moveNodeToPosition(node, newPosition)
-
-    @Serial
-    private fun writeObject(o: ObjectOutputStream) {
-        o.defaultWriteObject()
-        o.writeObject(obstacles)
-    }
-
-    @Serial
-    private fun readObject(o: ObjectInputStream) {
-        o.defaultReadObject()
-        rtree = RTree.create()
-        @Suppress("UNCHECKED_CAST")
-        val obstacles = o.readObject() as List<RectObstacle2D<Euclidean2DPosition>>
-        rtree = RTree.create<RectObstacle2D<Euclidean2DPosition>, Rectangle>().add(
-            obstacles.parallelStream()
-                .map { EntryDefault(it, toGeometry(it)) }
-                .toList(),
-        )
-    }
+    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) =
+        super<AbstractLimitedContinuous2D>.moveNodeTo(node, position)
 
     private fun toGeometry(o: RectObstacle2D<Euclidean2DPosition>): Rectangle =
         Geometries.rectangle(o.minX, o.minY, o.maxX, o.maxY)

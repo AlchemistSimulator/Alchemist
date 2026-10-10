@@ -37,7 +37,7 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers:
 
   test("Gradient"):
     val env = testNoVar[Any]("/test_gradient.yml")
-    env.getNodes
+    env.getNodes.getCurrent
       .iterator()
       .asScala
       .foreach: node =>
@@ -47,7 +47,7 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers:
 
   test("Environment"):
     val env = testNoVar[Any]("/test_env.yml")
-    env.getNodes
+    env.getNodes.getCurrent
       .iterator()
       .asScala
       .foreach: node =>

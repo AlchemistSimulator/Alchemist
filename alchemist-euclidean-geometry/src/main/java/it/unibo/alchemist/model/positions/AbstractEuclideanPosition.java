@@ -23,11 +23,6 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     extends AbstractPosition<P> implements Vector<P> {
 
     /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
      * @param copy
      *            true if it is unsafe to store the array as-is
      * @param coordinates

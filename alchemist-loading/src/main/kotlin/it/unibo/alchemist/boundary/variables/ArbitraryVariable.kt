@@ -8,9 +8,6 @@
  */
 package it.unibo.alchemist.boundary.variables
 
-import java.io.Serial
-import java.io.Serializable
-
 /**
  * A variable that can take any value from an arbitrary, finite set.
  *
@@ -21,8 +18,8 @@ import java.io.Serializable
  * @property values the set of allowed values (non-nullable)
  * @property default the default value (non-nullable)
  */
-data class ArbitraryVariable(override val default: Serializable, private val values: List<Serializable?>) :
-    AbstractPrintableVariable<Serializable?>() {
+data class ArbitraryVariable(override val default: Any, private val values: List<Any?>) :
+    AbstractPrintableVariable<Any?>() {
 
     init {
         require(values.distinct() == values) {
@@ -35,7 +32,7 @@ data class ArbitraryVariable(override val default: Serializable, private val val
      * @param default the default value
      * @param values values to include in the set
      */
-    constructor(default: Serializable, vararg values: Double) : this(
+    constructor(default: Any, vararg values: Double) : this(
         default,
         values.toList(),
     )
@@ -45,12 +42,7 @@ data class ArbitraryVariable(override val default: Serializable, private val val
      * @param default the default value
      * @param values iterable containing the allowed values
      */
-    constructor(default: Serializable, values: Iterable<Serializable?>) : this(default, values.toList())
+    constructor(default: Any, values: Iterable<Any?>) : this(default, values.toList())
 
     override fun stream() = values.stream()
-
-    private companion object {
-        @Serial
-        private const val serialVersionUID = 1L
-    }
 }

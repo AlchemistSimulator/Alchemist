@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,9 +13,9 @@ import it.unibo.alchemist.model.EnvironmentWithObstacles
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.CognitiveProperty
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.cognitive.properties.CognitiveProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
@@ -37,7 +37,7 @@ class CognitiveAgentAvoidLayer
 @JvmOverloads
 constructor(
     environment: Euclidean2DEnvironment<Number>,
-    reaction: Reaction<Number>,
+    reaction: NodeReaction<Number>,
     pedestrian: PedestrianProperty<Number>,
     targetMolecule: Molecule,
     private val viewDepth: Double = Double.POSITIVE_INFINITY,
@@ -52,11 +52,11 @@ constructor(
             }
         }
 
-    override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): CognitiveAgentAvoidLayer =
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Number>): CognitiveAgentAvoidLayer =
         CognitiveAgentAvoidLayer(
             environment,
-            reaction,
-            node.pedestrianProperty,
+            newReaction,
+            newReaction.host.pedestrianProperty,
             targetMolecule,
             viewDepth,
         )
@@ -66,7 +66,7 @@ constructor(
      * (either because it is in sight or due to social contagion), otherwise a zero vector is returned.
      */
     override fun nextPosition(): Euclidean2DPosition = when {
-        node.wantsToEscape() || isDangerInSight() -> followScalarField.nextPosition()
+        targetNode.wantsToEscape() || isDangerInSight() -> followScalarField.nextPosition()
         else -> environment.origin
     }
 
@@ -76,7 +76,7 @@ constructor(
      */
     @Suppress("UNCHECKED_CAST")
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
-        val currentPosition = environment.getPosition(node)
+        val currentPosition = environment.getCurrentPosition(targetNode)
         /*
          * environment is euclidean, so if it has obstacles it must be an
          * EnvironmentWithObstacles<*, *, Euclidean2DPosition>. Since generic types can't be checked at runtime, this

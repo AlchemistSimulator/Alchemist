@@ -40,10 +40,8 @@ import it.unibo.alchemist.boundary.variables.Constant
 import it.unibo.alchemist.boundary.variables.JSR223Variable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
@@ -69,7 +67,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>?, Actionable<T>, Any?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, Reaction<T>, Any?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -675,7 +673,7 @@ internal object SimulationModel {
         node: Node<T>?,
         context: Context,
         program: Map<*, *>,
-    ): Result<Pair<List<PositionBasedFilter<P>>, Actionable<T>>>? =
+    ): Result<Pair<List<PositionBasedFilter<P>>, Reaction<T>>>? =
         if (ProgramSyntax.validateDescriptor(program) || GlobalProgramSyntax.validateDescriptor(program)) {
             /*
              * Time distribution
@@ -691,11 +689,18 @@ internal object SimulationModel {
                 )
             context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
             /*
-             * Actionable
+             * Reaction
              */
-            val actionable: Actionable<T> =
-                visitActionable(simulationRNG, incarnation, environment, node, timeDistribution, context, program)
-            context.factory.registerSingleton(Actionable::class.java, actionable)
+            val reaction: Reaction<T> = visitReaction(
+                simulationRNG,
+                incarnation,
+                environment,
+                node,
+                timeDistribution,
+                context,
+                program,
+            )?.getOrThrow() ?: cantBuildWith<Reaction<T>>(program)
+            context.factory.registerSingleton(Reaction::class.java, reaction)
 
             /*
              * Support function implementing the lookup strategy for conditions and actions
@@ -707,7 +712,7 @@ internal object SimulationModel {
             ): Result<R>? {
                 fun <R> create(withParameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> =
                     runCatching {
-                        makeWith(simulationRNG, environment, node, actionable, withParameter)
+                        makeWith(simulationRNG, environment, node, reaction, withParameter)
                     }
                 return when (parameter) {
                     is String -> create(parameter, incarnationFactory)
@@ -744,7 +749,7 @@ internal object SimulationModel {
                     visitIncarnationBuildable(it, incarnation::createCondition, ::visitBuilding)
                 }
             if (conditions.isNotEmpty()) {
-                actionable.conditions = actionable.conditions + conditions
+                reaction.conditions = reaction.conditions + conditions
             }
             val actions =
                 visitRecursively<Action<T>>(
@@ -755,16 +760,16 @@ internal object SimulationModel {
                     visitIncarnationBuildable(it, incarnation::createAction, ::visitBuilding)
                 }
             if (actions.isNotEmpty()) {
-                actionable.actions = actionable.actions + actions
+                reaction.actions = reaction.actions + actions
             }
-            context.factory.deregisterSingleton(actionable)
+            context.factory.deregisterSingleton(reaction)
             context.factory.deregisterSingleton(timeDistribution)
-            Result.success(Pair(filters, actionable))
+            Result.success(Pair(filters, reaction))
         } else {
             null
         }
 
-    private fun <P : Position<P>, T> visitActionable(
+    private fun <P : Position<P>, T> visitReaction(
         simulationRNG: RandomGenerator,
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
@@ -772,15 +777,18 @@ internal object SimulationModel {
         timeDistribution: TimeDistribution<T>,
         context: Context,
         root: Map<*, *>,
-    ) = when {
+    ): Result<Reaction<T>>? = when {
         root.containsKey(ProgramSyntax.program) ->
-            incarnation.createReaction(simulationRNG, environment, node, timeDistribution, root[ProgramSyntax.program])
-        node != null ->
-            // This is a node-local reaction
-            visitBuilding<Reaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<Reaction<T>>(root)
-        else ->
-            // A reaction with no node is a GlobalReaction
-            visitBuilding<GlobalReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<GlobalReaction<T>>(root)
+            Result.success(
+                incarnation.createReaction(
+                    simulationRNG,
+                    environment,
+                    node,
+                    timeDistribution,
+                    root[ProgramSyntax.program],
+                ),
+            )
+        else -> visitBuilding<Reaction<T>>(context, root)?.map { it }
     }
 
     fun visitSeeds(context: Context, root: Any?): Seeds = when (root) {

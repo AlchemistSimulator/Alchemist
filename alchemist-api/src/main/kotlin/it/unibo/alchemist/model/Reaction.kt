@@ -1,50 +1,96 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.model
 
+import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.Observable
+
 /**
- * @param <T>
- * The type which describes the concentration of a molecule
+ * A scheduled entity whose absolute occurrence time is owned by the entity itself.
  *
- * A generic reaction. Every reaction in the system must implement
- * this interface.
-</T> */
-interface Reaction<T> : Actionable<T> {
-    /**
-     * The widest [Context] among [Condition]s, namely the
-     * smallest [Context] in which the [Reaction] can read
-     * informations.
-     */
-    val inputContext: Context
+ * The engine initializes a reaction before scheduling it, indexes [nextOccurrence], and subscribes to that
+ * observable without replaying its current value.
+ * After the scheduler selects a finite occurrence, the engine calls [execute].
+ * Observed model inputs synchronously mark the reaction dirty.
+ * When the enclosing model mutation completes, the engine invokes [updateSchedulingAfterInvalidation] once;
+ * the implementation owns that policy and communicates scheduling changes only by emitting a new [nextOccurrence].
+ */
+interface Reaction<T> :
+    Comparable<Reaction<T>>,
+    Disposable {
 
     /**
-     * The widest [Context] among [Action]s, namely the
-     * smallest context in which the [Reaction] can do
-     * modifications.
+     * The [Action]s executed by this reaction.
+     * Please be careful when modifying this list.
      */
-    val outputContext: Context
+    var actions: List<Action<T>>
 
     /**
-     * @return The [Node] in which this [Reaction] executes.
-     */
-    val node: Node<T>
-
-    /**
-     * This method allows to clone this reaction on a new node. It may result
-     * useful to support runtime creation of nodes with the same reaction
-     * programming, e.g. for morphogenesis.
+     * The [Condition]s interpreted by this reaction's scheduling and execution policy.
      *
-     * @param node
-     * The node where to clone this Reaction
-     * @param currentTime
-     * the time at which the clone is created (required to correctly clone the [TimeDistribution]s)
-     * @return the cloned action
+     * Conditions normally gate scheduling.
+     * A reaction with occurrence-time semantics may instead evaluate them only when its occurrence is selected.
+     * Please be careful when modifying this list.
      */
-    fun cloneOnNewNode(node: Node<T>, currentTime: Time): Reaction<T>
+    var conditions: List<Condition<T>>
+
+    /**
+     * The absolute [Time] of the next occurrence.
+     *
+     * This is the sole observable used by the engine for scheduling. Once the reaction has been registered, every
+     * emission requests scheduler reindexing; changing other observable state does not directly notify the engine.
+     */
+    val nextOccurrence: Observable<Time>
+
+    /**
+     * Observes whether the reaction procedure can be selected and executed by the engine. This observable emits
+     * updates when that state changes. Reactions whose procedure includes checking occurrence-time conditions may
+     * remain executable even when those conditions will suppress their model effects.
+     *
+     * The observable is owned by this reaction and released when the reaction is disposed.
+     */
+    val canExecute: Observable<Boolean>
+
+    /**
+     * The model entity hosting this reaction, fixed for the lifetime of the reaction.
+     * A host only registers reactions whose host is the host itself.
+     */
+    val host: ReactionHost<T>
+
+    /**
+     * Executes this reaction.
+     *
+     * While executing, [nextOccurrence] still holds the occurrence being executed, so conditions and actions can read
+     * it as the current time; the following occurrence is published only once the model mutation is complete.
+     */
+    fun execute()
+
+    /**
+     * Refreshes this reaction's scheduling after one or more observed model inputs changed.
+     *
+     * The engine invokes this once when the enclosing model mutation completes,
+     * using the simulation time at which the mutation (execution of the reaction) happened.
+     * Implementations own the resulting scheduling policy and communicate any change only through
+     * [nextOccurrence].
+     *
+     * @param currentTime the simulation time of the model mutation
+     */
+    fun updateSchedulingAfterInvalidation(currentTime: Time)
+
+    /**
+     * Activates reactive inputs after the environment is fully initialized and establishes the first occurrence.
+     *
+     * The engine invokes this method exactly once before indexing [nextOccurrence] in its scheduler.
+     *
+     * @param atTime the current simulation time
+     * @param environment the initialized environment
+     */
+    fun initializationComplete(atTime: Time, environment: Environment<T, *>)
 }

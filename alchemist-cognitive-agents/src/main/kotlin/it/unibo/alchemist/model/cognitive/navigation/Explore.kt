@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,8 +13,8 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.cognitive.NavigationStrategy
 import it.unibo.alchemist.model.cognitive.NavigationStrategy2D
-import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
+import it.unibo.alchemist.model.cognitive.properties.OrientingProperty
 import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
 import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
@@ -125,7 +125,7 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
         environment
             .getNodesWithinRange(centroid, radius)
             .asSequence()
-            .map { environment.getPosition(it) }
+            .map { environment.getCurrentPosition(it) }
             .count { contains(it) }
             .let { it * node.area / area }
             .coerceAtMost(1.0)

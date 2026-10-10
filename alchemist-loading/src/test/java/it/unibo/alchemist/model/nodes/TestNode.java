@@ -11,17 +11,12 @@ package it.unibo.alchemist.model.nodes;
 
 import it.unibo.alchemist.model.Environment;
 
-import java.io.Serial;
-
 /**
  * Generic node for testing purposes.
  *
  * @param <T> concentration type
  */
 public final class TestNode<T> extends GenericNode<T> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     /**
      * @param environment the environment

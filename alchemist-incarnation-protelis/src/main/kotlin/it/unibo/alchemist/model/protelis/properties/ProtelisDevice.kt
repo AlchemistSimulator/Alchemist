@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
@@ -113,7 +112,7 @@ constructor(
     /**
      * Finds all the [RunProtelisProgram]s installed on this node.
      */
-    fun allProtelisPrograms(): List<RunProtelisProgram<*>> = node.reactions
+    fun allProtelisPrograms(): List<RunProtelisProgram<*>> = node.reactions.current
         .asSequence()
         .flatMap { it.actions }
         .filterIsInstance<RunProtelisProgram<*>>()
@@ -128,7 +127,7 @@ constructor(
         when {
             node.contains(molecule) -> node.getConcentration(molecule)
             else ->
-                checkNotNull(environment.getLayer(molecule)?.getValue(environment.getPosition(node))) {
+                checkNotNull(environment.getLayer(molecule)?.getValue(environment.getCurrentPosition(node))) {
                     "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
                 }
         }
@@ -203,7 +202,7 @@ constructor(
     private fun validateCommunicationConfiguration() {
         val hasProtelisPrograms = allProtelisPrograms().isNotEmpty()
         if (hasProtelisPrograms) {
-            val hasSendAction = node.reactions
+            val hasSendAction = node.reactions.current
                 .asSequence()
                 .flatMap { it.actions }
                 .any { it is SendToNeighbor }

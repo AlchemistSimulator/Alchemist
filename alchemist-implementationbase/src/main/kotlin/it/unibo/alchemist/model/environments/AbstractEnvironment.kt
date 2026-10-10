@@ -9,13 +9,9 @@
 
 package it.unibo.alchemist.model.environments
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.benmanes.caffeine.cache.LoadingCache
-import gnu.trove.map.hash.TIntObjectHashMap
 import gnu.trove.set.hash.TIntHashSet
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.LinkingRule
@@ -23,62 +19,82 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serial
+import it.unibo.alchemist.model.observables.ObservableMutableList
+import it.unibo.alchemist.model.observables.ObservableMutableMap
+import it.unibo.alchemist.model.observables.ObservableMutableSet
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
+import it.unibo.alchemist.model.observation.ObservableSet
 import java.util.Objects
-import java.util.Spliterator
 import java.util.function.Consumer
-import org.danilopianini.util.ArrayListSet
-import org.danilopianini.util.ImmutableListSet
-import org.danilopianini.util.LinkedListSet
-import org.danilopianini.util.ListSet
-import org.danilopianini.util.ListSets
 import org.danilopianini.util.SpatialIndex
 
 /**
- * Very generic and basic implementation for an environment. Basically, only
- * manages an internal set of nodes and their position.
+ * Base implementation of an [Environment]:
+ * it owns the ordered node list, node positions and neighborhoods, the environment-hosted reactions,
+ * the layers associated during setup,
+ * and live range queries over node positions.
+ * Subclasses define the geometry, through [computeActualInsertionPosition] and node movement, and may react to node
+ * addition and removal through [nodeAdded] and [nodeRemoved].
  *
- * @param <T>
- * concentration type
- * @param <P>
- * [it.unibo.alchemist.model.Position] type
-</P></T> */
+ * @param T concentration type
+ * @param P position type
+ */
 abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     incarnation: Incarnation<T, P>,
     internalIndex: SpatialIndex<Node<T>>,
 ) : Environment<T, P> {
-    private val _nodes: ListSet<Node<T>> = ArrayListSet()
-    private val _globalReactions = ArrayListSet<GlobalReaction<T>>()
+    private val nodeList = ObservableMutableList<Node<T>>()
+    private val environmentReactions = ObservableMutableList<Reaction<T>>()
     final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
         private set
-    private val neighCache = TIntObjectHashMap<Neighborhood<T>>()
-    private val nodeToPos = TIntObjectHashMap<P>()
+
+    /*
+     * The authoritative model state is the ordered node list, the position of every node, and the neighborhood of
+     * every node. Neighborhoods are stored rather than recomputed on demand: a linking rule that is not locally
+     * consistent derives a node's neighborhood from the rest of the topology, so only the stored snapshots are
+     * reliable. Positions and neighborhoods are keyed by node id and published through observable maps; each stored
+     * neighborhood is an immutable snapshot that topology changes replace.
+     */
+    private val neighborhoods = ObservableMutableMap<Int, Neighborhood<T>>()
+
+    private val nodesToPositions = ObservableMutableMap<Int, P>()
+
+    /*
+     * A secondary index of node coordinates answering range queries. It must mirror nodesToPositions exactly: every
+     * addition, movement, and removal updates both.
+     */
     private val spatialIndex: SpatialIndex<Node<T>> = internalIndex
 
-//    override val layers: Map<Molecule, Layer<T, P>> get() = _layers
+    /*
+     * The range queries that currently have subscribers. Each one is updated incrementally on every node addition,
+     * movement, and removal; unobserved queries are not tracked and compute their members on demand.
+     */
+    private val activeRangeQueries = LinkedHashSet<RangeQuery>()
 
-    override val globalReactions: ListSet<GlobalReaction<T>>
-        get() = ListSets.unmodifiableListSet(_globalReactions)
+    override val reactions: ObservableList<Reaction<T>> = environmentReactions
 
-    override val nodes: ListSet<Node<T>> = ListSets.unmodifiableListSet(_nodes)
+    override val nodes: ObservableList<Node<T>> = nodeList
 
-    final override val nodeCount: Int get() = nodes.size
+    final override val nodeCount: Observable<Int> = nodes.size
 
+    /*
+     * Replacing the rule recomputes every stored neighborhood at once from the current positions, so no snapshot built
+     * by the previous rule survives.
+     */
     final override var linkingRule: LinkingRule<T, P> = NoLinks()
+        set(value) {
+            field = value
+            nodes.current.forEach { node -> neighborhoods.put(node.id, value.computeNeighborhood(node, this)) }
+        }
 
-    @Transient
-    private var cache: LoadingCache<Pair<P, Double>, List<Node<T>>>? = null
+    final override val incarnation: Incarnation<T, P> = requireNotNull(incarnation)
 
-    @Transient
-    final override var incarnation: Incarnation<T, P> = requireNotNull(incarnation)
-        private set
-
-    @Transient
     final override var simulationOrNull: Simulation<T, P>? = null
         private set
 
@@ -101,34 +117,45 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private var terminationPredicate: TerminationPredicate<T, P> = TerminationPredicate { false }
 
-    init {
-        this.incarnation = requireNotNull(incarnation)
-    }
-
     override fun addLayer(molecule: Molecule, layer: Layer<T, P>) {
+        check(simulationOrNull == null) {
+            "Cannot associate a layer with $molecule: layers must be added before the environment joins a simulation."
+        }
         check(molecule !in layers.keys) { "A layer for $molecule was already associated to this environment." }
         layers += molecule to layer
     }
 
-    override fun addGlobalReaction(reaction: GlobalReaction<T>) {
-        _globalReactions.add(reaction)
-        ifEngineAvailable { it.reactionAdded(reaction) }
+    override fun addReaction(reaction: Reaction<T>) {
+        require(reaction.host === this) { "$reaction is hosted by ${reaction.host}, not by $this" }
+        if (reaction !in environmentReactions.current) {
+            environmentReactions.add(reaction)
+            ifAttachedToSimulation { it.reactionAdded(reaction) }
+        }
     }
 
-    override fun removeGlobalReaction(reaction: GlobalReaction<T>) {
-        _globalReactions.remove(reaction)
-        ifEngineAvailable { it.reactionRemoved(reaction) }
+    override fun removeReaction(reaction: Reaction<T>) {
+        if (environmentReactions.remove(reaction)) {
+            ifAttachedToSimulation { it.reactionRemoved(reaction) }
+            reaction.dispose()
+        }
     }
 
     override fun addNode(node: Node<T>, position: P): Boolean = when {
         nodeShouldBeAdded(node, position) -> {
             val actualPosition = computeActualInsertionPosition(node, position)
+            require(node !in nodeList.current) {
+                "Node with id ${node.id} was already existing in this environment."
+            }
+            /*
+             * The position and spatial index come first, because the linking rule queries them to compute the new
+             * neighborhood; reactions are announced only once the node is fully part of the model.
+             */
             setPosition(node, actualPosition)
-            require(_nodes.add(node)) { "Node with id ${node.id} was already existing in this environment." }
             spatialIndex.insert(node, *actualPosition.coordinates)
-            updateNeighborhood(node, true)
-            ifEngineAvailable { it.nodeAdded(node) }
-            nodeAdded(node, position, getNeighborhood(node))
+            nodeList.add(node)
+            refreshNeighborhoodsAround(node)
+            ifAttachedToSimulation { simulation -> node.reactions.current.forEach(simulation::reactionAdded) }
+            nodeAdded(node, actualPosition, currentNeighborhoodOf(node))
             true
         }
         else -> false
@@ -155,66 +182,93 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      */
     protected abstract fun computeActualInsertionPosition(node: Node<T>, originalPosition: P): P
 
-    override fun forEach(action: Consumer<in Node<T>?>?) {
-        nodes.forEach(action)
-    }
-
     private fun foundNeighbors(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> = newNeighborhood
-        .getNeighbors()
+    ): Sequence<Node<T>> = newNeighborhood
+        .neighbors
         .asSequence()
-        .filterNot { it in (oldNeighborhood ?: emptySet()) || getNeighborhood(it).contains(center) }
-        .map { Operation(center, it, true) }
+        .filterNot { it in (oldNeighborhood ?: emptySet()) || currentNeighborhoodOf(it).contains(center) }
 
-    private fun getAllNodesInRange(center: P, range: Double): List<Node<T>> {
+    private fun queryNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
-        val validCache = cache ?: Caffeine.newBuilder()
-            .maximumSize(1000)
-            .build<Pair<P, Double>, List<Node<T>>> { (pos, r) -> runQuery(pos, r) }
-            .also { cache = it }
-        return validCache[center to range]
+        return spatialIndex
+            .query(*center.boundingBox(range).map { it.coordinates }.toTypedArray())
+            .filter { currentPositionOf(it).distanceTo(center) <= range }
+            .distinct()
     }
 
-    override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double = getPosition(n1).distanceTo(getPosition(n2))
+    override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double =
+        currentPositionOf(n1).distanceTo(currentPositionOf(n2))
 
     override fun getLayer(molecule: Molecule): Layer<T, P>? = layers[molecule]
 
-    override fun getNeighborhood(node: Node<T>): Neighborhood<T> {
-        val result = neighCache[node.id]
-        requireNotNull(result) {
-            check(!nodes.contains(node)) {
-                "The environment state is inconsistent. $node is among the nodes, but has no position."
+    /*
+     * The layer is looked up whenever the position changes or the value is recomputed,
+     * not when the observable is built:
+     * conditions may be created during setup before their layer is associated.
+     */
+    override fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T?> =
+        getPosition(node).switchMap { position ->
+            getLayer(molecule)?.observeValue(position)?.map<T?> { it } ?: observe<T?>(null)
+        }
+
+    /**
+     * The current neighborhood of [node], which must be part of this environment.
+     */
+    protected fun currentNeighborhoodOf(node: Node<T>): Neighborhood<T> =
+        requireNeighborhood(node, neighborhoods.current[node.id])
+
+    override fun getNeighborhood(node: Node<T>): Observable<Neighborhood<T>> =
+        neighborhoods[node.id].map { requireNeighborhood(node, it.getOrNull()) }
+
+    private fun requireNeighborhood(node: Node<T>, neighborhood: Neighborhood<T>?): Neighborhood<T> =
+        requireNotNull(neighborhood) {
+            check(node !in nodes.current) {
+                "The environment state is inconsistent. $node is among the nodes, but has no neighborhood."
             }
             "$node is not part of the environment."
         }
-        return result
-    }
 
-    override fun getNodeByID(id: Int): Node<T> = nodes.first { n: Node<T> -> n.id == id }
+    override fun contains(node: Node<T>): Boolean = node.id in nodesToPositions.current
 
-    override fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>> {
-        val centerPosition = getPosition(node)
-        val res = LinkedListSet(getAllNodesInRange(centerPosition, range))
-        check(res.remove(node)) {
+    override fun getNodeByID(id: Int): Node<T> = nodes.current.first { n: Node<T> -> n.id == id }
+
+    override fun getNodesWithinRange(node: Node<T>, range: Double): List<Node<T>> {
+        val centerPosition = currentPositionOf(node)
+        val nodesInRange = queryNodesInRange(centerPosition, range)
+        // The center is always within any positive range of itself, unless coordinates lost precision.
+        check(node in nodesInRange) {
             "Either the provided range ($range) is too small for queries to work without precision loss, " +
                 "or the environment is in an inconsistent state. Node $node at $centerPosition was the query center, " +
-                "but within range $range, only nodes $res were found."
+                "but within range $range, only nodes $nodesInRange were found."
         }
-        return res
+        return nodesInRange.filterNot { it == node }
     }
 
-    override fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>> {
-        /*
-         * Collect every node in range
-         */
-        return ImmutableListSet.copyOf(getAllNodesInRange(position, range))
+    override fun getNodesWithinRange(position: P, range: Double): List<Node<T>> = queryNodesInRange(position, range)
+
+    override fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> {
+        require(range > 0) { "Range query must be positive (provided: $range)" }
+        return RangeQuery(node, range)
     }
 
-    override fun getPosition(node: Node<T>): P = requireNotNull(nodeToPos[node.id]) {
-        check(!nodes.contains(node)) {
+    override fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>> {
+        require(range > 0) { "Range query must be positive (provided: $range)" }
+        return RangeQuery(null, range) { position }
+    }
+
+    /**
+     * The current position of [node], which must be part of this environment.
+     */
+    protected fun currentPositionOf(node: Node<T>): P = requirePosition(node, nodesToPositions.current[node.id])
+
+    override fun getPosition(node: Node<T>): Observable<P> =
+        nodesToPositions[node.id].map { requirePosition(node, it.getOrNull()) }
+
+    private fun requirePosition(node: Node<T>, position: P?): P = requireNotNull(position) {
+        check(node !in nodes.current) {
             "Node $node is registered in the environment but has no position. " +
                 "This could be a bug in Alchemist. Please open an issue at: " +
                 "https://github.com/AlchemistSimulator/Alchemist/issues/new/choose"
@@ -231,30 +285,23 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override val sizeInDistanceUnits: DoubleArray get() = size
 
     /**
-     * If this environment is attached to a simulation engine, executes consumer.
-     *
-     * @param action  the [Consumer] to execute
+     * Executes [action] on the simulation this environment is attached to, if any.
      */
-    protected fun ifEngineAvailable(action: Consumer<Simulation<T, P>>) {
+    protected fun ifAttachedToSimulation(action: Consumer<Simulation<T, P>>) {
         simulationOrNull?.also(action::accept)
     }
 
-    private fun invalidateCache() = cache?.invalidateAll()
-
     override val isTerminated: Boolean
         get() = terminationPredicate.test(this)
-
-    override fun iterator(): MutableIterator<Node<T>> = nodes.iterator()
 
     private fun lostNeighbors(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> = oldNeighborhood
+    ): Sequence<Node<T>> = oldNeighborhood
         ?.neighbors
         ?.asSequence()
-        ?.filter { neigh -> !newNeighborhood.contains(neigh) && getNeighborhood(neigh).contains(center) }
-        ?.map { neigh -> Operation(center, neigh, isAdd = false) }
+        ?.filter { neigh -> !newNeighborhood.contains(neigh) && currentNeighborhoodOf(neigh).contains(center) }
         .orEmpty()
 
     /**
@@ -287,50 +334,48 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      */
     protected open fun nodeShouldBeAdded(node: Node<T>, position: P): Boolean = true
 
-    @Serial
-    private fun readObject(inputStream: ObjectInputStream) {
-        inputStream.defaultReadObject()
-        val name = inputStream.readObject().toString()
-        incarnation =
-            SupportedIncarnations
-                .get<T, P>(name)
-                .orElseThrow { IllegalStateException("Unknown incarnation $name") }
-    }
-
-    private fun recursiveOperation(origin: Node<T>): Sequence<Operation<T>> {
-        val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(origin), this)
-        val oldNeighborhood: Neighborhood<T>? = neighCache.put(origin.id, newNeighborhood)
-        return toQueue(origin, oldNeighborhood, newNeighborhood)
-    }
-
-    private fun recursiveOperation(origin: Node<T>, destination: Node<T>, isAdd: Boolean): Sequence<Operation<T>> {
-        requireNotNull(destination) { "Destination node cannot be null." }
-        ifEngineAvailable {
-            if (isAdd) {
-                it.neighborAdded(origin, destination)
-            } else {
-                it.neighborRemoved(origin, destination)
-            }
-        }
-        val newNeighborhood = linkingRule.computeNeighborhood(destination, this)
-        val oldNeighborhood = neighCache.put(destination.id, newNeighborhood)
-        return toQueue(destination, oldNeighborhood, newNeighborhood)
+    private fun recomputeNeighborhood(node: Node<T>): Sequence<Node<T>> {
+        val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(node), this)
+        val oldNeighborhood = neighborhoods.current[node.id]
+        neighborhoods.put(node.id, newNeighborhood)
+        return affectedNeighbors(node, oldNeighborhood, newNeighborhood)
     }
 
     override fun removeNode(node: Node<T>) {
-        invalidateCache()
-        _nodes.remove(requireNotNull(node) { "Node cannot be null." })
-        val pos = requireNotNull(nodeToPos.remove(node.id)) { "Node position cannot be null." }
-        spatialIndex.remove(node, *pos.coordinates)
-        val neigh = neighCache.remove(node.id)
-        neigh.forEach { neighCache.put(it.id, neighCache.remove(it.id).remove(node)) }
-        ifEngineAvailable { it.nodeRemoved(node, neigh) }
+        val reactions = node.reactions.current
+        /*
+         * Dispose the node, and with it its reactions and their subscriptions, before its position and neighborhood
+         * leave the model: a reaction observing its own node would otherwise receive the removal emission and query a
+         * node that no longer exists. Engine notifications below use the reactions captured beforehand.
+         */
+        node.dispose()
+        val position = requireNotNull(nodesToPositions.current[node.id]) { "Node position cannot be null." }
+        spatialIndex.remove(node, *position.coordinates)
+        nodeList.remove(node)
+        val neigh = requireNotNull(neighborhoods.remove(node.id)) { "Node neighborhood cannot be null." }
+        // A locally consistent rule only loses the removed node; any other rule may rewire the remaining topology.
+        if (linkingRule.isLocallyConsistent()) {
+            neigh.forEach {
+                with(currentNeighborhoodOf(it).remove(node)) {
+                    neighborhoods.put(it.id, this)
+                }
+            }
+        } else {
+            nodes.current.forEach { remainingNode ->
+                val updatedNeighborhood = linkingRule.computeNeighborhood(remainingNode, this)
+                neighborhoods.put(remainingNode.id, updatedNeighborhood)
+            }
+        }
+        updateRangeQueries(node, null)
+        /*
+         * The position goes last. Observers reach a node's position through the node list, a neighborhood, or a range
+         * query: once the node has left all of them, they no longer observe its position, which can then go away
+         * without notifying anyone about a node that no longer exists.
+         */
+        nodesToPositions.remove(node.id)
+        ifAttachedToSimulation { simulation -> reactions.forEach(simulation::reactionRemoved) }
         nodeRemoved(node, neigh)
     }
-
-    private fun runQuery(center: P, range: Double): List<Node<T>> = spatialIndex
-        .query(*center.boundingBox(range).map { it.coordinates }.toTypedArray())
-        .filter { getPosition(it).distanceTo(center) <= range }
 
     /**
      * Adds or updates a node's position in the position map.
@@ -339,22 +384,31 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * @param p its new position
      */
     protected fun setPosition(n: Node<T>, p: P) {
-        val pos = nodeToPos.put(n.id, p)
-        if (p != pos) {
-            invalidateCache()
-        }
+        val pos = nodesToPositions.current[n.id]
+        /*
+         * A new node has no previous position and is inserted in the spatial index by addNode after this call.
+         * The position map is updated before the range queries, so that queries centered on the moved node see its
+         * new position.
+         */
         require(pos == null || spatialIndex.move(n, pos.coordinates, p.coordinates)) {
             "Tried to move a node not previously present in the environment:\nNode: $n\nRequested position: $p"
         }
+        nodesToPositions[n.id] = p
+        updateRangeQueries(n, p)
     }
 
-    override fun spliterator(): Spliterator<Node<T>> = nodes.spliterator()
+    /*
+     * Iterates over a snapshot: updating a query may deactivate it, which removes it from activeRangeQueries.
+     */
+    private fun updateRangeQueries(node: Node<T>, newPosition: P?) {
+        activeRangeQueries.toList().forEach { it.update(node, newPosition) }
+    }
 
-    private fun toQueue(
+    private fun affectedNeighbors(
         center: Node<T>,
         oldNeighborhood: Neighborhood<T>?,
         newNeighborhood: Neighborhood<T>,
-    ): Sequence<Operation<T>> = lostNeighbors(center, oldNeighborhood, newNeighborhood) +
+    ): Sequence<Node<T>> = lostNeighbors(center, oldNeighborhood, newNeighborhood) +
         foundNeighbors(center, oldNeighborhood, newNeighborhood)
 
     /**
@@ -363,61 +417,124 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override fun toString(): String = javaClass.getSimpleName()
 
     /**
-     * After a node movement, recomputes the neighborhood and notifies the simulation of modifications.
-     * This allows movement actions to be defined as LOCAL, though they are normally considered GLOBAL.
-     *
-     * @param node the moved node
-     * @param isNewNode true if the node is new, false otherwise
+     * Recomputes the neighborhoods affected by the addition or movement of [node]: its own, and those of the nodes
+     * it joined or left, or every neighborhood the linking rule rewires when the rule is not locally consistent.
      */
-    protected fun updateNeighborhood(node: Node<T>, isNewNode: Boolean) {
+    protected fun refreshNeighborhoodsAround(node: Node<T>) {
+        /*
+         * With a locally consistent rule, a node's neighborhood depends only on its own position: recompute it, then
+         * add or remove the node in exactly the neighborhoods it entered or left. Any other rule may change the
+         * neighborhoods of nodes that did not move, so recomputation spreads from the moved node through every node
+         * whose neighborhood changed, visiting each node at most once.
+         */
         if (linkingRule.isLocallyConsistent()) {
             val newNeighborhood = linkingRule.computeNeighborhood(node, this)
-            val oldNeighborhood: Neighborhood<T>? = neighCache.put(node.id, newNeighborhood)
+            val oldNeighborhood = neighborhoods.current[node.id]
+            neighborhoods.put(node.id, newNeighborhood)
             oldNeighborhood?.let {
-                it
-                    .getNeighbors()
-                    .asSequence()
+                it.neighbors.asSequence()
                     .filterNot(newNeighborhood::contains)
-                    .map(this::getNeighborhood)
+                    .map(this::currentNeighborhoodOf)
                     .filter { neigh -> neigh.contains(node) }
                     .forEach { neighborhoodToChange ->
-                        val formerNeighbor = neighborhoodToChange.getCenter()
-                        neighCache.put(formerNeighbor.id, neighborhoodToChange.remove(node))
-                        if (!isNewNode) {
-                            ifEngineAvailable { it.neighborRemoved(node, formerNeighbor) }
+                        val formerNeighbor = neighborhoodToChange.center
+                        with(neighborhoodToChange.remove(node)) {
+                            neighborhoods.put(formerNeighbor.id, this)
                         }
                     }
             }
             val newNeighbors = newNeighborhood.neighbors
-            val oldNeighbors: Set<Node<T>>? = oldNeighborhood?.neighbors
-            (newNeighbors - oldNeighbors.orEmpty()).forEach { newNeighbor ->
-                neighCache.put(newNeighbor.id, neighCache[newNeighbor.id].add(node))
-                if (!isNewNode) {
-                    ifEngineAvailable { it.neighborAdded(node, newNeighbor) }
+            val oldNeighbors = oldNeighborhood?.neighbors.orEmpty()
+            (newNeighbors - oldNeighbors).forEach { newNeighbor ->
+                with(currentNeighborhoodOf(newNeighbor).add(node)) {
+                    neighborhoods.put(newNeighbor.id, this)
                 }
             }
         } else {
-            val processed = TIntHashSet(nodeCount).apply { add(node.id) }
-            val operations = recursiveOperation(node).toMutableList()
-            while (operations.isNotEmpty()) {
-                val next = operations.removeLast()
-                if (processed.add(next.destination.id)) {
-                    operations.addAll(recursiveOperation(next.origin, next.destination, next.isAdd))
+            val processed = TIntHashSet(nodes.current.size).apply { add(node.id) }
+            val nodesToUpdate = recomputeNeighborhood(node).toMutableList()
+            while (nodesToUpdate.isNotEmpty()) {
+                val next = nodesToUpdate.removeLast()
+                if (processed.add(next.id)) {
+                    nodesToUpdate.addAll(recomputeNeighborhood(next))
                 }
             }
         }
     }
 
-    private fun writeObject(out: ObjectOutputStream) {
-        out.defaultWriteObject()
-        out.writeObject(incarnation.javaClass.getSimpleName())
-    }
+    /**
+     * The nodes within [radius] of a center, kept up to date while observed.
+     * The center is either [centerNode], which is excluded from the members and followed as it moves, or a fixed
+     * position; [centerPosition] provides the current center in both cases.
+     *
+     * The query implements [ObservableSet] directly, rather than delegating, so that every subscription path,
+     * including the default members of [Observable], goes through [onChange] and [stopWatching]. The first observer
+     * computes the members and activates the query; the last one to leave deactivates it. While unobserved, [current]
+     * is computed on demand. Once its center node leaves the environment, the query is empty and never updates again.
+     */
+    private inner class RangeQuery(
+        private val centerNode: Node<T>?,
+        private val radius: Double,
+        private val centerPosition: () -> P = { currentPositionOf(checkNotNull(centerNode)) },
+    ) : ObservableSet<Node<T>> {
+        private val members = ObservableMutableSet<Node<T>>()
 
-    private data class Operation<T>(val origin: Node<T>, val destination: Node<T>, val isAdd: Boolean) {
-        override fun toString(): String = origin.toString() + (if (isAdd) " discovered " else " lost ") + destination
-    }
+        private var centerRemoved = false
 
-    private companion object {
-        private const val serialVersionUID = 1L
+        private val isActive: Boolean get() = members.observers.isNotEmpty()
+
+        override val current: Set<Node<T>>
+            get() = when {
+                centerRemoved -> emptySet()
+                isActive -> members.current
+                else -> computeMembers()
+            }
+
+        override val observers: List<Any> get() = members.observers
+
+        override val observingCallbacks: Map<Any, List<(Set<Node<T>>) -> Unit>> get() = members.observingCallbacks
+
+        override val size: Observable<Int> get() = map { it.size }
+
+        override fun containsItem(item: Node<T>): Observable<Boolean> = map { item in it }
+
+        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<Node<T>>) -> Unit) {
+            if (!isActive && !centerRemoved) {
+                members.clearAndAddAll(computeMembers())
+                activeRangeQueries += this
+            }
+            members.onChange(registrant, invokeOnRegistration, callback)
+        }
+
+        override fun stopWatching(registrant: Any) {
+            members.stopWatching(registrant)
+            if (!isActive) {
+                activeRangeQueries -= this
+            }
+        }
+
+        override fun dispose() {
+            members.dispose()
+            activeRangeQueries -= this
+        }
+
+        /**
+         * Reacts to [node] being added or moved to [newPosition], or removed when [newPosition] is null.
+         */
+        fun update(node: Node<T>, newPosition: P?) {
+            when {
+                node == centerNode && newPosition == null -> {
+                    centerRemoved = true
+                    activeRangeQueries -= this
+                    members.clearAndAddAll(emptySet())
+                }
+                node == centerNode -> members.clearAndAddAll(computeMembers())
+                newPosition != null && newPosition.distanceTo(centerPosition()) <= radius -> members.add(node)
+                else -> members.remove(node)
+            }
+        }
+
+        private fun computeMembers(): Set<Node<T>> =
+            queryNodesInRange(centerPosition(), radius).filterNot { it == centerNode }.toSet()
     }
 }

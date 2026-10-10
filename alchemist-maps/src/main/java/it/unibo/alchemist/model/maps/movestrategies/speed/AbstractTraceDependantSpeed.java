@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,16 +12,16 @@ package it.unibo.alchemist.model.maps.movestrategies.speed;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.TimeDistributedReaction;
 import it.unibo.alchemist.model.maps.GPSPoint;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.maps.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
-import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -36,9 +36,8 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     extends AbstractStrategyWithGPS
     implements SpeedSelectionStrategy<T, GeoPosition> {
 
-    @Serial
-    private static final long serialVersionUID = 8021140539083062866L;
-    private final Reaction<T> reaction;
+    private final NodeReaction<T> reaction;
+    private final TimeDistributedReaction<?> timeDistributedReaction;
     private final MapEnvironment<T, O, S> mapEnvironment;
     private final Node<T> node;
 
@@ -54,23 +53,27 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     public AbstractTraceDependantSpeed(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
-        final Reaction<T> reaction
+        final NodeReaction<T> reaction
     ) {
         this.mapEnvironment = Objects.requireNonNull(environment);
         this.node = Objects.requireNonNull(node);
         this.reaction = Objects.requireNonNull(reaction);
+        if (!(reaction instanceof final TimeDistributedReaction<?> distributedReaction)) {
+            throw new IllegalArgumentException(reaction + " does not expose a recurrence rate");
+        }
+        timeDistributedReaction = distributedReaction;
     }
 
     @Override
     public final double getNodeMovementLength(final GeoPosition target) {
-        final Time currentTime = reaction.getTau();
+        final Time currentTime = reaction.getNextOccurrence().getCurrent();
         final double curTime = currentTime.toDouble();
         final GPSPoint next = getTrace().getNextPosition(currentTime);
         final double expArrival = next.getTime().toDouble();
         if (curTime >= expArrival) {
             return Double.POSITIVE_INFINITY;
         }
-        final double frequency = reaction.getRate();
+        final double frequency = timeDistributedReaction.getRate();
         final double steps = (expArrival - curTime) * frequency;
         return computeDistance(mapEnvironment, node, target) / steps;
     }

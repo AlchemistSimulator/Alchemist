@@ -12,8 +12,6 @@ package it.unibo.alchemist.model.linkingrules;
 import it.unibo.alchemist.model.LinkingRule;
 import it.unibo.alchemist.model.Position;
 
-import java.io.Serial;
-
 /**
  * @param <T>
  *            Concentration type
@@ -21,9 +19,6 @@ import java.io.Serial;
  *            {@link Position} type
  */
 public abstract class AbstractLocallyConsistentLinkingRule<T, P extends Position<? extends P>> implements LinkingRule<T, P> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     @Override
     public final boolean isLocallyConsistent() {

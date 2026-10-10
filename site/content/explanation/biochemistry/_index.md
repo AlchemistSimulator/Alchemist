@@ -42,6 +42,24 @@ The reaction ``[A in env] --> [A in cell]`` moves the molecule A from the enviro
 
 If the location is not explicit, it is assumed the molecule to be inside the cell.
 
+### Scheduling
+
+{{% api package="model.biochemistry.reactions" class="BiochemicalNodeReaction" %}} computes its rate from the
+configured exponential rate and the typed state of its conditions.
+Molecule quantities determine mass-action factors, neighbor conditions provide selection weights, and mechanical
+conditions contribute tension-dependent factors.
+Changes to these inputs refresh scheduling even when condition validity remains true.
+It is a Markovian reaction: the general rules for preserving and rescaling its pending occurrence are described in
+[Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/#reactive-invalidation).
+
+The binomial mass-action calculation requires discrete molecule counts: local, neighboring, and extracellular
+quantities must be non-negative integers no greater than `Int.MAX_VALUE`.
+Fractional concentrations require a reaction type with a continuous rate law.
+Each factor is validated even when another factor makes the total rate zero.
+Zero propensity suspends scheduling, and positive infinite propensity schedules an immediate occurrence subject to
+the distribution's start time.
+Negative and NaN propensities fail at the reaction's scheduling boundary.
+
 ### Junctions
 A junction can be created just with a neighbor of the programmed cell.
 
@@ -52,11 +70,13 @@ The junction can also be destroyed using the syntax ``[junction X-Y] --> []``, c
 Also, the junction will be automatically removed if, because of their movement, the cells will stop being in a neighborhood.
 
 ### Custom Conditions
-Any custom condition must be placed after the reaction products following an ``if`` clause.
-
-For example, to create a molecule if the cell has at least three neighbor you would write:
-
-``[] --> [X] if NumberOfNeighborsGreaterThan(5)``
+A custom condition is placed after the reaction products following an `if` clause.
+{{% api package="model.biochemistry.reactions" class="BiochemicalNodeReaction" %}} accepts quantity conditions
+derived from {{% api package="model.biochemistry.conditions" class="GenericMoleculePresent" %}}, neighbor conditions
+derived from {{% api package="model.biochemistry.conditions" class="AbstractNeighborCondition" %}},
+{{% api package="model.biochemistry.conditions" class="EnvPresent" %}}, and
+{{% api package="model.biochemistry.conditions" class="TensionPresent" %}}.
+These types expose the state used by the reaction's rate law; their validity controls whether the reaction can run.
 
 ### Movement
 A movement can be performed in the same way of a reaction, using the function as it is a product of the reaction itself.

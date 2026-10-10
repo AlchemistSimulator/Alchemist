@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,18 +10,15 @@
 package it.unibo.alchemist.model.timedistributions
 
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 
-class DummyAction(
-    node: Node<Int>,
-) : AbstractLocalAction<Int>(node) {
-    override fun cloneAction(node: Node<Int>, reaction: Reaction<Int>): Action<Int> = DummyAction(node)
+class DummyAction(reaction: NodeReaction<Int>) : AbstractLocalAction<Int>(reaction) {
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Int>): Action<Int> = DummyAction(newReaction)
 
     override fun execute() {
         // Do nothing, this is a dummy action
-        node.setConcentration(SimpleMolecule("dummy"), 0)
+        targetNode.setConcentration(SimpleMolecule("dummy"), 0)
     }
 }

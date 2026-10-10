@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,10 +10,8 @@
 package it.unibo.alchemist.model.movestrategies;
 
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.Reaction;
-
-import java.io.Serializable;
 
 /**
  * This interface models a strategy for selecting positions where to move.
@@ -22,7 +20,7 @@ import java.io.Serializable;
  * @param <P> Position type
  */
 @FunctionalInterface
-public interface TargetSelectionStrategy<T, P extends Position<? extends P>> extends Serializable {
+public interface TargetSelectionStrategy<T, P extends Position<? extends P>> {
 
     /**
      * @return the next target where the {@link Node} is directed
@@ -31,12 +29,12 @@ public interface TargetSelectionStrategy<T, P extends Position<? extends P>> ext
 
     /**
      * @param destination the {@link Node} where the strategy is being cloned
-     * @param reaction the {@link Reaction} where strategy is being cloned
+     * @param reaction the {@link NodeReaction} where strategy is being cloned
      *
      * @return A copy of the strategy if the strategy is stateful, and this object otherwise.
      *     The default implementation assumes a stateless strategy.
      */
-    default TargetSelectionStrategy<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+    default TargetSelectionStrategy<T, P> cloneIfNeeded(final Node<T> destination, final NodeReaction<T> reaction) {
         return this;
     }
 }

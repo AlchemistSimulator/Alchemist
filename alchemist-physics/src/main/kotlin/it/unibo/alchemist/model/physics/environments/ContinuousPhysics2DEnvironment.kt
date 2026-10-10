@@ -34,8 +34,6 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     Continuous2DEnvironment<T>(incarnation),
     Physics2DEnvironment<T> {
     private companion object {
-        @JvmStatic private val serialVersionUID: Long = 1L
-
         private val adimensional =
             AdimensionalShape<Euclidean2DPosition, Euclidean2DTransformation>(Euclidean2DEnvironment.origin)
     }
@@ -46,7 +44,6 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0
 
-    @Transient
     private val shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape> =
         Caffeine.newBuilder().weakKeys().build { node ->
             node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional
@@ -66,7 +63,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     }
 
     override fun getShape(node: Node<T>): Euclidean2DShape = shapefulNodes[node].transformed {
-        origin(getPosition(node))
+        origin(currentPositionOf(node))
         rotate(getHeading(node))
     }
 
@@ -86,7 +83,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         nodeToHeading.remove(node)
         val occupiesSpaceProperty = node.asPropertyOrNull<T, AreaProperty<T>>()
         if (occupiesSpaceProperty != null && largestShapeDiameter <= occupiesSpaceProperty.shape.diameter) {
-            largestShapeDiameter = nodes
+            largestShapeDiameter = nodes.current
                 .asSequence()
                 .filter { getShape(it) != adimensional }
                 .map { getShape(it) }
@@ -96,15 +93,14 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     }
 
     /**
-     * Moves the [node] to the [farthestPositionReachable] towards the desired [newPosition]. If the node is shapeless,
-     * it is simply moved to [newPosition].
+     * Moves the [node] to the [farthestPositionReachable] towards the desired [position]. If the node is shapeless,
+     * it is simply moved to [position].
      */
-    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        if (getShape(node) != adimensional) {
-            super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
-        } else {
-            super.moveNodeToPosition(node, newPosition)
-        }
+    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) = if (getShape(node) != adimensional) {
+        super.moveNodeTo(node, farthestPositionReachable(node, position))
+    } else {
+        super.moveNodeTo(node, position)
+    }
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
@@ -127,7 +123,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         desiredPosition: Euclidean2DPosition,
         hitboxRadius: Double,
     ): Euclidean2DPosition {
-        val currentPosition = getPosition(node)
+        val currentPosition = currentPositionOf(node)
         val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)
         val nodesOnPath =
             nodesOnPath(node, desiredMovement)

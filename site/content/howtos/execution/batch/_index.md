@@ -39,27 +39,7 @@ and specifying [termination criteria](/howtos/execution/termination/).
 The modern approach to running batch simulations is to configure the launcher directly 
 in your simulation file. Add a `launcher` section specifying which variables to batch:
 
-```yaml
-# Your simulation configuration with variables
-variables:
-  nodeCount: &nodeCount
-    type: LinearVariable
-    parameters: [5, 5, 15, 10]  # Start: 5, Step: 5, End: 15, Default: 10
-  range: &range
-    type: LinearVariable  
-    parameters: [1, 1, 3, 2]    # Start: 1, Step: 1, End: 3, Default: 2
-
-# Configure the launcher for batch execution
-launcher:
-  parameters:
-    batch: [nodeCount, range]
-
-# Rest of your simulation configuration...
-deployments:
-  - type: Circle
-    parameters: [*nodeCount, 0, 0, 5]
-    # ... rest of configuration
-```
+{{< code path="src/test/resources/website-snippets/batch-complete-example.yml" from="3" to="14" >}}
 
 Then run the simulation with:
 
@@ -89,8 +69,11 @@ CI=true java -jar ./build/shadow/alchemist-full-*-all.jar run simulation.yml
 
 ### Understanding batch execution
 
-Under the hood, the simulator will compute the cartesian product of all possible values 
-of the variables specified in the `batch` list. Variables not included in the batch 
+Under the hood, the {{% api package="boundary.launchers" class="DefaultLauncher" %}}
+will compute the cartesian product of all possible values
+of the variables specified in the `batch` list.
+{{% api package="boundary.variables" class="LinearVariable" %}} parameters are, in order,
+the default value, the minimum, the maximum, and the step. Variables not included in the batch
 will use their default value.
 
 For example, with:

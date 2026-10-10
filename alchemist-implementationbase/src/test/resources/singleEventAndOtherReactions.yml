@@ -1,0 +1,24 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [30]
+
+deployments:
+  - type: Point
+    parameters: [0, 0]
+    programs:
+      - type: AbsoluteEvent
+        parameters: [3]
+        actions:
+          - type: TestEventAction
+            parameters: []
+      - time-distribution: 1
+        type: GenericReaction
+        actions:
+          - type: DummyAction
+            parameters: []
+
+terminate:
+  - type: AfterTime
+    parameters: 10

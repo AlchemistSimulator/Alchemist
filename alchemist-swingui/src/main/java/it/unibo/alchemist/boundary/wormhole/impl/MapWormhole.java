@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -139,10 +139,12 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
         do {
             setZoom(zoom);
             zoom--;
-        } while (zoom > 1 && !environment.getNodes().parallelStream()
-                .map(environment::getPosition)
+        } while (
+            zoom > 1 && !environment.getNodes().getCurrent().parallelStream()
+                .map(environment::getCurrentPosition)
                 .map(this::getViewPoint)
-                .allMatch(this::isInsideView));
+                .allMatch(this::isInsideView)
+        );
     }
 
     @Override

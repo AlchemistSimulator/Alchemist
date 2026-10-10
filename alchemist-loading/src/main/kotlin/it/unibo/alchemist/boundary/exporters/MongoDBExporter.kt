@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.boundary.exporters
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import org.bson.Document
 
@@ -49,7 +49,7 @@ constructor(
         mongoService.createCollection(collectionName)
     }
 
-    override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         mongoService.pushToDatabase(convertToDocument(environment, reaction, time, step))
     }
 
@@ -59,7 +59,7 @@ constructor(
 
     private fun convertToDocument(
         environment: Environment<T, P>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Document {

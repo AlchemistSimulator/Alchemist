@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.Position2D;
 
 import javax.annotation.Nullable;
 import java.awt.Graphics2D;
-import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -31,8 +30,6 @@ import java.util.Optional;
 @Deprecated
 public abstract class AbstractDrawOnce implements Effect {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     @Nullable
     private Integer markerNodeID;
 
@@ -51,14 +48,14 @@ public abstract class AbstractDrawOnce implements Effect {
              * We want to check if the cached id belongs to a node still present in
              * the environment, thus we don't use getNodeByID to avoid exceptions
              */
-            final Optional<Node<T>> markerNode = environment.getNodes().stream()
+            final Optional<? extends Node<T>> markerNode = environment.getNodes().getCurrent().stream()
                     .filter(it -> it.getId() == markerNodeID)
                     .findFirst();
             /*
              * if marker node is no longer in the environment or it is no longer displayed, we need to change it
              */
             if (markerNode.isEmpty()
-                    || !wormhole.isInsideView(wormhole.getViewPoint(environment.getPosition(markerNode.get())))) {
+                    || !wormhole.isInsideView(wormhole.getViewPoint(environment.getCurrentPosition(markerNode.get())))) {
                 markerNodeID = null;
             }
         }

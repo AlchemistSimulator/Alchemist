@@ -14,12 +14,12 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringAction
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.cognitive.actions.CognitiveAgentCombineSteering
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.reactions.AbstractReaction
+import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 
 /**
  * Reaction representing a pedestrian's steering behavior.
@@ -29,7 +29,6 @@ import it.unibo.alchemist.model.reactions.AbstractReaction
  * @property pedestrian the owner pedestrian's property
  * @param timeDistribution the time distribution that schedules reaction execution
  * @property steerStrategy the strategy used to combine steering actions
- * @property steerActions list of steering actions in this reaction
  */
 open class SteeringBehavior<T>(
     private val environment: Environment<T, Euclidean2DPosition>,
@@ -37,18 +36,16 @@ open class SteeringBehavior<T>(
     protected val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
     open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>,
-) : AbstractReaction<T>(pedestrian.node, timeDistribution) {
+) : AbstractNodeReaction<T>(pedestrian.node, timeDistribution) {
     /** The list of steering actions in this reaction. */
     fun steerActions(): List<SteeringAction<T, Euclidean2DPosition>> =
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
-        SteeringBehavior(environment, node.pedestrianProperty, timeDistribution, steerStrategy)
+    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) = makeClone(node, currentTime) {
+        SteeringBehavior(environment, node.pedestrianProperty, it, steerStrategy)
+    }
 
-    override fun updateInternalStatus(currentTime: Time?, hasBeenExecuted: Boolean, environment: Environment<T, *>?) =
-        Unit
-
-    override fun execute() {
+    override fun performModelMutation() {
         (actions - steerActions().toSet()).forEach { it.execute() }
         CognitiveAgentCombineSteering(environment, this, pedestrian, steerActions(), steerStrategy).execute()
     }

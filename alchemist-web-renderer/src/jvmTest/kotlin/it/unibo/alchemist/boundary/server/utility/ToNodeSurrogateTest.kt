@@ -30,7 +30,7 @@ class ToNodeSurrogateTest<T, P> :
         "ToNodeSurrogate should map a Node to a NodeSurrogate" {
             webRendererTestEnvironments<T, P>().forEach {
                 val environment: Environment<T, P> = it.environment
-                val node: Node<T> = environment.nodes.first()
+                val node: Node<T> = environment.nodes.current.first()
                 val nodeSurrogate =
                     node.toNodeSurrogate(
                         environment,
@@ -55,5 +55,5 @@ fun <T, P, TS, PS> checkToNodeSurrogate(
         nodeSurrogate.contents[surrogateContentKey] shouldBe EmptyConcentrationSurrogate
     }
     node.contents.size shouldBe nodeSurrogate.contents.size
-    checkToPositionSurrogate(environment.getPosition(node), nodeSurrogate.position)
+    checkToPositionSurrogate(environment.getCurrentPosition(node), nodeSurrogate.position)
 }

@@ -23,8 +23,9 @@ class TestLevyWalk : StringSpec() {
                 .getDefault<Any, Euclidean2DPosition>()
                 .environment
                 .nodes
+                .current
                 .first()
-                .reactions
+                .reactions.current
                 .first()
                 .actions
                 .first()::class shouldBe LevyWalk::class

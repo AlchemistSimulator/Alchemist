@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,10 +12,9 @@ package it.unibo.alchemist.boundary.exporters
 import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.exporters.AbstractExporter.Companion.DEFAULT_INTERVAL
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 
 /**
@@ -92,7 +91,7 @@ abstract class AbstractExporter<T, P : Position<P>>(private val samplingInterval
      *  Converts the division of the current time and the interval to Long in order to export data only
      *  when the difference between steps is as big as the sampling interval.
      */
-    final override fun update(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    final override fun update(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val curSample: Long = (time.toDouble() / samplingInterval).toLong()
         if (curSample > count) {
             count = curSample
@@ -103,5 +102,5 @@ abstract class AbstractExporter<T, P : Position<P>>(private val samplingInterval
     /**
      * Delegates the concrete implementation of this method to his subclasses.
      */
-    abstract fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long)
+    abstract fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long)
 }

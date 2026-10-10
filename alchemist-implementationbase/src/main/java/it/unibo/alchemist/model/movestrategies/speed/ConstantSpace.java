@@ -12,8 +12,6 @@ package it.unibo.alchemist.model.movestrategies.speed;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
-import java.io.Serial;
-
 /**
  * This strategy makes the node move every time of a fixed amount in space.
  *
@@ -23,8 +21,6 @@ import java.io.Serial;
  */
 public final class ConstantSpace<T, P extends Position<P>> implements SpeedSelectionStrategy<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final double space;
 
     /**

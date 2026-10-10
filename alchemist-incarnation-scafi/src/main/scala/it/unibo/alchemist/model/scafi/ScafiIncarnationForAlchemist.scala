@@ -80,7 +80,7 @@ object ScafiIncarnationForAlchemist
       val layer: Layer[Any, Position[?]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
       val node = alchemistEnvironment.getNodeByID(mid())
       layer
-        .getValue(alchemistEnvironment.getPosition(node))
+        .getValue(alchemistEnvironment.getCurrentPosition(node))
         .asInstanceOf[A]
 
     def senseEnvData[A](name: String): A =

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,12 +10,11 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.impact.individual.Speed
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
@@ -38,7 +37,7 @@ import it.unibo.alchemist.model.geometry.Vector
  */
 open class CognitiveAgentArrive<T, P, A>(
     environment: Environment<T, P>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     protected val decelerationRadius: Double,
     protected val arrivalTolerance: Double,
@@ -49,7 +48,7 @@ open class CognitiveAgentArrive<T, P, A>(
           A : Transformation<P> {
     constructor(
         environment: Environment<T, P>,
-        reaction: Reaction<T>,
+        reaction: NodeReaction<T>,
         pedestrian: PedestrianProperty<T>,
         decelerationRadius: Double,
         arrivalTolerance: Double,
@@ -67,16 +66,16 @@ open class CognitiveAgentArrive<T, P, A>(
         with((currentPosition as Vector<P>).distanceTo(target)) {
             when {
                 this < arrivalTolerance -> 0.0
-                this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
-                else -> node.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
+                this < decelerationRadius -> Speed.default * this / decelerationRadius / recurrenceRate
+                else -> targetNode.asProperty<T, PedestrianProperty<T>>().speed() / recurrenceRate
             }
         }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentArrive<T, P, A> =
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentArrive<T, P, A> =
         CognitiveAgentArrive(
             environment,
-            reaction,
-            node.pedestrianProperty,
+            newReaction,
+            newReaction.host.pedestrianProperty,
             decelerationRadius,
             arrivalTolerance,
             target,

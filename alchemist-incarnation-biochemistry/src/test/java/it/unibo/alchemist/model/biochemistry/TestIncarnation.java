@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.biochemistry;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.actions.AddJunctionInCell;
 import it.unibo.alchemist.model.biochemistry.actions.AddJunctionInNeighbor;
@@ -99,7 +99,7 @@ class TestIncarnation {
             final int nNeighAct,
             final int nEnvCond,
             final int nEnvAct) { // TODO custom conditions and actions
-        final Reaction<Double> r = INCARNATION.createReaction(rand, environment, node, time, param);
+        final NodeReaction<Double> r = INCARNATION.createReaction(rand, environment, node, time, param);
         assertNotNull(r);
         assertEquals(nCond, r.getConditions().size());
         assertEquals(nAct, r.getActions().size());

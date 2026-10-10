@@ -13,8 +13,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -107,7 +107,7 @@ interface DeploymentContext<T, P : Position<P>> {
     fun program(
         program: String? = null,
         timeDistribution: Any? = null,
-        block: context(Reaction<T>) ActionableContext.() -> Unit = { },
+        block: context(NodeReaction<T>) ActionableContext.() -> Unit = { },
     ) = withTimeDistribution(timeDistribution) {
         program(program, block)
     }
@@ -158,12 +158,13 @@ interface DeploymentContext<T, P : Position<P>> {
             node: Node<T>,
             timeDistribution: TimeDistribution<T>
         )
-        private fun <T, P : Position<P>> makeReaction(descriptor: String?): Reaction<T> = incarnation.createReaction(
-            randomGenerator,
-            environment,
-            node,
-            timeDistribution,
-            null,
-        )
+        private fun <T, P : Position<P>> makeReaction(descriptor: String?): NodeReaction<T> =
+            incarnation.createReaction(
+                randomGenerator,
+                environment,
+                node,
+                timeDistribution,
+                null,
+            )
     }
 }

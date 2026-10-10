@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,9 +10,8 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
@@ -26,7 +25,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  */
 open class CognitiveAgentFollowLayer(
     euclidean: Euclidean2DEnvironment<Number>,
-    reaction: Reaction<Number>,
+    reaction: NodeReaction<Number>,
     pedestrian: PedestrianProperty<Number>,
     targetMolecule: Molecule,
 ) : AbstractLayerAction(euclidean, reaction, pedestrian, targetMolecule) {
@@ -39,11 +38,11 @@ open class CognitiveAgentFollowLayer(
 
     override fun nextPosition(): Euclidean2DPosition = followScalarField.nextPosition()
 
-    override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): CognitiveAgentFollowLayer =
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<Number>): CognitiveAgentFollowLayer =
         CognitiveAgentFollowLayer(
             environment,
-            reaction,
-            node.pedestrianProperty,
+            newReaction,
+            newReaction.host.pedestrianProperty,
             targetMolecule,
         )
 }

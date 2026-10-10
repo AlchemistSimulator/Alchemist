@@ -87,7 +87,7 @@ class EmptyEnvironment<T, P : Position<P>>(incarnation: Incarnation<T, P>, overr
      *
      * @throws UnsupportedOperationException always.
      */
-    override fun moveNodeToPosition(node: Node<T>, newPosition: P) = nope()
+    override fun moveNodeTo(node: Node<T>, position: P) = nope()
 
     private companion object {
 

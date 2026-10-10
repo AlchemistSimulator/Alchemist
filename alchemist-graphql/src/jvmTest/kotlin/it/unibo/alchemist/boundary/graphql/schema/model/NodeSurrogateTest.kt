@@ -18,7 +18,6 @@ import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLNode
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLReactionSurrogate
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.geometry.Vector
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
@@ -33,7 +32,7 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
     @Timeout(value = 1, unit = TimeUnit.MINUTES)
     fun `NodeSurrogate should map a Node to a GraphQL compliant object`() {
         GraphQLTestEnvironments.loadTests<T, P> {
-            it.nodes.forEach { node ->
+            it.nodes.current.forEach { node ->
                 checkNodeSurrogate(node, node.toGraphQLNodeSurrogate())
             }
         }
@@ -43,9 +42,9 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
         fun <T : Any> checkNodeSurrogate(node: Node<T>, nodeSurrogate: NodeSurrogate<T>) {
             assertEquals(node.id, nodeSurrogate.id, "Node ID mismatch")
             assertEquals(node.moleculeCount, nodeSurrogate.moleculeCount, "Molecule count mismatch")
-            assertEquals(node.reactions.size, nodeSurrogate.reactions().size, "Reaction count mismatch")
-            node.reactions.forEach { reaction ->
-                checkReactionSurrogate(reaction, reaction.toGraphQLReactionSurrogate())
+            assertEquals(node.reactions.current.size, nodeSurrogate.reactions().size, "Reaction count mismatch")
+            node.reactions.current.forEach { reaction ->
+                checkReactionSurrogate(node, reaction.toGraphQLReactionSurrogate(node))
             }
             node.contents.forEach { (molecule, concentration) ->
                 val surrogate = nodeSurrogate.contents()[MoleculeInput(molecule.name)]
@@ -61,10 +60,8 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
                 checkConcentrationContent(concentration, actual)
             }
         }
-        fun <T> checkReactionSurrogate(reaction: Reaction<T>, reactionSurrogate: ReactionSurrogate<T>) {
-            assertEquals(reaction.inputContext, reactionSurrogate.inputContext, "Input context mismatch")
-            assertEquals(reaction.outputContext, reactionSurrogate.outputContext, "Output context mismatch")
-            assertEquals(reaction.node.toGraphQLNodeSurrogate(), reactionSurrogate.node, "Node mapping mismatch")
+        fun <T> checkReactionSurrogate(node: Node<T>, reactionSurrogate: ReactionSurrogate<T>) {
+            assertEquals(node.toGraphQLNodeSurrogate(), reactionSurrogate.node, "Node mapping mismatch")
         }
     }
 }

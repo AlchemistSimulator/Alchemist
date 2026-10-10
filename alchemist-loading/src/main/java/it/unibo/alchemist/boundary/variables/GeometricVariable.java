@@ -12,7 +12,6 @@ package it.unibo.alchemist.boundary.variables;
 import org.apache.commons.math3.util.FastMath;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,8 +26,6 @@ import java.util.stream.Stream;
  */
 public final class GeometricVariable extends AbstractPrintableVariable<Double> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final double def;
     private final int maxSamples;
     private final double min;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,6 +16,9 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty;
 import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells;
+import it.unibo.alchemist.model.observables.util.MutableObservables;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
@@ -23,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -37,11 +39,10 @@ public final class BioRect2DEnvironmentNoOverlap
         extends BioRect2DEnvironment
         implements EnvironmentSupportingDeformableCells<Euclidean2DPosition> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(BioRect2DEnvironmentNoOverlap.class);
     private Optional<Node<Double>> biggestCellWithCircularArea = Optional.absent();
     private Optional<Node<Double>> biggestCircularDeformableCell = Optional.absent();
+    private final MutableObservable<Double> maxDiameterAmongCircularDeformableCells = MutableObservables.observe(0d);
 
     /**
      * Returns an infinite {@link BioRect2DEnvironment}.
@@ -84,7 +85,7 @@ public final class BioRect2DEnvironmentNoOverlap
                 return range <= 0
                         || getNodesWithinRange(position, range).stream()
                             .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
-                            .noneMatch(n -> getPosition(n).distanceTo(position) < nodeRadius
+                            .noneMatch(n -> currentPositionOf(n).distanceTo(position) < nodeRadius
                                     + n.asProperty(CircularCellProperty.class).getRadius());
             } else {
                 return true;
@@ -95,9 +96,9 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     @Override
-    public void moveNodeToPosition(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition newPosition) {
-        final double[] cur = getPosition(node).getCoordinates();
-        final double[] np = newPosition.getCoordinates();
+    public void moveNodeTo(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition position) {
+        final double[] cur = currentPositionOf(node).getCoordinates();
+        final double[] np = position.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
         if (node.asPropertyOrNull(CircularCellProperty.class) != null) {
             final Euclidean2DPosition nextPos = findNearestFreePosition(
@@ -105,9 +106,9 @@ public final class BioRect2DEnvironmentNoOverlap
                     new Euclidean2DPosition(cur[0], cur[1]),
                     nextWithinLimts
             );
-            super.moveNodeToPosition(node, nextPos);
+            super.moveNodeTo(node, nextPos);
         } else {
-            super.moveNodeToPosition(node, nextWithinLimts);
+            super.moveNodeTo(node, nextWithinLimts);
         }
     }
 
@@ -158,7 +159,7 @@ public final class BioRect2DEnvironmentNoOverlap
         range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
         return getNodesWithinRange(newMidPoint, range).stream()
                 .filter(n -> !n.equals(nodeToMove) && n.asPropertyOrNull(CircularCellProperty.class) != null)
-                .filter(n -> selectNodes(n, nodeToMove, getPosition(nodeToMove), requestedPos, xVer, yVer))
+                .filter(n -> selectNodes(n, nodeToMove, currentPositionOf(nodeToMove), requestedPos, xVer, yVer))
                 .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -175,7 +176,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final double yVer
     ) {
         // testing if node is between requested position and original position
-        final Euclidean2DPosition nodePos = getPosition(node);
+        final Euclidean2DPosition nodePos = currentPositionOf(node);
         final Euclidean2DPosition nodeOrientationFromOrigin = new Euclidean2DPosition(nodePos.getX() - origin.getX(),
                 nodePos.getY() - origin.getY());
         final double scalarProductResult1 = xVer * nodeOrientationFromOrigin.getX()
@@ -208,7 +209,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final double xr
     ) {
         // original position
-        final Euclidean2DPosition possibleObstaclePosition = getPosition(node);
+        final Euclidean2DPosition possibleObstaclePosition = currentPositionOf(node);
         // coordinates of original position, requested position and of node's position
         final double yn = possibleObstaclePosition.getY();
         final double xn = possibleObstaclePosition.getX();
@@ -271,9 +272,11 @@ public final class BioRect2DEnvironmentNoOverlap
             biggestCellWithCircularArea = Optional.of(node);
         }
         final var deformableCell = node.asPropertyOrNull(CircularDeformableCellProperty.class);
-        if (deformableCell != null && deformableCell.getMaximumDiameter() > getMaxDiameterAmongCircularDeformableCells()) {
+        if (deformableCell != null
+            && deformableCell.getMaximumDiameter() > maxDiameterAmongCircularDeformableCells.getCurrent()) {
             biggestCircularDeformableCell = Optional.of(node);
         }
+        updateMaxDiameterAmongCircularDeformableCells();
     }
 
     @Override
@@ -288,6 +291,7 @@ public final class BioRect2DEnvironmentNoOverlap
                         .transform(CircularCellProperty::getNode);
             }
         }
+        updateMaxDiameterAmongCircularDeformableCells();
     }
 
     private <C> Optional<C> getBiggest(final Class<C> cellClass) {
@@ -300,7 +304,7 @@ public final class BioRect2DEnvironmentNoOverlap
             throw new UnsupportedOperationException("Input type must be CellWithCircuolarShape or CircularDeformableCell");
         }
 
-        return getNodes().stream()
+        return getNodes().getCurrent().stream()
                 .parallel()
                 .flatMap(n -> cellClass.isInstance(n) ? Stream.of(cellClass.cast(n)) : Stream.empty())
                 .max((c1, c2) -> {
@@ -352,9 +356,14 @@ public final class BioRect2DEnvironmentNoOverlap
         return getDiameterFromCell(biggestCellWithCircularArea);
     }
 
+    @Nonnull
     @Override
-    public double getMaxDiameterAmongCircularDeformableCells() {
-        return getDiameterFromCell(biggestCircularDeformableCell);
+    public Observable<Double> getMaxDiameterAmongCircularDeformableCells() {
+        return maxDiameterAmongCircularDeformableCells;
+    }
+
+    private void updateMaxDiameterAmongCircularDeformableCells() {
+        maxDiameterAmongCircularDeformableCells.setCurrent(getDiameterFromCell(biggestCircularDeformableCell));
     }
 
     private double getDiameterFromCell(final Optional<Node<Double>> biggest) {

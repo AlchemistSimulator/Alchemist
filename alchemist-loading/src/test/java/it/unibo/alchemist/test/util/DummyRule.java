@@ -11,7 +11,6 @@ package it.unibo.alchemist.test.util;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
@@ -21,9 +20,6 @@ import java.util.List;
  *            position type
  */
 public final class DummyRule<T, P extends Position<P>> extends NoLinks<T, P> {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     /**
      * @param param1

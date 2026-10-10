@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Position2D
+import it.unibo.alchemist.model.cognitive.properties.SocialProperty
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.test.loadYamlSimulation
 import it.unibo.alchemist.test.startSimulation
@@ -35,16 +36,16 @@ class TestSteeringBehaviors<T, P> :
             loadYamlSimulation<T, P>("seek.yml")
                 .startSimulation(
                     onceInitialized = { environment ->
-                        environment.nodes.forEach {
-                            startDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
+                        environment.nodes.current.forEach {
+                            startDistances[it] = environment.getCurrentPosition(it).distanceTo(environment.origin)
                         }
                     },
                     whenFinished = { environment, _, _ ->
-                        environment.nodes.forEach {
-                            endDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
+                        environment.nodes.current.forEach {
+                            endDistances[it] = environment.getCurrentPosition(it).distanceTo(environment.origin)
                         }
                     },
-                ).nodes
+                ).nodes.current
                 .forEach { startDistances.getValue(it) shouldBeGreaterThan endDistances.getValue(it) }
         }
 
@@ -54,26 +55,27 @@ class TestSteeringBehaviors<T, P> :
             loadYamlSimulation<T, P>("flee.yml")
                 .startSimulation(
                     onceInitialized = { e ->
-                        e.nodes.forEach {
-                            startDistances[it] = e.getPosition(it).distanceTo(e.origin)
+                        e.nodes.current.forEach {
+                            startDistances[it] = e.getCurrentPosition(it).distanceTo(e.origin)
                         }
                     },
                     whenFinished = { e, _, _ ->
-                        e.nodes.forEach {
-                            endDistances[it] = e.getPosition(it).distanceTo(e.origin)
+                        e.nodes.current.forEach {
+                            endDistances[it] = e.getCurrentPosition(it).distanceTo(e.origin)
                         }
                     },
-                ).nodes
+                ).nodes.current
                 .forEach { startDistances.getValue(it) shouldBeLessThan endDistances.getValue(it) }
         }
 
         "nodes arriving to a target must decelerate while approaching it" {
             with(loadYamlSimulation<T, P>("arrive.yml")) {
-                val nodesPositions: Map<Node<T>, MutableList<P>> = environment.nodes.associateWith { mutableListOf() }
+                val nodesPositions: Map<Node<T>, MutableList<P>> =
+                    environment.nodes.current.associateWith { mutableListOf() }
                 startSimulation(
                     atEachStep = { e, _, _, _ ->
-                        e.nodes.forEach {
-                            nodesPositions[it]?.add(e.getPosition(it))
+                        e.nodes.current.forEach {
+                            nodesPositions[it]?.add(e.getCurrentPosition(it))
                         }
                     },
                 )
@@ -100,14 +102,14 @@ class TestSteeringBehaviors<T, P> :
         "cohesion gives importance to the other members of the group during an evacuation" {
             loadYamlSimulation<T, P>("cohesion.yml").startSimulation(
                 whenFinished = { e, _, _ ->
-                    e.nodes
+                    e.nodes.current
                         .asSequence()
                         .filter(filterSocialNode)
                         .groupBy { it.asProperty<T, SocialProperty<T>>().group }
                         .values
                         .forEach {
-                            for (nodePos in it.map { node -> e.getPosition(node) }) {
-                                for (otherPos in it.map { node -> e.getPosition(node) }.minusElement(nodePos)) {
+                            for (nodePos in it.map { node -> e.getCurrentPosition(node) }) {
+                                for (otherPos in it.map { node -> e.getCurrentPosition(node) }.minusElement(nodePos)) {
                                     nodePos.distanceTo(otherPos) shouldBeLessThan 4.0
                                 }
                             }
@@ -120,7 +122,7 @@ class TestSteeringBehaviors<T, P> :
         "nodes using separation behavior keep a distance to each other" {
             loadYamlSimulation<T, P>("separation.yml").startSimulation(
                 whenFinished = { e, _, _ ->
-                    with(e.nodes.map { e.getPosition(it) }) {
+                    with(e.nodes.current.map { e.getCurrentPosition(it) }) {
                         for (nodePos in this) {
                             for (otherPos in (this.minusElement(nodePos))) {
                                 nodePos.distanceTo(otherPos) shouldBeGreaterThan 6.0
@@ -135,8 +137,8 @@ class TestSteeringBehaviors<T, P> :
         "obstacle avoidance let nodes reach destinations behind obstacles" {
             loadYamlSimulation<T, P>("obstacle-avoidance.yml").startSimulation(
                 whenFinished = { e, _, _ ->
-                    e.nodes.forEach {
-                        e.getPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
+                    e.nodes.current.forEach {
+                        e.getCurrentPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
                     }
                 },
                 steps = 26000,

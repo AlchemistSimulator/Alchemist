@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,10 +10,10 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.GroupSteeringAction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.geometry.Vector
  */
 abstract class AbstractGroupSteeringAction<T, P, A>(
     environment: Environment<T, P>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     GroupSteeringAction<T, P>
@@ -33,6 +33,6 @@ abstract class AbstractGroupSteeringAction<T, P, A>(
      * Computes the centroid of the [group] in absolute coordinates.
      */
     protected fun centroid(): P = with(group()) {
-        map { environment.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
+        map { environment.getCurrentPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
     }
 }

@@ -17,9 +17,9 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.maps.MapEnvironment
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.molecules.SimpleMolecule
@@ -58,7 +58,7 @@ class AlchemistExecutionContext<P : Position<P>>(
     val environmentAccess: Environment<Any, P>,
     private val node: Node<Any>,
     private val protelisDevice: ProtelisDevice<P>,
-    private val reaction: Reaction<Any>,
+    private val reaction: NodeReaction<Any>,
     /**
      * The internal random generator used by the execution context.
      */
@@ -94,7 +94,7 @@ class AlchemistExecutionContext<P : Position<P>>(
      * The device position, in form of [Position].
      */
     val devicePosition: P
-        get() = environmentAccess.getPosition(node)
+        get() = environmentAccess.getCurrentPosition(node)
 
     /**
      * @param environment
@@ -102,7 +102,7 @@ class AlchemistExecutionContext<P : Position<P>>(
      * @param localNode
      * the local [Node]
      * @param reaction
-     * the [Reaction] hosting the program
+     * the [NodeReaction] hosting the program
      * @param random
      * the [RandomGenerator] for this simulation
      * @param networkManager
@@ -111,7 +111,7 @@ class AlchemistExecutionContext<P : Position<P>>(
     constructor(
         environment: Environment<Any, P>,
         localNode: Node<Any>,
-        reaction: Reaction<Any>,
+        reaction: NodeReaction<Any>,
         random: RandomGenerator,
         networkManager: AlchemistNetworkManager,
     ) : this(
@@ -163,7 +163,7 @@ class AlchemistExecutionContext<P : Position<P>>(
 
     override fun getCoordinates(): Tuple = DatatypeFactory.createTuple(this.devicePosition.coordinates.toList())
 
-    override fun getCurrentTime() = reaction.tau.toDouble()
+    override fun getCurrentTime() = reaction.nextOccurrence.current.toDouble()
 
     override fun getDeviceUID(): DeviceUID = protelisDevice
 
@@ -243,7 +243,8 @@ class AlchemistExecutionContext<P : Position<P>>(
      * the destination, in the form of a destination node
      * @return the distance on a map
      */
-    fun routingDistance(dest: Node<Any>): Double = routingDistance(environmentAccess.getPosition(dest) as GeoPosition)
+    fun routingDistance(dest: Node<Any>): Double =
+        routingDistance(environmentAccess.getCurrentPosition(dest) as GeoPosition)
 
     /**
      * Computes the distance along a map. Requires a [MapEnvironment].

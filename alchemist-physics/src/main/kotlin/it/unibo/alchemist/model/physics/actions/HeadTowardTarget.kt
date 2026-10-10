@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,11 +9,10 @@
 
 package it.unibo.alchemist.model.physics.actions
 
-import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.actions.AbstractAction
+import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.TimeDistributedReaction
+import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.util.Anys.toPosition
 import kotlin.math.abs
@@ -25,48 +24,48 @@ import org.apache.commons.math3.util.FastMath.toRadians
 
 /**
  * Reads the target's absolute coordinates from the [target] molecule
- * contained in [node] and sets the node's heading accordingly.
+ * contained in the node owning this action and sets the node's heading accordingly.
  */
 class HeadTowardTarget<T>
 @JvmOverloads
 constructor(
-    node: Node<T>,
     private val environment: Physics2DEnvironment<T>,
-    private val reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     private val target: Molecule,
     private val angularSpeedDegrees: Double = 360.0,
-) : AbstractAction<T>(node) {
+) : AbstractLocalAction<T>(reaction) {
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
+    private val timeDistributedReaction = requireNotNull(reaction as? TimeDistributedReaction<*>) {
+        "$reaction does not expose a recurrence rate"
+    }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        HeadTowardTarget(node, environment, reaction, target, angularSpeedDegrees)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>) =
+        HeadTowardTarget(environment, newReaction, target, angularSpeedDegrees)
 
     /**
      * Sets the heading of the node according to the target molecule.
      */
     override fun execute() {
-        node.getConcentration(target)?.also {
-            val speedRadians = angularSpeedRadians / reaction.timeDistribution.rate
+        targetNode.getConcentration(target)?.also {
+            val speedRadians = angularSpeedRadians / timeDistributedReaction.rate
             val targetPosition = it.toPosition(environment)
-            val myHeading = environment.getHeading(node)
+            val myHeading = environment.getHeading(targetNode)
             if (targetPosition != myHeading) {
                 if (speedRadians >= 2 * Math.PI) {
-                    environment.setHeading(node, targetPosition - environment.getPosition(node))
+                    environment.setHeading(targetNode, targetPosition - environment.getCurrentPosition(targetNode))
                 } else {
-                    val targetAngle = (targetPosition - environment.getPosition(node)).asAngle
-                    val currentAngle = environment.getHeading(node).asAngle
+                    val targetAngle = (targetPosition - environment.getCurrentPosition(targetNode)).asAngle
+                    val currentAngle = environment.getHeading(targetNode).asAngle
                     val rotation = shortestRotationAngle(currentAngle, targetAngle)
                     val absDistance = abs(rotation)
                     if (absDistance > 0) {
                         val newAngle = currentAngle + min(speedRadians, absDistance) * rotation.sign
-                        environment.setHeading(node, environment.makePosition(cos(newAngle), sin(newAngle)))
+                        environment.setHeading(targetNode, environment.makePosition(cos(newAngle), sin(newAngle)))
                     }
                 }
             }
         }
     }
-
-    override fun getContext() = Context.LOCAL
 
     /**
      * Shortest distance in radians from the angles [from] to [to] in radians.

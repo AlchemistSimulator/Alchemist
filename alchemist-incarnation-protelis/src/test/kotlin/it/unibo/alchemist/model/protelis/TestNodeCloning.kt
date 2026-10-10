@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,10 +10,10 @@ package it.unibo.alchemist.model.protelis
 
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -43,7 +43,7 @@ internal class TestNodeCloning<P : Position<P>> {
             environment.getNodeByID(0).apply {
                 setConcentration(SOURCEMOL, false)
                 setConcentration(ENABLEDMOL, true)
-                environment.moveNodeToPosition(this, environment.makePosition(-30.72191619873047, -9.75))
+                environment.moveNodeTo(this, environment.makePosition(-30.72191619873047, -9.75))
             }
             environment.makeNode(-34.62321853637695, -6.039149761199951, true, false)
             environment.makeNode(-33.585994720458987, -1.3899999856948853, true, true)
@@ -55,7 +55,7 @@ internal class TestNodeCloning<P : Position<P>> {
             object : OutputMonitor<Any, P> {
                 override fun stepDone(
                     currentEnvironment: Environment<Any, P>,
-                    reaction: Actionable<Any>?,
+                    reaction: Reaction<Any>?,
                     time: Time,
                     step: Long,
                 ) {

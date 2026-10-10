@@ -6,7 +6,7 @@ environment:
     - time-distribution:
         type: DiracComb
         parameters: [1.0]
-      type: GlobalTestReaction
+      type: EnvironmentTestReaction
 
 monitors:
   - type: another.location.SimpleMonitor

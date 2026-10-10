@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,10 +11,9 @@ package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EnvironmentWithObstacles
-import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.physics.PhysicsEnvironment
@@ -24,7 +23,7 @@ import it.unibo.alchemist.model.physics.PhysicsEnvironment
  */
 class CognitiveAgentFollowScalarField<T, P, A>(
     environment: Environment<T, P>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     /**
      * The position of either maximum or minimum value of the scalar field, can be null if such a position doesn't
@@ -62,8 +61,8 @@ class CognitiveAgentFollowScalarField<T, P, A>(
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
-        CognitiveAgentFollowScalarField(environment, reaction, node.pedestrianProperty, center, valueIn)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
+        CognitiveAgentFollowScalarField(environment, newReaction, newReaction.host.pedestrianProperty, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> = when (environment) {
         is EnvironmentWithObstacles<*, T, P> ->
@@ -73,7 +72,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
 
     private fun Sequence<P>.enforceOthers(): Sequence<P> = when (environment) {
         is PhysicsEnvironment<T, P, *, *> ->
-            map { (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(node, it) }
+            map { (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(targetNode, it) }
         else -> this
     }
 

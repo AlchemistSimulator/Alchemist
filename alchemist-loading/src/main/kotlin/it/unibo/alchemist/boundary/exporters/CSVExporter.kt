@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.boundary.exporters
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.util.BugReporting
@@ -95,7 +95,7 @@ constructor(
         exportData(environment, null, DoubleTime(), 0)
     }
 
-    override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val line: String = dataExtractors.joinToString(separator = " ") { extractor ->
             val data = extractor.extractDataAsText(environment, reaction, time, step)
             val names = extractor.columnNames

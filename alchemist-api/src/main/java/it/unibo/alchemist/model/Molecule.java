@@ -13,7 +13,7 @@ package it.unibo.alchemist.model;
  *          Interface for a molecule.
  *
  */
-public interface Molecule extends Dependency {
+public interface Molecule {
 
     /**
      * @return the name of this {@link Molecule}

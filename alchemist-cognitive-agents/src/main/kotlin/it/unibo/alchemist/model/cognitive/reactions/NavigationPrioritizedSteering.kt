@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,13 +10,18 @@
 package it.unibo.alchemist.model.cognitive.reactions
 
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringAction
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.steering.SinglePrevalent
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
+import it.unibo.alchemist.model.timedistributions.DiracComb
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
+import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
+import it.unibo.alchemist.model.timedistributions.WeibullTime
 
 /**
  * A [SteeringBehavior] that prioritizes a single navigation action using the [SinglePrevalent] strategy.
@@ -48,7 +53,14 @@ constructor(
         environment,
         pedestrian.node,
         prevalent = { singleNavigationAction() },
-        maxWalk = { pedestrian.speed() / timeDistribution.rate },
+        maxWalk = {
+            pedestrian.speed() /
+                (
+                    timeDistribution.steeringRate.takeUnless(Double::isNaN) ?: error(
+                        "Navigation steering requires a time generator with a defined execution rate",
+                    )
+                    )
+        },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha,
     ),
@@ -65,6 +77,16 @@ constructor(
             }
     }
 }
+
+private val TimeDistribution<*>.steeringRate: Double
+    get() = when (this) {
+        is DiracComb<*> -> frequency
+        is ExponentialTime<*> -> lambda
+        is AnyRealDistribution<*> -> mean
+        is WeibullTime<*> -> mean
+        is SimpleNetworkArrivals<*> -> expectedRate
+        else -> Double.NaN
+    }
 
 /*
  * Just for readability.

@@ -33,7 +33,7 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
     @Timeout(value = 2, unit = TimeUnit.MINUTES)
     fun `GraphQL node contents access should not cause ConcurrentModificationException during simulation`() {
         GraphQLTestEnvironments.loadTests<T, P> { environment ->
-            val nodes = environment.nodes.filterIsInstance<LsaNode>()
+            val nodes = environment.nodes.current.filterIsInstance<LsaNode>()
             // Skip test if no SAPERE nodes are available
             check(nodes.isNotEmpty())
             val threadCount = 20

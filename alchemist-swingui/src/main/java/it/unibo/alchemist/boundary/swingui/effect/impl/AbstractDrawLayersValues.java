@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.Position2D;
 import org.danilopianini.view.ExportForGUI;
 
 import java.awt.Graphics2D;
-import java.io.Serial;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -51,8 +50,6 @@ import java.util.function.Function;
 @Deprecated
 public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implements FunctionDrawer {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Min layer value")
     private String minLayerValue = "0.0";
     @ExportForGUI(nameToExport = "Max layer value")

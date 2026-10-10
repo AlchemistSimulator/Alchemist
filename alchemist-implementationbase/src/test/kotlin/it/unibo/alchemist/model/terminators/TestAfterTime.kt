@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,8 +14,8 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import org.kaikikm.threadresloader.ResourceLoader
@@ -34,7 +34,7 @@ class TestAfterTime :
 
                         override fun stepDone(
                             environment: Environment<Nothing, Nothing>,
-                            reaction: Actionable<Nothing>?,
+                            reaction: Reaction<Nothing>?,
                             time: Time,
                             step: Long,
                         ) {

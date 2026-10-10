@@ -37,7 +37,7 @@ class OffsetGraphStreamLinkingRule<T, P : Position<P>>(val offset: Int, val grap
             if (neighborsIds.isEmpty()) {
                 emptySequence()
             } else {
-                environment.nodes.asSequence().filter { it.id in neighborsIds }
+                environment.nodes.current.asSequence().filter { it.id in neighborsIds }
             }
         return Neighborhoods.make(environment, center, neighbors.asIterable())
     }

@@ -1,9 +1,20 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.boundary.extractors
 
 import it.unibo.alchemist.boundary.Extractor
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import kotlin.Double.Companion.NEGATIVE_INFINITY
+import kotlin.Double.Companion.POSITIVE_INFINITY
 import kotlin.math.max
 import kotlin.math.min
 
@@ -21,21 +32,21 @@ class NetworkDensity : Extractor<Double> {
 
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<String, Double> = mapOf(NAME to environment.networkDensity())
 
     private fun <T> Environment<T, *>.networkDensity(): Double {
         data class BoundingBox(
-            val minX: Double = Double.Companion.POSITIVE_INFINITY,
-            val maxX: Double = Double.Companion.NEGATIVE_INFINITY,
-            val minY: Double = Double.Companion.POSITIVE_INFINITY,
-            val maxY: Double = Double.Companion.NEGATIVE_INFINITY,
+            val minX: Double = POSITIVE_INFINITY,
+            val maxX: Double = NEGATIVE_INFINITY,
+            val minY: Double = POSITIVE_INFINITY,
+            val maxY: Double = NEGATIVE_INFINITY,
         )
 
-        val boundingBox = this.fold(BoundingBox()) { bb, node ->
-            val (x, y) = getPosition(node).coordinates
+        val boundingBox = nodes.current.fold(BoundingBox()) { bb, node ->
+            val (x, y) = getCurrentPosition(node).coordinates
             BoundingBox(
                 min(x, bb.minX),
                 max(x, bb.maxX),
@@ -46,7 +57,7 @@ class NetworkDensity : Extractor<Double> {
         val area = (boundingBox.maxX - boundingBox.minX) * (boundingBox.maxY - boundingBox.minY)
         return when {
             area <= 0 || area.isInfinite() -> Double.NaN
-            else -> nodeCount / area
+            else -> nodeCount.current / area
         }
     }
 }

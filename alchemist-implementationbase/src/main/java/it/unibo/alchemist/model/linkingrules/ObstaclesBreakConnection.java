@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.geometry.Vector;
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -30,9 +30,6 @@ import java.util.stream.StreamSupport;
  */
 public final class ObstaclesBreakConnection<T, P extends Position<P> & Vector<P>> extends ConnectWithinDistance<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = -3279202906910960340L;
-
     /**
      * @param radius
      *            connection range
@@ -41,19 +38,20 @@ public final class ObstaclesBreakConnection<T, P extends Position<P> & Vector<P>
         super(radius);
     }
 
+    @Nonnull
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
+    public Neighborhood<T> computeNeighborhood(@Nonnull final Node<T> center, @Nonnull final Environment<T, P> environment) {
         Neighborhood<T> normal = super.computeNeighborhood(center, environment);
         if (!normal.isEmpty() && environment instanceof final EnvironmentWithObstacles<?, T, P> environmentWithObstacles) {
-            final P centerPosition = environment.getPosition(center);
+            final P centerPosition = environment.getCurrentPosition(center);
             environmentWithObstacles.intersectsObstacle(
-                environmentWithObstacles.getPosition(center),
-                environmentWithObstacles.getPosition(center)
+                environmentWithObstacles.getCurrentPosition(center),
+                environmentWithObstacles.getCurrentPosition(center)
             );
             final Iterable<Node<T>> neighbors = StreamSupport.stream(normal.spliterator(), false)
                 .filter(node ->
                     !environmentWithObstacles
-                        .intersectsObstacle(centerPosition, environmentWithObstacles.getPosition(node))
+                        .intersectsObstacle(centerPosition, environmentWithObstacles.getCurrentPosition(node))
                 )
                 .collect(Collectors.toList());
             normal = Neighborhoods.make(environmentWithObstacles, center, neighbors);

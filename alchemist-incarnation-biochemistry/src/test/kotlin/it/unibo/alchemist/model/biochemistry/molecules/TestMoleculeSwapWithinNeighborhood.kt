@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.biochemistry.molecules
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
@@ -48,8 +48,8 @@ class TestMoleculeSwapWithinNeighborhood {
         environment.linkingRule = LINKING_RULE
         environment.addNode(nodes.first, INITIAL_POSITIONS.first)
         environment.addNode(nodes.second, INITIAL_POSITIONS.second)
-        assertTrue(environment.getNeighborhood(nodes.first).neighbors.contains(nodes.second))
-        assertTrue(environment.getNeighborhood(nodes.second).neighbors.contains(nodes.first))
+        assertTrue(environment.getNeighborhood(nodes.first).current.neighbors.contains(nodes.second))
+        assertTrue(environment.getNeighborhood(nodes.second).current.neighbors.contains(nodes.first))
         nodes.first.setConcentration(BIOMOLECULE, 1.0)
     }
 
@@ -78,7 +78,7 @@ private fun testSimulation() = environment.startSimulationWithoutParameters(
     initialized = {
         assertEquals(1.0, nodes.first.getConcentration(BIOMOLECULE))
         assertEquals(0.0, nodes.second.getConcentration(BIOMOLECULE))
-        assertEquals(1, nodes.toList().sumOf { it.reactions.count() })
+        assertEquals(1, nodes.toList().sumOf { it.reactions.current.count() })
     },
     stepDone = {
         assertEquals(1.0, nodes.toList().sumOf { it.getConcentration(BIOMOLECULE) })
@@ -89,5 +89,5 @@ private fun testSimulation() = environment.startSimulationWithoutParameters(
     },
 )
 
-private val Reaction<Double>.neighborConditions: List<AbstractNeighborCondition<*>>
+private val NodeReaction<Double>.neighborConditions: List<AbstractNeighborCondition<*>>
     get() = conditions.filterIsInstance<AbstractNeighborCondition<*>>()

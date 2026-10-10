@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.timedistributions
 
-import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
 import org.apache.commons.math3.distribution.WeibullDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -12,14 +12,13 @@ import org.apache.commons.math3.util.FastMath
 /**
  * Weibull distributed events.
  *
- * @param <T> concentration type
  */
 open class WeibullTime<T> private constructor(
     private val randomGenerator: RandomGenerator,
     private val backingDistribution: WeibullDistribution,
     private val offset: Double,
     start: Time,
-) : AbstractDistribution<T?>(start) {
+) : AbstractDistribution<T>(start) {
     /**
      * @param mean
      *            mean for this distribution
@@ -77,17 +76,21 @@ open class WeibullTime<T> private constructor(
         start,
     )
 
-    override fun updateStatus(currentTime: Time, executed: Boolean, param: Double, environment: Environment<T?, *>?) {
-        if (executed) {
-            this.setNextOccurrence(currentTime.plus(DoubleTime(1.0 / this.genSample())))
-        }
-    }
-
     /**
      * @return a sample from the distribution
      */
     protected fun genSample(): Double =
         backingDistribution.inverseCumulativeProbability(randomGenerator.nextDouble()) + this.offset
+
+    override fun sample(): Time = DoubleTime(1.0 / genSample())
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = WeibullTime(
+        backingDistribution.shape,
+        backingDistribution.scale,
+        offset,
+        startTime,
+        randomGenerator,
+    )
 
     /**
      * @return the mean for this distribution.
@@ -100,15 +103,6 @@ open class WeibullTime<T> private constructor(
      */
     val deviation: Double
         get() = FastMath.sqrt(backingDistribution.numericalVariance)
-
-    override fun getRate(): Double = this.mean
-
-    override fun cloneOnNewNode(destination: Node<T?>, currentTime: Time): WeibullTime<T?> = WeibullTime(
-        this.randomGenerator,
-        this.backingDistribution,
-        this.offset,
-        currentTime,
-    )
 
     protected companion object {
         private const val PREFERRED_INVERSE_CUMULATIVE_ACCURACY = 1.0E-9

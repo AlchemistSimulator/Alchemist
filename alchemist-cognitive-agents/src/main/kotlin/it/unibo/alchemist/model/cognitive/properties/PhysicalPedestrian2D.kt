@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,8 +12,6 @@ package it.unibo.alchemist.model.cognitive.properties
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.cognitive.CognitiveProperty
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Euclidean2DShape
 import it.unibo.alchemist.model.geometry.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
@@ -70,7 +68,7 @@ class PhysicalPedestrian2D<T>(
         environment
             .shapeFactory
             .circle(nodeShape.radius + comfortRay)
-            .transformed { origin(environment.getPosition(node)) }
+            .transformed { origin(environment.getCurrentPosition(node)) }
 
     override val rectangleOfInfluence: Euclidean2DShape get() =
         environment
@@ -84,7 +82,7 @@ class PhysicalPedestrian2D<T>(
     private val fallenAgentPerceptionArea
         get() = environment.shapeFactory.circle(FALLEN_AGENT_PERCEPTION_RADIUS).transformed { origin(node.position) }
 
-    private val Node<T>.position get() = environment.getPosition(this)
+    private val Node<T>.position get() = environment.getCurrentPosition(this)
 
     override fun checkAndPossiblyFall() {
         if (!isFallen && shouldFall(repulsionForces())) {
@@ -101,7 +99,7 @@ class PhysicalPedestrian2D<T>(
     }
 
     override fun repulse(other: Node<T>): Euclidean2DPosition {
-        val myShape = nodeShape.transformed { origin(environment.getPosition(node)) }
+        val myShape = nodeShape.transformed { origin(environment.getCurrentPosition(node)) }
         val otherShape = environment.getShape(other)
         return (myShape.centroid - otherShape.centroid).let {
             val desiredDistance = myShape.radius + comfortRay + otherShape.radius

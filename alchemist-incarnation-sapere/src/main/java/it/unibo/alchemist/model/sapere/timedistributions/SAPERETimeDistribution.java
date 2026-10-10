@@ -15,14 +15,19 @@ import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import org.danilopianini.lang.HashString;
 
-import java.util.List;
 import java.util.Map;
+import java.util.List;
 
 /**
  * Interface for TimeDistribution that need matches.
  *
  */
 public interface SAPERETimeDistribution extends TimeDistribution<List<ILsaMolecule>> {
+
+    /**
+     * @return the rate computed against the currently installed SAPERE match token
+     */
+    double getRate();
 
     /**
      * @return true if the equation is actually a number

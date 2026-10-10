@@ -37,12 +37,14 @@ import org.slf4j.LoggerFactory
  * @property exportPath the directory to write exported files (temporary folder is used when omitted)
  * @property appendTime if true a timestamp is appended to the file name to avoid overwriting
  * @property fileExtension the extension for the exported files (default: 'csv')
+ * @property decimalPlacesCount the count of places after decimal
  */
 class CSVExporter<T, P : Position<P>>
 @JvmOverloads
 constructor(
     private val fileNameRoot: String = "",
     val interval: Double = DEFAULT_INTERVAL,
+    val decimalPlacesCount: Int = 2,
     val exportPath: String =
         createTempDirectory("alchemist-export")
             .absolutePathString()
@@ -100,17 +102,21 @@ constructor(
             val data = extractor.extractDataAsText(environment, reaction, time, step)
             val names = extractor.columnNames
             when {
-                data.size <= 1 -> data.values.joinToString(" ")
+                data.size <= 1 ->
+                    roundValues(data.values, decimalPlacesCount).joinToString(" ")
                 // Labels and keys match
                 data.size == names.size && data.keys.containsAll(names) ->
-                    names.joinToString(" ") {
-                        requireNotNull(data[it]) {
-                            BugReporting.reportBug(
-                                "Bug in ${this::class.simpleName}",
-                                mapOf("key" to it, "data" to data),
-                            )
-                        }
-                    }
+                    roundValues(
+                        names.map { name ->
+                            requireNotNull(data[name]) {
+                                BugReporting.reportBug(
+                                    "Bug in ${this::class.simpleName}",
+                                    mapOf("key" to name, "data" to data),
+                                )
+                            }
+                        },
+                        decimalPlacesCount,
+                    ).joinToString(" ")
                 // If the labels do not match keys, require predictable iteration order
                 else -> {
                     require(data.hasPredictableIteration) {
@@ -122,7 +128,7 @@ constructor(
                             """.trimIndent(),
                         )
                     }
-                    data.values.joinToString(" ")
+                    roundValues(data.values, decimalPlacesCount).joinToString(" ")
                 }
             }
         }
@@ -137,6 +143,15 @@ constructor(
             println(" #")
             println(SEPARATOR)
             close()
+        }
+    }
+
+    private fun roundValues(values: Collection<String>, decimalsNumber: Int): Collection<String> = values.map { raw ->
+        val number = raw.toDoubleOrNull()
+        if (number == null || !number.isFinite() || number % 1.0 == 0.0) {
+            raw
+        } else {
+            String.format(Locale.US, "%.${decimalsNumber}f", number)
         }
     }
 

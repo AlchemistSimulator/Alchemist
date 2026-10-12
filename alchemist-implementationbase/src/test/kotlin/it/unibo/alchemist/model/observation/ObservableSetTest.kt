@@ -16,8 +16,7 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.observables.ObservableMutableSet
 import it.unibo.alchemist.model.observables.ObservableMutableSet.Companion.toObservableSet
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
-import it.unibo.alchemist.model.observables.util.ObservableSets.filter
-import it.unibo.alchemist.model.observables.util.ObservableSets.merge
+import it.unibo.alchemist.model.observables.util.ObservableSets.flattenMerge
 import it.unibo.alchemist.model.observables.util.ObservableSets.union
 
 class ObservableSetTest : FunSpec({
@@ -111,16 +110,11 @@ class ObservableSetTest : FunSpec({
 
     context("ObservableSet extensions") {
 
-        test("filter should filter set elements") {
-            val set = ObservableMutableSet(1, 2, 3, 4, 5)
-            set.filter { it % 2 == 0 }.current shouldContainExactlyInAnyOrder listOf(2, 4)
-        }
-
         test("merging a set should emit updates both for sets and members") {
             val sources = listOf(observe(10), observe(20), observe(30))
             val set: ObservableSet<Observable<Int>> = sources.toObservableSet()
             var changeCounter = 0
-            set.merge().onChange(this) { changeCounter++ }
+            set.flattenMerge().onChange(this) { changeCounter++ }
             val baseline = changeCounter
             sources[0].update { it + 100 }
             changeCounter shouldBe baseline + 1

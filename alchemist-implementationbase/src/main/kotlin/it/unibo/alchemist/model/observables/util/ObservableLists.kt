@@ -59,8 +59,7 @@ object ObservableLists {
      *
      * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableList]
      */
-    @Suppress("UNCHECKED_CAST")
-    fun ObservableList<out Observable<*>>.merge(): Observable<Option<Any?>> = flatMap { it as Observable<Any?> }
+    fun <T> ObservableList<out Observable<T>>.flattenMerge(): Observable<Option<T>> = flatMap { it }
 
     /**
      * Converts the given [ObservableList] of [observables][Observable] into a unique observable.
@@ -68,10 +67,9 @@ object ObservableLists {
      * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableList]
      */
     @JvmStatic
-    @JvmName("mergeObservables")
-    @Suppress("UNCHECKED_CAST")
-    fun merge(observables: ObservableList<out Observable<*>>): Observable<Option<Any?>> =
-        observables.flatMap { it as Observable<Any?> }
+    @JvmName("flattenMergeObservables")
+    fun <T> flattenMerge(observables: ObservableList<out Observable<T>>): Observable<Option<T>> =
+        observables.flatMap { it }
 
     /**
      * Creates a new [ObservableList] and populates it with the specified items.

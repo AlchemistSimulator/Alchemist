@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.observables.util
 
 import arrow.core.Option
 import it.unibo.alchemist.model.observables.ObservableMutableSet
-import it.unibo.alchemist.model.observables.ObservableMutableSet.Companion.toObservableSet
 import it.unibo.alchemist.model.observables.util.Observables.combineLatestCollection
 import it.unibo.alchemist.model.observables.util.Observables.flatMapCollection
 import it.unibo.alchemist.model.observation.Observable
@@ -71,8 +70,7 @@ object ObservableSets {
      *
      * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableSet]
      */
-    @Suppress("UNCHECKED_CAST")
-    fun ObservableSet<out Observable<*>>.merge(): Observable<Option<Any?>> = flatMap { it as Observable<Any?> }
+    fun <T> ObservableSet<out Observable<T>>.flattenMerge(): Observable<Option<T>> = flatMap { it }
 
     /**
      * Converts the given [ObservableSet] of [observables][Observable] into a unique observable that emits
@@ -84,21 +82,9 @@ object ObservableSets {
      * @return a unique observable wrapping in one place all the notifications emitted by this [ObservableSet]
      */
     @JvmStatic
-    @JvmName("mergeObservables")
-    @Suppress("UNCHECKED_CAST")
-    fun merge(observables: ObservableSet<out Observable<*>>): Observable<Option<Any?>> =
-        observables.flatMap { it as Observable<Any?> }
-
-    /**
-     * Returns a new [ObservableSet] applying the given [predicate] to each element.
-     * The resulting collection is this collection with all the items that satisfy the given [predicate].
-     * This function is backed by the standard `filter` of [sets][Set].
-     *
-     * @param predicate the predicate to apply for each element of this collection.
-     * @return a new [ObservableSet] with the items that satisfy the input [predicate].
-     */
-    fun <T> ObservableSet<T>.filter(predicate: (T) -> Boolean): ObservableSet<T> =
-        current.filter(predicate).toObservableSet()
+    @JvmName("flattenMergeObservables")
+    fun <T> flattenMerge(observables: ObservableSet<out Observable<T>>): Observable<Option<T>> =
+        observables.flatMap { it }
 
     /**
      * Combines this observable set with another, producing a new observable set that represents

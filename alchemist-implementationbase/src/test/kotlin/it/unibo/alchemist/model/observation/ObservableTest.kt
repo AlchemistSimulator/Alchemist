@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.MutableObservables.updateValue
 import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observables.util.ObservableSets.flatMap
-import it.unibo.alchemist.model.observables.util.ObservableSets.merge
+import it.unibo.alchemist.model.observables.util.ObservableSets.flattenMerge
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
 import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
 
@@ -357,7 +357,7 @@ class ObservableTest : FunSpec({
             val obsA = observe(10)
             val obsB = observe(-10)
             val elements = ObservableMutableSet(obsA, obsB)
-            val merged = elements.merge()
+            val merged = elements.flattenMerge()
             var counter = -elements.current.size
             merged.onChange(this) {
                 println(it)
@@ -369,7 +369,7 @@ class ObservableTest : FunSpec({
         }
         test("merge should emit None immediately if the set is empty") {
             val set = ObservableMutableSet<Observable<Int>>()
-            val merged = set.merge()
+            val merged = set.flattenMerge()
             val seen = mutableListOf<Any?>()
             merged.onChange(this) { seen.add(it.getOrNull()) }
             seen shouldContainExactly listOf(null)
@@ -377,7 +377,7 @@ class ObservableTest : FunSpec({
         test("merge should emit None when set becomes empty, then Some when it becomes non-empty again") {
             val a = observe(1)
             val set = ObservableMutableSet<Observable<Int>>(a)
-            val merged = set.merge()
+            val merged = set.flattenMerge()
             val seen = mutableListOf<Any?>()
             merged.onChange(this) { seen.add(it.getOrNull()) }
             set.remove(a)

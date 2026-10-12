@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.observables.ObservableMutableList.Companion.toOb
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.ObservableLists.combineLatest
 import it.unibo.alchemist.model.observables.util.ObservableLists.flatMap
-import it.unibo.alchemist.model.observables.util.ObservableLists.merge
+import it.unibo.alchemist.model.observables.util.ObservableLists.flattenMerge
 
 class ObservableListTest : FunSpec({
     context("ObservableList factories tests") {
@@ -179,7 +179,7 @@ class ObservableListTest : FunSpec({
             val sources = listOf(observe(10), observe(20), observe(30))
             val list: ObservableMutableList<Observable<Int>> = sources.toObservableList()
             var changeCounter = 0
-            list.merge().onChange(this) { changeCounter++ }
+            list.flattenMerge().onChange(this) { changeCounter++ }
             val baseline = changeCounter
             sources[0].update { it + 100 }
             changeCounter shouldBe baseline + 1

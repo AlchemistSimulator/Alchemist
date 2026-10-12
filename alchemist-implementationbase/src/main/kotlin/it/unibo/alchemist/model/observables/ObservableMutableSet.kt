@@ -27,7 +27,7 @@ class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSe
 
     override val current: Set<T> get() = backing.current.keys
 
-    override val observers: List<Any> get() = backing.observers.map { this to it }
+    override val observers: List<Any> get() = observingCallbacks.keys.toList()
 
     override val observingCallbacks: MutableMap<Any, List<(Set<T>) -> Unit>> = mutableMapOf()
 

@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.observation
 
+import arrow.core.Option
 import arrow.core.none
 import arrow.core.some
 import it.unibo.alchemist.model.observables.ObservableMutableMap
@@ -38,5 +39,36 @@ class ObservableMutableMapKeyObservablesTest {
         map.remove("initial")
         stopObservingTheMap()
         assertEquals(none(), map["initial"].current)
+    }
+
+    @Test
+    fun `a handle taken for an absent key follows later insertions`() {
+        val handle = map["late"]
+        stopObservingTheMap()
+        map.put("late", 3)
+        assertEquals(3.some(), handle.current)
+        val seen = mutableListOf<Option<Int>>()
+        handle.subscribe(invokeOnSubscription = false) { seen += it }
+        map.remove("late")
+        map.put("late", 4)
+        assertEquals(listOf(none(), 4.some()), seen)
+    }
+
+    @Test
+    fun `a key subscription can be released through another handle for the same key`() {
+        val seen = mutableListOf<Option<Int>>()
+        map["initial"].onChange(this, invokeOnRegistration = false) { seen += it }
+        map["initial"].stopWatching(this)
+        map.put("initial", 2)
+        assertEquals(emptyList(), seen)
+    }
+
+    @Test
+    fun `stopping a registrant on the map releases its key subscriptions`() {
+        val seen = mutableListOf<Option<Int>>()
+        map["initial"].onChange(this, invokeOnRegistration = false) { seen += it }
+        map.stopWatching(this)
+        map.put("initial", 2)
+        assertEquals(emptyList(), seen)
     }
 }

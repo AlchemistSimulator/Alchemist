@@ -28,7 +28,10 @@ interface Reaction<T> :
 
     /**
      * The [Action]s executed by this reaction.
-     * Please be careful when modifying this list.
+     *
+     * Actions can only be set while the reaction is being built: once it is initialized or disposed, setting them
+     * fails with an [IllegalStateException]. To change them, build a new reaction with the desired actions, remove
+     * this one from its [host], and add the new one.
      */
     var actions: List<Action<T>>
 
@@ -37,7 +40,10 @@ interface Reaction<T> :
      *
      * Conditions normally gate scheduling.
      * A reaction with occurrence-time semantics may instead evaluate them only when its occurrence is selected.
-     * Please be careful when modifying this list.
+     *
+     * Conditions can only be set while the reaction is being built: once it is initialized or disposed, setting them
+     * fails with an [IllegalStateException], as observers may already depend on [canExecute]. To change them, build a
+     * new reaction with the desired conditions, remove this one from its [host], and add the new one.
      */
     var conditions: List<Condition<T>>
 

@@ -30,6 +30,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     override var actions: List<Action<T>> = emptyList()
         set(value) {
+            requireConfigurable("Actions")
             requireOwnership(value, Action<T>::reaction)
             field = value
         }
@@ -38,6 +39,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
+            requireConfigurable("Conditions")
             requireOwnership(value, Condition<T>::reaction)
             validateConditions(value)
             field = value
@@ -45,14 +47,11 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
             conditionValidity = value.map { it.isValid }
                 .reduceOrNull { left, right -> left.mergeWith(right) { a, b -> a && b } }
                 ?: observe(true)
-            if (initializedEnvironment != null) {
-                initializeSchedulingSubscriptions()
-                schedulingInputChanged()
-            }
         }
 
     /*
-     * The backing field is needed because replacing conditions must replace and dispose the old combined observable.
+     * The backing field is needed because replacing conditions during construction must replace and dispose the old
+     * combined observable.
      * Computing it in the canExecute getter would create a new observable on every access.
      * Making canExecute itself mutable would also be undesirable: the API promises a read-only property,
      * and subclasses must override it with a fixed val.
@@ -113,6 +112,15 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
 
     /** Called after reaction-specific initialization completes. */
     protected open fun afterInitializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+
+    /*
+     * Conditions and actions are part of the reaction's construction: once the engine initializes the reaction,
+     * observers may hold its combined validity, so changes must go through replacing the whole reaction.
+     */
+    private fun requireConfigurable(what: String) = check(!disposed && initializedEnvironment == null) {
+        "$what of $this cannot change once the reaction is initialized or disposed: create a new reaction with the " +
+            "desired conditions and actions, remove this one from its host, and insert the new one"
+    }
 
     private fun <E> requireOwnership(elements: List<E>, owner: (E) -> Any) {
         val foreign = elements.filterNot { owner(it) === this }
@@ -183,8 +191,6 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
             schedulingSubscriptions?.dispose()
             schedulingSubscriptions = null
             conditions.forEach(Condition<T>::dispose)
-            conditions = emptyList()
-            actions = emptyList()
             val executionEligibility = canExecute
             executionEligibility.dispose()
             if (executionEligibility !== conditionValidity) {

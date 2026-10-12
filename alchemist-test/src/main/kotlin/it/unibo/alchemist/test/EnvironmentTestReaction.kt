@@ -35,11 +35,20 @@ class EnvironmentTestReaction<T>(
     override val rate: Double get() = timeDistribution.expectedRate
     private val mutableNextOccurrence = observe(timeDistribution.startTime, false)
     override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
+
+    // Like every reaction, it can only be configured until it is initialized or disposed.
+    private var configurable = true
+
     override var actions: List<Action<T>> = emptyList()
+        set(value) {
+            check(configurable) { "Actions of $this cannot change once the reaction is initialized or disposed" }
+            field = value
+        }
     private var validity: Observable<Boolean> = observe(true)
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
+            check(configurable) { "Conditions of $this cannot change once the reaction is initialized or disposed" }
             field = value
             validity.dispose()
             validity = value
@@ -72,9 +81,12 @@ class EnvironmentTestReaction<T>(
         }
     }
 
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
+    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
+        configurable = false
+    }
 
     override fun dispose() {
+        configurable = false
         validity.dispose()
         conditions.forEach(Condition<T>::dispose)
         nextOccurrence.dispose()

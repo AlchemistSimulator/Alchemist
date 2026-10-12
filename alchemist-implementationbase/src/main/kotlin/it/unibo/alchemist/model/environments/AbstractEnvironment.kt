@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods
 import it.unibo.alchemist.model.observables.ObservableMutableList
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.ObservableMutableSet
@@ -154,6 +155,12 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
              */
             spatialIndex.insert(node, *actualPosition.coordinates)
             setPosition(node, actualPosition)
+            /*
+             * The node is published isolated, so that observers of the node list can read its neighborhood, and then
+             * linked. It must be among the nodes before linking, because some linking rules (e.g., ClosestN) look
+             * for it there when recomputing the neighborhoods of the other nodes.
+             */
+            neighborhoods.put(node.id, Neighborhoods.make(this, node))
             nodeList.add(node)
             refreshNeighborhoodsAround(node)
             ifAttachedToSimulation { simulation -> node.reactions.current.forEach(simulation::reactionAdded) }

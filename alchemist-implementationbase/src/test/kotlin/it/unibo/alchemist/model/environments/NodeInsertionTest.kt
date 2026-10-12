@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.environments
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
@@ -46,6 +47,22 @@ class NodeInsertionTest {
         // The environment bounds are widened by one ulp around each included object.
         assertEquals(SHIFT, environment.offset[0], TOLERANCE)
         assertEquals(0.0, environment.offset[1], TOLERANCE)
+    }
+
+    @Test
+    fun `node list subscribers can read the neighborhood of a node being added`() {
+        val environment = Continuous2DEnvironment(
+            SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow(),
+        ).apply { linkingRule = ConnectWithinDistance(1.0) }
+        val first = GenericNode(environment).also { environment.addNode(it, environment.makePosition(0, 0)) }
+        val neighborsOnArrival = mutableListOf<List<Node<Any>>>()
+        environment.nodes.subscribe(invokeOnSubscription = false) { nodes ->
+            neighborsOnArrival += environment.getNeighborhood(nodes.last()).current.neighbors.toList()
+        }
+        val second = GenericNode(environment).also { environment.addNode(it, environment.makePosition(0.5, 0)) }
+        // The node is published isolated, and linked right after.
+        assertEquals(listOf(emptyList()), neighborsOnArrival)
+        assertEquals(listOf(first), environment.getNeighborhood(second).current.neighbors.toList())
     }
 
     private companion object {

@@ -358,11 +358,8 @@ class ObservableTest : FunSpec({
             val obsB = observe(-10)
             val elements = ObservableMutableSet(obsA, obsB)
             val merged = elements.flattenMerge()
-            var counter = -elements.current.size
-            merged.onChange(this) {
-                println(it)
-                counter++
-            }
+            var counter = 0
+            merged.onChange(this, invokeOnRegistration = false) { counter++ }
             obsA.update { it + 11 }
             elements.add(observe(29))
             counter shouldBe 2

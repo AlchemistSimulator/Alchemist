@@ -62,4 +62,29 @@ class CollectionDerivedObservableTest {
         created.filter { it.observers.isNotEmpty() }.forEach { it.current = 5 }
         assertEquals(10, total())
     }
+
+    @Test
+    fun `subscribing to a combined observable keeps the observables that computed its initial value`() {
+        val created = mutableListOf<MutableObservable<Int>>()
+        val total = elements.combineLatest(
+            transformer = { observe(created.size).also(created::add) },
+            aggregator = { it.sum() },
+        )
+        val received = mutableListOf<Int>()
+        total.subscribe { received += it }
+        assertEquals(listOf(1), received)
+        assertEquals(2, created.size)
+        assertEquals(1, total.current)
+    }
+
+    @Test
+    fun `subscribing to a merged observable keeps the observable that computed its initial value`() {
+        val created = mutableListOf<MutableObservable<Int>>()
+        val merged = elements.flatMap { observe(created.size).also(created::add) }
+        val received = mutableListOf<Option<Int>>()
+        merged.subscribe { received += it }
+        assertEquals(listOf(0.some()), received)
+        assertEquals(2, created.size)
+        assertEquals(0.some(), merged.current)
+    }
 }

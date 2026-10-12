@@ -147,11 +147,13 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 "Node with id ${node.id} was already existing in this environment."
             }
             /*
-             * The position and spatial index come first, because the linking rule queries them to compute the new
+             * The spatial index and position come first, because the linking rule queries them to compute the new
              * neighborhood; reactions are announced only once the node is fully part of the model.
+             * The node enters the spatial index before setPosition publishes it to the observed range queries,
+             * so that their observers find it through spatial queries.
              */
-            setPosition(node, actualPosition)
             spatialIndex.insert(node, *actualPosition.coordinates)
+            setPosition(node, actualPosition)
             nodeList.add(node)
             refreshNeighborhoodsAround(node)
             ifAttachedToSimulation { simulation -> node.reactions.current.forEach(simulation::reactionAdded) }
@@ -386,7 +388,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     protected fun setPosition(n: Node<T>, p: P) {
         val pos = nodesToPositions.current[n.id]
         /*
-         * A new node has no previous position and is inserted in the spatial index by addNode after this call.
+         * A new node has no previous position and is inserted in the spatial index by addNode before this call.
          * The position map is updated before the range queries, so that queries centered on the moved node see its
          * new position.
          */

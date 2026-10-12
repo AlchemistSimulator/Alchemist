@@ -99,4 +99,15 @@ class ObservableRangeQueryTest {
         assertEquals(setOf(member), survivingRange.current)
         subscriptions.forEach { it.dispose() }
     }
+
+    @Test
+    fun `observers of a range find a node added within it through spatial queries`() {
+        val center = nodeAt(0, 0)
+        val queried = mutableListOf<List<Node<Any>>>()
+        val subscription = environment.observeNodesWithinRange(center, 1.0)
+            .subscribe(invokeOnSubscription = false) { queried += environment.getNodesWithinRange(center, 1.0) }
+        val added = nodeAt(0.5, 0)
+        assertEquals(listOf(listOf(added)), queried)
+        subscription.dispose()
+    }
 }

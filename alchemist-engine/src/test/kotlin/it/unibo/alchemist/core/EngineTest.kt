@@ -37,7 +37,6 @@ private class LambdaNodeReaction<T>(
     override fun performModelMutation() = operation()
 }
 
-@Suppress("UnnecessaryAbstractClass")
 class EngineTest : FreeSpec({
 
     "Neighbor Condition: Reaction executes when neighbor has concentration" {

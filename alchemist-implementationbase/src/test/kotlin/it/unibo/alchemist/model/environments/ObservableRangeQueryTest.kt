@@ -110,4 +110,17 @@ class ObservableRangeQueryTest {
         assertEquals(listOf(listOf(added)), queried)
         subscription.dispose()
     }
+
+    @Test
+    fun `a range unobserved when its center is removed is empty`() {
+        val center = nodeAt(0, 0)
+        nodeAt(0.5, 0)
+        val range = environment.observeNodesWithinRange(center, 1.0)
+        environment.removeNode(center)
+        assertEquals(emptySet(), range.current)
+        val received = mutableListOf<Set<Node<Any>>>()
+        val subscription = range.subscribe { received += it }
+        assertEquals(listOf(emptySet()), received)
+        subscription.dispose()
+    }
 }

@@ -488,7 +488,11 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     ) : ObservableSet<Node<T>> {
         private val members = ObservableMutableSet<Node<T>>()
 
+        /*
+         * Active queries are told when their center leaves; inactive ones are not, so they check the environment.
+         */
         private var centerRemoved = false
+            get() = field || centerNode != null && centerNode !in this@AbstractEnvironment
 
         private val isActive: Boolean get() = members.observers.isNotEmpty()
 

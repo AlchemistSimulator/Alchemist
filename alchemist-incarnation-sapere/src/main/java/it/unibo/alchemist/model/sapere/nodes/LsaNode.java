@@ -150,9 +150,10 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
             if (list != null) {
                 for (int i = 0; i < list.size(); i++) {
                     if (matchedInstance.matches(list.get(i))) {
-                        list.remove(i);
+                        // The argument may be a template: remove the stored instance it matched.
+                        final ILsaMolecule removed = list.remove(i);
                         moleculeCount.update(c -> c - 1);
-                        allInstances.remove(matchedInstance);
+                        allInstances.remove(removed);
                         final var obs = observablesByName.get(name);
                         if (obs != null) {
                             obs.update(it -> new ArrayList<>(list));

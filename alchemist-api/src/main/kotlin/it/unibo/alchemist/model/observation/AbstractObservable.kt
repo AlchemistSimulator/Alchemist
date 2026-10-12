@@ -46,8 +46,9 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
             if (invokeOnRegistration) {
                 val initial = computeFresh()
                 cached = initial.some()
-                callback(initial)
+                // Monitor before notifying, so that source changes made by the callback itself are not missed.
                 startMonitoring(true)
+                callback(initial)
             } else {
                 startMonitoring(true)
             }

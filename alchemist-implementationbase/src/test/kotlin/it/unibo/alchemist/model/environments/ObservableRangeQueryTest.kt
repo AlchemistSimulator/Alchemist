@@ -134,4 +134,20 @@ class ObservableRangeQueryTest {
         nodeAt(0.5, 0)
         assertEquals(emptyList(), sizes)
     }
+
+    @Test
+    fun `observers of a range can read the neighborhood of a node added within it`() {
+        environment.linkingRule = ConnectWithinDistance(1.0)
+        val neighbor = nodeAt(0.2, 0)
+        val neighborsOfMembers = mutableListOf<List<Node<Any>>>()
+        val subscription = environment.observeNodesWithinRange(environment.makePosition(0, 0), 1.0)
+            .subscribe(invokeOnSubscription = false) { members ->
+                members.filter { it != neighbor }.forEach {
+                    neighborsOfMembers += environment.getNeighborhood(it).current.neighbors.toList()
+                }
+            }
+        nodeAt(0.5, 0)
+        assertEquals(listOf(listOf(neighbor)), neighborsOfMembers)
+        subscription.dispose()
+    }
 }

@@ -150,11 +150,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             /*
              * The spatial index and position come first, because the linking rule queries them to compute the new
              * neighborhood; reactions are announced only once the node is fully part of the model.
-             * The node enters the spatial index before setPosition publishes it to the observed range queries,
-             * so that their observers find it through spatial queries.
              */
             spatialIndex.insert(node, *actualPosition.coordinates)
-            setPosition(node, actualPosition)
+            nodesToPositions[node.id] = actualPosition
             /*
              * The node is published isolated, so that observers of the node list can read its neighborhood, and then
              * linked. It must be among the nodes before linking, because some linking rules (e.g., ClosestN) look
@@ -163,6 +161,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             neighborhoods.put(node.id, Neighborhoods.make(this, node))
             nodeList.add(node)
             refreshNeighborhoodsAround(node)
+            // Observers of the ranges the node entered find it indexed, positioned, listed, and linked.
+            updateRangeQueries(node, actualPosition)
             ifAttachedToSimulation { simulation -> node.reactions.current.forEach(simulation::reactionAdded) }
             nodeAdded(node, actualPosition, currentNeighborhoodOf(node))
             true
@@ -395,7 +395,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     protected fun setPosition(n: Node<T>, p: P) {
         val pos = nodesToPositions.current[n.id]
         /*
-         * A new node has no previous position and is inserted in the spatial index by addNode before this call.
          * The position map is updated before the range queries, so that queries centered on the moved node see its
          * new position.
          */

@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import org.apache.commons.math3.random.MersenneTwister
 
@@ -28,19 +29,23 @@ class TensionPresentTest {
     private val environment = BioRect2DEnvironmentNoOverlap(BiochemistryIncarnation())
         .apply { linkingRule = ConnectWithinDistance(1.0) }
 
-    private fun deformableCellAt(x: Double, maximumDiameter: Double, rigidity: Double): Node<Double> {
-        val cell = GenericNode(environment)
-        cell.addProperty(CircularDeformableCell(environment, cell, maximumDiameter, rigidity))
-        assertTrue(environment.addNode(cell, Euclidean2DPosition(x, 0.0)))
-        return cell
-    }
+    private fun deformableCell(maximumDiameter: Double, rigidity: Double): Node<Double> = GenericNode(environment)
+        .also { node -> node.addProperty(CircularDeformableCell(environment, node, maximumDiameter, rigidity)) }
+
+    private fun deformableCellAt(x: Double, maximumDiameter: Double, rigidity: Double): Node<Double> =
+        deformableCell(maximumDiameter, rigidity).also {
+            assertTrue(environment.addNode(it, Euclidean2DPosition(x, 0.0)))
+        }
+
+    private fun tensionOn(cell: Node<Double>) = TensionPresent(
+        environment,
+        BiochemicalNodeReaction(cell, ExponentialTime(1.0, randomGenerator), environment, randomGenerator),
+    )
 
     @Test
     fun `a bigger cell added later widens the range where tension is observed`() {
         val cell = deformableCellAt(0.0, maximumDiameter = 1.0, rigidity = 1.0)
-        val reaction =
-            BiochemicalNodeReaction(cell, ExponentialTime(1.0, randomGenerator), environment, randomGenerator)
-        val tension = TensionPresent(environment, reaction)
+        val tension = tensionOn(cell)
         val validity = mutableListOf<Boolean>()
         tension.isValid.subscribe { validity += it }
         assertEquals(listOf(false), validity)
@@ -48,5 +53,13 @@ class TensionPresentTest {
         deformableCellAt(2.2, maximumDiameter = 4.0, rigidity = 0.5)
         assertEquals(4.0, environment.maxDiameterAmongCircularDeformableCells.current)
         assertEquals(listOf(false, true), validity)
+    }
+
+    @Test
+    fun `tension is absent while there are no deformable cells in the environment`() {
+        val tension = tensionOn(deformableCell(maximumDiameter = 1.0, rigidity = 1.0))
+        assertEquals(0.0, environment.maxDiameterAmongCircularDeformableCells.current)
+        assertFalse(tension.isValid.current)
+        assertEquals(0.0, tension.getTension())
     }
 }

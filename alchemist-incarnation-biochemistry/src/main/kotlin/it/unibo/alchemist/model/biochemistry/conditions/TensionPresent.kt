@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.biochemistry.CircularCellProperty
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty
 import it.unibo.alchemist.model.biochemistry.EnvironmentSupportingDeformableCells
 import it.unibo.alchemist.model.conditions.AbstractLocalCondition
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
@@ -26,14 +27,18 @@ class TensionPresent(private val environment: EnvironmentSupportingDeformableCel
 
     /*
      * Deformable cells interact within the biggest deformable cell diameter, which grows as bigger cells are added:
-     * the observed range follows it.
+     * the observed range follows it. With no deformable cells around there is no range to query, hence no tension.
      */
     private val mechanics: Observable<MechanicalState> = environment
         .maxDiameterAmongCircularDeformableCells
         .switchMap { range ->
-            environment
-                .observeNodesWithinRange(targetNode, range)
-                .combineLatest(environment::getPosition) { computeMechanicalState(range) }
+            if (range > 0.0) {
+                environment
+                    .observeNodesWithinRange(targetNode, range)
+                    .combineLatest(environment::getPosition) { computeMechanicalState(range) }
+            } else {
+                observe(MechanicalState(valid = false, tension = 0.0))
+            }
         }
 
     init {

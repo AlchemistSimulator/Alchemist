@@ -12,6 +12,14 @@ package it.unibo.alchemist.model
 /**
  * An operation performed when its owning [Reaction] executes.
  *
+ * Actions are imperative: [execute] reads the model state it needs, such as neighborhoods or concentrations,
+ * when it runs. Actions should not subscribe to observables
+ * (e.g., through [Observable.onChange][it.unibo.alchemist.model.observation.Observable.onChange])
+ * to keep a copy of that state: nothing releases such subscriptions when the reaction or its node is removed,
+ * so they outlive the action and may run against nodes that are no longer in the environment;
+ * moreover, the copy goes stale whenever the state it derives from changes without the observed value changing.
+ * Reactive dependencies belong to [Condition]s, whose validity is owned by their reaction.
+ *
  * @param T concentration type
  */
 interface Action<T> {

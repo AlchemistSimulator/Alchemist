@@ -52,19 +52,16 @@ class ChemotacticPolarization(
         else -> throw IllegalArgumentException("Possible imput string are only up or down")
     }
 
-    private var neighbors: List<Node<Double>> = emptyList()
-
-    init {
-        environment.getNeighborhood(targetNode).onChange(this) { neighborhood ->
-            neighbors = neighborhood.neighbors.filter { it is EnvironmentNode && it.contains(biomolecule) }
-        }
-    }
-
     override fun cloneOnNodeReaction(newReaction: NodeReaction<Double>): ChemotacticPolarization =
         ChemotacticPolarization(environment, newReaction, biomolecule, ascendGrad)
 
     override fun execute() {
-        val candidates = neighbors
+        // Neighbors gain and lose the molecule without changing the neighborhood, so the candidates are computed anew.
+        val candidates = environment
+            .getNeighborhood(targetNode)
+            .current
+            .neighbors
+            .filter { it is EnvironmentNode && it.contains(biomolecule) }
         val position = environment.getCurrentPosition(targetNode)
         val maxConcentrationNode = candidates.maxByOrNull { it.getConcentration(biomolecule) }
         when {

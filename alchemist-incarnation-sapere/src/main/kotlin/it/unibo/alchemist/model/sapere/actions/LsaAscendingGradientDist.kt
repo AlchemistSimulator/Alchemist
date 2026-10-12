@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.sapere.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.sapere.ILsaMolecule
@@ -30,16 +29,10 @@ class LsaAscendingGradientDist<P : Position<P>>(
     environment: Environment<List<ILsaMolecule>, P>,
     reaction: NodeReaction<List<ILsaMolecule>>,
 ) : AbstractSAPERENeighborAgent<P>(environment, reaction, MOLRESPONSE) {
-    private lateinit var neighborhood: Neighborhood<List<ILsaMolecule>>
-
-    init {
-        environment.getNeighborhood(targetNode).onChange(this) { neighborhood = it }
-    }
-
     override fun execute() {
         var minGrad = getLSAArgumentAsDouble(lsaNode.getConcentration(MOLGRAD)[0], POS)
         val targets = mutableListOf<LsaNode>()
-        for (neighbor in neighborhood.neighbors) {
+        for (neighbor in environment.getNeighborhood(targetNode).current.neighbors) {
             val lsaNeighbor = neighbor as LsaNode
             for (grad in lsaNeighbor.getConcentration(MOLGRAD)) {
                 val valueGrad = grad.getArg(POS).calculate(null).getValue(null) as Double

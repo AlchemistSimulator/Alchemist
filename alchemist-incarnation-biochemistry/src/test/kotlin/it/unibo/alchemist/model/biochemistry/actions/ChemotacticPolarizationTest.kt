@@ -48,4 +48,10 @@ class ChemotacticPolarizationTest {
             cell.asProperty<Double, CircularCellProperty>().polarizationVersor,
         )
     }
+
+    @Test
+    fun `the cell can be removed from the environment`() {
+        environment.removeNode(cell)
+        assertEquals(listOf(source), environment.nodes.current)
+    }
 }

@@ -80,15 +80,21 @@ object Observables {
         object : AbstractObservable<R>() {
             private var innerSubscription: Disposable? = null
 
-            override fun computeFresh(): R = transform(this@switchMap.current).current
+            // The inner observable selected by the latest computeFresh, whose value may have just been cached.
+            private var lastSelected: Observable<R>? = null
+
+            override fun computeFresh(): R = transform(this@switchMap.current).also { lastSelected = it }.current
 
             override fun startMonitoring() = startMonitoring(false)
 
             override fun startMonitoring(lazy: Boolean) {
                 this@switchMap.onChange(this, !lazy, ::switchInner)
                 if (lazy) {
-                    // a manual switch to set up inner subscription without emitting is required if lazy
-                    switchInner(this@switchMap.current, invokeOnRegistration = cached.isSome())
+                    // Follow the inner observable whose value is cached, if any, rather than selecting a new one.
+                    follow(
+                        lastSelected?.takeIf { cached.isSome() } ?: transform(this@switchMap.current),
+                        emitCurrent = false,
+                    )
                 }
             }
 
@@ -96,20 +102,18 @@ object Observables {
                 this@switchMap.stopWatching(this)
                 innerSubscription?.dispose()
                 innerSubscription = null
+                lastSelected = null
             }
 
-            private fun switchInner(value: T) = switchInner(value, true)
+            private fun switchInner(value: T) = follow(transform(value), emitCurrent = true)
 
-            private fun switchInner(value: T, invokeOnRegistration: Boolean) {
+            private fun follow(inner: Observable<R>, emitCurrent: Boolean) {
                 innerSubscription?.dispose()
-                with(transform(value)) {
-                    innerSubscription =
-                        subscribe(invokeOnSubscription = invokeOnRegistration, callback = ::updateAndNotify)
-                    if (invokeOnRegistration) {
-                        updateAndNotify(this.current)
-                    } else {
-                        cached = this.current.some()
-                    }
+                innerSubscription = inner.subscribe(invokeOnSubscription = false, callback = ::updateAndNotify)
+                if (emitCurrent) {
+                    updateAndNotify(inner.current)
+                } else {
+                    cached = inner.current.some()
                 }
             }
         }

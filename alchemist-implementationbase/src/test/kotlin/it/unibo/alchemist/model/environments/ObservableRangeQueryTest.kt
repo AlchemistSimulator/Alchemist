@@ -123,4 +123,15 @@ class ObservableRangeQueryTest {
         assertEquals(listOf(emptySet()), received)
         subscription.dispose()
     }
+
+    @Test
+    fun `a size subscription of a range can be released through the size of the same range`() {
+        val center = nodeAt(0, 0)
+        val range = environment.observeNodesWithinRange(center, 1.0)
+        val sizes = mutableListOf<Int>()
+        range.size.onChange(this, invokeOnRegistration = false) { sizes += it }
+        range.size.stopWatching(this)
+        nodeAt(0.5, 0)
+        assertEquals(emptyList(), sizes)
+    }
 }

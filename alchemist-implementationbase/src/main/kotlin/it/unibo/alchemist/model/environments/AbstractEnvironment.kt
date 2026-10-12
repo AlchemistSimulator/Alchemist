@@ -507,7 +507,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
         override val observingCallbacks: Map<Any, List<(Set<Node<T>>) -> Unit>> get() = members.observingCallbacks
 
-        override val size: Observable<Int> get() = map { it.size }
+        override val size: Observable<Int> = map { it.size }
 
         override fun containsItem(item: Node<T>): Observable<Boolean> = map { item in it }
 

@@ -38,12 +38,10 @@ object MutableObservables {
         override val observers: List<Any> get() = observingCallbacks.keys.toList()
 
         override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
+            observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
             if (invokeOnRegistration) {
                 callback(current)
             }
-            observingCallbacks[registrant] = observingCallbacks[registrant]?.let {
-                it + callback
-            } ?: listOf(callback)
         }
 
         override fun stopWatching(registrant: Any) {

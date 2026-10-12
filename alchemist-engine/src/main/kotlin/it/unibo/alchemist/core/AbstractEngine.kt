@@ -281,6 +281,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
      * Internal method to run the simulation loop.
      * Implementations must provide [initialize], [doStep], and hooks for run cycle.
      */
+    @Suppress("TooGenericExceptionCaught")
     override fun run() {
         synchronized(environment) {
             try {

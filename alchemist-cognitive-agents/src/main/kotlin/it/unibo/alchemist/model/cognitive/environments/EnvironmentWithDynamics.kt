@@ -137,7 +137,7 @@ constructor(
     override fun addNode(node: Node<T>, position: Euclidean2DPosition): Boolean {
         if (backingEnvironment.addNode(node, position)) {
             addNodeBody(node)
-            moveNodeBodyToPosition(node, position)
+            moveNodeBodyToPosition(node, backingEnvironment.getCurrentPosition(node))
             return true
         }
         return false
@@ -206,8 +206,11 @@ constructor(
         }
     }
 
-    override fun getCurrentPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position
-        ?: throw IllegalArgumentException("Unable to find $node's position in the environment.")
+    /*
+     * The backing environment publishes positions, and bodies are aligned to it after every move:
+     * reading positions from it keeps them consistent with what position observers are notified about.
+     */
+    override fun getCurrentPosition(node: Node<T>): Euclidean2DPosition = backingEnvironment.getCurrentPosition(node)
 
     private val PhysicsBody.position get() =
         Euclidean2DPosition(this.transform.translationX, this.transform.translationY)

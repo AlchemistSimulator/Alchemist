@@ -36,7 +36,7 @@ constructor(
 ) : AbstractLocalAction<T>(reaction) {
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
     private val timeDistributedReaction = requireNotNull(reaction as? TimeDistributedReaction<*>) {
-        "$reaction does not expose a recurrence rate"
+        "$reaction is not driven by a time distribution"
     }
 
     override fun cloneOnNodeReaction(newReaction: NodeReaction<T>) =
@@ -47,7 +47,7 @@ constructor(
      */
     override fun execute() {
         targetNode.getConcentration(target)?.also {
-            val speedRadians = angularSpeedRadians / timeDistributedReaction.rate
+            val speedRadians = angularSpeedRadians * timeDistributedReaction.finitePositiveMeanDelayOrError
             val targetPosition = it.toPosition(environment)
             val myHeading = environment.getHeading(targetNode)
             if (targetPosition != myHeading) {

@@ -36,10 +36,10 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     extends AbstractStrategyWithGPS
     implements SpeedSelectionStrategy<T, GeoPosition> {
 
-    private final NodeReaction<T> reaction;
-    private final TimeDistributedReaction<?> timeDistributedReaction;
     private final MapEnvironment<T, O, S> mapEnvironment;
     private final Node<T> node;
+    private final NodeReaction<T> reaction;
+    private final TimeDistributedReaction<?> timeDistributedReaction;
 
     /**
      * @param environment
@@ -59,7 +59,7 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
         this.node = Objects.requireNonNull(node);
         this.reaction = Objects.requireNonNull(reaction);
         if (!(reaction instanceof final TimeDistributedReaction<?> distributedReaction)) {
-            throw new IllegalArgumentException(reaction + " does not expose a recurrence rate");
+            throw new IllegalArgumentException(reaction + " is not driven by a time distribution");
         }
         timeDistributedReaction = distributedReaction;
     }
@@ -73,8 +73,8 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
         if (curTime >= expArrival) {
             return Double.POSITIVE_INFINITY;
         }
-        final double frequency = timeDistributedReaction.getRate();
-        final double steps = (expArrival - curTime) * frequency;
+        final double meanDelay = timeDistributedReaction.getFinitePositiveMeanDelayOrError();
+        final double steps = (expArrival - curTime) / meanDelay;
         return computeDistance(mapEnvironment, node, target) / steps;
     }
 

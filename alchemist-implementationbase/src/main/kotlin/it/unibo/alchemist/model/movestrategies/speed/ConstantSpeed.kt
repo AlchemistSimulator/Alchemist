@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -29,15 +29,16 @@ import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
 class ConstantSpeed<T, P : Position<P>>(reaction: NodeReaction<*>, private val speed: Double) :
     SpeedSelectionStrategy<T, P> {
     private val timeDistributedReaction = requireNotNull(reaction as? TimeDistributedReaction<*>) {
-        "$reaction does not expose a recurrence rate"
+        "$reaction is not driven by a time distribution"
     }
 
     init {
         require(speed >= 0) { "Speed must be positive or zero in $reaction. Provided: $speed" }
     }
 
-    override fun getNodeMovementLength(target: P?): Double = speed / timeDistributedReaction.rate
-
     override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): ConstantSpeed<T, P> =
         ConstantSpeed(reaction, speed)
+
+    override fun getNodeMovementLength(target: P?): Double =
+        speed * timeDistributedReaction.finitePositiveMeanDelayOrError
 }

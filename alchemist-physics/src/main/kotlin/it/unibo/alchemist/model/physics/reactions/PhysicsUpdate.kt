@@ -31,7 +31,7 @@ class PhysicsUpdate<T>(
 
     override val host: Dynamics2DEnvironment<T> get() = environment
 
-    override val rate: Double get() = 1 / timeDistribution.meanDelay
+    override val meanDelay: Double get() = timeDistribution.meanDelay
 
     constructor(environment: Dynamics2DEnvironment<T>, updateRate: Double) : this(environment, DiracComb(updateRate))
 
@@ -41,7 +41,7 @@ class PhysicsUpdate<T>(
         setNextOccurrence(currentTime.plus(sample))
     }
 
-    override fun performModelMutation() = environment.updatePhysics(timeDistribution.meanDelay)
+    override fun performModelMutation() = environment.updatePhysics(meanDelay)
 
     override fun scheduleAfterInvalidation(currentTime: Time) = updateSchedulingAfterFiring(currentTime)
 

@@ -42,29 +42,38 @@ class SAPERENodeReaction(
     private val randomGenerator: RandomGenerator,
     timeDistribution: TimeDistribution<List<ILsaMolecule>>,
 ) : AbstractNodeReaction<List<ILsaMolecule>>(node, timeDistribution) {
-    private val sapereTimeDistribution: SAPERETimeDistribution? = timeDistribution as? SAPERETimeDistribution
-    private var possibleMatches: List<MutableMap<HashString, ITreeNode<*>>> = emptyList()
-    private var possibleRemove: List<Map<ILsaNode, List<ILsaMolecule>>> = emptyList()
-    private var propensities: List<Double> = emptyList()
-    private var totalPropensity = 0.0
-    private var validNodes: List<ILsaNode> = emptyList()
+    override val meanDelay: Double get() = when {
+        totalPropensity == 0.0 -> Double.POSITIVE_INFINITY
+        // Exponential delays are rescaled to the total propensity, any other delay is drawn as is.
+        timeDistribution is ExponentialTime<*> -> 1 / totalPropensity
+        else -> super.meanDelay
+    }
 
-    private val sapereActions: List<ILsaAction> get() = actions.map { it as ILsaAction }
+    /** The total propensity of the possible matches, which is the rate of this reaction for exponential delays. */
+    val rate: Double get() = totalPropensity
 
-    private val sapereConditions: List<ILsaCondition> get() = conditions.map { it as ILsaCondition }
-
-    private val numericRate: Boolean get() = sapereTimeDistribution?.isStatic ?: true
-
-    private val baseRate: Double get() = sapereTimeDistribution?.rate ?: super.rate
-
-    override val rate: Double get() = totalPropensity
-
-    override val rateAsString: String
+    override val schedulingAsString: String
         get() = sapereTimeDistribution
             ?.takeUnless { numericRate }
             ?.rateEquation
             ?.toString()
             ?: baseRate.toString()
+
+    private val baseRate: Double get() = sapereTimeDistribution?.rate ?: (1 / super.meanDelay)
+
+    private val numericRate: Boolean get() = sapereTimeDistribution?.isStatic ?: true
+
+    private val sapereActions: List<ILsaAction> get() = actions.map { it as ILsaAction }
+
+    private val sapereConditions: List<ILsaCondition> get() = conditions.map { it as ILsaCondition }
+
+    private val sapereTimeDistribution: SAPERETimeDistribution? = timeDistribution as? SAPERETimeDistribution
+
+    private var possibleMatches: List<MutableMap<HashString, ITreeNode<*>>> = emptyList()
+    private var possibleRemove: List<Map<ILsaNode, List<ILsaMolecule>>> = emptyList()
+    private var propensities: List<Double> = emptyList()
+    private var totalPropensity = 0.0
+    private var validNodes: List<ILsaNode> = emptyList()
 
     override fun cloneOnNewNode(node: Node<List<ILsaMolecule>>, currentTime: Time): NodeReaction<List<ILsaMolecule>> =
         prepareClone(
@@ -72,18 +81,10 @@ class SAPERENodeReaction(
             currentTime,
         )
 
-    override fun validateConditions(conditions: List<Condition<List<ILsaMolecule>>>) {
-        val unsupported = conditions.filterNot { it is ILsaCondition }
-        require(unsupported.isEmpty()) { "SAPERE reactions require ILsaCondition instances, got $unsupported" }
-    }
-
-    override fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
-        sapereConditions.forEach { condition ->
-            subscriptions.add(
-                condition.matchingInput.subscribe(invokeOnSubscription = false) {
-                    schedulingInputChanged()
-                },
-            )
+    override fun onInitializationComplete(atTime: Time, environment: Environment<List<ILsaMolecule>, *>) {
+        if (!isNewlyInstantiatedProgram) {
+            refreshReactionState(atTime, environment)
+            initializeNewProgramScheduling(atTime)
         }
     }
 
@@ -109,51 +110,6 @@ class SAPERENodeReaction(
         }
     }
 
-    private fun currentNeighbors(): List<ILsaNode> =
-        environment.getNeighborhood(host).current.neighbors.filterIsInstance<ILsaNode>()
-
-    private fun executeActions(matches: Map<HashString, ITreeNode<*>>?) {
-        sapereActions.forEach { action ->
-            action.setExecutionContext(matches, validNodes)
-            action.execute()
-        }
-    }
-
-    private fun removeMatchedMolecules(toRemove: Map<ILsaNode, List<ILsaMolecule>>) {
-        toRemove.forEach { (node, molecules) -> molecules.forEach(node::removeOneMatchedLsa) }
-    }
-
-    private fun selectMatchIndex(): Int = when {
-        // With a numeric rate, all matches share the same propensity: an infinite one fires the last match,
-        // a finite one a random match.
-        numericRate -> when (totalPropensity) {
-            Double.POSITIVE_INFINITY -> possibleMatches.lastIndex
-            else -> randomGenerator.nextInt(possibleMatches.size)
-        }
-        // The evaluation of propensities stops at the first infinite one: that match fires.
-        totalPropensity == Double.POSITIVE_INFINITY -> propensities.lastIndex
-        // Otherwise, the matches are selected randomly, weighted by their propensities.
-        else -> selectWeightedMatchIndex()
-    }
-
-    private fun selectWeightedMatchIndex(): Int {
-        val selectedPropensity = randomGenerator.nextDouble() * totalPropensity
-        var cumulativePropensity = 0.0
-        val selected = propensities.indexOfFirst { propensity ->
-            cumulativePropensity += propensity
-            cumulativePropensity > selectedPropensity
-        }
-        // Floating-point rounding can cause selectedPropensity == totalPropensity: fall back to the last bucket.
-        return if (selected >= 0) selected else propensities.lastIndex
-    }
-
-    override fun onInitializationComplete(atTime: Time, environment: Environment<List<ILsaMolecule>, *>) {
-        if (!isNewlyInstantiatedProgram) {
-            refreshReactionState(atTime, environment)
-            initializeNewProgramScheduling(atTime)
-        }
-    }
-
     override fun refreshReactionState(currentTime: Time, environment: Environment<List<ILsaMolecule>, *>) {
         // Valid nodes must be re-initialized at every refresh.
         val nodes = currentNeighbors()
@@ -176,6 +132,25 @@ class SAPERENodeReaction(
         }
     }
 
+    override fun scheduleAfterInvalidation(currentTime: Time) = scheduleFreshOccurrence(currentTime)
+
+    override fun scheduleNextOccurrenceAfterFiring(currentTime: Time) = scheduleFreshOccurrence(currentTime)
+
+    override fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
+        sapereConditions.forEach { condition ->
+            subscriptions.add(
+                condition.matchingInput.subscribe(invokeOnSubscription = false) {
+                    schedulingInputChanged()
+                },
+            )
+        }
+    }
+
+    override fun validateConditions(conditions: List<Condition<List<ILsaMolecule>>>) {
+        val unsupported = conditions.filterNot { it is ILsaCondition }
+        require(unsupported.isEmpty()) { "SAPERE reactions require ILsaCondition instances, got $unsupported" }
+    }
+
     private fun computePropensities() {
         if (numericRate) {
             totalPropensity = possibleMatches.size * baseRate
@@ -191,9 +166,24 @@ class SAPERENodeReaction(
         }
     }
 
-    override fun scheduleNextOccurrenceAfterFiring(currentTime: Time) = scheduleFreshOccurrence(currentTime)
+    private fun currentNeighbors(): List<ILsaNode> =
+        environment.getNeighborhood(host).current.neighbors.filterIsInstance<ILsaNode>()
 
-    override fun scheduleAfterInvalidation(currentTime: Time) = scheduleFreshOccurrence(currentTime)
+    private fun executeActions(matches: Map<HashString, ITreeNode<*>>?) {
+        sapereActions.forEach { action ->
+            action.setExecutionContext(matches, validNodes)
+            action.execute()
+        }
+    }
+
+    private fun findPositiveMatch(): Int = propensities.indexOfFirst { it == Double.POSITIVE_INFINITY }
+        .takeIf { it >= 0 }
+        ?: propensities.indexOfFirst { it > 0 }.takeIf { it >= 0 }
+        ?: error("Positive SAPERE propensity without a positive match")
+
+    private fun removeMatchedMolecules(toRemove: Map<ILsaNode, List<ILsaMolecule>>) {
+        toRemove.forEach { (node, molecules) -> molecules.forEach(node::removeOneMatchedLsa) }
+    }
 
     private fun scheduleFreshOccurrence(currentTime: Time) {
         val totalRate = rate
@@ -232,10 +222,29 @@ class SAPERENodeReaction(
         setNextOccurrence(schedulingTime.plus(delay))
     }
 
-    private fun findPositiveMatch(): Int = propensities.indexOfFirst { it == Double.POSITIVE_INFINITY }
-        .takeIf { it >= 0 }
-        ?: propensities.indexOfFirst { it > 0 }.takeIf { it >= 0 }
-        ?: error("Positive SAPERE propensity without a positive match")
+    private fun selectMatchIndex(): Int = when {
+        // With a numeric rate, all matches share the same propensity: an infinite one fires the last match,
+        // a finite one a random match.
+        numericRate -> when (totalPropensity) {
+            Double.POSITIVE_INFINITY -> possibleMatches.lastIndex
+            else -> randomGenerator.nextInt(possibleMatches.size)
+        }
+        // The evaluation of propensities stops at the first infinite one: that match fires.
+        totalPropensity == Double.POSITIVE_INFINITY -> propensities.lastIndex
+        // Otherwise, the matches are selected randomly, weighted by their propensities.
+        else -> selectWeightedMatchIndex()
+    }
+
+    private fun selectWeightedMatchIndex(): Int {
+        val selectedPropensity = randomGenerator.nextDouble() * totalPropensity
+        var cumulativePropensity = 0.0
+        val selected = propensities.indexOfFirst { propensity ->
+            cumulativePropensity += propensity
+            cumulativePropensity > selectedPropensity
+        }
+        // Floating-point rounding can cause selectedPropensity == totalPropensity: fall back to the last bucket.
+        return if (selected >= 0) selected else propensities.lastIndex
+    }
 
     private companion object {
         /**

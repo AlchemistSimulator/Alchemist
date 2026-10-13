@@ -28,22 +28,15 @@ class GloballyConstantSpeed<T, P : Position<P>>(reaction: NodeReaction<*>, priva
     }
 
     init {
-        val meanDelay = timeDistributedReaction.timeDistribution.meanDelay
-        verifyMeanDelayValidity(meanDelay)
+        // Checks that the mean delay is finite and positive at construction time
+        timeDistributedReaction.timeDistribution.finitePositiveMeanDelayOrError
     }
 
     override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): GloballyConstantSpeed<T, P> =
         GloballyConstantSpeed(reaction, maxSpeed)
 
     override fun getNodeMovementLength(target: P?): Double {
-        val meanDelay = timeDistributedReaction.timeDistribution.meanDelay
-        verifyMeanDelayValidity(meanDelay)
-        return maxSpeed * meanDelay
+        val distribution = timeDistributedReaction.timeDistribution
+        return maxSpeed * distribution.finitePositiveMeanDelayOrError
     }
-
-    private fun verifyMeanDelayValidity(meanDelay: Double) =
-        require(meanDelay.isFinite() && meanDelay > 0) {
-            "${this::class.simpleName} requires a finite and positive mean delay, " +
-                "but ${timeDistributedReaction.timeDistribution} has $meanDelay"
-        }
 }

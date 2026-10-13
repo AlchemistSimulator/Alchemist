@@ -34,12 +34,12 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
 
     private static final double MINIMUM_DISTANCE_WALKED = 1;
     private final Environment<T, P> environment;
-    private final Node<T> node;
     private final Molecule interactingMolecule;
-    private final double radius;
     private final double interaction;
+    private final Node<T> node;
+    private final double radius;
     private final double speed;
-    private final double maximumStep;
+    private final TimeDistributedReaction<?> timeDistributedReaction;
 
     /**
      * @param environment
@@ -76,12 +76,21 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
             throw new IllegalArgumentException("The radius must be positive (provided: " + radius + ")");
         }
         this.radius = radius;
-        if (!(reaction instanceof final TimeDistributedReaction<?> timeDistributedReaction)) {
-            throw new IllegalArgumentException(reaction + " does not expose a recurrence rate");
+        if (!(reaction instanceof final TimeDistributedReaction<?> timed)) {
+            throw new IllegalArgumentException(reaction + " is not driven by a time distribution");
         }
+        this.timeDistributedReaction = timed;
         this.speed = speed;
-        this.maximumStep = speed / timeDistributedReaction.getRate();
         this.interaction = interaction;
+    }
+
+    @Nonnull
+    @Override
+    public SpeedSelectionStrategy<T, P> cloneIfNeeded(
+        @Nonnull final Node<T> destination,
+        @Nonnull final NodeReaction<T> reaction
+    ) {
+        return new InteractWithOthers<>(environment, destination, reaction, interactingMolecule, speed, radius, interaction);
     }
 
     @Override
@@ -97,15 +106,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
                 }
             }
         }
+        final double maximumStep = speed * timeDistributedReaction.getFinitePositiveMeanDelayOrError();
         return Math.max(maximumStep / (crowd * interaction + 1), MINIMUM_DISTANCE_WALKED);
-    }
-
-    @Nonnull
-    @Override
-    public SpeedSelectionStrategy<T, P> cloneIfNeeded(
-        @Nonnull final Node<T> destination,
-        @Nonnull final NodeReaction<T> reaction
-    ) {
-        return new InteractWithOthers<>(environment, destination, reaction, interactingMolecule, speed, radius, interaction);
     }
 }

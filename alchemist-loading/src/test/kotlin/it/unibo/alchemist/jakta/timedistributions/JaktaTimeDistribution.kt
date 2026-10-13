@@ -18,7 +18,12 @@ data class JaktaTimeDistribution<T>(
     val deliberate: TimeDistribution<T>,
     val act: TimeDistribution<T>,
 ) : TimeDistribution<T> {
-    /** Unknown, as the three phases follow distinct distributions. */
+    /**
+     * Unknown, as the three phases follow distinct distributions and JaKtA owns their scheduling.
+     * The mean delay of a whole sense-deliberate-act cycle is the sum of the mean delays of the phases,
+     * but the mean delay between occurrences depends on how many occurrences a cycle takes and on whether
+     * any phase is skipped. Moreover, this distribution cannot be sampled at all.
+     */
     override val meanDelay: Double = Double.NaN
 
     override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = JaktaTimeDistribution(

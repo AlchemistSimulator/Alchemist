@@ -28,7 +28,7 @@ class Spin<T>(
 ) : AbstractLocalAction<T>(reaction) {
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
     private val timeDistributedReaction = requireNotNull(reaction as? TimeDistributedReaction<*>) {
-        "$reaction does not expose a recurrence rate"
+        "$reaction is not driven by a time distribution"
     }
 
     override fun cloneOnNodeReaction(newReaction: NodeReaction<T>) = Spin(newReaction, environment, angularSpeedDegrees)
@@ -37,7 +37,7 @@ class Spin<T>(
      * Spins the node around itself.
      */
     override fun execute() {
-        val realSpeed = angularSpeedRadians / timeDistributedReaction.rate
+        val realSpeed = angularSpeedRadians * timeDistributedReaction.finitePositiveMeanDelayOrError
         val headingAngle = environment.getHeading(targetNode).asAngle + realSpeed
         environment.setHeading(targetNode, environment.makePosition(cos(headingAngle), sin(headingAngle)))
     }

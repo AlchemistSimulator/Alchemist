@@ -54,7 +54,7 @@ infix fun Reaction<*>.shouldEqual(other: Reaction<*>) {
     assertEquals(other::class, this::class, "Actionable types don't match")
     assertEquals(other.nextOccurrence.current, nextOccurrence.current)
     if (this is TimeDistributedReaction<*> && other is TimeDistributedReaction<*>) {
-        assertEquals(other.rate, rate)
+        assertEquals(other.meanDelay, meanDelay)
         timeDistribution shouldEqual other.timeDistribution
     }
     conditions.ebeEquals(other.conditions) { expected, actual -> actual shouldEqual expected }

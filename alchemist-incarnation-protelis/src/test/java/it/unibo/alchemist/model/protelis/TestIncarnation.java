@@ -50,9 +50,41 @@ class TestIncarnation {
 
     private static final ProtelisIncarnation<Euclidean2DPosition> INCARNATION = new ProtelisIncarnation<>();
     private static final String PROGRAM = "nbr(1)";
-    private static final String UNIT_RATE = "1";
     private static final String SEND = "send";
     private static final double TOLERANCE = 1e-12;
+    private static final String UNIT_RATE = "1";
+
+    @Test
+    void disposingOneSendMustNotDisposeAnotherSendConditionSharingTheProgram() {
+        final RandomGenerator rng = new MersenneTwister(0);
+        final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
+        final Node<Object> node = INCARNATION.createNode(rng, environment, null);
+        environment.addNode(node, environment.makePosition(0, 0));
+        final NodeReaction<Object> program = INCARNATION.createReaction(
+            rng,
+            environment,
+            node,
+            INCARNATION.createTimeDistribution(rng, environment, node, UNIT_RATE),
+            PROGRAM
+        );
+        node.addReaction(program);
+        final RunProtelisProgram<?> programAction = assertInstanceOf(
+            RunProtelisProgram.class,
+            program.getActions().get(0)
+        );
+        final CountingDistribution survivingDistribution = new CountingDistribution();
+        final GenericReaction<Object> removedSend = new GenericReaction<>(node, new CountingDistribution());
+        final GenericReaction<Object> survivingSend = new GenericReaction<>(node, survivingDistribution);
+        removedSend.setConditions(List.of(new ComputationalRoundComplete(removedSend, programAction)));
+        survivingSend.setConditions(List.of(new ComputationalRoundComplete(survivingSend, programAction)));
+        removedSend.initializationComplete(Time.ZERO, environment);
+        survivingSend.initializationComplete(Time.ZERO, environment);
+        removedSend.dispose();
+        program.execute();
+        assertTrue(survivingSend.getCanExecute().getCurrent());
+        assertEquals(1, survivingDistribution.samples);
+        assertEquals(1.0, survivingSend.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+    }
 
     /**
      * Tests the ability of {@link ProtelisIncarnation} of properly building an
@@ -69,12 +101,11 @@ class TestIncarnation {
         final NodeReaction<Object> immediateReaction = INCARNATION.createReaction(rng, environment, node, immediately, null);
         final TimeDistributedReaction<?> immediateRecurrence =
             assertInstanceOf(TimeDistributedReaction.class, immediateReaction);
-        assertTrue(Double.isInfinite(immediateRecurrence.getRate()));
-        assertTrue(immediateRecurrence.getRate() > 0);
+        assertEquals(0d, immediateRecurrence.getMeanDelay());
         final TimeDistribution<Object> standard = INCARNATION.createTimeDistribution(rng, environment, node, "3");
         assertNotNull(standard);
         final NodeReaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
-        assertEquals(3d, assertInstanceOf(TimeDistributedReaction.class, generic).getRate(), Double.MIN_VALUE);
+        assertEquals(1d / 3, assertInstanceOf(TimeDistributedReaction.class, generic).getMeanDelay());
         assertNotNull(generic);
         assertInstanceOf(GenericReaction.class, generic);
         final NodeReaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, PROGRAM);
@@ -100,31 +131,6 @@ class TestIncarnation {
         testIsSendToNeighbor(send);
     }
 
-    private static void testIsProtelisProgram(final NodeReaction<Object> program) {
-        assertNotNull(program);
-        assertInstanceOf(GenericReaction.class, program);
-        assertTrue(program.getConditions().isEmpty());
-        assertFalse(program.getActions().isEmpty());
-        assertEquals(1, program.getActions().size());
-        final Action<Object> prog = program.getActions().get(0);
-        assertNotNull(prog);
-        assertInstanceOf(RunProtelisProgram.class, prog);
-    }
-
-    private static void testIsSendToNeighbor(final NodeReaction<Object> program) {
-        assertNotNull(program);
-        assertFalse(program.getConditions().isEmpty());
-        assertEquals(1, program.getConditions().size());
-        final Condition<Object> check = program.getConditions().get(0);
-        assertNotNull(check);
-        assertInstanceOf(ComputationalRoundComplete.class, check);
-        assertFalse(program.getActions().isEmpty());
-        assertEquals(1, program.getActions().size());
-        final Action<Object> prog = program.getActions().get(0);
-        assertNotNull(prog);
-        assertInstanceOf(SendToNeighbor.class, prog);
-    }
-
     /**
      * Verifies that the incarnation can properly init new concentrations.
      */
@@ -133,44 +139,6 @@ class TestIncarnation {
         assertEquals("aString", INCARNATION.createConcentration("aString"));
         assertEquals(1.0, INCARNATION.createConcentration(UNIT_RATE));
         assertEquals("foo", INCARNATION.createConcentration("let a = \"foo\"; a"));
-    }
-
-    @Test
-    void testSendSchedulingStartsOnlyWhenTheProgramCompletes() {
-        final RandomGenerator rng = new MersenneTwister(0);
-        final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
-        final Node<Object> node = INCARNATION.createNode(rng, environment, null);
-        environment.addNode(node, environment.makePosition(0, 0));
-        final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
-            rng, environment, node, UNIT_RATE
-        );
-        final NodeReaction<Object> program = INCARNATION.createReaction(
-            rng, environment, node, programDistribution, PROGRAM
-        );
-        node.addReaction(program);
-        final CountingDistribution distribution = new CountingDistribution();
-        final NodeReaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
-        assertInstanceOf(TimeDistributedReaction.class, reaction);
-        node.addReaction(reaction);
-        program.initializationComplete(Time.ZERO, environment);
-        reaction.initializationComplete(Time.ZERO, environment);
-        assertEquals(0, distribution.samples);
-        assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
-        assertFalse(reaction.getCanExecute().getCurrent());
-        program.execute();
-        assertTrue(reaction.getCanExecute().getCurrent());
-        assertEquals(1, distribution.samples);
-        assertEquals(1.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
-        program.execute();
-        assertEquals(1, distribution.samples);
-        reaction.execute();
-        assertFalse(reaction.getCanExecute().getCurrent());
-        assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
-        assertEquals(1, distribution.samples);
-        program.execute();
-        assertEquals(2, distribution.samples);
-        assertTrue(reaction.getCanExecute().getCurrent());
-        assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
     }
 
     @Test
@@ -214,35 +182,66 @@ class TestIncarnation {
     }
 
     @Test
-    void disposingOneSendMustNotDisposeAnotherSendConditionSharingTheProgram() {
+    void testSendSchedulingStartsOnlyWhenTheProgramCompletes() {
         final RandomGenerator rng = new MersenneTwister(0);
         final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
         final Node<Object> node = INCARNATION.createNode(rng, environment, null);
         environment.addNode(node, environment.makePosition(0, 0));
+        final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
+            rng, environment, node, UNIT_RATE
+        );
         final NodeReaction<Object> program = INCARNATION.createReaction(
-            rng,
-            environment,
-            node,
-            INCARNATION.createTimeDistribution(rng, environment, node, UNIT_RATE),
-            PROGRAM
+            rng, environment, node, programDistribution, PROGRAM
         );
         node.addReaction(program);
-        final RunProtelisProgram<?> programAction = assertInstanceOf(
-            RunProtelisProgram.class,
-            program.getActions().get(0)
-        );
-        final CountingDistribution survivingDistribution = new CountingDistribution();
-        final GenericReaction<Object> removedSend = new GenericReaction<>(node, new CountingDistribution());
-        final GenericReaction<Object> survivingSend = new GenericReaction<>(node, survivingDistribution);
-        removedSend.setConditions(List.of(new ComputationalRoundComplete(removedSend, programAction)));
-        survivingSend.setConditions(List.of(new ComputationalRoundComplete(survivingSend, programAction)));
-        removedSend.initializationComplete(Time.ZERO, environment);
-        survivingSend.initializationComplete(Time.ZERO, environment);
-        removedSend.dispose();
+        final CountingDistribution distribution = new CountingDistribution();
+        final NodeReaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
+        assertInstanceOf(TimeDistributedReaction.class, reaction);
+        node.addReaction(reaction);
+        program.initializationComplete(Time.ZERO, environment);
+        reaction.initializationComplete(Time.ZERO, environment);
+        assertEquals(0, distribution.samples);
+        assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
+        assertFalse(reaction.getCanExecute().getCurrent());
         program.execute();
-        assertTrue(survivingSend.getCanExecute().getCurrent());
-        assertEquals(1, survivingDistribution.samples);
-        assertEquals(1.0, survivingSend.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+        assertTrue(reaction.getCanExecute().getCurrent());
+        assertEquals(1, distribution.samples);
+        assertEquals(1.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+        program.execute();
+        assertEquals(1, distribution.samples);
+        reaction.execute();
+        assertFalse(reaction.getCanExecute().getCurrent());
+        assertEquals(Time.INFINITY, reaction.getNextOccurrence().getCurrent());
+        assertEquals(1, distribution.samples);
+        program.execute();
+        assertEquals(2, distribution.samples);
+        assertTrue(reaction.getCanExecute().getCurrent());
+        assertEquals(3.0, reaction.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
+    }
+
+    private static void testIsProtelisProgram(final NodeReaction<Object> program) {
+        assertNotNull(program);
+        assertInstanceOf(GenericReaction.class, program);
+        assertTrue(program.getConditions().isEmpty());
+        assertFalse(program.getActions().isEmpty());
+        assertEquals(1, program.getActions().size());
+        final Action<Object> prog = program.getActions().get(0);
+        assertNotNull(prog);
+        assertInstanceOf(RunProtelisProgram.class, prog);
+    }
+
+    private static void testIsSendToNeighbor(final NodeReaction<Object> program) {
+        assertNotNull(program);
+        assertFalse(program.getConditions().isEmpty());
+        assertEquals(1, program.getConditions().size());
+        final Condition<Object> check = program.getConditions().get(0);
+        assertNotNull(check);
+        assertInstanceOf(ComputationalRoundComplete.class, check);
+        assertFalse(program.getActions().isEmpty());
+        assertEquals(1, program.getActions().size());
+        final Action<Object> prog = program.getActions().get(0);
+        assertNotNull(prog);
+        assertInstanceOf(SendToNeighbor.class, prog);
     }
 
     private static final class CountingDistribution implements TimeDistribution<Object> {

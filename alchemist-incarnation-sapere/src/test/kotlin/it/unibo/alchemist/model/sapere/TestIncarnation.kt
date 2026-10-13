@@ -34,12 +34,27 @@ class TestIncarnation {
     private val randomGenerator: RandomGenerator = MersenneTwister()
     private val timeDistribution: TimeDistribution<List<ILsaMolecule>> = SAPEREExponentialTime("1", randomGenerator)
 
-    private fun makeMolecule(specification: String, arguments: Int, ground: Boolean): ILsaMolecule =
-        incarnation.createMolecule(specification).also {
-            assertEquals(ground, it.isIstance)
-            assertEquals(arguments, it.argsNumber())
-            assertEquals(arguments, it.size())
-        }
+    @Test
+    fun `malformed reaction specifications are rejected`() {
+        listOf(
+            "asdsad",
+            "asdsad {}",
+            "{} --> ",
+            "--> {}",
+            "{} --> {}",
+            "{a} --> {}",
+            "{} --> {a}",
+            "a {a} --> {a}",
+            "{a} a--> {a}",
+            "{a} a {a}--> {a}",
+            "--> a {a}",
+            "--> a {a} a",
+            "--> {a} a",
+            "->",
+            "aasda",
+            "--->",
+        ).forEach(::assertNoReaction)
+    }
 
     @Test
     fun `molecules are parsed with their arguments`() {
@@ -51,53 +66,6 @@ class TestIncarnation {
         makeMolecule("sub, 0.9", 2, true)
         makeMolecule("{sub, 0.9}", 2, true)
         assertEquals(makeMolecule("sub, 0.9", 2, true), makeMolecule("{sub, 0.9}", 2, true))
-    }
-
-    private fun assertTimeDistribution(parameter: String?, rate: Double, occurrence: Double) {
-        val reaction = GenericReaction(
-            node,
-            incarnation.createTimeDistribution(randomGenerator, environment, node, parameter),
-        )
-        if (!rate.isNaN()) {
-            assertEquals(rate, reaction.rate, Double.MIN_VALUE)
-        }
-        if (!occurrence.isNaN()) {
-            assertEquals(occurrence, reaction.nextOccurrence.current.toDouble(), Double.MIN_VALUE)
-        }
-    }
-
-    @Test
-    fun `time distributions are created from rate expressions and start times`() {
-        assertTimeDistribution(null, Double.POSITIVE_INFINITY, 0.0)
-        assertTimeDistribution("", Double.POSITIVE_INFINITY, 0.0)
-        assertTimeDistribution("Infinity", Double.POSITIVE_INFINITY, 0.0)
-        assertTimeDistribution("10", 10.0, Double.NaN)
-        assertTimeDistribution("10 * 10", 100.0, Double.NaN)
-        assertTimeDistribution("Infinity, 100", Double.POSITIVE_INFINITY, 100.0)
-        assertTimeDistribution("N * 3", Double.NaN, Double.NaN)
-    }
-
-    private fun assertReaction(
-        parameter: String?,
-        conditions: Int,
-        actions: Int,
-        neighborConditions: Int = 0,
-        neighborActions: Int = 0,
-        allNeighborsActions: Int = 0,
-    ) {
-        val reaction = incarnation.createReaction(randomGenerator, environment, node, timeDistribution, parameter)
-        assertEquals(conditions, reaction.conditions.size)
-        assertEquals(actions, reaction.actions.size)
-        assertEquals(neighborConditions, reaction.conditions.count { it::class == LsaNeighborhoodCondition::class })
-        assertEquals(neighborActions, reaction.actions.count { it::class == LsaRandomNeighborAction::class })
-        assertEquals(allNeighborsActions, reaction.actions.count { it::class == LsaAllNeighborsAction::class })
-    }
-
-    private fun assertNoReaction(parameter: String) {
-        val error = assertFailsWith<IllegalArgumentException> {
-            incarnation.createReaction(randomGenerator, environment, node, timeDistribution, parameter)
-        }
-        assertFalse(error.message.isNullOrEmpty())
     }
 
     @Test
@@ -120,24 +88,56 @@ class TestIncarnation {
     }
 
     @Test
-    fun `malformed reaction specifications are rejected`() {
-        listOf(
-            "asdsad",
-            "asdsad {}",
-            "{} --> ",
-            "--> {}",
-            "{} --> {}",
-            "{a} --> {}",
-            "{} --> {a}",
-            "a {a} --> {a}",
-            "{a} a--> {a}",
-            "{a} a {a}--> {a}",
-            "--> a {a}",
-            "--> a {a} a",
-            "--> {a} a",
-            "->",
-            "aasda",
-            "--->",
-        ).forEach(::assertNoReaction)
+    fun `time distributions are created from rate expressions and start times`() {
+        assertTimeDistribution(null, Double.POSITIVE_INFINITY, 0.0)
+        assertTimeDistribution("", Double.POSITIVE_INFINITY, 0.0)
+        assertTimeDistribution("Infinity", Double.POSITIVE_INFINITY, 0.0)
+        assertTimeDistribution("10", 10.0, Double.NaN)
+        assertTimeDistribution("10 * 10", 100.0, Double.NaN)
+        assertTimeDistribution("Infinity, 100", Double.POSITIVE_INFINITY, 100.0)
+        assertTimeDistribution("N * 3", Double.NaN, Double.NaN)
     }
+
+    private fun assertNoReaction(parameter: String) {
+        val error = assertFailsWith<IllegalArgumentException> {
+            incarnation.createReaction(randomGenerator, environment, node, timeDistribution, parameter)
+        }
+        assertFalse(error.message.isNullOrEmpty())
+    }
+
+    private fun assertReaction(
+        parameter: String?,
+        conditions: Int,
+        actions: Int,
+        neighborConditions: Int = 0,
+        neighborActions: Int = 0,
+        allNeighborsActions: Int = 0,
+    ) {
+        val reaction = incarnation.createReaction(randomGenerator, environment, node, timeDistribution, parameter)
+        assertEquals(conditions, reaction.conditions.size)
+        assertEquals(actions, reaction.actions.size)
+        assertEquals(neighborConditions, reaction.conditions.count { it::class == LsaNeighborhoodCondition::class })
+        assertEquals(neighborActions, reaction.actions.count { it::class == LsaRandomNeighborAction::class })
+        assertEquals(allNeighborsActions, reaction.actions.count { it::class == LsaAllNeighborsAction::class })
+    }
+
+    private fun assertTimeDistribution(parameter: String?, rate: Double, occurrence: Double) {
+        val reaction = GenericReaction(
+            node,
+            incarnation.createTimeDistribution(randomGenerator, environment, node, parameter),
+        )
+        if (!rate.isNaN()) {
+            assertEquals(1 / rate, reaction.meanDelay, Double.MIN_VALUE)
+        }
+        if (!occurrence.isNaN()) {
+            assertEquals(occurrence, reaction.nextOccurrence.current.toDouble(), Double.MIN_VALUE)
+        }
+    }
+
+    private fun makeMolecule(specification: String, arguments: Int, ground: Boolean): ILsaMolecule =
+        incarnation.createMolecule(specification).also {
+            assertEquals(ground, it.isIstance)
+            assertEquals(arguments, it.argsNumber())
+            assertEquals(arguments, it.size())
+        }
 }

@@ -29,15 +29,12 @@ abstract class AbstractNodeReaction<T>(
     NodeReaction<T>,
     TimeDistributedReaction<T> {
 
-    override val rate: Double get() = 1 / timeDistribution.meanDelay
-
-    /**
-     * @return a [String] representation of the rate
-     */
-    override val rateAsString: String get() = rate.toString()
+    override val meanDelay: Double get() = timeDistribution.meanDelay
 
     /** Whether this reaction is awaiting initialization as a newly instantiated program. */
     protected val isNewlyInstantiatedProgram: Boolean get() = newlyInstantiatedAt != null
+
+    override val schedulingAsString: String get() = "meanDelay=$meanDelay"
 
     private var newlyInstantiatedAt: Time? = null
 

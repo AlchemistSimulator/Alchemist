@@ -24,7 +24,7 @@ class GloballyConstantSpeedTest {
     @Test
     fun `construction fails when the mean delay is not finite and positive`() {
         listOf(Double.NaN, Double.POSITIVE_INFINITY, 0.0).forEach { invalid ->
-            assertFailsWith<IllegalArgumentException> {
+            assertFailsWith<IllegalStateException> {
                 GloballyConstantSpeed<Any, Euclidean2DPosition>(reactionWith(distributionWith { invalid }), SPEED)
             }
         }
@@ -44,7 +44,7 @@ class GloballyConstantSpeedTest {
     }
 
     @Test
-    fun `the movement length follows the mean delay of the time distribution rather than the reaction rate`() {
+    fun `the movement length follows the mean delay of the time distribution rather than of the reaction`() {
         val strategy = GloballyConstantSpeed<Any, Euclidean2DPosition>(
             reactionWith(DiracComb(DISTRIBUTION_RATE)),
             SPEED,
@@ -54,11 +54,12 @@ class GloballyConstantSpeedTest {
 
     private fun distributionWith(meanDelay: () -> Double) = mockk<TimeDistribution<Any>> {
         every { this@mockk.meanDelay } answers { meanDelay() }
+        every { finitePositiveMeanDelayOrError } answers { callOriginal() }
     }
 
     private fun reactionWith(distribution: TimeDistribution<Any>) = mockk<TimedNodeReaction> {
         // A chemical reaction, for instance, scales the distribution rate by the propensity of its conditions.
-        every { rate } returns DISTRIBUTION_RATE * PROPENSITY
+        every { meanDelay } returns 1 / (DISTRIBUTION_RATE * PROPENSITY)
         every { timeDistribution } returns distribution
     }
 

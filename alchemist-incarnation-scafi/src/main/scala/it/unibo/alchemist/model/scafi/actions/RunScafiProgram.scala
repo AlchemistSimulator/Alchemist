@@ -42,11 +42,7 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
       programName: String
   ) =
     this(
-      environment,
-      reaction,
-      randomGenerator,
-      programName,
-      FastMath.nextUp(1.0 / RunScafiProgram.recurrenceRate(reaction))
+      environment, reaction, randomGenerator, programName, FastMath.nextUp(RunScafiProgram.meanDelay(reaction))
     )
 
 sealed class RunScafiProgram[T, P <: Position[P]](
@@ -64,11 +60,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       programName: String
   ) =
     this(
-      environment,
-      reaction,
-      randomGenerator,
-      programName,
-      FastMath.nextUp(1.0 / RunScafiProgram.recurrenceRate(reaction))
+      environment, reaction, randomGenerator, programName, FastMath.nextUp(RunScafiProgram.meanDelay(reaction))
     )
 
   import RunScafiProgram.NeighborData
@@ -193,9 +185,9 @@ sealed class RunScafiProgram[T, P <: Position[P]](
   def prepareForComputationalCycle: Unit = _completed.update(_ => false)
 
 object RunScafiProgram:
-  private[actions] def recurrenceRate[T](reaction: NodeReaction[T]): Double = reaction match
-    case recurring: TimeDistributedReaction[?] => recurring.getRate
-    case _ => throw new IllegalArgumentException(s"$reaction does not expose a recurrence rate")
+  private[actions] def meanDelay[T](reaction: NodeReaction[T]): Double = reaction match
+    case recurring: TimeDistributedReaction[?] => recurring.getFinitePositiveMeanDelayOrError
+    case _ => throw new IllegalArgumentException(s"$reaction is not driven by a time distribution")
 
   case class NeighborData[P <: Position[P]](exportData: EXPORT, position: P, executionTime: AlchemistTime)
 

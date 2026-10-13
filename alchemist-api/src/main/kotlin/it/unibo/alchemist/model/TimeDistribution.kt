@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model
 
+import it.unibo.alchemist.model.util.asFinitePositiveMeanDelayOrThrow
+
 /**
  * Generates non-negative delays between occurrences.
  *
@@ -17,6 +19,13 @@ package it.unibo.alchemist.model
  * absolute simulation times and own every decision about preserving, replacing, or transforming an occurrence.
  */
 interface TimeDistribution<T> {
+
+    /**
+     * The current [meanDelay], for consumers requiring it to be finite and positive.
+     *
+     * @throws IllegalStateException if the [meanDelay] is not finite and positive
+     */
+    val finitePositiveMeanDelayOrError: Double get() = meanDelay.asFinitePositiveMeanDelayOrThrow(this)
 
     /**
      * The expected value of the delays drawn by [sample] in the current model state.

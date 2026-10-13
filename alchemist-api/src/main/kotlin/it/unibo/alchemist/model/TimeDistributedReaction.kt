@@ -9,15 +9,33 @@
 
 package it.unibo.alchemist.model
 
+import it.unibo.alchemist.model.util.asFinitePositiveMeanDelayOrThrow
+
 /**
  * A [Reaction] whose putative occurrence delays are sampled from a [timeDistribution].
  *
  * Most time-distributed reactions recur. A single-use implementation may instead remove itself after its first
- * successful execution. Both expose their sampler and an average execution [rate] when one is available.
+ * successful execution. Both expose their sampler and the [meanDelay] between their occurrences.
  */
 interface TimeDistributedReaction<T> : Reaction<T> {
-    /** The average number of occurrences per time unit, or `NaN` when unavailable. */
-    val rate: Double
+
+    /**
+     * The current [meanDelay], for consumers requiring it to be finite and positive, such as those converting speeds
+     * into per-occurrence movements.
+     *
+     * @throws IllegalStateException if the [meanDelay] is not finite and positive
+     */
+    val finitePositiveMeanDelayOrError: Double get() = meanDelay.asFinitePositiveMeanDelayOrThrow(this)
+
+    /**
+     * The expected delay between two occurrences of this reaction in the current model state.
+     *
+     * It may differ from the [TimeDistribution.meanDelay] of [timeDistribution], for instance when the state of the
+     * model scales the sampled delays. It is [Double.POSITIVE_INFINITY] if the reaction is not expected to occur again,
+     * and [Double.NaN] if it is unknown. It may change along with the model state: consumers should read it when they
+     * need it rather than storing it.
+     */
+    val meanDelay: Double
 
     /** The delay distribution governing this reaction's putative occurrences. */
     val timeDistribution: TimeDistribution<T>

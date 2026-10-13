@@ -40,27 +40,34 @@ abstract class AbstractSteeringAction<T, P, A>(
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P> {
-    /** The recurrence rate required to normalize per-execution movement. */
-    protected val recurrenceRate: Double =
-        requireNotNull(reaction as? TimeDistributedReaction<*>) {
-            "$reaction does not expose a recurrence rate"
-        }.rate
-
     /**
      * The maximum distance the node can walk, this is a length.
      */
-    open val maxWalk: Double get() = pedestrian.speed() / recurrenceRate
+    open val maxWalk: Double get() = pedestrian.speed() * meanDelay
+
+    /** The current mean delay between executions, which converts speeds into per-execution movements. */
+    protected val meanDelay: Double get() = timeDistributedReaction.finitePositiveMeanDelayOrError
+
+    /**
+     * Get the pedestrian property. This can be useful when cloning actions this actions.
+     */
+    protected val Node<T>.pedestrianProperty get() = this.asProperty<T, PedestrianProperty<T>>()
+
+    private val timeDistributedReaction: TimeDistributedReaction<*> =
+        requireNotNull(reaction as? TimeDistributedReaction<*>) {
+            "$reaction is not driven by a time distribution"
+        }
+
+    /**
+     * Creates an equivalent action owned by [newReaction], bound to its node.
+     */
+    abstract override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): AbstractSteeringAction<T, P, A>
 
     /**
      * @return The next position where to move, in absolute or relative coordinates depending on the
      *         value of isAbsolute.
      */
     override fun getNextPosition(): P = nextPosition()
-
-    /**
-     * Creates an equivalent action owned by [newReaction], bound to its node.
-     */
-    abstract override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): AbstractSteeringAction<T, P, A>
 
     /**
      * Ensures that the passed [node] has type [N].
@@ -72,9 +79,4 @@ abstract class AbstractSteeringAction<T, P, A>(
         require(node is N) { "Incompatible node type. Required ${N::class}, found ${node::class}" }
         return builder(node)
     }
-
-    /**
-     * Get the pedestrian property. This can be useful when cloning actions this actions.
-     */
-    protected val Node<T>.pedestrianProperty get() = this.asProperty<T, PedestrianProperty<T>>()
 }

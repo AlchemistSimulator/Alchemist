@@ -29,10 +29,10 @@ class EnvironmentTestReaction<T>(
 
     override val host: Environment<T, *> get() = environment
 
+    override val meanDelay: Double get() = timeDistribution.meanDelay
+
     private val mutableNextOccurrence = observe(timeDistribution.startTime, false)
     override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
-
-    override val rate: Double get() = 1 / timeDistribution.meanDelay
 
     override var actions: List<Action<T>> = emptyList()
         set(value) {

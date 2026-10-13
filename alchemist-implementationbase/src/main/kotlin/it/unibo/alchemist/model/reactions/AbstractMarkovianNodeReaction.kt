@@ -21,25 +21,20 @@ import it.unibo.alchemist.model.timedistributions.ExponentialTime
 abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
     AbstractNodeReaction<T>(node, timeDistribution) {
 
+    override val meanDelay: Double get() = 1 / rate
+
+    /**
+     * The current rate of the exponentially distributed delays, namely the propensity of this reaction.
+     * By default, it is the rate of its [ExponentialTime].
+     */
+    open val rate: Double get() = (timeDistribution as ExponentialTime<*>).lambda
+
     private var previousRate: Double? = null
 
     init {
         require(timeDistribution is ExponentialTime<*>) {
             "Markovian reactions require an ExponentialTime distribution, got $timeDistribution"
         }
-    }
-
-    override fun scheduleNextOccurrenceAfterFiring(currentTime: Time) {
-        val distribution = timeDistribution as ExponentialTime<*>
-        val newRate = rate
-        newRate.validateRate()
-        if (newRate == 0.0) {
-            setNextOccurrence(Time.INFINITY)
-        } else {
-            val sampled = scheduleSampleAfter(maxOf(currentTime, distribution.startTime), distribution)
-            setNextOccurrence(sampled)
-        }
-        previousRate = newRate
     }
 
     override fun scheduleAfterInvalidation(currentTime: Time) {
@@ -64,6 +59,19 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         previousRate = newRate
     }
 
+    override fun scheduleNextOccurrenceAfterFiring(currentTime: Time) {
+        val distribution = timeDistribution as ExponentialTime<*>
+        val newRate = rate
+        newRate.validateRate()
+        if (newRate == 0.0) {
+            setNextOccurrence(Time.INFINITY)
+        } else {
+            val sampled = scheduleSampleAfter(maxOf(currentTime, distribution.startTime), distribution)
+            setNextOccurrence(sampled)
+        }
+        previousRate = newRate
+    }
+
     override fun suspendScheduling() {
         super.suspendScheduling()
         previousRate = 0.0
@@ -74,7 +82,6 @@ abstract class AbstractMarkovianNodeReaction<T>(node: Node<T>, timeDistribution:
         val delay = if (distribution.lambda == rate) sample else sample.times(distribution.lambda / rate)
         return currentTime.plus(delay)
     }
-
     private companion object {
         private fun Double.validateRate() {
             check(this >= 0.0) { "Reaction propensity must be non-negative and not NaN: $this" }

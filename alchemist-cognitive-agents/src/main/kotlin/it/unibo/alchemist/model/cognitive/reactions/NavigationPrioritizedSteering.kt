@@ -49,11 +49,7 @@ constructor(
         pedestrian.node,
         prevalent = { singleNavigationAction() },
         maxWalk = {
-            val meanDelay = timeDistribution.meanDelay
-            check(meanDelay.isFinite() && meanDelay > 0) {
-                "Navigation steering requires a finite and positive mean delay, but $timeDistribution has $meanDelay"
-            }
-            pedestrian.speed() * meanDelay
+            pedestrian.speed() * timeDistribution.finitePositiveMeanDelayOrError
         },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha,

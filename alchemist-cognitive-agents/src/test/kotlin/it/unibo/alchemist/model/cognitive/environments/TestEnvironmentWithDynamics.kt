@@ -45,7 +45,7 @@ class TestEnvironmentWithDynamics<T, P> :
             environment.reactions.current
                 .first()
                 .shouldBeInstanceOf<TimeDistributedReaction<*>>()
-                .rate shouldBe 1.5
+                .meanDelay shouldBe 1 / 1.5
         }
         "Ignore time distribution when updateRate is Specified" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate2.yml").environment
@@ -53,7 +53,7 @@ class TestEnvironmentWithDynamics<T, P> :
             environment.reactions.current
                 .first()
                 .shouldBeInstanceOf<TimeDistributedReaction<*>>()
-                .rate shouldBe 0.5
+                .meanDelay shouldBe 1 / 0.5
         }
         "Customize rate with time-distribution" {
             val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate3.yml").environment
@@ -63,7 +63,7 @@ class TestEnvironmentWithDynamics<T, P> :
                     .first()
                     .shouldBeInstanceOf<TimeDistributedReaction<*>>()
             globalReaction.timeDistribution::class shouldBe ExponentialTime::class
-            globalReaction.rate shouldBe 0.5
+            globalReaction.meanDelay shouldBe 1 / 0.5
         }
         "absolute and relative moves both move the physical body" {
             val environment = loadYamlSimulation<T, P>("testSinglePedestrian.yml").environment
@@ -86,6 +86,6 @@ class TestEnvironmentWithDynamics<T, P> :
             environment.reactions.current
                 .first()
                 .shouldBeInstanceOf<TimeDistributedReaction<*>>()
-                .rate shouldBe 2.0
+                .meanDelay shouldBe 1 / 2.0
         }
     }) where P : Position<P>, P : Vector<P>

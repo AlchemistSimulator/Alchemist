@@ -24,7 +24,6 @@ import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -42,13 +41,10 @@ import static it.unibo.alchemist.model.observables.util.MutableObservables.obser
  */
 public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode {
 
-    private static final ILsaMolecule ZEROMOL = new LsaMolecule("0");
-
     private final Map<String, List<ILsaMolecule>> instancesByName = new HashMap<>();
     private final Map<String, MutableObservable<List<ILsaMolecule>>> observablesByName = new HashMap<>();
     private final MutableObservable<Integer> moleculeCount = observe(0);
     private final ObservableMutableList<ILsaMolecule> allInstances = new ObservableMutableList<>();
-    private boolean contentsDirty = true;
 
     /**
      * @param environment
@@ -56,28 +52,6 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
      */
     public LsaNode(final Environment<List<ILsaMolecule>, ?> environment) {
         super(environment);
-        this.allInstances.onChange(this, it -> {
-            contentsDirty = true;
-            return Unit.INSTANCE;
-        });
-    }
-
-    @Override
-    @NotNull
-    public Map<Molecule, List<ILsaMolecule>> getContents() {
-        if (contentsDirty) {
-            updateContents(allInstances.getCurrent());
-        }
-        return super.getContents();
-    }
-
-    @Override
-    @NotNull
-    public ObservableMutableMap<Molecule, List<ILsaMolecule>> getObservableContents() {
-        if (contentsDirty) {
-            updateContents(allInstances.getCurrent());
-        }
-        return super.getObservableContents();
     }
 
     @Override
@@ -154,6 +128,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                         final ILsaMolecule removed = list.remove(i);
                         moleculeCount.update(c -> c - 1);
                         allInstances.remove(removed);
+                        updateCount(removed, -1);
                         final var obs = observablesByName.get(name);
                         if (obs != null) {
                             obs.update(it -> new ArrayList<>(list));
@@ -175,6 +150,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                 list.add(inst);
                 moleculeCount.update(c -> c + 1);
                 allInstances.add(inst);
+                updateCount(inst, 1);
                 final var obs = observablesByName.get(name);
                 if (obs != null) {
                     obs.update(it -> new ArrayList<>(list));
@@ -200,26 +176,19 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
         return getId() + " contains: " + allInstances.getCurrent();
     }
 
-    private Unit updateContents(final List<? extends ILsaMolecule> currentInstances) {
-        final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(currentInstances.size(), 1.0f);
-        for (final ILsaMolecule m : currentInstances) {
-            final List<ILsaMolecule> l;
-            if (res.containsKey(m)) {
-                /*
-                 * Safe by construction.
-                 */
-                l = res.get(m);
-            } else {
-                l = new ArrayList<>(1);
-                l.add(ZEROMOL);
-                res.put(m, l);
-            }
-            final Double v = (Double) l.get(0).getArg(0).getRootNodeData() + 1;
-            final IExpression e = new Expression(new NumTreeNode(v));
-            l.set(0, new LsaMolecule(Collections.singletonList(e)));
+    /*
+     * The contents map each distinct instance to a single LSA holding how many copies of it the node contains.
+     * They are updated along with every mutation, so that their observers are notified.
+     */
+    private void updateCount(final ILsaMolecule instance, final int delta) {
+        final ObservableMutableMap<Molecule, List<ILsaMolecule>> contents = getObservableContents();
+        final List<ILsaMolecule> previous = contents.getCurrent().get(instance);
+        final double count = (previous == null ? 0 : (Double) previous.get(0).getArg(0).getRootNodeData()) + delta;
+        if (count > 0) {
+            final IExpression countExpression = new Expression(new NumTreeNode(count));
+            contents.put(instance, List.of(new LsaMolecule(Collections.singletonList(countExpression))));
+        } else {
+            contents.remove(instance);
         }
-        contentsDirty = false;
-        super.getObservableContents().clearAndPutAll(res);
-        return null;
     }
 }

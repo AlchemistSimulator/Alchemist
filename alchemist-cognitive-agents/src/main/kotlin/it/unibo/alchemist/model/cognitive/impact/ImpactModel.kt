@@ -77,8 +77,8 @@ class ImpactModel(compliance: Double, influencedBy: () -> List<CognitiveModel>, 
 
     override fun escapeIntention(): Double = characteristicLevel<IntentionEvacuate>()
 
-    override fun update(frequency: Double) {
-        cognitiveCharacteristics.values.forEach { it.update(frequency) }
+    override fun update(timeStep: Double) {
+        cognitiveCharacteristics.values.forEach { it.update(timeStep) }
         escapeDecision.current = escapeIntention() > remainIntention()
     }
 

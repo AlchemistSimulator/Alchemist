@@ -39,6 +39,6 @@ class CognitiveBehavior<T, V, A>(node: Node<T>, timeDistribution: TimeDistributi
      */
     override fun performModelMutation() {
         super.performModelMutation()
-        host.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(1 / finitePositiveMeanDelayOrError)
+        host.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(finitePositiveMeanDelayOrError)
     }
 }

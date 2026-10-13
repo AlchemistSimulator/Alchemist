@@ -12,7 +12,8 @@ interface CognitiveCharacteristic : Characteristic {
     fun level(): Double
 
     /**
-     * Update the current intensity of this characteristic.
+     * Advances the current intensity of this characteristic by [timeStep], the simulated time elapsed since the
+     * previous update.
      */
-    fun update(frequency: Double)
+    fun update(timeStep: Double)
 }

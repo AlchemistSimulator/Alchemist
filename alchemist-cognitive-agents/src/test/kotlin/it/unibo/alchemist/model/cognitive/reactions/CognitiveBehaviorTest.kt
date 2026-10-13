@@ -30,12 +30,18 @@ class CognitiveBehaviorTest {
         Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow())
 
     @Test
+    fun `the cognitive model advances by the mean delay between firings`() {
+        val model = mockk<CognitiveModel>(relaxed = true)
+        val behavior = behaviorOf(model, RATE)
+        behavior.initializationComplete(Time.ZERO, environment)
+        behavior.execute()
+        verify(exactly = 1) { model.update(1 / RATE) }
+    }
+
+    @Test
     fun `the cognitive model advances only when the reaction fires`() {
         val model = mockk<CognitiveModel>(relaxed = true)
-        val node = GenericNode(environment)
-        node.addProperty(mockk<CognitiveProperty<Any>> { every { cognitiveModel } returns model })
-        environment.addNode(node, environment.makePosition(0, 0))
-        val behavior = CognitiveBehavior<Any, Euclidean2DPosition, Euclidean2DTransformation>(node, DiracComb(1.0))
+        val behavior = behaviorOf(model, 1.0)
         val validity = observe(true)
         behavior.conditions = listOf(
             mockk<Condition<Any>>(relaxed = true) {
@@ -49,5 +55,17 @@ class CognitiveBehaviorTest {
         verify(exactly = 0) { model.update(any()) }
         behavior.execute()
         verify(exactly = 1) { model.update(any()) }
+    }
+
+    private fun behaviorOf(model: CognitiveModel, rate: Double) =
+        CognitiveBehavior<Any, Euclidean2DPosition, Euclidean2DTransformation>(cognitiveNode(model), DiracComb(rate))
+
+    private fun cognitiveNode(model: CognitiveModel) = GenericNode(environment).also { node ->
+        node.addProperty(mockk<CognitiveProperty<Any>> { every { cognitiveModel } returns model })
+        environment.addNode(node, environment.makePosition(0, 0))
+    }
+
+    private companion object {
+        private const val RATE = 4.0
     }
 }

@@ -52,11 +52,11 @@ interface CognitiveModel {
     fun remainIntention(): Double
 
     /**
-     * Update the model internal state using the provided update frequency.
+     * Advances the model internal state by [timeStep].
      *
-     * @param frequency the update frequency (time between updates or update rate), represented as a [Double].
+     * @param timeStep the simulated time elapsed since the previous update
      */
-    fun update(frequency: Double)
+    fun update(timeStep: Double)
 
     /**
      * Whether the agent currently intends to escape.

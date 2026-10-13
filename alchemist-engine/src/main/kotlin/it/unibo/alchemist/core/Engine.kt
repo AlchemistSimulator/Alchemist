@@ -93,20 +93,24 @@ open class Engine<T, P : Position<out P>>(
     }
 
     override fun reactionAdded(reactionToAdd: Reaction<T>) {
-        pendingAdditions.add(reactionToAdd)
-        schedule {
-            if (pendingAdditions.remove(reactionToAdd)) {
-                scheduleReaction(reactionToAdd)
+        if (status != Status.TERMINATED) {
+            pendingAdditions.add(reactionToAdd)
+            scheduleUnlessTerminated {
+                if (pendingAdditions.remove(reactionToAdd)) {
+                    scheduleReaction(reactionToAdd)
+                }
             }
         }
     }
 
     override fun reactionRemoved(reactionToRemove: Reaction<T>) {
-        if (modelMutationDepth > 0) {
-            dirtyReactions.remove(reactionToRemove)
-        }
-        if (!pendingAdditions.remove(reactionToRemove)) {
-            schedule { removeReactionIfScheduled(reactionToRemove) }
+        if (status != Status.TERMINATED) {
+            if (modelMutationDepth > 0) {
+                dirtyReactions.remove(reactionToRemove)
+            }
+            if (!pendingAdditions.remove(reactionToRemove)) {
+                scheduleUnlessTerminated { removeReactionIfScheduled(reactionToRemove) }
+            }
         }
     }
 
@@ -124,6 +128,17 @@ open class Engine<T, P : Position<out P>>(
 
     override fun processCommand(command: CheckedRunnable) = modelMutation {
         super.processCommand(command)
+    }
+
+    /*
+     * Once the simulation is terminated, nothing is scheduled any more, but hosts may still change, for instance from
+     * OutputMonitor.finished or a GUI: their notifications are ignored rather than failing the host mutation.
+     * A command queued while the simulation terminates is never processed, as no step follows.
+     */
+    private fun scheduleUnlessTerminated(command: CheckedRunnable) {
+        if (status != Status.TERMINATED) {
+            commands.add(command)
+        }
     }
 
     private fun scheduleReaction(reaction: Reaction<T>) {

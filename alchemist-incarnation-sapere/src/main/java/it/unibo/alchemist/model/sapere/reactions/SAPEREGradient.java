@@ -278,7 +278,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
      */
     private List<ILsaMolecule> cleanUpExistingAndRecomputeFromSource(final Map<HashString, ITreeNode<?>> matches) {
         for (final ILsaMolecule g : getHost().getConcentration(gradient)) {
-            getLsaNode().removeConcentration(g);
+            getLsaNode().removeOneMatchedLsa(g);
         }
         final List<ILsaMolecule> createdFromSource = new ArrayList<>(sourceCache.size());
         if (!sourceCache.isEmpty()) {
@@ -293,7 +293,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
                 final List<IExpression> gl = gradient.allocateVar(matches);
                 final ILsaMolecule m = new LsaMolecule(gl);
                 createdFromSource.add(m);
-                getLsaNode().setConcentration(m);
+                getLsaNode().addLsa(m);
             }
         }
         return createdFromSource;
@@ -371,7 +371,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         final GradientSearch gradSearch = new GradientSearch(gradientsFound, matches);
         filteredGradCache.forEachEntry(gradSearch);
         gradientsFound.addAll(createdFromSource);
-        gradientsFound.forEach(grad -> getLsaNode().setConcentration(grad));
+        gradientsFound.forEach(grad -> getLsaNode().addLsa(grad));
     }
 
     @Nonnull

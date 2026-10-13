@@ -70,6 +70,6 @@ abstract class AbstractSAPERENeighborAgent<P : Position<P>> private constructor(
      * Allocates the variables of [molecule] using the current matches, and injects the result in [destination].
      */
     protected open fun allocateAndInject(molecule: ILsaMolecule, destination: ILsaNode) {
-        destination.setConcentration(LsaMolecule(molecule.allocateVar(matches)))
+        destination.addLsa(LsaMolecule(molecule.allocateVar(matches)))
     }
 }

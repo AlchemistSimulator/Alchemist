@@ -99,7 +99,7 @@ open class GenericNode<T> @JvmOverloads constructor(
 
     final override fun hashCode(): Int = id // TODO: better hashing
 
-    final override fun removeConcentration(moleculeToRemove: Molecule) {
+    override fun removeConcentration(moleculeToRemove: Molecule) {
         if (observableContents.remove(moleculeToRemove) == null) {
             throw NoSuchElementException("$moleculeToRemove was not present in node $id")
         }

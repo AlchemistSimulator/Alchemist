@@ -120,7 +120,7 @@ class SAPERENodeReaction(
     }
 
     private fun removeMatchedMolecules(toRemove: Map<ILsaNode, List<ILsaMolecule>>) {
-        toRemove.forEach { (node, molecules) -> molecules.forEach(node::removeConcentration) }
+        toRemove.forEach { (node, molecules) -> molecules.forEach(node::removeOneMatchedLsa) }
     }
 
     private fun selectMatchIndex(): Int = when {

@@ -21,9 +21,9 @@ class LsaNodeRemovalTest {
     @Test
     fun `removing through a matching template removes the matched instance from the LSA space`() {
         val kept = LsaMolecule("other, 2")
-        node.setConcentration(LsaMolecule("grad, 1"))
-        node.setConcentration(kept)
-        node.removeConcentration(LsaMolecule("grad, X"))
+        node.addLsa(LsaMolecule("grad, 1"))
+        node.addLsa(kept)
+        node.removeOneMatchedLsa(LsaMolecule("grad, X"))
         assertEquals(listOf(kept), node.lsaSpace)
         assertEquals(listOf(kept), node.observeLsaSpace().current)
         assertEquals(1, node.moleculeCount)

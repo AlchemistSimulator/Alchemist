@@ -53,11 +53,11 @@ class SAPERENodeReactionSchedulingTest {
         reaction.initializationComplete(DoubleTime(0.0), environment)
         assertTrue(reaction.nextOccurrence.current.isInfinite)
         verify(exactly = 0) { randomGenerator.nextDouble() }
-        node.setConcentration(LsaMolecule("token"))
+        node.addLsa(LsaMolecule("token"))
         assertTrue(reaction.canExecute.current)
         assertTrue(reaction.nextOccurrence.current.isFinite)
         verify(exactly = 1) { randomGenerator.nextDouble() }
-        node.setConcentration(LsaMolecule("token"))
+        node.addLsa(LsaMolecule("token"))
         assertTrue(reaction.canExecute.current)
         assertTrue(reaction.nextOccurrence.current.isFinite)
         verify(exactly = 2) { randomGenerator.nextDouble() }
@@ -77,11 +77,11 @@ class SAPERENodeReactionSchedulingTest {
         assertEquals(Time.INFINITY, reaction.nextOccurrence.current)
         verify(exactly = 0) { randomGenerator.nextDouble() }
         now = DoubleTime(5.0)
-        node.setConcentration(LsaMolecule("token"))
+        node.addLsa(LsaMolecule("token"))
         verify(exactly = 1) { randomGenerator.nextDouble() }
         assertEquals(5.0 + ln(2.0) / 2, reaction.nextOccurrence.current.toDouble(), TOLERANCE)
         now = DoubleTime(6.0)
-        node.setConcentration(LsaMolecule("token"))
+        node.addLsa(LsaMolecule("token"))
         verify(exactly = 2) { randomGenerator.nextDouble() }
         assertTrue(reaction.nextOccurrence.current > now)
     }
@@ -98,19 +98,19 @@ class SAPERENodeReactionSchedulingTest {
         assertTrue(reaction.nextOccurrence.current.isInfinite)
         assertTrue(clone.nextOccurrence.current.isInfinite)
         verify(exactly = 0) { randomGenerator.nextDouble() }
-        source.setConcentration(LsaMolecule("token"))
+        source.addLsa(LsaMolecule("token"))
         assertTrue(reaction.nextOccurrence.current.isFinite)
         assertTrue(clone.nextOccurrence.current.isInfinite)
         verify(exactly = 1) { randomGenerator.nextDouble() }
-        destination.setConcentration(LsaMolecule("token"))
+        destination.addLsa(LsaMolecule("token"))
         assertTrue(clone.nextOccurrence.current.isFinite)
         verify(exactly = 2) { randomGenerator.nextDouble() }
         val cloneOccurrence = clone.nextOccurrence.current
         clone.dispose()
-        destination.setConcentration(LsaMolecule("token"))
+        destination.addLsa(LsaMolecule("token"))
         assertEquals(cloneOccurrence, clone.nextOccurrence.current)
         verify(exactly = 2) { randomGenerator.nextDouble() }
-        source.setConcentration(LsaMolecule("token"))
+        source.addLsa(LsaMolecule("token"))
         verify(exactly = 3) { randomGenerator.nextDouble() }
     }
 
@@ -128,7 +128,7 @@ class SAPERENodeReactionSchedulingTest {
         listOf("0 - N" to 1, "N / N" to 0).forEach { (rate, value) ->
             val (rng, environment, node, reaction) = fixture(rate)
             reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), reaction))
-            node.setConcentration(LsaMolecule("token, $value"))
+            node.addLsa(LsaMolecule("token, $value"))
             assertFailsWith<IllegalStateException> {
                 reaction.initializationComplete(DoubleTime(0.0), environment)
             }
@@ -140,7 +140,7 @@ class SAPERENodeReactionSchedulingTest {
     fun `an unresolved match propensity is rejected at the reaction boundary`() {
         val (randomGenerator, environment, node, reaction) = fixture("Missing")
         reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token, N"), reaction))
-        node.setConcentration(LsaMolecule("token, 1"))
+        node.addLsa(LsaMolecule("token, 1"))
         assertFailsWith<IllegalStateException> {
             reaction.initializationComplete(DoubleTime(0.0), environment)
         }
@@ -171,14 +171,14 @@ class SAPERENodeReactionSchedulingTest {
         // Nodes outside the neighborhood are not observed at all.
         val distant = LsaNode(environment)
         assertTrue(environment.addNode(distant, Euclidean2DPosition(5.0, 0.0)))
-        distant.setConcentration(LsaMolecule("gradient, 1, 1"))
+        distant.addLsa(LsaMolecule("gradient, 1, 1"))
         environment.removeNode(distant)
         verify(exactly = 0) { randomGenerator.nextDouble() }
         val neighbor = LsaNode(environment)
         assertTrue(environment.addNode(neighbor, Euclidean2DPosition(0.5, 0.0)))
         assertTrue(environment.getNeighborhood(node).current.neighbors.contains(neighbor))
         verify(exactly = 1) { randomGenerator.nextDouble() }
-        neighbor.setConcentration(LsaMolecule("gradient, 1, 1"))
+        neighbor.addLsa(LsaMolecule("gradient, 1, 1"))
         verify(exactly = 2) { randomGenerator.nextDouble() }
         environment.moveNodeTo(neighbor, Euclidean2DPosition(0.75, 0.0))
         verify(exactly = 3) { randomGenerator.nextDouble() }
@@ -204,8 +204,8 @@ class SAPERENodeReactionSchedulingTest {
     fun `a match with infinite propensity is the one that fires`() {
         val (randomGenerator, environment, node) = fixture()
         // With rate 1/N, the match with N = 0 has infinite propensity, even if it is not the last match.
-        node.setConcentration(LsaMolecule("token, 0"))
-        node.setConcentration(LsaMolecule("token, 1"))
+        node.addLsa(LsaMolecule("token, 0"))
+        node.addLsa(LsaMolecule("token, 1"))
         val reaction = SAPEREIncarnation<Euclidean2DPosition>().createReaction(
             randomGenerator,
             environment,
@@ -226,7 +226,7 @@ class SAPERENodeReactionSchedulingTest {
         environment.linkingRule = ConnectWithinDistance(1.0)
         // As in the engine, invalidations are applied after the mutation completes, not while the reaction fires.
         environment.simulation = mockk<Simulation<List<ILsaMolecule>, Euclidean2DPosition>>(relaxed = true)
-        node.setConcentration(LsaMolecule("token"))
+        node.addLsa(LsaMolecule("token"))
         val reaction = SAPEREIncarnation<Euclidean2DPosition>().createReaction(
             randomGenerator,
             environment,

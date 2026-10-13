@@ -48,7 +48,7 @@ class LsaAscendingGradientDist<P : Position<P>>(
             val response = MOLRESPONSE.allocateVar(matches)
             val oldDistance = response.removeAt(response.size - 1).rootNodeData as Double
             response.add(Expression(AST(NumTreeNode(distance + oldDistance))))
-            target.setConcentration(LsaMolecule(response))
+            target.addLsa(LsaMolecule(response))
         }
     }
 

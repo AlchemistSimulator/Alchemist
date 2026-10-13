@@ -27,7 +27,7 @@ class LsaNodeConcurrencyTest {
     @Test
     fun `concurrent reads and modifications leave the node consistent`() {
         val node = newNode()
-        repeat(INITIAL_MOLECULES) { node.setConcentration(LsaMolecule("molecule$it")) }
+        repeat(INITIAL_MOLECULES) { node.addLsa(LsaMolecule("molecule$it")) }
         val executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
         try {
             val tasks = (0 until NUMBER_OF_THREADS).map { threadId ->
@@ -55,11 +55,11 @@ class LsaNodeConcurrencyTest {
 
     private fun write(node: LsaNode, threadId: Int, operation: Int) {
         val molecule: ILsaMolecule = LsaMolecule("thread${threadId}x$operation")
-        node.setConcentration(molecule)
+        node.addLsa(molecule)
         // Occasionally remove molecules to simulate concurrent modifications.
         if (operation % REMOVAL_PERIOD == 0 && node.moleculeCount > MIN_MOLECULES) {
             // Another thread may have already removed the molecule.
-            runCatching { node.removeConcentration(molecule) }
+            runCatching { node.removeOneMatchedLsa(molecule) }
                 .onFailure { check(it is IllegalStateException) { "Unexpected failure: $it" } }
         }
     }
@@ -70,12 +70,12 @@ class LsaNodeConcurrencyTest {
         val molecule: ILsaMolecule = LsaMolecule("test")
         assertEquals(0, node.moleculeCount)
         assertFalse(node.contains(molecule))
-        node.setConcentration(molecule)
+        node.addLsa(molecule)
         assertEquals(1, node.moleculeCount)
         assertTrue(node.contains(molecule))
         assertEquals(1, node.contents.size)
         assertEquals(1, node.lsaSpace.size)
-        assertTrue(node.removeConcentration(molecule))
+        assertTrue(node.removeOneMatchedLsa(molecule))
         assertEquals(0, node.moleculeCount)
         assertFalse(node.contains(molecule))
     }

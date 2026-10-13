@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -28,7 +28,7 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
      * @param inst
      *            the molecule you want to add
      */
-    void setConcentration(ILsaMolecule inst);
+    void addLsa(ILsaMolecule inst);
 
     /**
      * Deletes an ILsaMolecule from the Node LsaSpace Warning: the method
@@ -39,7 +39,7 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
      * @return true if the remove operation finishes correctly, false otherwise.
      *
      */
-    boolean removeConcentration(ILsaMolecule matchedInstance);
+    boolean removeOneMatchedLsa(ILsaMolecule matchedInstance);
 
     /**
      * @return lsaMolecules in the node. This backs the internal LsaSpace: USE READ-ONLY.

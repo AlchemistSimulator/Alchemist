@@ -35,7 +35,7 @@ class LsaAscendingAgentTest {
     )
 
     private fun node(x: Double, y: Double, vararg lsas: String) = LsaNode(environment).also { node ->
-        lsas.forEach { node.setConcentration(LsaMolecule(it)) }
+        lsas.forEach { node.addLsa(LsaMolecule(it)) }
         environment.addNode(node, environment.makePosition(x, y))
     }
 

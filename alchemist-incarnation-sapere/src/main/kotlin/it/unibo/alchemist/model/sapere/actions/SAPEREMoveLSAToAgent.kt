@@ -37,7 +37,7 @@ class SAPEREMoveLSAToAgent(
 
     override fun execute() {
         val instance = allocateVarsAndBuildLSA(template)
-        lsaNode.removeConcentration(instance)
-        destination.setConcentration(instance)
+        lsaNode.removeOneMatchedLsa(instance)
+        destination.addLsa(instance)
     }
 }

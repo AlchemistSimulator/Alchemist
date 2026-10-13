@@ -208,7 +208,7 @@ abstract class AbstractLsaAction(
      * Injects the LSA [molecule], with its variables allocated using the current matches, in [destination].
      */
     protected open fun inject(destination: ILsaNode, molecule: ILsaMolecule) {
-        destination.setConcentration(LsaMolecule(molecule.allocateVar(matches)))
+        destination.addLsa(LsaMolecule(molecule.allocateVar(matches)))
     }
 
     /**

@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static it.unibo.alchemist.model.observables.util.MutableObservables.observe;
 
@@ -40,6 +41,8 @@ import static it.unibo.alchemist.model.observables.util.MutableObservables.obser
  * This class realizes a node with LSA concentration.
  */
 public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode {
+
+    private static final String INCOMPATIBLE_MOLECULE = " is not a compatible molecule type";
 
     private final Map<String, List<ILsaMolecule>> instancesByName = new HashMap<>();
     private final Map<String, MutableObservable<List<ILsaMolecule>>> observablesByName = new HashMap<>();
@@ -81,7 +84,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @NotNull
     public Observable<Option<List<ILsaMolecule>>> observeConcentration(@NotNull final Molecule molecule) {
         if (!(molecule instanceof final ILsaMolecule mol)) {
-            throw new IllegalArgumentException(molecule + " is not a compatible molecule type");
+            throw new IllegalArgumentException(molecule + INCOMPATIBLE_MOLECULE);
         }
         return observeMoleculeName(mol.getArg(0).toString()).map(current -> {
             final ArrayList<ILsaMolecule> res = new ArrayList<>();
@@ -117,7 +120,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public boolean removeConcentration(final ILsaMolecule matchedInstance) {
+    public boolean removeOneMatchedLsa(final ILsaMolecule matchedInstance) {
         synchronized (instancesByName) {
             final String name = matchedInstance.getArg(0).toString();
             final List<ILsaMolecule> list = instancesByName.get(name);
@@ -128,7 +131,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                         final ILsaMolecule removed = list.remove(i);
                         moleculeCount.update(c -> c - 1);
                         allInstances.remove(removed);
-                        updateCount(removed, -1);
+                        updateCount(removed, list);
                         final var obs = observablesByName.get(name);
                         if (obs != null) {
                             obs.update(it -> new ArrayList<>(list));
@@ -141,8 +144,29 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
         throw new IllegalStateException("Tried to remove missing " + matchedInstance + " from " + this);
     }
 
+    /**
+     * Removes every copy of [moleculeToRemove] from this node.
+     *
+     * @param moleculeToRemove the LSA to remove
+     * @throws java.util.NoSuchElementException if the node contains no copy of it
+     */
     @Override
-    public void setConcentration(final ILsaMolecule inst) {
+    public void removeConcentration(@Nonnull final Molecule moleculeToRemove) {
+        if (!(moleculeToRemove instanceof final ILsaMolecule lsa)) {
+            throw new IllegalArgumentException(moleculeToRemove + INCOMPATIBLE_MOLECULE);
+        }
+        synchronized (instancesByName) {
+            if (!getLsaSpace().contains(lsa)) {
+                throw new NoSuchElementException(lsa + " was not present in node " + getId());
+            }
+            while (getLsaSpace().contains(lsa)) {
+                removeOneMatchedLsa(lsa);
+            }
+        }
+    }
+
+    @Override
+    public void addLsa(final ILsaMolecule inst) {
         if (inst.isIstance()) {
             synchronized (instancesByName) {
                 final String name = inst.getArg(0).toString();
@@ -150,7 +174,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                 list.add(inst);
                 moleculeCount.update(c -> c + 1);
                 allInstances.add(inst);
-                updateCount(inst, 1);
+                updateCount(inst, list);
                 final var obs = observablesByName.get(name);
                 if (obs != null) {
                     obs.update(it -> new ArrayList<>(list));
@@ -164,9 +188,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     public void setConcentration(@Nonnull final Molecule molecule, final List<ILsaMolecule> c) {
         if (molecule instanceof final ILsaMolecule il) {
-            setConcentration(il);
+            addLsa(il);
         } else {
-            throw new IllegalArgumentException(molecule + " is not a compatible molecule type");
+            throw new IllegalArgumentException(molecule + INCOMPATIBLE_MOLECULE);
         }
     }
 
@@ -178,14 +202,14 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     /*
      * The contents map each distinct instance to a single LSA holding how many copies of it the node contains.
-     * They are updated along with every mutation, so that their observers are notified.
+     * They are updated along with every mutation, so that their observers are notified, by counting the copies in
+     * the bucket of the instance: the count of a mutated instance is always the actual one.
      */
-    private void updateCount(final ILsaMolecule instance, final int delta) {
+    private void updateCount(final ILsaMolecule instance, final List<ILsaMolecule> bucket) {
+        final long count = bucket.stream().filter(instance::equals).count();
         final ObservableMutableMap<Molecule, List<ILsaMolecule>> contents = getObservableContents();
-        final List<ILsaMolecule> previous = contents.getCurrent().get(instance);
-        final double count = (previous == null ? 0 : (Double) previous.get(0).getArg(0).getRootNodeData()) + delta;
         if (count > 0) {
-            final IExpression countExpression = new Expression(new NumTreeNode(count));
+            final IExpression countExpression = new Expression(new NumTreeNode((double) count));
             contents.put(instance, List.of(new LsaMolecule(Collections.singletonList(countExpression))));
         } else {
             contents.remove(instance);

@@ -65,7 +65,7 @@ open class LsaStandardAction(
         if (initNode) {
             addMatch(LsaMolecule.SYN_NODE_ID, checkNotNull(nodeId))
         }
-        node.setConcentration(LsaMolecule(molecule.allocateVar(matches)))
+        node.addLsa(LsaMolecule(molecule.allocateVar(matches)))
     }
 
     override fun toString(): String = molecule.toString()

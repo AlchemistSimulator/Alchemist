@@ -29,7 +29,7 @@ open class LsaStandardCondition(
     protected val molecule: ILsaMolecule,
     reaction: NodeReaction<List<ILsaMolecule>>,
 ) : AbstractLsaCondition(reaction, setOf(molecule)) {
-    private val matchInput: Observable<*> = lsaNode.observeMoleculeName(molecule.getArg(0).toString())
+    private val matchInput: Observable<*> = lsaNode.observeCandidates(molecule)
     private val valid: MutableObservable<Boolean> = observe(false)
 
     init {

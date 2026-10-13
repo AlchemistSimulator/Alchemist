@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +49,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     private final Map<String, MutableObservable<List<ILsaMolecule>>> observablesByName = new HashMap<>();
     private final MutableObservable<Integer> moleculeCount = observe(0);
     private final ObservableMutableList<ILsaMolecule> allInstances = new ObservableMutableList<>();
+    private final Observable<List<ILsaMolecule>> allCandidates = allInstances.map(Collections::unmodifiableList);
 
     /**
      * @param environment
@@ -61,7 +63,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @NotNull
     public Observable<Boolean> observeContains(@NotNull final Molecule molecule) {
         if (molecule instanceof final ILsaMolecule toMatch) {
-            return observeMoleculeName(toMatch.getArg(0).toString()).map(molecules ->
+            return observeCandidates(toMatch).map(molecules ->
                 molecules.stream().anyMatch(mol -> mol.matches(toMatch))
             );
         }
@@ -83,13 +85,13 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     @NotNull
     public Observable<Option<List<ILsaMolecule>>> observeConcentration(@NotNull final Molecule molecule) {
-        if (!(molecule instanceof final ILsaMolecule mol)) {
+        if (!(molecule instanceof final ILsaMolecule lsaTemplate)) {
             throw new IllegalArgumentException(molecule + INCOMPATIBLE_MOLECULE);
         }
-        return observeMoleculeName(mol.getArg(0).toString()).map(current -> {
+        return observeCandidates(lsaTemplate).map(current -> {
             final ArrayList<ILsaMolecule> res = new ArrayList<>();
             for (final ILsaMolecule instance : current) {
-                if (mol.matches(instance)) {
+                if (lsaTemplate.matches(instance)) {
                     res.add(instance);
                 }
             }
@@ -99,7 +101,11 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     @NotNull
-    public Observable<List<ILsaMolecule>> observeMoleculeName(@NotNull final String name) {
+    public Observable<List<ILsaMolecule>> observeCandidates(@NotNull final ILsaMolecule template) {
+        if (!isIndexable(template)) {
+            return allCandidates;
+        }
+        final String name = indexOf(template);
         synchronized (instancesByName) {
             return observablesByName.computeIfAbsent(name, k ->
                 observe(
@@ -122,22 +128,23 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     public boolean removeOneMatchedLsa(final ILsaMolecule matchedInstance) {
         synchronized (instancesByName) {
-            final String name = matchedInstance.getArg(0).toString();
-            final List<ILsaMolecule> list = instancesByName.get(name);
-            if (list != null) {
-                for (int i = 0; i < list.size(); i++) {
-                    if (matchedInstance.matches(list.get(i))) {
-                        // The argument may be a template: remove the stored instance it matched.
-                        final ILsaMolecule removed = list.remove(i);
-                        moleculeCount.update(c -> c - 1);
-                        allInstances.remove(removed);
-                        updateCount(removed, list);
-                        final var obs = observablesByName.get(name);
-                        if (obs != null) {
-                            obs.update(it -> new ArrayList<>(list));
-                        }
-                        return true;
+            // The argument may be a template: remove the stored instance it matched.
+            final List<ILsaMolecule> candidates = isIndexable(matchedInstance)
+                ? instancesByName.getOrDefault(indexOf(matchedInstance), Collections.emptyList())
+                : allInstances.getCurrent();
+            for (final ILsaMolecule candidate : candidates) {
+                if (matchedInstance.matches(candidate)) {
+                    final String name = indexOf(candidate);
+                    final List<ILsaMolecule> list = instancesByName.get(name);
+                    list.remove(candidate);
+                    moleculeCount.update(c -> c - 1);
+                    allInstances.remove(candidate);
+                    updateCount(candidate, list);
+                    final var obs = observablesByName.get(name);
+                    if (obs != null) {
+                        obs.update(it -> new ArrayList<>(list));
                     }
+                    return true;
                 }
             }
         }
@@ -169,7 +176,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     public void addLsa(final ILsaMolecule inst) {
         if (inst.isIstance()) {
             synchronized (instancesByName) {
-                final String name = inst.getArg(0).toString();
+                final String name = indexOf(inst);
                 final List<ILsaMolecule> list = instancesByName.computeIfAbsent(name, k -> new ArrayList<>());
                 list.add(inst);
                 moleculeCount.update(c -> c + 1);
@@ -214,5 +221,19 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
         } else {
             contents.remove(instance);
         }
+    }
+
+
+    /*
+     * Instances are indexed by their first argument. A template can only match the instances sharing its first argument
+     * when that argument is a constant or a number; a variable or an expression may match any first argument.
+     */
+    private static boolean isIndexable(final ILsaMolecule template) {
+        final Type type = template.getArg(0).getRootNodeType();
+        return type == Type.CONST || type == Type.NUM;
+    }
+
+    private static String indexOf(final ILsaMolecule molecule) {
+        return molecule.getArg(0).toString();
     }
 }

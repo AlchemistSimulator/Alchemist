@@ -154,14 +154,14 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
             new SGFakeConditionAction(
                 this,
                 source,
-                node.observeMoleculeName(source.getArg(0).toString()),
+                node.observeCandidates(source),
                 observeNeighborState(environment, node)
             )
         );
         fakeacts.add(new SGFakeConditionAction(this, gradient));
         if (context != null) {
             fakeconds.add(
-                new SGFakeConditionAction(this, context, node.observeMoleculeName(context.getArg(0).toString()))
+                new SGFakeConditionAction(this, context, node.observeCandidates(context))
             );
         }
         final boolean usesRoutes = this.environment instanceof MapEnvironment

@@ -55,9 +55,12 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
     List<ILsaMolecule> getConcentration(@Nonnull Molecule mol);
 
     /**
-     * @param name the name of the molecule to observe
-     * @return an observable that emits the list of molecules with the given name
+     * Observes the instances that [template] may match: those sharing its first argument when it is a constant
+     * or a number, every instance otherwise. Matching them against [template] is up to the caller.
+     *
+     * @param template the LSA template
+     * @return an observable that emits the instances that [template] may match
      */
-    Observable<List<ILsaMolecule>> observeMoleculeName(String name);
+    Observable<List<ILsaMolecule>> observeCandidates(ILsaMolecule template);
 
 }

@@ -135,6 +135,10 @@ open class Engine<T, P : Position<out P>>(
         // Registration is fail-fast: AbstractEngine terminates and discards the scheduler if any step throws.
         // Initialization computes the first occurrence before the scheduler reads it.
         reaction.initializationComplete(time, environment)
+        val firstOccurrence = reaction.nextOccurrence.current
+        require(firstOccurrence >= time) {
+            "$reaction cannot be registered at time $time, as its first occurrence $firstOccurrence is in the past"
+        }
         scheduler.addReaction(reaction)
         // Do not emit the current value on subscription: scheduler insertion already indexed it.
         schedulingSubscriptions[reaction] =

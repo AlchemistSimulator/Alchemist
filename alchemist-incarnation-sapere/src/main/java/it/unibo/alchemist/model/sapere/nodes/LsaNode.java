@@ -223,7 +223,6 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
         }
     }
 
-
     /*
      * Instances are indexed by their first argument. A template can only match the instances sharing its first argument
      * when that argument is a constant or a number; a variable or an expression may match any first argument.

@@ -15,7 +15,7 @@ Preserve the existing multi-module structure. Keep changes small, local, and con
 
 Order the members of classes, interfaces, and objects as follows, in Java and Kotlin alike.
 The order extends the Checkstyle `DeclarationOrder` and `InnerTypeLast` checks, and keeps Kotlin companion objects last as in the Kotlin coding conventions.
-Within every group, sort members by visibility (public, then protected and Kotlin `internal`, then Java package-private, then private), and members sharing a visibility alphabetically by name, keeping overloads adjacent.
+Within every group, sort members by visibility (public, then protected and Kotlin `internal`, then Java package-private, then private), fields and properties sharing a visibility by mutability (Java `final` fields and Kotlin `val`s before non-final fields and `var`s), and then members alphabetically by name, keeping overloads adjacent.
 1. Java static fields.
 2. Java static initializers.
 3. Fields and Kotlin properties.

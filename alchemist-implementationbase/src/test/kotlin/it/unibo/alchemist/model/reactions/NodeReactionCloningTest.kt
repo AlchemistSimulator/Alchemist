@@ -190,11 +190,14 @@ class NodeReactionCloningTest {
     }
 
     private class SequenceDistribution(vararg samples: Double) : TimeDistribution<Any> {
+        override val meanDelay: Double get() = configuredSamples.average()
+
         private val configuredSamples = samples.copyOf()
+
         private val iterator = configuredSamples.iterator()
 
-        override fun sample(): Time = DoubleTime(iterator.nextDouble())
-
         override fun newInstanceOn(node: Node<Any>): TimeDistribution<Any> = SequenceDistribution(*configuredSamples)
+
+        override fun sample(): Time = DoubleTime(iterator.nextDouble())
     }
 }

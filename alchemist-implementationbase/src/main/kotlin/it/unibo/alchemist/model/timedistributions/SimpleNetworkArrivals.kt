@@ -49,6 +49,57 @@ class SimpleNetworkArrivals<T> private constructor(
     startTime: Time = Time.ZERO,
 ) : AbstractDistribution<T>(startTime) {
 
+    /** Computes the effective bandwidth considering access point load balancing. */
+    val bandwidth: Double
+        get() = (
+            constantBandwidth ?: incarnation.getProperty(node, bandwidthMolecule, bandwidthProperty)
+            ).let { bw ->
+            accessPointIdentificator?.let { id ->
+                if (node.isAccessPoint || myNeighborhood.isEmpty()) {
+                    bw / myNeighborhood.size.coerceAtLeast(1)
+                } else {
+                    val accesspoints = myNeighborhood.filter { it.isAccessPoint }
+                    when (accesspoints.size) {
+                        0 -> bw
+                        1 -> bw / accesspoints.first().neighborhood.size
+                        else -> error(
+                            "node ${node.id} is connected to multiple access points: $accesspoints",
+                        )
+                    }
+                }
+            } ?: bw
+        }
+
+    /** Expected number of arrivals per time unit for the current network state. */
+    val expectedRate: Double get() = 1 / meanDelay
+
+    /** The transmission time of a packet in the current network state. */
+    override val meanDelay: Double get() = propagationDelay + packetSize / bandwidth
+
+    /** Gets the neighbors of a node as a collection. */
+    val Node<T>.neighborhood: Collection<Node<T>>
+        get() = environment.getNeighborhood(this).current.neighbors
+
+    /**
+     * Computes the packet size from constants or properties.
+     * Defaults to 1.0 if not specified or invalid.
+     */
+    val packetSize: Double
+        get() = constantPacketSize
+            ?: incarnation.getProperty(node, packetSizeMolecule, packetSizeProperty).takeIf { it.isFinite() && it >= 0 }
+            ?: 1.0
+
+    /** Computes the propagation delay from constants or properties. */
+    val propagationDelay: Double
+        get() = constantPropagationDelay
+            ?: incarnation.getProperty(node, propagationDelayMolecule, propagationDelayProperty)
+
+    private val Node<T>.isAccessPoint
+        get() = accessPointIdentificator?.let { this.contains(it) } ?: false
+
+    private val myNeighborhood
+        get() = node.neighborhood
+
     @JvmOverloads
     constructor(
         incarnation: Incarnation<T, *>,
@@ -134,56 +185,6 @@ class SimpleNetworkArrivals<T> private constructor(
         accessPointIdentificator = accessPointIdentificator.isMeaningful,
     )
 
-    private val myNeighborhood
-        get() = node.neighborhood
-
-    private val Node<T>.isAccessPoint
-        get() = accessPointIdentificator?.let { this.contains(it) } ?: false
-
-    /** Gets the neighbors of a node as a collection. */
-    val Node<T>.neighborhood: Collection<Node<T>>
-        get() = environment.getNeighborhood(this).current.neighbors
-
-    /** Computes the effective bandwidth considering access point load balancing. */
-    val bandwidth: Double
-        get() = (
-            constantBandwidth ?: incarnation.getProperty(node, bandwidthMolecule, bandwidthProperty)
-            ).let { bw ->
-            accessPointIdentificator?.let { id ->
-                if (node.isAccessPoint || myNeighborhood.isEmpty()) {
-                    bw / myNeighborhood.size.coerceAtLeast(1)
-                } else {
-                    val accesspoints = myNeighborhood.filter { it.isAccessPoint }
-                    when (accesspoints.size) {
-                        0 -> bw
-                        1 -> bw / accesspoints.first().neighborhood.size
-                        else -> error(
-                            "node ${node.id} is connected to multiple access points: $accesspoints",
-                        )
-                    }
-                }
-            } ?: bw
-        }
-
-    /**
-     * Computes the packet size from constants or properties.
-     * Defaults to 1.0 if not specified or invalid.
-     */
-    val packetSize: Double
-        get() = constantPacketSize
-            ?: incarnation.getProperty(node, packetSizeMolecule, packetSizeProperty).takeIf { it.isFinite() && it >= 0 }
-            ?: 1.0
-
-    /** Computes the propagation delay from constants or properties. */
-    val propagationDelay: Double
-        get() = constantPropagationDelay
-            ?: incarnation.getProperty(node, propagationDelayMolecule, propagationDelayProperty)
-
-    override fun sample(): Time = DoubleTime(propagationDelay + packetSize / bandwidth)
-
-    /** Expected number of arrivals per time unit for the current network state. */
-    val expectedRate: Double get() = 1 / (propagationDelay + packetSize / bandwidth)
-
     override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = SimpleNetworkArrivals(
         incarnation = incarnation,
         environment = environment,
@@ -200,6 +201,8 @@ class SimpleNetworkArrivals<T> private constructor(
         accessPointIdentificator = accessPointIdentificator,
         startTime = startTime,
     )
+
+    override fun sample(): Time = DoubleTime(meanDelay)
 
     private companion object {
         private val Molecule?.isMeaningful: Molecule?

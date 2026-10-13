@@ -28,11 +28,17 @@ import org.apache.commons.math3.util.FastMath
 open class ExponentialTime<T>(open val lambda: Double, start: Time, protected val randomGenerator: RandomGenerator) :
     AbstractDistribution<T>(start) {
 
+    override val meanDelay: Double get() = 1 / lambda
+
     /**
      * @param rate configured exponential rate
      * @param randomGenerator simulation random generator
      */
     constructor(rate: Double, randomGenerator: RandomGenerator) : this(rate, Time.ZERO, randomGenerator)
+
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = ExponentialTime(lambda, startTime, randomGenerator)
+
+    override fun sample(): Time = genTime(lambda)
 
     /**
      * Generates an exponential delay at [propensity].
@@ -41,10 +47,6 @@ open class ExponentialTime<T>(open val lambda: Double, start: Time, protected va
      * domain token. Scheduling transformations remain reaction-owned.
      */
     protected open fun genTime(propensity: Double): Time = DoubleTime(uniformToExponential(propensity))
-
-    override fun sample(): Time = genTime(lambda)
-
-    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = ExponentialTime(lambda, startTime, randomGenerator)
 
     private fun uniformToExponential(lambda: Double): Double = -FastMath.log1p(-randomGenerator.nextDouble()) / lambda
 }

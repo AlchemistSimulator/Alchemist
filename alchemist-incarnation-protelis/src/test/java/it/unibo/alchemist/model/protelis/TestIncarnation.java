@@ -24,8 +24,8 @@ import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
 import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.reactions.GenericReaction;
-import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -238,10 +238,8 @@ class TestIncarnation {
         survivingSend.setConditions(List.of(new ComputationalRoundComplete(survivingSend, programAction)));
         removedSend.initializationComplete(Time.ZERO, environment);
         survivingSend.initializationComplete(Time.ZERO, environment);
-
         removedSend.dispose();
         program.execute();
-
         assertTrue(survivingSend.getCanExecute().getCurrent());
         assertEquals(1, survivingDistribution.samples);
         assertEquals(1.0, survivingSend.getNextOccurrence().getCurrent().toDouble(), TOLERANCE);
@@ -250,17 +248,23 @@ class TestIncarnation {
     private static final class CountingDistribution implements TimeDistribution<Object> {
         private int samples;
 
-        @Nonnull
         @Override
-        public Time sample() {
-            samples++;
-            return new DoubleTime(samples);
+        public double getMeanDelay() {
+            // The delays grow at every sample: they follow no single distribution.
+            return Double.NaN;
         }
 
         @Nonnull
         @Override
         public TimeDistribution<Object> newInstanceOn(@Nonnull final Node<Object> node) {
             return new CountingDistribution();
+        }
+
+        @Nonnull
+        @Override
+        public Time sample() {
+            samples++;
+            return new DoubleTime(samples);
         }
     }
 

@@ -27,6 +27,8 @@ open class AnyRealDistribution<T> private constructor(
     private val distributionFactory: (() -> RealDistribution)?,
 ) : AbstractDistribution<T>(start) {
 
+    override val meanDelay: Double get() = distribution.numericalMean
+
     /**
      * Builds a generator from an Apache Commons Math distribution name.
      *
@@ -67,15 +69,8 @@ open class AnyRealDistribution<T> private constructor(
      */
     constructor(start: Time, distribution: RealDistribution) : this(start, distribution, null)
 
-    /** Mean value exposed by the backing distribution. */
-    val mean: Double get() = distribution.numericalMean
-
-    override fun sample(): Time = distribution.sample().let { delay ->
-        check(delay.isFinite() && delay >= 0) {
-            "$distribution generated an invalid delta time: $delay"
-        }
-        DoubleTime(delay)
-    }
+    private constructor(start: Time, distributionFactory: () -> RealDistribution) :
+        this(start, distributionFactory(), distributionFactory)
 
     override fun newInstanceOn(node: Node<T>): TimeDistribution<T> {
         val factory = checkNotNull(distributionFactory) {
@@ -85,6 +80,10 @@ open class AnyRealDistribution<T> private constructor(
         return AnyRealDistribution(startTime, factory)
     }
 
-    private constructor(start: Time, distributionFactory: () -> RealDistribution) :
-        this(start, distributionFactory(), distributionFactory)
+    override fun sample(): Time = distribution.sample().let { delay ->
+        check(delay.isFinite() && delay >= 0) {
+            "$distribution generated an invalid delta time: $delay"
+        }
+        DoubleTime(delay)
+    }
 }

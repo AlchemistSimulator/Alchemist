@@ -22,6 +22,11 @@ import it.unibo.alchemist.model.times.DoubleTime
  */
 open class DiracComb<T>(start: Time, rate: Double) : AbstractDistribution<T>(start) {
 
+    /** Number of occurrences per time unit represented by this constant-delay law. */
+    val frequency: Double get() = 1 / timeInterval
+
+    override val meanDelay: Double get() = timeInterval
+
     private val timeInterval = 1 / rate
 
     /**
@@ -29,12 +34,9 @@ open class DiracComb<T>(start: Time, rate: Double) : AbstractDistribution<T>(sta
      */
     constructor(rate: Double) : this(Time.ZERO, rate)
 
-    /** Number of occurrences per time unit represented by this constant-delay law. */
-    val frequency: Double get() = 1 / timeInterval
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = DiracComb(startTime, frequency)
 
     override fun sample(): Time = DoubleTime(timeInterval)
-
-    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = DiracComb(startTime, frequency)
 
     override fun toString(): String = "${javaClass.simpleName}[ΔT=$timeInterval]"
 }

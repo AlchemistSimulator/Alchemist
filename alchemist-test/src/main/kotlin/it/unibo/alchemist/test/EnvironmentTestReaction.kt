@@ -19,32 +19,26 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.timedistributions.AbstractDistribution
-import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
-import it.unibo.alchemist.model.timedistributions.DiracComb
-import it.unibo.alchemist.model.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
-import it.unibo.alchemist.model.timedistributions.WeibullTime
 
 class EnvironmentTestReaction<T>(
     val environment: Environment<T, *>,
     override val timeDistribution: TimeDistribution<T>,
 ) : TimeDistributedReaction<T> {
 
+    override val canExecute: Observable<Boolean> get() = validity
+
     override val host: Environment<T, *> get() = environment
 
-    override val rate: Double get() = timeDistribution.expectedRate
     private val mutableNextOccurrence = observe(timeDistribution.startTime, false)
     override val nextOccurrence: Observable<Time> = mutableNextOccurrence.map { it }
 
-    // Like every reaction, it can only be configured until it is initialized or disposed.
-    private var configurable = true
+    override val rate: Double get() = 1 / timeDistribution.meanDelay
 
     override var actions: List<Action<T>> = emptyList()
         set(value) {
             check(configurable) { "Actions of $this cannot change once the reaction is initialized or disposed" }
             field = value
         }
-    private var validity: Observable<Boolean> = observe(true)
 
     override var conditions: List<Condition<T>> = emptyList()
         set(value) {
@@ -57,14 +51,29 @@ class EnvironmentTestReaction<T>(
                 ?: observe(true)
         }
 
+    // Like every reaction, it can only be configured until it is initialized or disposed.
+    private var configurable = true
+
+    private var validity: Observable<Boolean> = observe(true)
+
     override fun compareTo(other: Reaction<T>): Int = nextOccurrence.current.compareTo(other.nextOccurrence.current)
 
-    override val canExecute: Observable<Boolean> get() = validity
+    override fun dispose() {
+        configurable = false
+        validity.dispose()
+        conditions.forEach(Condition<T>::dispose)
+        nextOccurrence.dispose()
+        mutableNextOccurrence.dispose()
+    }
 
     override fun execute() {
         conditions.forEach(Condition<T>::beforeReactionFires)
         actions.forEach(Action<T>::execute)
         updateSchedulingAfterFiring(environment.simulationOrNull?.time ?: nextOccurrence.current)
+    }
+
+    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
+        configurable = false
     }
 
     override fun updateSchedulingAfterFiring(currentTime: Time) {
@@ -81,30 +90,8 @@ class EnvironmentTestReaction<T>(
         }
     }
 
-    override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {
-        configurable = false
-    }
-
-    override fun dispose() {
-        configurable = false
-        validity.dispose()
-        conditions.forEach(Condition<T>::dispose)
-        nextOccurrence.dispose()
-        mutableNextOccurrence.dispose()
-    }
-
     private companion object {
         private val TimeDistribution<*>.startTime: Time
             get() = (this as? AbstractDistribution<*>)?.startTime ?: Time.ZERO
-
-        private val TimeDistribution<*>.expectedRate: Double
-            get() = when (this) {
-                is DiracComb<*> -> frequency
-                is ExponentialTime<*> -> lambda
-                is AnyRealDistribution<*> -> mean
-                is WeibullTime<*> -> mean
-                is SimpleNetworkArrivals<*> -> expectedRate
-                else -> Double.NaN
-            }
     }
 }

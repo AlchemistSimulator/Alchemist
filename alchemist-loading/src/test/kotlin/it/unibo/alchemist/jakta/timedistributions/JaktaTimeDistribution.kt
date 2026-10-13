@@ -18,7 +18,8 @@ data class JaktaTimeDistribution<T>(
     val deliberate: TimeDistribution<T>,
     val act: TimeDistribution<T>,
 ) : TimeDistribution<T> {
-    override fun sample(): Time = doNotUse()
+    /** Unknown, as the three phases follow distinct distributions. */
+    override val meanDelay: Double = Double.NaN
 
     override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = JaktaTimeDistribution(
         sense.newInstanceOn(node),
@@ -26,10 +27,12 @@ data class JaktaTimeDistribution<T>(
         act.newInstanceOn(node),
     )
 
+    override fun sample(): Time = doNotUse()
+
+    override fun toString(): String = "JaktaTimeDistribution(sense=$sense, deliberate=$deliberate, act=$act)"
+
     private fun doNotUse(): Nothing = error(
         "${this::class.simpleName} is not meant to be used directly, but to host custom time distributions" +
             " for the sense, deliberate, and act phases of the JaKtA lifecycle.",
     )
-
-    override fun toString(): String = "JaktaTimeDistribution(sense=$sense, deliberate=$deliberate, act=$act)"
 }

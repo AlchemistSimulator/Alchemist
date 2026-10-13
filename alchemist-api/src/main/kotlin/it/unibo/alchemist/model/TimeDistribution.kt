@@ -19,14 +19,14 @@ package it.unibo.alchemist.model
 interface TimeDistribution<T> {
 
     /**
-     * Draws the next delay.
+     * The expected value of the delays drawn by [sample] in the current model state.
      *
-     * Implementations must return a non-negative, finite [Time]. Invalid samples are rejected at the reaction
-     * boundary so custom implementations receive the same validation as built-in distributions.
-     *
-     * @return a newly sampled delay
+     * Following the conventions of statistics libraries, it is [Double.POSITIVE_INFINITY] if the expected delay
+     * diverges, and [Double.NaN] if it is undefined or unknown, for instance when the delays do not follow a single
+     * distribution. Distributions whose delays depend on the model state may expose a different value at each read:
+     * consumers should read it when they need it rather than storing it.
      */
-    fun sample(): Time
+    val meanDelay: Double
 
     /**
      * Creates a fresh generator with the same configuration for [node].
@@ -38,4 +38,14 @@ interface TimeDistribution<T> {
      * @return a fresh destination-bound generator
      */
     fun newInstanceOn(node: Node<T>): TimeDistribution<T>
+
+    /**
+     * Draws the next delay.
+     *
+     * Implementations must return a non-negative, finite [Time]. Invalid samples are rejected at the reaction
+     * boundary so custom implementations receive the same validation as built-in distributions.
+     *
+     * @return a newly sampled delay
+     */
+    fun sample(): Time
 }

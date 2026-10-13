@@ -130,14 +130,18 @@ class EventSchedulingTest {
     }
 
     private class SequenceDistribution(vararg delays: Double) : TimeDistribution<Any> {
-        private val configuredDelays = delays.copyOf()
-        private val iterator = configuredDelays.iterator()
+        override val meanDelay: Double get() = configuredDelays.average()
+
         var samples = 0
             private set
 
-        override fun sample(): Time = DoubleTime(iterator.nextDouble()).also { samples++ }
+        private val configuredDelays = delays.copyOf()
+
+        private val iterator = configuredDelays.iterator()
 
         override fun newInstanceOn(node: Node<Any>): TimeDistribution<Any> = SequenceDistribution(*configuredDelays)
+
+        override fun sample(): Time = DoubleTime(iterator.nextDouble()).also { samples++ }
     }
 
     private fun environmentWithMutableTime(): Pair<Environment<Any, Nothing>, (Time) -> Unit> {

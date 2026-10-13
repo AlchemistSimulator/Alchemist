@@ -208,9 +208,11 @@ class TimeDistributionSamplingTest {
     }
 
     private class FixedDistribution(private val delay: Time) : TimeDistribution<Any> {
-        override fun sample(): Time = delay
+        override val meanDelay: Double = delay.toDouble()
 
         override fun newInstanceOn(node: Node<Any>): TimeDistribution<Any> = FixedDistribution(delay)
+
+        override fun sample(): Time = delay
     }
 
     private companion object {

@@ -16,11 +16,6 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.timedistributions.AbstractDistribution
-import it.unibo.alchemist.model.timedistributions.AnyRealDistribution
-import it.unibo.alchemist.model.timedistributions.DiracComb
-import it.unibo.alchemist.model.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.timedistributions.SimpleNetworkArrivals
-import it.unibo.alchemist.model.timedistributions.WeibullTime
 
 /**
  * Partial implementation of a [NodeReaction] whose scheduling is driven by observable model state.
@@ -34,14 +29,31 @@ abstract class AbstractNodeReaction<T>(
     NodeReaction<T>,
     TimeDistributedReaction<T> {
 
-    private var newlyInstantiatedAt: Time? = null
-
-    override val rate: Double get() = timeDistribution.defaultReactionRate
+    override val rate: Double get() = 1 / timeDistribution.meanDelay
 
     /**
      * @return a [String] representation of the rate
      */
     override val rateAsString: String get() = rate.toString()
+
+    /** Whether this reaction is awaiting initialization as a newly instantiated program. */
+    protected val isNewlyInstantiatedProgram: Boolean get() = newlyInstantiatedAt != null
+
+    private var newlyInstantiatedAt: Time? = null
+
+    /** Refreshes reaction state after firing, then applies firing scheduling policy. */
+    final override fun updateSchedulingAfterFiring(currentTime: Time) {
+        val environment = checkNotNull(initializedEnvironment) {
+            "Reaction $this was advanced before initialization"
+        }
+        lastKnownTime = currentTime
+        refreshReactionState(currentTime, environment)
+        if (canExecute.current) {
+            scheduleNextOccurrenceAfterFiring(currentTime)
+        } else {
+            suspendScheduling()
+        }
+    }
 
     override fun afterInitializationComplete(atTime: Time, environment: Environment<T, *>) {
         newlyInstantiatedAt?.let { cloneTime ->
@@ -52,8 +64,10 @@ abstract class AbstractNodeReaction<T>(
         }
     }
 
-    /** Whether this reaction is awaiting initialization as a newly instantiated program. */
-    protected val isNewlyInstantiatedProgram: Boolean get() = newlyInstantiatedAt != null
+    /** Starts a newly instantiated program without interpreting the initialization as a previous occurrence. */
+    protected open fun initializeNewProgramScheduling(currentTime: Time) {
+        scheduleNextOccurrenceAfterFiring(currentTime)
+    }
 
     /**
      * Creates a clone and populates it with cloned actions and conditions.
@@ -79,20 +93,6 @@ abstract class AbstractNodeReaction<T>(
         clone.newlyInstantiatedAt = currentTime
     }
 
-    /** Refreshes reaction state after firing, then applies firing scheduling policy. */
-    final override fun updateSchedulingAfterFiring(currentTime: Time) {
-        val environment = checkNotNull(initializedEnvironment) {
-            "Reaction $this was advanced before initialization"
-        }
-        lastKnownTime = currentTime
-        refreshReactionState(currentTime, environment)
-        if (canExecute.current) {
-            scheduleNextOccurrenceAfterFiring(currentTime)
-        } else {
-            suspendScheduling()
-        }
-    }
-
     /** Applies scheduling policy after a reactive invalidation without firing the reaction. */
     override fun scheduleAfterInvalidation(currentTime: Time) {
         val schedulingTime = maxOf(currentTime, timeDistribution.startTime)
@@ -111,26 +111,11 @@ abstract class AbstractNodeReaction<T>(
         setNextOccurrence(schedulingTime.plus(validatedSample()))
     }
 
-    /** Starts a newly instantiated program without interpreting the initialization as a previous occurrence. */
-    protected open fun initializeNewProgramScheduling(currentTime: Time) {
-        scheduleNextOccurrenceAfterFiring(currentTime)
-    }
-
     protected fun validatedSample(): Time = timeDistribution.sample().also { sample ->
         check(sample.isFinite && sample >= Time.ZERO) {
             "$timeDistribution generated an invalid delay: $sample"
         }
     }
-
-    private val TimeDistribution<T>.defaultReactionRate: Double
-        get() = when (this) {
-            is DiracComb<*> -> frequency
-            is ExponentialTime<*> -> lambda
-            is AnyRealDistribution<*> -> mean
-            is WeibullTime<*> -> mean
-            is SimpleNetworkArrivals<*> -> expectedRate
-            else -> Double.NaN
-        }
 
     private companion object {
         val TimeDistribution<*>.startTime: Time

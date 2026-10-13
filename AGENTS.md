@@ -13,6 +13,22 @@ Use narrower Gradle tasks only to iterate faster while working. Do not stop at `
 
 Preserve the existing multi-module structure. Keep changes small, local, and consistent with the style already used in the touched module. Avoid mixing unrelated refactors into a focused fix.
 
+Order the members of classes, interfaces, and objects as follows, in Java and Kotlin alike.
+The order extends the Checkstyle `DeclarationOrder` and `InnerTypeLast` checks, and keeps Kotlin companion objects last as in the Kotlin coding conventions.
+Within every group, sort members by visibility (public, then protected and Kotlin `internal`, then Java package-private, then private), and members sharing a visibility alphabetically by name, keeping overloads adjacent.
+1. Java static fields.
+2. Java static initializers.
+3. Fields and Kotlin properties.
+4. Initializer blocks and Kotlin `init` blocks.
+5. Constructors (in Kotlin, secondary constructors).
+6. Methods and Kotlin functions, including overrides and member extensions.
+7. Java static methods.
+8. Nested types, including Kotlin nested objects other than the companion.
+9. The Kotlin companion object, whose members follow these same rules.
+
+Initialization order overrides alphabetical order: fields, properties, and initializer blocks run in declaration order, so a member that reads another one during initialization must stay after it.
+Reorder members only in the classes a change already touches, in a separate `style` commit unless asked otherwise.
+
 Do not suppress warnings unless there is no real fix. Every suppression must be narrowly scoped and explained with a short justification next to the suppression site.
 
 Treat generated files, caches, and build outputs as non-source artifacts. Do not commit them unless the task explicitly requires it.

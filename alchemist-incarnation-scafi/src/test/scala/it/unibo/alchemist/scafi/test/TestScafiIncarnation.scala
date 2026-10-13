@@ -8,9 +8,11 @@
 
 package it.unibo.alchemist.scafi.test
 
+import it.unibo.alchemist.model.{NodeReaction, TimeDistribution}
 import it.unibo.alchemist.model.incarnations.ScafiIncarnation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.GenericReaction
 import org.apache.commons.math3.random.MersenneTwister
 import org.scalatest.funsuite.AnyFunSuite
@@ -25,13 +27,13 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers:
   test("build"):
     val rng = new MersenneTwister(0)
     val env = new Continuous2DEnvironment[Any](INC)
-    val node = INC.createNode(rng, env, null)
+    val node: GenericNode[Any] = INC.createNode(rng, env, null)
     assertNotNull(node)
 
-    val standard = INC.createTimeDistribution(rng, env, node, "3")
+    val standard: TimeDistribution[Any] = INC.createTimeDistribution(rng, env, node, "3")
     assertNotNull(standard)
 
-    val generic = INC.createReaction(rng, env, node, standard, null)
+    val generic: NodeReaction[Any] = INC.createReaction(rng, env, node, standard, null)
     assertNotNull(generic)
     assertTrue(generic.isInstanceOf[GenericReaction[?]])
     generic.asInstanceOf[GenericReaction[Any]].getMeanDelay shouldEqual 1d / 3

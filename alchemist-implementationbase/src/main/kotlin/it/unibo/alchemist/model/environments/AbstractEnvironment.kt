@@ -144,7 +144,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     override fun addNode(node: Node<T>, position: P): Boolean = when {
         nodeShouldBeAdded(node, position) -> {
             val actualPosition = computeActualInsertionPosition(node, position)
-            require(node !in nodeList.current) {
+            require(node !in this) {
                 "Node with id ${node.id} was already existing in this environment."
             }
             /*

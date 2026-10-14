@@ -128,9 +128,9 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
      */
     operator fun set(key: K, value: V) = put(key, value)
 
+    // Per-key subscriptions belong to the per-key observables, which release them independently.
     override fun stopWatching(registrant: Any) {
         observingCallbacks.remove(registrant)
-        keyCallbacks.keys.toList().forEach { key -> stopWatchingKey(key, registrant) }
     }
 
     private fun notifyKeyObservers(key: K, value: Option<V>) {

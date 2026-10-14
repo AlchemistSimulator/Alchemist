@@ -64,11 +64,12 @@ class ObservableMutableMapKeyObservablesTest {
     }
 
     @Test
-    fun `stopping a registrant on the map releases its key subscriptions`() {
+    fun `stopping a registrant on the map keeps its key subscriptions`() {
         val seen = mutableListOf<Option<Int>>()
+        map.onChange(this, invokeOnRegistration = false) { }
         map["initial"].onChange(this, invokeOnRegistration = false) { seen += it }
         map.stopWatching(this)
         map.put("initial", 2)
-        assertEquals(emptyList(), seen)
+        assertEquals(listOf(2.some()), seen)
     }
 }

@@ -242,7 +242,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun contains(node: Node<T>): Boolean = node.id in nodesToPositions.current
 
-    override fun getNodeByID(id: Int): Node<T> = nodes.current.first { n: Node<T> -> n.id == id }
+    override fun getNodeByID(id: Int): Node<T> = requireNotNull(neighborhoods.current[id]) {
+        "Node with id $id does not exist in the environment. Available: ${nodeList.current.map { it.id }.sorted()}"
+    }.center
 
     override fun getNodesWithinRange(node: Node<T>, range: Double): List<Node<T>> {
         val centerPosition = currentPositionOf(node)

@@ -20,16 +20,12 @@ import it.unibo.alchemist.model.timedistributions.DiracComb
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertSame
 
 class ObservableEnvironmentStateTest {
     private val environment =
         Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow())
             .apply { linkingRule = ConnectWithinDistance(1.0) }
-
-    private fun <T> Observable<T>.record(): List<T> = mutableListOf<T>().also { values -> subscribe { values += it } }
-
-    private fun nodeAt(x: Double, y: Double = 0.0): Node<Any> =
-        GenericNode(environment).also { environment.addNode(it, Euclidean2DPosition(x, y)) }
 
     @Test
     fun `a neighborhood follows nodes entering, leaving, and being removed`() {
@@ -66,6 +62,28 @@ class ObservableEnvironmentStateTest {
     }
 
     @Test
+    fun `looking up a node that is not in the environment fails`() {
+        val removed = nodeAt(0.0)
+        environment.removeNode(removed)
+        val neverAdded = GenericNode(environment)
+        listOf(removed, neverAdded).forEach { node ->
+            assertFailsWith<IllegalArgumentException> { environment.getNodeByID(node.id) }
+        }
+    }
+
+    @Test
+    fun `nodes are found by id whatever their insertion order`() {
+        val nodes = List(3) { GenericNode(environment) }
+        nodes.reversed().forEachIndexed { index, node ->
+            environment.addNode(node, Euclidean2DPosition(index * 0.5, 0.0))
+        }
+        nodes.forEach { node -> assertSame(node, environment.getNodeByID(node.id)) }
+        // Changing the linking rule recomputes every neighborhood.
+        environment.linkingRule = ConnectWithinDistance(0.1)
+        nodes.forEach { node -> assertSame(node, environment.getNodeByID(node.id)) }
+    }
+
+    @Test
     fun `the node list and count follow additions and removals`() {
         val nodes = environment.nodes.record()
         val counts = environment.nodeCount.record()
@@ -87,4 +105,9 @@ class ObservableEnvironmentStateTest {
         node.removeReaction(first)
         assertEquals(listOf(emptyList(), listOf(first), listOf(first, second), listOf(second)), reactions)
     }
+
+    private fun nodeAt(x: Double, y: Double = 0.0): Node<Any> =
+        GenericNode(environment).also { environment.addNode(it, Euclidean2DPosition(x, y)) }
+
+    private fun <T> Observable<T>.record(): List<T> = mutableListOf<T>().also { values -> subscribe { values += it } }
 }

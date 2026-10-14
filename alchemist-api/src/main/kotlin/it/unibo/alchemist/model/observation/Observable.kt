@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.model.observation
 
-import arrow.core.Option
-
 /**
  * Represents an observable object that emits updates to registered observers when its value changes.
  * Subscription changes take effect on later emissions.
@@ -146,15 +144,21 @@ interface Observable<T> : Disposable {
     }
 
     /**
-     * Set of handy extension methods for Observables.
+     * Utilities for implementations of [Observable].
      */
-    companion object ObservableExtensions {
-
+    companion object {
         /**
-         * Retrieves the current value of the observable if present, or `null` if no value is available.
+         * Notifies [value] to the [observingCallbacks] of this observable, by registrant, while [isCurrent] holds.
+         * It is meant for implementations of [Observable] notifying their own observers.
          *
-         * @return The current value of the observable, or `null` if it is not set.
+         * Both registrants and callbacks are snapshotted, so that subscriptions may change during the notification.
+         * A callback may also publish a newer value, whose nested notification reaches every observer: the remaining
+         * observers must not receive the outdated [value] afterwards, so the notification stops as soon as
+         * [isCurrent] no longer holds. It is checked right before each callback, after the previous one ran.
          */
-        fun <T> Observable<Option<T>>.currentOrNull(): T? = current.getOrNull()
+        fun <T> Observable<T>.notifyCurrentObservers(value: T, isCurrent: () -> Boolean = { true }) {
+            // The sequence is lazy, so that isCurrent is evaluated after each callback rather than all upfront.
+            observingCallbacks.values.flatten().asSequence().takeWhile { isCurrent() }.forEach { it(value) }
+        }
     }
 }

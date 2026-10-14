@@ -181,6 +181,13 @@ object Observables {
     }
 
     /**
+     * Retrieves the current value of the observable if present, or `null` if no value is available.
+     *
+     * @return The current value of the observable, or `null` if it is not set.
+     */
+    fun <T> Observable<Option<T>>.currentOrNull(): T? = current.getOrNull()
+
+    /**
      * Maps every element of the current collection to an observable through `transformer`, and merges their
      * emissions, in the sense of the `flatMap` operator of the
      * [ReactiveX convention](https://reactivex.io/documentation/operators/flatmap.html): the result emits the value

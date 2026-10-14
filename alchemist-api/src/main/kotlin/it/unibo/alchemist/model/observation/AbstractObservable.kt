@@ -13,6 +13,7 @@ import arrow.core.Option
 import arrow.core.getOrElse
 import arrow.core.none
 import arrow.core.some
+import it.unibo.alchemist.model.observation.Observable.Companion.notifyCurrentObservers
 import java.util.Collections
 
 /**
@@ -25,18 +26,32 @@ import java.util.Collections
  * @param T The type of data being observed.
  */
 abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true) : Observable<T> {
-    protected var cached: Option<T> = none()
-    private val callbacks = LinkedHashMap<Any, List<(T) -> Unit>>()
+    final override val current: T
+        get() = if (isListening) cached.getOrElse { computeFresh() } else computeFresh()
 
-    override val observingCallbacks: Map<Any, List<(T) -> Unit>>
+    final override val observers: List<Any>
+        get() = callbacks.keys.toList()
+
+    final override val observingCallbacks: Map<Any, List<(T) -> Unit>>
         get() = Collections.unmodifiableMap(callbacks)
 
-    override val observers: List<Any>
-        get() = callbacks.keys.toList()
+    protected var cached: Option<T> = none()
+
+    private val callbacks = LinkedHashMap<Any, List<(T) -> Unit>>()
+
+    // Counts the emissions, so that a notification can tell whether a callback emitted again.
+    private var emissions = 0L
+
     private var isListening = false
 
-    override val current: T
-        get() = if (isListening) cached.getOrElse { computeFresh() } else computeFresh()
+    override fun dispose() {
+        if (isListening) {
+            stopMonitoring()
+        }
+        callbacks.clear()
+        isListening = false
+        cached = none()
+    }
 
     override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
         val wasEmpty = callbacks.isEmpty()
@@ -66,14 +81,14 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
         }
     }
 
-    override fun dispose() {
-        if (isListening) {
-            stopMonitoring()
-        }
-        callbacks.clear()
-        isListening = false
-        cached = none()
-    }
+    /**
+     * Computes and returns a fresh value of type [T]. This method is expected to be implemented
+     * in derived classes to provide a new value that represents the updated state or computation
+     * result of the observable entity.
+     *
+     * @return a fresh, computed value of type [T]
+     */
+    protected abstract fun computeFresh(): T
 
     /**
      * Initiates monitoring for changes or updates in the implementing class.
@@ -101,15 +116,6 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
      */
     protected abstract fun stopMonitoring()
 
-    /**
-     * Computes and returns a fresh value of type [T]. This method is expected to be implemented
-     * in derived classes to provide a new value that represents the updated state or computation
-     * result of the observable entity.
-     *
-     * @return a fresh, computed value of type [T]
-     */
-    protected abstract fun computeFresh(): T
-
     protected fun updateAndNotify(newValue: T) {
         val hasChanged = cached.fold(
             ifEmpty = { true },
@@ -117,7 +123,9 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
         )
         if (!emitOnDistinct || hasChanged) {
             cached = newValue.some()
-            callbacks.values.flatten().forEach { it(newValue) }
+            val emission = ++emissions
+            // A callback emitting again makes this emission outdated for the remaining callbacks.
+            notifyCurrentObservers(newValue) { emissions == emission }
         }
     }
 }

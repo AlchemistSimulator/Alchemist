@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.observables.util
 
 import arrow.core.Option
 import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observation.Observable.Companion.notifyCurrentObservers
 
 /** Factory and utilities for mutable observables. */
 object MutableObservables {
@@ -25,17 +26,21 @@ object MutableObservables {
     @JvmOverloads
     @JvmStatic
     fun <T> observe(initial: T, emitOnDistinct: Boolean = true): MutableObservable<T> = object : MutableObservable<T> {
+        override val observers: List<Any> get() = observingCallbacks.keys.toList()
+
         override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
 
         override var current: T = initial
             set(value) {
                 if (!emitOnDistinct || value != field) {
                     field = value
-                    observingCallbacks.notifyCurrentObservers(value)
+                    val emission = ++emissions
+                    notifyCurrentObservers(value) { emissions == emission }
                 }
             }
 
-        override val observers: List<Any> get() = observingCallbacks.keys.toList()
+        // Counts the emissions, so that a notification can tell whether a callback emitted again.
+        private var emissions = 0L
 
         override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
             observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback

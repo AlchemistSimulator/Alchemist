@@ -17,9 +17,9 @@ import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.ObservableMutableMap.ObservableMapExtensions.upsertValue
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.Observables.currentOrNull
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
 
 /**
  * A node's capability to behave as a cell.

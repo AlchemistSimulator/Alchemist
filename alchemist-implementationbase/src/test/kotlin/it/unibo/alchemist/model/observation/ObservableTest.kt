@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observables.util.ObservableSets.flatMap
 import it.unibo.alchemist.model.observables.util.ObservableSets.flattenMerge
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
-import it.unibo.alchemist.model.observation.Observable.ObservableExtensions.currentOrNull
+import it.unibo.alchemist.model.observables.util.Observables.currentOrNull
 
 class ObservableTest : FunSpec({
     context("base `Observable` tests") {
@@ -154,7 +154,8 @@ class ObservableTest : FunSpec({
             }
             observable.subscribe(invokeOnSubscription = false) { emissions += "second:$it" }
             observable.current = 1
-            emissions shouldContainExactly listOf("first:1", "second:2", "late:2", "second:1")
+            // The outdated value is not delivered after the newer one.
+            emissions shouldContainExactly listOf("first:1", "second:2", "late:2")
         }
         test("an observable may emit an event when assigned an equal value") {
             val observable = observe(initial = 0, emitOnDistinct = false)

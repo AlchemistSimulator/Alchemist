@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.observables
 
-import it.unibo.alchemist.model.observables.util.notifyCurrentObservers
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.Observable.Companion.notifyCurrentObservers
 
 /**
  * An implementation of [Observable] that emits updates to its observers when triggered manually
@@ -34,7 +34,7 @@ class EventObservable : Observable<Unit> {
      * all of its observers.
      */
     fun emit() {
-        observingCallbacks.notifyCurrentObservers(Unit)
+        notifyCurrentObservers(Unit)
     }
 
     override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Unit) -> Unit) {

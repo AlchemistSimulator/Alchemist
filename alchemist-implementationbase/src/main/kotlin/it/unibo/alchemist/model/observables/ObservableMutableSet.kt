@@ -20,16 +20,16 @@ import it.unibo.alchemist.model.observation.ObservableSet
  * @param T The type of elements maintained by this set.
  */
 class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSet<T> {
-
-    private val backing = ObservableMutableMap<T, Boolean>(initial.associateWith { true })
-
-    override val size: Observable<Int> = backing.map { it.keys.size }
-
     override val current: Set<T> get() = backing.current.keys
 
     override val observers: List<Any> get() = observingCallbacks.keys.toList()
 
     override val observingCallbacks: MutableMap<Any, List<(Set<T>) -> Unit>> = mutableMapOf()
+
+    // Out of order: size is initialized from it.
+    private val backing = ObservableMutableMap<T, Boolean>(initial.associateWith { true })
+
+    override val size: Observable<Int> = backing.map { it.keys.size }
 
     /**
      * Adds an item to the observable set.
@@ -43,6 +43,28 @@ class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSe
     }
 
     /**
+     * Replaces the contents of this set with [items].
+     * The observers of the set are notified once, if the contents change, and the observers of an item only if the
+     * presence of that item changes.
+     *
+     * @param items the new contents of this set
+     */
+    fun clearAndAddAll(items: Set<T>) = backing.clearAndPutAll(items.associateWith { true })
+
+    override fun containsItem(item: T): Observable<Boolean> = backing[item].map { opt -> opt.isSome() }
+
+    override fun dispose() {
+        backing.dispose()
+        size.dispose()
+        observingCallbacks.clear()
+    }
+
+    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<T>) -> Unit) {
+        observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
+        backing.onChange(this to registrant, invokeOnRegistration) { callback(it.keys) }
+    }
+
+    /**
      * Removes the specified item from the observable set.
      * If the item exists in the set, it will be removed, and observers of the set
      * will be notified of the change.
@@ -52,46 +74,23 @@ class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSe
      */
     fun remove(item: T): Boolean = backing.remove(item) != null
 
-    /**
-     * Clears the current set and inserts the given [items]. This is the equivalent
-     * of calling [remove] for each `this - [items]` element, and [add] for each
-     * `[items] - this` notifying every subscriber.
-     *
-     * > WARNING: calling so many times add and remove for basically every new element
-     * added in this collection will trigger `|N ∪ M|` times the callbacks associated with
-     * this set resulting in a non-negligible time spent updating observers. Please be
-     * careful when using this method.
-     *
-     * @param items
-     */
-    fun clearAndAddAll(items: Set<T>) {
-        val (toRemove, toAdd) = with(current) { (this - items) to (items - this) }
-        toRemove.forEach(::remove)
-        toAdd.forEach(::add)
-    }
-
-    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<T>) -> Unit) {
-        observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        backing.onChange(this to registrant, invokeOnRegistration) { callback(it.keys) }
-    }
-
     override fun stopWatching(registrant: Any) {
         backing.stopWatching(this to registrant)
         observingCallbacks.remove(registrant)
     }
 
-    override fun dispose() {
-        backing.dispose()
-        size.dispose()
-        observingCallbacks.clear()
-    }
-
-    override fun containsItem(item: T): Observable<Boolean> = backing[item].map { opt -> opt.isSome() }
-
     /**
      * A companion object for the `ObservableMutableSet` class, providing handy factories.
      */
     companion object {
+        /**
+         * Creates a new [ObservableMutableSet] and populates it with the specified items.
+         *
+         * @param items The items to be added to the newly created `ObservableMutableSet`.
+         * The items are provided as a variable number of arguments.
+         * @return A new [ObservableMutableSet] containing the specified items.
+         */
+        operator fun <T> invoke(vararg items: T): ObservableMutableSet<T> = ObservableMutableSet<T>(items.toList())
 
         /**
          * Converts the current list into an observable mutable set.
@@ -108,14 +107,5 @@ class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSe
          * @return An instance of `ObservableMutableSet` containing all the elements from the original set.
          */
         fun <T> Set<T>.toObservableSet(): ObservableMutableSet<T> = ObservableMutableSet<T>(this)
-
-        /**
-         * Creates a new [ObservableMutableSet] and populates it with the specified items.
-         *
-         * @param items The items to be added to the newly created `ObservableMutableSet`.
-         * The items are provided as a variable number of arguments.
-         * @return A new [ObservableMutableSet] containing the specified items.
-         */
-        operator fun <T> invoke(vararg items: T): ObservableMutableSet<T> = ObservableMutableSet<T>(items.toList())
     }
 }

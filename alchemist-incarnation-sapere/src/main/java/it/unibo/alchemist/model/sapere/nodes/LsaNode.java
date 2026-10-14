@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.sapere.nodes;
 
 import arrow.core.Option;
+import arrow.core.Some;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
@@ -28,7 +29,6 @@ import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -119,7 +119,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                     res.add(instance);
                 }
             }
-            return Option.fromNullable(res);
+            return new Some<>(res);
         });
     }
 
@@ -200,12 +200,6 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Nonnull
     public String toString() {
         return getId() + " contains: " + allInstances.getCurrent();
-    }
-
-    @Override
-    @Nullable
-    protected List<ILsaMolecule> createT() { // NOPMD: this must return null, not an empty collection.
-        return null; // NOPMD: this must return null, not an empty collection.
     }
 
     private void bucketChanged(final ILsaMolecule instance, final String name, final List<ILsaMolecule> bucket) {

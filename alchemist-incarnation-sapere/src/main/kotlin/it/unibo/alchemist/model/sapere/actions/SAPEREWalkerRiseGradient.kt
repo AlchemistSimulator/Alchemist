@@ -98,9 +98,8 @@ open class SAPEREWalkerRiseGradient(
         }
 
         companion object {
-            fun Node<List<ILsaMolecule>>.asILsaNode(): ILsaNode {
-                return this as? ILsaNode ?: throw IllegalArgumentException("Node is not a valid SAPERE node")
-            }
+            fun Node<List<ILsaMolecule>>.asILsaNode(): ILsaNode =
+                this as? ILsaNode ?: throw IllegalArgumentException("Node is not a valid SAPERE node")
         }
     }
 }

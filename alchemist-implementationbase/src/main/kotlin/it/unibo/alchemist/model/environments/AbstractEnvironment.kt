@@ -32,6 +32,7 @@ import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableSet
 import java.util.Objects
+import java.util.TreeMap
 import java.util.function.Consumer
 import org.danilopianini.util.SpatialIndex
 
@@ -102,10 +103,11 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         private set
 
     /*
-     * The range queries that currently have subscribers. Each one is updated incrementally on every node addition,
-     * movement, and removal; unobserved queries are not tracked and compute their members on demand.
+     * The range queries that currently have subscribers. Each one is updated incrementally on the node additions,
+     * movements, and removals that may affect it; unobserved queries are not tracked and compute their members on
+     * demand.
      */
-    private val activeRangeQueries = LinkedHashSet<RangeQuery>()
+    private val activeRangeQueries = ActiveRangeQueries()
 
     private val environmentReactions = ObservableMutableList<Reaction<T>>()
 
@@ -159,7 +161,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             nodeList.add(node)
             refreshNeighborhoodsAround(node)
             // Observers of the ranges the node entered find it indexed, positioned, listed, and linked.
-            updateRangeQueries(node, actualPosition)
+            updateRangeQueries(node, null, actualPosition)
             ifAttachedToSimulation { simulation -> node.reactions.current.forEach(simulation::reactionAdded) }
             nodeAdded(node, actualPosition, currentNeighborhoodOf(node))
             true
@@ -260,7 +262,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 neighborhoods.put(remainingNode.id, updatedNeighborhood)
             }
         }
-        updateRangeQueries(node, null)
+        updateRangeQueries(node, position, null)
         /*
          * The position goes last. Observers reach a node's position through the node list, a neighborhood, or a range
          * query: once the node has left all of them, they no longer observe its position, which can then go away
@@ -401,11 +403,13 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
          * The position map is updated before the range queries, so that queries centered on the moved node see its
          * new position.
          */
-        require(pos == null || spatialIndex.move(n, pos.coordinates, p.coordinates)) {
-            "Tried to move a node not previously present in the environment:\nNode: $n\nRequested position: $p"
+        if (pos != p) {
+            require(pos == null || spatialIndex.move(n, pos.coordinates, p.coordinates)) {
+                "Tried to move a node not previously present in the environment:\nNode: $n\nRequested position: $p"
+            }
+            nodesToPositions[n.id] = p
+            updateRangeQueries(n, pos, p)
         }
-        nodesToPositions[n.id] = p
-        updateRangeQueries(n, p)
     }
 
     private fun affectedNeighbors(
@@ -469,8 +473,65 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     /*
      * Iterates over a snapshot: updating a query may deactivate it, which removes it from activeRangeQueries.
      */
-    private fun updateRangeQueries(node: Node<T>, newPosition: P?) {
-        activeRangeQueries.toList().forEach { it.update(node, newPosition) }
+    private fun updateRangeQueries(node: Node<T>, oldPosition: P?, newPosition: P?) {
+        activeRangeQueries.affectedBy(node, oldPosition, newPosition).forEach { it.update(node, newPosition) }
+    }
+
+    /**
+     * The active range queries, indexed so that a node addition, movement, or removal reaches only the queries it may
+     * affect: those centered on the node, those centered on a fixed position, and those whose center is within their
+     * radius of the old or the new position of the node, found through the spatial index.
+     */
+    private inner class ActiveRangeQueries {
+        private val byCenter = LinkedHashMap<Int, MutableSet<RangeQuery>>()
+
+        private val fixed = LinkedHashSet<RangeQuery>()
+
+        // How many node-centered queries use each radius, so that the largest one is always known.
+        private val radii = TreeMap<Double, Int>()
+
+        /**
+         * The queries that a change of [node] from [oldPosition] to [newPosition] may affect, as a snapshot.
+         * A null [oldPosition] stands for an addition, a null [newPosition] for a removal.
+         */
+        fun affectedBy(node: Node<T>, oldPosition: P?, newPosition: P?): List<RangeQuery> {
+            val affected = LinkedHashSet<RangeQuery>()
+            byCenter[node.id]?.let(affected::addAll)
+            affected += fixed
+            radii.lastEntry()?.key?.let { largestRadius ->
+                listOfNotNull(oldPosition, newPosition).forEach { position ->
+                    queryNodesInRange(position, largestRadius).forEach { center ->
+                        byCenter[center.id]?.let(affected::addAll)
+                    }
+                }
+            }
+            return affected.toList()
+        }
+
+        operator fun minusAssign(query: RangeQuery) {
+            val center = query.centerNode
+            if (center == null) {
+                fixed -= query
+            } else {
+                byCenter[center.id]?.let { queries ->
+                    if (queries.remove(query)) {
+                        if (queries.isEmpty()) {
+                            byCenter -= center.id
+                        }
+                        radii.computeIfPresent(query.radius) { _, count -> (count - 1).takeIf { it > 0 } }
+                    }
+                }
+            }
+        }
+
+        operator fun plusAssign(query: RangeQuery) {
+            val center = query.centerNode
+            if (center == null) {
+                fixed += query
+            } else if (byCenter.getOrPut(center.id) { LinkedHashSet() }.add(query)) {
+                radii.merge(query.radius, 1, Int::plus)
+            }
+        }
     }
 
     /**
@@ -484,8 +545,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * is computed on demand. Once its center node leaves the environment, the query is empty and never updates again.
      */
     private inner class RangeQuery(
-        private val centerNode: Node<T>?,
-        private val radius: Double,
+        val centerNode: Node<T>?,
+        val radius: Double,
         private val centerPosition: () -> P = { currentPositionOf(checkNotNull(centerNode)) },
     ) : ObservableSet<Node<T>> {
         override val current: Set<Node<T>>

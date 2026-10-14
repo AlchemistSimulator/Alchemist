@@ -45,16 +45,32 @@ open class GenericNode<T> @JvmOverloads constructor(
     molecules: MutableMap<Molecule, T> = LinkedHashMap(),
     properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
-    final override val properties: List<NodeProperty<T>>
-        field: MutableList<NodeProperty<T>> = properties
+    override val contents: Map<Molecule, T> get() = observableContents.current
+
+    override val moleculeCount: Int get() = observeMoleculeCount.current
 
     override val observableContents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
 
+    override val observeMoleculeCount: Observable<Int> = observableContents.map { it.size }
+
+    final override val properties: List<NodeProperty<T>>
+        field: MutableList<NodeProperty<T>> = properties
+
+    // Out of order: reactions is initialized from it.
     private val observableReactions = ObservableMutableList<Reaction<T>>()
 
     final override val reactions: ObservableList<Reaction<T>> = observableReactions
 
-    override val observeMoleculeCount: Observable<Int> = observableContents.map { it.size }
+    final override fun addProperty(nodeProperty: NodeProperty<T>) {
+        check(this !in environment) {
+            "Properties are part of the node setup: $nodeProperty cannot be added to node $id, already in $environment"
+        }
+        check(properties.none { it::class == nodeProperty::class }) {
+            "Node with id ${this.id} already contains a property of type ${nodeProperty::class}, " +
+                "this may lead to an inconsistent state"
+        }
+        properties.add(nodeProperty)
+    }
 
     final override fun addReaction(reaction: Reaction<T>) {
         require(reaction.host === this) { "$reaction is hosted by ${reaction.host}, not by $this" }
@@ -76,14 +92,12 @@ open class GenericNode<T> @JvmOverloads constructor(
 
     override fun contains(molecule: Molecule): Boolean = observeContains(molecule).current
 
-    override fun observeContains(molecule: Molecule): Observable<Boolean> = observableContents.map {
-        it.contains(molecule)
+    override fun dispose() {
+        observableReactions.current.forEach(Disposable::dispose)
+        observableReactions.clear()
+        observableContents.dispose()
+        observeMoleculeCount.dispose()
     }
-
-    /**
-     * @return an empty concentration
-     */
-    protected open fun createT(): T = environment.incarnation.createConcentration()
 
     final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
 
@@ -91,18 +105,20 @@ open class GenericNode<T> @JvmOverloads constructor(
         createT()
     }
 
-    override fun observeConcentration(molecule: Molecule): Observable<Option<T>> = observableContents[molecule]
-
-    override val contents: Map<Molecule, T> get() = observableContents.current
-
-    override val moleculeCount: Int get() = observeMoleculeCount.current
-
     final override fun hashCode(): Int = id // TODO: better hashing
 
+    override fun observeConcentration(molecule: Molecule): Observable<Option<T>> = observableContents[molecule]
+
+    override fun observeContains(molecule: Molecule): Observable<Boolean> = observableContents.map {
+        it.contains(molecule)
+    }
+
     override fun removeConcentration(moleculeToRemove: Molecule) {
-        if (observableContents.remove(moleculeToRemove) == null) {
+        // The concentration may be null: the presence of the molecule is checked on the keys.
+        if (moleculeToRemove !in observableContents.current) {
             throw NoSuchElementException("$moleculeToRemove was not present in node $id")
         }
+        observableContents.remove(moleculeToRemove)
     }
 
     final override fun removeReaction(reaction: Reaction<T>) {
@@ -116,25 +132,12 @@ open class GenericNode<T> @JvmOverloads constructor(
         observableContents[molecule] = concentration
     }
 
-    final override fun addProperty(nodeProperty: NodeProperty<T>) {
-        check(this !in environment) {
-            "Properties are part of the node setup: $nodeProperty cannot be added to node $id, already in $environment"
-        }
-        check(properties.none { it::class == nodeProperty::class }) {
-            "Node with id ${this.id} already contains a property of type ${nodeProperty::class}, " +
-                "this may lead to an inconsistent state"
-        }
-        properties.add(nodeProperty)
-    }
-
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
 
-    override fun dispose() {
-        observableReactions.current.forEach(Disposable::dispose)
-        observableReactions.clear()
-        observableContents.dispose()
-        observeMoleculeCount.dispose()
-    }
+    /**
+     * @return an empty concentration
+     */
+    protected open fun createT(): T = environment.incarnation.createConcentration()
 
     private fun ifRegisteredInEnvironment(action: (it.unibo.alchemist.core.Simulation<T, *>) -> Unit) {
         if (this in environment) {

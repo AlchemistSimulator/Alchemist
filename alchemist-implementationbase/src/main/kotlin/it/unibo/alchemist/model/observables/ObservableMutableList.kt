@@ -117,6 +117,23 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
     }
 
     /**
+     * Removes all the elements satisfying [predicate] from the observable list.
+     * If the list changes, observers will be notified once.
+     *
+     * @param predicate the condition selecting the elements to remove
+     * @return `true` if any element was removed
+     */
+    fun removeAll(predicate: (T) -> Boolean): Boolean {
+        val newBacking = backing.removeAll(predicate)
+        val result = newBacking !== backing
+        if (result) {
+            backing = newBacking
+            notifyObservers()
+        }
+        return result
+    }
+
+    /**
      * Removes the element at the specified position in this list.
      *
      * @param index the index of the element to be removed

@@ -12,6 +12,8 @@ package it.unibo.alchemist.model.nodes
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.some
+import io.mockk.mockk
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.molecules.SimpleMolecule
@@ -19,15 +21,22 @@ import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ObservableNodeStateTest {
     private val environment =
         Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow())
-    private val node = GenericNode(environment)
     private val molecule = SimpleMolecule("m")
+    private val node = GenericNode(environment)
     private val other = SimpleMolecule("other")
 
-    private fun <T> Observable<T>.record(): List<T> = mutableListOf<T>().also { values -> subscribe { values += it } }
+    @Test
+    fun `a molecule stored with a null concentration can be removed`() {
+        val nullableNode = GenericNode(mockk<Environment<Any?, *>>(relaxed = true))
+        nullableNode.setConcentration(molecule, null)
+        nullableNode.removeConcentration(molecule)
+        assertTrue(nullableNode.contents.isEmpty())
+    }
 
     @Test
     fun `concentrations follow setting, changing, and removing a molecule`() {
@@ -57,4 +66,6 @@ class ObservableNodeStateTest {
         node.removeConcentration(other)
         assertEquals(listOf(0, 1, 2, 1), counts)
     }
+
+    private fun <T> Observable<T>.record(): List<T> = mutableListOf<T>().also { values -> subscribe { values += it } }
 }

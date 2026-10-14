@@ -11,12 +11,28 @@ package it.unibo.alchemist.model.sapere.nodes
 
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
+import it.unibo.alchemist.model.sapere.ILsaMolecule
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class LsaNodeRemovalTest {
     private val node = LsaNode(Continuous2DEnvironment(SAPEREIncarnation()))
+
+    @Test
+    fun `removing a molecule removes all of its copies at once`() {
+        val removed = LsaMolecule("grad, 1")
+        val kept = LsaMolecule("grad, 2")
+        listOf(removed, kept, LsaMolecule("grad, 1")).forEach(node::addLsa)
+        val spaces = mutableListOf<List<ILsaMolecule>>()
+        node.observeLsaSpace().subscribe(invokeOnSubscription = false) { spaces += it }
+        node.removeConcentration(LsaMolecule("grad, 1"))
+        assertEquals(listOf<List<ILsaMolecule>>(listOf(kept)), spaces)
+        assertEquals(1, node.moleculeCount)
+        assertEquals(setOf(kept), node.contents.keys)
+        assertFailsWith<NoSuchElementException> { node.removeConcentration(removed) }
+    }
 
     @Test
     fun `removing through a matching template removes the matched instance from the LSA space`() {

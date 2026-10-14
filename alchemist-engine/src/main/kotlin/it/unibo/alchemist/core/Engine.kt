@@ -33,7 +33,6 @@ open class Engine<T, P : Position<out P>>(
     protected val scheduler: Scheduler<T>,
 ) : AbstractEngine<T, P>(environment) {
 
-    private val schedulingSubscriptions = mutableMapOf<Reaction<T>, Disposable>()
     private val dirtyReactions = mutableSetOf<Reaction<T>>()
 
     /*
@@ -43,6 +42,8 @@ open class Engine<T, P : Position<out P>>(
      */
     private val pendingAdditions = mutableSetOf<Reaction<T>>()
 
+    private val schedulingSubscriptions = mutableMapOf<Reaction<T>, Disposable>()
+
     /*
      * A model mutation may synchronously trigger multiple, possibly nested observable cascades.
      * We do not want to reschedule/resample from intermediate model states, thus,
@@ -51,13 +52,57 @@ open class Engine<T, P : Position<out P>>(
      */
     private var modelMutationDepth = 0
 
+    // The reaction being refreshed: refreshes change nothing but their own next occurrence, so they invalidate nothing.
+    private var refreshing: Reaction<T>? = null
+
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
-    override fun initialize() {
-        // Initialization registers every hosted reaction, superseding the additions queued before the run started.
+    override fun reactionAdded(reactionToAdd: Reaction<T>) {
+        if (status != Status.TERMINATED) {
+            pendingAdditions.add(reactionToAdd)
+            scheduleUnlessTerminated {
+                if (pendingAdditions.remove(reactionToAdd)) {
+                    scheduleReaction(reactionToAdd)
+                }
+            }
+        }
+    }
+
+    override fun reactionInvalidated(reactionToUpdate: Reaction<T>) {
+        checkCaller()
+        check(refreshing == null) {
+            "Refreshing $refreshing invalidated $reactionToUpdate, but refreshes must change nothing but their own " +
+                "next occurrence"
+        }
+        check(schedulingSubscriptions.containsKey(reactionToUpdate)) {
+            "Reaction $reactionToUpdate was invalidated without being scheduled"
+        }
+        if (modelMutationDepth == 0) {
+            modelMutation { dirtyReactions.add(reactionToUpdate) }
+        } else {
+            dirtyReactions.add(reactionToUpdate)
+        }
+    }
+
+    override fun reactionRemoved(reactionToRemove: Reaction<T>) {
+        if (status != Status.TERMINATED) {
+            if (modelMutationDepth > 0) {
+                dirtyReactions.remove(reactionToRemove)
+            }
+            if (!pendingAdditions.remove(reactionToRemove)) {
+                scheduleUnlessTerminated { removeReactionIfScheduled(reactionToRemove) }
+            }
+        }
+    }
+
+    override fun afterRun() {
+        schedulingSubscriptions.values.forEach { handle ->
+            runCatching(handle::dispose).exceptionOrNull()?.let(::recordError)
+        }
+        schedulingSubscriptions.clear()
+        dirtyReactions.clear()
         pendingAdditions.clear()
-        environment.reactions.current.forEach(::scheduleReaction)
-        environment.nodes.current.forEach { it.reactions.current.forEach(::scheduleReaction) }
+        // Reactions belong to the environment; afterRun only releases engine-owned subscriptions.
     }
 
     override fun doStep() {
@@ -92,52 +137,52 @@ open class Engine<T, P : Position<out P>>(
         currentStep = step + 1
     }
 
-    override fun reactionAdded(reactionToAdd: Reaction<T>) {
-        if (status != Status.TERMINATED) {
-            pendingAdditions.add(reactionToAdd)
-            scheduleUnlessTerminated {
-                if (pendingAdditions.remove(reactionToAdd)) {
-                    scheduleReaction(reactionToAdd)
-                }
-            }
-        }
-    }
-
-    override fun reactionRemoved(reactionToRemove: Reaction<T>) {
-        if (status != Status.TERMINATED) {
-            if (modelMutationDepth > 0) {
-                dirtyReactions.remove(reactionToRemove)
-            }
-            if (!pendingAdditions.remove(reactionToRemove)) {
-                scheduleUnlessTerminated { removeReactionIfScheduled(reactionToRemove) }
-            }
-        }
-    }
-
-    override fun reactionInvalidated(reactionToUpdate: Reaction<T>) {
-        checkCaller()
-        check(schedulingSubscriptions.containsKey(reactionToUpdate)) {
-            "Reaction $reactionToUpdate was invalidated without being scheduled"
-        }
-        if (modelMutationDepth == 0) {
-            modelMutation { dirtyReactions.add(reactionToUpdate) }
-        } else {
-            dirtyReactions.add(reactionToUpdate)
-        }
+    override fun initialize() {
+        // Initialization registers every hosted reaction, superseding the additions queued before the run started.
+        pendingAdditions.clear()
+        environment.reactions.current.forEach(::scheduleReaction)
+        environment.nodes.current.forEach { it.reactions.current.forEach(::scheduleReaction) }
     }
 
     override fun processCommand(command: CheckedRunnable) = modelMutation {
         super.processCommand(command)
     }
 
-    /*
-     * Once the simulation is terminated, nothing is scheduled any more, but hosts may still change, for instance from
-     * OutputMonitor.finished or a GUI: their notifications are ignored rather than failing the host mutation.
-     * A command queued while the simulation terminates is never processed, as no step follows.
-     */
-    private fun scheduleUnlessTerminated(command: CheckedRunnable) {
-        if (status != Status.TERMINATED) {
-            commands.add(command)
+    private inline fun <R> modelMutation(mutation: () -> R): R {
+        modelMutationDepth++
+        val result = mutation()
+        modelMutationDepth--
+        if (modelMutationDepth == 0) {
+            refreshDirtyReactions()
+        }
+        return result
+    }
+
+    private fun refreshDirtyReactions() {
+        val pending = dirtyReactions.toList()
+        dirtyReactions.clear()
+        pending.forEach { reaction ->
+            if (schedulingSubscriptions.containsKey(reaction)) {
+                refreshing = reaction
+                reaction.updateSchedulingAfterInvalidation(time)
+                refreshing = null
+            }
+        }
+    }
+
+    private fun removeReaction(reaction: Reaction<T>) {
+        checkCaller()
+        dirtyReactions.remove(reaction)
+        checkNotNull(schedulingSubscriptions.remove(reaction)) {
+            "Reaction $reaction was removed without being scheduled"
+        }.dispose()
+        scheduler.removeReaction(reaction)
+        reaction.dispose()
+    }
+
+    private fun removeReactionIfScheduled(reaction: Reaction<T>) {
+        if (schedulingSubscriptions.containsKey(reaction)) {
+            removeReaction(reaction)
         }
     }
 
@@ -163,52 +208,14 @@ open class Engine<T, P : Position<out P>>(
             }
     }
 
-    private fun removeReaction(reaction: Reaction<T>) {
-        checkCaller()
-        dirtyReactions.remove(reaction)
-        checkNotNull(schedulingSubscriptions.remove(reaction)) {
-            "Reaction $reaction was removed without being scheduled"
-        }.dispose()
-        scheduler.removeReaction(reaction)
-        reaction.dispose()
-    }
-
-    private fun removeReactionIfScheduled(reaction: Reaction<T>) {
-        if (schedulingSubscriptions.containsKey(reaction)) {
-            removeReaction(reaction)
-        }
-    }
-
-    override fun afterRun() {
-        schedulingSubscriptions.values.forEach { handle ->
-            runCatching(handle::dispose).exceptionOrNull()?.let(::recordError)
-        }
-        schedulingSubscriptions.clear()
-        dirtyReactions.clear()
-        pendingAdditions.clear()
-        // Reactions belong to the environment; afterRun only releases engine-owned subscriptions.
-    }
-
-    private inline fun <R> modelMutation(mutation: () -> R): R {
-        modelMutationDepth++
-        val result = mutation()
-        modelMutationDepth--
-        if (modelMutationDepth == 0) {
-            refreshDirtyReactions()
-        }
-        return result
-    }
-
-    private fun refreshDirtyReactions() {
-        val refreshed = mutableSetOf<Reaction<T>>()
-        while (dirtyReactions.isNotEmpty()) {
-            val pending = dirtyReactions.toList()
-            dirtyReactions.clear()
-            pending.forEach { reaction ->
-                if (refreshed.add(reaction) && schedulingSubscriptions.containsKey(reaction)) {
-                    reaction.updateSchedulingAfterInvalidation(time)
-                }
-            }
+    /*
+     * Once the simulation is terminated, nothing is scheduled any more, but hosts may still change, for instance from
+     * OutputMonitor.finished or a GUI: their notifications are ignored rather than failing the host mutation.
+     * A command queued while the simulation terminates is never processed, as no step follows.
+     */
+    private fun scheduleUnlessTerminated(command: CheckedRunnable) {
+        if (status != Status.TERMINATED) {
+            commands.add(command)
         }
     }
 }

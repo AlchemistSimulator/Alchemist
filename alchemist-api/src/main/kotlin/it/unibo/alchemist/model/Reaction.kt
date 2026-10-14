@@ -84,7 +84,7 @@ interface Reaction<T> :
      * The engine invokes this once when the enclosing model mutation completes,
      * using the simulation time at which the mutation (execution of the reaction) happened.
      * Implementations own the resulting scheduling policy and communicate any change only through
-     * [nextOccurrence].
+     * [nextOccurrence]: a refresh invalidating any reaction, this one included, violates this contract.
      *
      * @param currentTime the simulation time of the model mutation
      */

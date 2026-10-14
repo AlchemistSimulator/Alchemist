@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class ObservableEnvironmentStateTest {
     private val environment =
@@ -40,6 +41,16 @@ class ObservableEnvironmentStateTest {
         environment.moveNodeTo(near, Euclidean2DPosition(3.0, 0.0))
         environment.removeNode(far)
         assertEquals(listOf(emptySet(), setOf(near), setOf(near, far), setOf(far), emptySet()), neighbors)
+    }
+
+    @Test
+    fun `a node already in the environment cannot be added again`() {
+        val node = nodeAt(0.0)
+        listOf(node, GenericNode(environment, node.id)).forEach { duplicate ->
+            assertFailsWith<IllegalArgumentException> { environment.addNode(duplicate, Euclidean2DPosition(1.0, 0.0)) }
+        }
+        assertEquals(listOf(node), environment.nodes.current)
+        assertEquals(Euclidean2DPosition(0.0, 0.0), environment.getCurrentPosition(node))
     }
 
     @Test

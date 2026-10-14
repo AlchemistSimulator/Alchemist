@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.math.hypot
 
@@ -63,7 +64,7 @@ class ChemotacticPolarization(
             .neighbors
             .filter { it is EnvironmentNode && it.contains(biomolecule) }
         val position = environment.getCurrentPosition(targetNode)
-        val maxConcentrationNode = candidates.maxByOrNull { it.getConcentration(biomolecule) }
+        val maxConcentrationNode = candidates.maxByOrNull { it.getOrZeroConcentration(biomolecule) }
         when {
             maxConcentrationNode == null -> cell.addPolarizationVersor(Euclidean2DPosition.zero)
             environment.getCurrentPosition(maxConcentrationNode) == position ->
@@ -90,7 +91,7 @@ class ChemotacticPolarization(
         val deltaX = neighborPosition.x - position.x
         val deltaY = neighborPosition.y - position.y
         val module = hypot(deltaX, deltaY)
-        val concentration = neighbor.getConcentration(biomolecule)
+        val concentration = neighbor.getOrZeroConcentration(biomolecule)
         Euclidean2DPosition(result.x + concentration * deltaX / module, result.y + concentration * deltaY / module)
     }
 }

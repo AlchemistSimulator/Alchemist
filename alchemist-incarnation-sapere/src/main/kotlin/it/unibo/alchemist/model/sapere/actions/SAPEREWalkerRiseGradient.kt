@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.maps.routingservices.GraphHopperRoutingService
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers
 import it.unibo.alchemist.model.sapere.ILsaMolecule
+import it.unibo.alchemist.model.sapere.ILsaNode
 
 /**
  * Walks on the streets following the gradient described by [templateLSA], whose argument in position [neighPos]
@@ -73,11 +74,11 @@ open class SAPEREWalkerRiseGradient(
     ) : TargetSelectionStrategy<List<ILsaMolecule>, GeoPosition> {
         private val template: ILsaMolecule =
             pattern as? ILsaMolecule ?: throw IllegalArgumentException("$pattern is not a valid SAPERE LSA")
-        private var currentNode: Node<List<ILsaMolecule>> = node
+        private var currentNode: ILsaNode = node.asILsaNode()
         private var currentPosition: GeoPosition? = null
 
         override fun getTarget(): GeoPosition {
-            val matches = node.getConcentration(template)
+            val matches = (node as ILsaNode).matching(template)
             val position = environment.getCurrentPosition(node)
             // If there is no gradient and there is no goal, or the goal has already been reached, then remain still.
             if (matches.isEmpty()) {
@@ -90,10 +91,16 @@ open class SAPEREWalkerRiseGradient(
                 currentPosition != currentNodePosition ||
                 environment.getNeighborhood(node).current.contains(currentNode)
             ) {
-                currentNode = environment.getNodeByID(nextHop)
+                currentNode = environment.getNodeByID(nextHop).asILsaNode()
                 currentPosition = environment.getCurrentPosition(currentNode)
             }
             return checkNotNull(currentPosition)
+        }
+
+        companion object {
+            fun Node<List<ILsaMolecule>>.asILsaNode(): ILsaNode {
+                return this as? ILsaNode ?: throw IllegalArgumentException("Node is not a valid SAPERE node")
+            }
         }
     }
 }

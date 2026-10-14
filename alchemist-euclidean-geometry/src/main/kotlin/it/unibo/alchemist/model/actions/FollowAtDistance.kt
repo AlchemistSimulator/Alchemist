@@ -50,7 +50,7 @@ class FollowAtDistance<T>(
     )
 
     override fun execute() {
-        targetNode.getConcentration(target)?.also {
+        targetNode[target].onSome {
             val targetPosition = it.toPosition(environment)
             val currentPosition = environment.getCurrentPosition(targetNode)
             var destination = targetPosition.surroundingPointAt(currentPosition - targetPosition, distance)

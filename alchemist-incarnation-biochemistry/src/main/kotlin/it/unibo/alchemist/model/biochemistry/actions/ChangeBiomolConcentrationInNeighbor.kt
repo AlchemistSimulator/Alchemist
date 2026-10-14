@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Iterables.randomElement
 import org.apache.commons.math3.random.RandomGenerator
@@ -37,7 +38,7 @@ class ChangeBiomolConcentrationInNeighbor(
     override fun execute() {
         val validNeighbors = environment.getNeighborhood(targetNode).current.filter {
             it.asPropertyOrNull<Double, CellProperty<Euclidean2DPosition>>() != null &&
-                (deltaConcentration > 0 || it.getConcentration(molecule) >= deltaConcentration)
+                (deltaConcentration > 0 || it.getOrZeroConcentration(molecule) >= deltaConcentration)
         }
         if (validNeighbors.isNotEmpty()) {
             execute(validNeighbors.randomElement(randomGenerator))
@@ -45,7 +46,7 @@ class ChangeBiomolConcentrationInNeighbor(
     }
 
     override fun execute(neighbor: Node<Double>) {
-        neighbor.setConcentration(molecule, neighbor.getConcentration(molecule) + deltaConcentration)
+        neighbor.setConcentration(molecule, neighbor.getOrZeroConcentration(molecule) + deltaConcentration)
     }
 
     override fun toString(): String = if (deltaConcentration >= 0) {

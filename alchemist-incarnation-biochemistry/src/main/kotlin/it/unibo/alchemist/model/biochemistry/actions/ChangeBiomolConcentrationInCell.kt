@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.biochemistry.actions
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.actions.AbstractActionOnSingleMolecule
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 
 /**
  * Changes the concentration of [molecule] in the cell by [deltaConcentration], which must not be zero.
@@ -31,7 +32,7 @@ class ChangeBiomolConcentrationInCell(
         ChangeBiomolConcentrationInCell(newReaction, molecule as Biomolecule, deltaConcentration)
 
     override fun execute() =
-        targetNode.setConcentration(molecule, targetNode.getConcentration(molecule) + deltaConcentration)
+        targetNode.setConcentration(molecule, targetNode.getOrZeroConcentration(molecule) + deltaConcentration)
 
     override fun toString(): String =
         if (deltaConcentration >= 0) "${molecule.name}+$deltaConcentration" else "${molecule.name}$deltaConcentration"

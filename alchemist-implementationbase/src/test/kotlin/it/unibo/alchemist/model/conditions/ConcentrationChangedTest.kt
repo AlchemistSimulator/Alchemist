@@ -26,24 +26,23 @@ import org.apache.commons.math3.random.MersenneTwister
 class ConcentrationChangedTest {
     private val molecule = SimpleMolecule("tracked")
 
-    /** A condition on a node whose [molecule] is observed as [initial], and read as [initialRead] when absent. */
-    private fun conditionOn(initial: Option<Double?>, initialRead: Double?) = observe(initial).let { observed ->
+    /** A condition on a node whose [molecule] is observed as [initial]. */
+    private fun conditionOn(initial: Option<Double?>) = observe(initial).let { observed ->
         val node = mockk<Node<Double?>>(relaxed = true) {
-            every { getConcentration(molecule) } returns initialRead
             every { observeConcentration(molecule) } returns observed
         }
         observed to ConcentrationChanged(GenericReaction(node, ExponentialTime(1.0, MersenneTwister(1))), molecule)
     }
 
     @Test
-    fun `an absent molecule read as the default concentration is not a change`() {
-        val (_, condition) = conditionOn(initial = none(), initialRead = 0.0)
+    fun `an absent molecule is not a change`() {
+        val (_, condition) = conditionOn(initial = none())
         assertFalse(condition.isValid.current)
     }
 
     @Test
     fun `removing a molecule with a null concentration is a change`() {
-        val (concentration, condition) = conditionOn(initial = null.some(), initialRead = null)
+        val (concentration, condition) = conditionOn(initial = null.some())
         assertFalse(condition.isValid.current)
         concentration.current = none()
         assertTrue(condition.isValid.current)

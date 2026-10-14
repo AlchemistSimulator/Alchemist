@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.core
 
+import arrow.core.some
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Node
@@ -79,9 +80,9 @@ class EngineTest : FreeSpec({
         }
 
         // B should have M=1.0 (from Node B's Reaction)
-        nodeB.getConcentration(molM) shouldBe 1.0
+        nodeB[molM] shouldBe 1.0.some()
 
         // A should have N=1.0 (executed after observing B)
-        nodeA.getConcentration(molN) shouldBe 1.0
+        nodeA[molN] shouldBe 1.0.some()
     }
 })

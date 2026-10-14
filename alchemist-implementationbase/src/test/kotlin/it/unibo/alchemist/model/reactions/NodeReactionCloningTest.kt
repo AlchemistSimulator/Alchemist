@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.reactions
 
+import arrow.core.some
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.model.Environment
@@ -93,8 +94,8 @@ class NodeReactionCloningTest {
         val molecule = mockk<Molecule>()
         val sourceNode = mockk<Node<Any>>()
         val destinationNode = mockk<Node<Any>>()
-        every { sourceNode.getConcentration(molecule) } returns 1.0
-        every { destinationNode.getConcentration(molecule) } returns 4.0
+        every { sourceNode[molecule] } returns 1.0.some()
+        every { destinationNode[molecule] } returns 4.0.some()
         val sourceDistribution = MoleculeControlledTimeDistribution(
             mockk<Incarnation<Any, *>>(),
             sourceNode,

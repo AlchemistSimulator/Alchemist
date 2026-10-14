@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 import kotlin.math.abs
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -58,10 +59,10 @@ class ChangeBiomolConcentrationInEnv(
         when {
             targetNode is EnvironmentNode -> changeConcentrationInRandomNodes(surrounding)
             surrounding.map { environment.getDistanceBetweenNodes(targetNode, it) }.distinct().size == 1 ->
-                if (surrounding.map { it.getConcentration(biomolecule) }.distinct().size == 1) {
+                if (surrounding.map { it.getOrZeroConcentration(biomolecule) }.distinct().size == 1) {
                     changeConcentrationInRandomNodes(surrounding)
                 } else {
-                    changeConcentrationInSortedNodes(surrounding.sortedBy { it.getConcentration(biomolecule) })
+                    changeConcentrationInSortedNodes(surrounding.sortedBy { it.getOrZeroConcentration(biomolecule) })
                 }
             else -> changeConcentrationInSortedNodes(
                 surrounding.sortedBy { environment.getDistanceBetweenNodes(targetNode, it) },
@@ -73,7 +74,7 @@ class ChangeBiomolConcentrationInEnv(
         if (deltaConcentration < 0) {
             var remaining = deltaConcentration
             for (target in sorted) {
-                val concentration = target.getConcentration(biomolecule)
+                val concentration = target.getOrZeroConcentration(biomolecule)
                 if (concentration >= abs(remaining)) {
                     target.setConcentration(biomolecule, concentration + remaining)
                     break
@@ -84,7 +85,7 @@ class ChangeBiomolConcentrationInEnv(
             }
         } else {
             val target = sorted.first()
-            target.setConcentration(biomolecule, target.getConcentration(biomolecule) + deltaConcentration)
+            target.setConcentration(biomolecule, target.getOrZeroConcentration(biomolecule) + deltaConcentration)
         }
     }
 
@@ -94,7 +95,7 @@ class ChangeBiomolConcentrationInEnv(
             while (remaining < 0) {
                 val index = randomGenerator.nextInt(candidates.size)
                 val target = candidates[index]
-                val concentration = target.getConcentration(biomolecule)
+                val concentration = target.getOrZeroConcentration(biomolecule)
                 if (concentration >= abs(remaining)) {
                     target.setConcentration(biomolecule, concentration + remaining)
                     break
@@ -106,7 +107,7 @@ class ChangeBiomolConcentrationInEnv(
             }
         } else {
             val target = candidates[randomGenerator.nextInt(candidates.size)]
-            target.setConcentration(biomolecule, target.getConcentration(biomolecule) + deltaConcentration)
+            target.setConcentration(biomolecule, target.getOrZeroConcentration(biomolecule) + deltaConcentration)
         }
     }
 

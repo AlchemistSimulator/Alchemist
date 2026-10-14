@@ -48,14 +48,8 @@ final class TestContinuous2DEnvironment {
         environment.setLinkingRule(new NoLinks<>());
     }
 
-    private Node<Integer> createIntNode(
-    ) {
-        return new GenericNode<>(INCARNATION, environment) {
-            @Override
-            public Integer createT() {
-                return 0;
-            }
-        };
+    private Node<Integer> createIntNode() {
+        return new GenericNode<>(environment);
     }
 
     /**
@@ -63,7 +57,7 @@ final class TestContinuous2DEnvironment {
      */
     @Test
     void testEnvironmentSize() {
-        assertEquals(0, environment.getNodeCount());
+        assertEquals(0, environment.getNodeCount().getCurrent());
         assertArrayEquals(ZEROS, environment.getSize(), TOLERANCE);
         environment.addNode(createIntNode(), new Euclidean2DPosition(P2_3));
         assertArrayEquals(ZEROS, environment.getSize(), TOLERANCE);
@@ -78,7 +72,7 @@ final class TestContinuous2DEnvironment {
      */
     @Test
     void testEnvironmentOffset() {
-        assertEquals(0, environment.getNodeCount());
+        assertEquals(0, environment.getNodeCount().getCurrent());
         assertTrue(Double.isNaN(environment.getOffset()[0]));
         assertTrue(Double.isNaN(environment.getOffset()[1]));
         environment.addNode(createIntNode(), new Euclidean2DPosition(P2_3));
@@ -94,7 +88,7 @@ final class TestContinuous2DEnvironment {
      */
     @Test
     void testNegativeRangeQuery() {
-        assertEquals(0, environment.getNodeCount());
+        assertEquals(0, environment.getNodeCount().getCurrent());
         final Node<Integer> dummy = createIntNode();
         environment.addNode(dummy, new Euclidean2DPosition(ZEROS));
         try {
@@ -110,12 +104,12 @@ final class TestContinuous2DEnvironment {
      */
     @Test
     void testZeroRangeQuery() {
-        assertEquals(0, environment.getNodeCount());
+        assertEquals(0, environment.getNodeCount().getCurrent());
         final Node<Integer> dummy = createIntNode();
         final Node<Integer> dummy2 = createIntNode();
         environment.addNode(dummy, new Euclidean2DPosition(ZEROS));
         environment.addNode(dummy2, new Euclidean2DPosition(ZEROS));
-        assertEquals(2, environment.getNodeCount());
+        assertEquals(2, environment.getNodeCount().getCurrent());
         assertEquals(Collections.singletonList(dummy2), environment.getNodesWithinRange(dummy, Math.nextUp(0)));
     }
 

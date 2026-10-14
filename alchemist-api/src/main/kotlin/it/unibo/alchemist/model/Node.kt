@@ -27,67 +27,10 @@ interface Node<T> :
     Comparable<Node<T>>,
     Disposable,
     ReactionHost<T> {
-
-    /**
-     * Creates a new Node which is a clone of the current Node. The new Node
-     * will have all the current Node's properties, such as reactions and
-     * molecules, but it will also have a different ID.
-     *
-     * @param currentTime
-     * the time at which the cloning operation happens
-     *
-     * @return A new Node which is a clone of the current one.
-     *
-     * @throws UnsupportedOperationException
-     * if the implementation does not support node cloning.
-     */
-    fun cloneNode(currentTime: Time): Node<T>
-
-    /**
-     * Tests whether a node contains a [Molecule].
-     *
-     * @param molecule
-     * the molecule to check
-     * @return true if the molecule is present, false otherwise
-     */
-    operator fun contains(molecule: Molecule): Boolean
-
-    /**
-     * Observes whether a node contains a [Molecule].
-     *
-     * @param molecule * the molecule to check
-     * @return emit true if the molecule is present, false otherwise
-     */
-    fun observeContains(molecule: Molecule): Observable<Boolean>
-
-    /**
-     * Calculates the concentration of a molecule.
-     *
-     * @param molecule
-     * the molecule whose concentration will be returned
-     * @return the concentration of the molecule
-     */
-    fun getConcentration(molecule: Molecule): T
-
-    /**
-     * Observe the concentration calculated with the given molecule.
-     * The result of this computation is wrapped into an [Option] and
-     * [some][arrow.core.Some] if the value is present, otherwise
-     * [none][arrow.core.None].
-     *
-     * @param molecule the molecule whose concentration will be returned
-     */
-    fun observeConcentration(molecule: Molecule): Observable<Option<T>>
-
     /**
      * @return the molecule corresponding to the i-th position
      */
     val contents: Map<Molecule, T>
-
-    /**
-     * @return an observable view of the molecule corresponding to the i-th position
-     */
-    val observableContents: ObservableMap<Molecule, T>
 
     /**
      * @return an univocal id for this node in the environment
@@ -98,6 +41,11 @@ interface Node<T> :
      * @return the count of different molecules in this node
      */
     val moleculeCount: Int
+
+    /**
+     * @return an observable view of the molecule corresponding to the i-th position
+     */
+    val observableContents: ObservableMap<Molecule, T>
 
     /**
      * Observes the count of different molecules in this node.
@@ -116,25 +64,6 @@ interface Node<T> :
      */
     override val reactions: ObservableList<Reaction<T>>
 
-    override fun hashCode(): Int
-
-    override fun equals(other: Any?): Boolean
-
-    /**
-     * @param moleculeToRemove the molecule that should be removed
-     */
-    fun removeConcentration(moleculeToRemove: Molecule)
-
-    /**
-     * Sets the concentration of mol to c.
-     *
-     * @param molecule
-     * the molecule you want to set the concentration
-     * @param concentration
-     * the concentration you want for mol
-     */
-    fun setConcentration(molecule: Molecule, concentration: T)
-
     /**
      * Adds a capability to the node.
      * Properties are part of the node setup: adding one fails once the node is in an environment,
@@ -143,6 +72,24 @@ interface Node<T> :
      * @param nodeProperty the capability you want to add to the node
      */
     fun addProperty(nodeProperty: NodeProperty<T>)
+
+    /**
+     * returns a [NodeProperty] of the provided [superType] [C].
+     * @param [C] type of capability
+     * @param superType the type of capability to retrieve
+     * @return a capability of the provided type [C]
+     */
+    fun <C : NodeProperty<T>> asProperty(superType: KClass<C>): C = requireNotNull(asPropertyOrNull(superType)) {
+        "A ${superType.simpleName} is required for node ${this.id} but is missing"
+    }
+
+    /**
+     * returns a [NodeProperty] of the provided [superType] [C].
+     * @param [C] type of capability
+     * @param superType the type of capability to retrieve
+     * @return a capability of the provided type [C]
+     */
+    fun <C : NodeProperty<T>> asProperty(superType: Class<C>): C = asProperty(superType.kotlin)
 
     /**
      * returns a [NodeProperty] of the provided [superType] [C].
@@ -177,22 +124,74 @@ interface Node<T> :
     }
 
     /**
-     * returns a [NodeProperty] of the provided [superType] [C].
-     * @param [C] type of capability
-     * @param superType the type of capability to retrieve
-     * @return a capability of the provided type [C]
+     * Creates a new Node which is a clone of the current Node. The new Node
+     * will have all the current Node's properties, such as reactions and
+     * molecules, but it will also have a different ID.
+     *
+     * @param currentTime
+     * the time at which the cloning operation happens
+     *
+     * @return A new Node which is a clone of the current one.
+     *
+     * @throws UnsupportedOperationException
+     * if the implementation does not support node cloning.
      */
-    fun <C : NodeProperty<T>> asProperty(superType: KClass<C>): C = requireNotNull(asPropertyOrNull(superType)) {
-        "A ${superType.simpleName} is required for node ${this.id} but is missing"
-    }
+    fun cloneNode(currentTime: Time): Node<T>
 
     /**
-     * returns a [NodeProperty] of the provided [superType] [C].
-     * @param [C] type of capability
-     * @param superType the type of capability to retrieve
-     * @return a capability of the provided type [C]
+     * Tests whether a node contains a [Molecule].
+     *
+     * @param molecule
+     * the molecule to check
+     * @return true if the molecule is present, false otherwise
      */
-    fun <C : NodeProperty<T>> asProperty(superType: Class<C>): C = asProperty(superType.kotlin)
+    operator fun contains(molecule: Molecule): Boolean
+
+    override fun equals(other: Any?): Boolean
+
+    /**
+     * The concentration of a molecule, [some][arrow.core.Some] if the molecule is present in this node,
+     * [none][arrow.core.None] otherwise.
+     *
+     * @param molecule the molecule whose concentration will be returned
+     * @return the concentration of the molecule, if present
+     */
+    operator fun get(molecule: Molecule): Option<T>
+
+    override fun hashCode(): Int
+
+    /**
+     * Observe the concentration calculated with the given molecule.
+     * The result of this computation is wrapped into an [Option] and
+     * [some][arrow.core.Some] if the value is present, otherwise
+     * [none][arrow.core.None].
+     *
+     * @param molecule the molecule whose concentration will be returned
+     */
+    fun observeConcentration(molecule: Molecule): Observable<Option<T>>
+
+    /**
+     * Observes whether a node contains a [Molecule].
+     *
+     * @param molecule * the molecule to check
+     * @return emit true if the molecule is present, false otherwise
+     */
+    fun observeContains(molecule: Molecule): Observable<Boolean>
+
+    /**
+     * @param moleculeToRemove the molecule that should be removed
+     */
+    fun removeConcentration(moleculeToRemove: Molecule)
+
+    /**
+     * Sets the concentration of mol to c.
+     *
+     * @param molecule
+     * the molecule you want to set the concentration
+     * @param concentration
+     * the concentration you want for mol
+     */
+    fun setConcentration(molecule: Molecule, concentration: T)
 
     /**
      * Utilities for [Node]s.

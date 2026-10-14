@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.sapere.actions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.sapere.ILsaMolecule
+import it.unibo.alchemist.model.sapere.ILsaNode
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import org.apache.commons.math3.random.RandomGenerator
@@ -49,7 +50,7 @@ class LsaCountNeighborsAction(
     override fun execute() {
         val template = LsaMolecule(moleculeToCount.allocateVar(matches))
         val count = environment.getNeighborhood(targetNode).current.neighbors
-            .count { it.getConcentration(template).isNotEmpty() }
+            .count { (it as ILsaNode).matching(template).isNotEmpty() }
         checkNotNull(matches)[countVariable] = NumTreeNode(count.toDouble())
     }
 

@@ -28,7 +28,7 @@ class LsaNodeTemplateMatchingTest {
         node.addLsa(LsaMolecule("foo, 3"))
     }
 
-    private fun matchesOf(template: String): List<ILsaMolecule> = node.getConcentration(LsaMolecule(template))
+    private fun matchesOf(template: String): List<ILsaMolecule> = node.matching(LsaMolecule(template))
 
     @Test
     fun `a template with a variable first argument matches any first argument`() {

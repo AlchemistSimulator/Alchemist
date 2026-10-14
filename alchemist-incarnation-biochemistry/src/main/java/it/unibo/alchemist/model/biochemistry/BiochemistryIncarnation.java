@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.properties.CircularCell;
 import it.unibo.alchemist.model.biochemistry.reactions.BiochemicalReactionBuilder;
+import it.unibo.alchemist.model.biochemistry.util.Nodes;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
@@ -38,7 +39,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
 
     @Override
     public double getProperty(final Node<Double> node, final Molecule molecule, final String property) {
-        return node.getConcentration(molecule);
+        return Nodes.getOrZeroConcentration(node, molecule);
     }
 
     @Override

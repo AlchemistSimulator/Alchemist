@@ -32,7 +32,7 @@ class LsaAscendingAgent<P : Position2D<P>>(
     override fun execute() {
         val target = localNeighborhood.neighbors
             .flatMap { neighbor ->
-                (neighbor as ILsaNode).getConcentration(template).map { neighbor to getLSAArgumentAsDouble(it, pos) }
+                (neighbor as ILsaNode).matching(template).map { neighbor to getLSAArgumentAsDouble(it, pos) }
             }
             // NaN and +∞ are never the lowest gradient; on ties, the last neighbor wins.
             .filter { (_, gradient) -> gradient <= Double.MAX_VALUE }

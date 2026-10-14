@@ -30,11 +30,11 @@ class LsaAscendingGradientDist<P : Position<P>>(
     reaction: NodeReaction<List<ILsaMolecule>>,
 ) : AbstractSAPERENeighborAgent<P>(environment, reaction, MOLRESPONSE) {
     override fun execute() {
-        var minGrad = getLSAArgumentAsDouble(lsaNode.getConcentration(MOLGRAD)[0], POS)
+        var minGrad = getLSAArgumentAsDouble(lsaNode.matching(MOLGRAD)[0], POS)
         val targets = mutableListOf<LsaNode>()
         for (neighbor in environment.getNeighborhood(targetNode).current.neighbors) {
             val lsaNeighbor = neighbor as LsaNode
-            for (grad in lsaNeighbor.getConcentration(MOLGRAD)) {
+            for (grad in lsaNeighbor.matching(MOLGRAD)) {
                 val valueGrad = grad.getArg(POS).calculate(null).getValue(null) as Double
                 if (valueGrad <= minGrad) {
                     minGrad = valueGrad

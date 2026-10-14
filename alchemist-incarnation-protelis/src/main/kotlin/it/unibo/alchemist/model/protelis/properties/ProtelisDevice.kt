@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.protelis.properties
 
+import arrow.core.getOrElse
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
@@ -124,12 +125,10 @@ constructor(
      * Returns the value associated with [id].
      */
     override fun get(id: String): Any = incarnation.createMolecule(id).let { molecule ->
-        when {
-            node.contains(molecule) -> node.getConcentration(molecule)
-            else ->
-                checkNotNull(environment.getLayer(molecule)?.getValue(environment.getCurrentPosition(node))) {
-                    "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
-                }
+        node[molecule].getOrElse {
+            checkNotNull(environment.getLayer(molecule)?.getValue(environment.getCurrentPosition(node))) {
+                "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
+            }
         }
     }
 

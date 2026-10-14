@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.timedistributions
 
+import arrow.core.some
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.model.Environment
@@ -37,7 +38,7 @@ class TimeDistributionMeanDelayTest {
     fun `a molecule-controlled distribution has the current molecule value as mean delay`() {
         val node = mockk<Node<Any?>>()
         var value = 1.5
-        every { node.getConcentration(MOLECULE) } answers { value }
+        every { node[MOLECULE] } answers { value.some() }
         val distribution = MoleculeControlledTimeDistribution(mockk<Incarnation<Any?, *>>(), node, MOLECULE)
         assertEquals(1.5, distribution.meanDelay)
         value = 3.0

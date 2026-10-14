@@ -74,7 +74,7 @@ class SAPEREIncarnation<P : Position<out P>> : Incarnation<List<ILsaMolecule>, P
         }
         if (saperePropertyNumber >= 0) {
             // Potential concurrency issue: a size check is mandatory.
-            val argument = node.getConcentration(molecule).firstOrNull()?.getArg(saperePropertyNumber)
+            val argument = node.matching(molecule).firstOrNull()?.getArg(saperePropertyNumber)
             if (argument?.rootNodeType == Type.NUM) {
                 return argument.rootNodeData as Double
             }

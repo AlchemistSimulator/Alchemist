@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.biochemistry.conditions.NeighborhoodPresent
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.biochemistry.startSimulationWithoutParameters
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
@@ -158,7 +159,7 @@ private val Node<Double>.junctionPresentPropensity: Double
 private val Node<Double>.biomoleculeInNeighborPropensity: Double
     get() =
         checkCellNodeAndGetPropensity {
-            binomialCoefficientDouble(it.getConcentration(BIOMOLECULE).toInt(), BIOMOLECULE_NEEDED)
+            binomialCoefficientDouble(it.getOrZeroConcentration(BIOMOLECULE).toInt(), BIOMOLECULE_NEEDED)
         }
 
 private fun Node<Double>.checkCellNodeAndGetPropensity(propensityFunction: (Node<Double>) -> Double) =

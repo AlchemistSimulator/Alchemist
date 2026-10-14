@@ -171,8 +171,7 @@ abstract class AbstractLsaAction(
     /**
      * Retrieves from the LSA space of [node] the molecules matching [template].
      */
-    protected open fun getLSAs(node: ILsaNode, template: ILsaMolecule): List<ILsaMolecule> =
-        node.getConcentration(template)
+    protected open fun getLSAs(node: ILsaNode, template: ILsaMolecule): List<ILsaMolecule> = node.matching(template)
 
     /**
      * Returns the value associated with [variable].

@@ -171,7 +171,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]:
     new DiracComb[T](new DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
 
   override def getProperty(node: Node[T], molecule: Molecule, propertyName: String): Double =
-    val target = node.getConcentration(molecule)
+    val target = node.get(molecule).getOrNull()
     if propertyName == null || propertyName.trim.isEmpty then toDouble(target)
     else toDouble(ScalaInterpreter("val value = " + target + ";" + propertyName))
 

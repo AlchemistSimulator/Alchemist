@@ -25,10 +25,4 @@ public final class TestNode<T> extends GenericNode<T> {
         super(environment);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    protected T createT() {
-        return (T) new Object();
-    }
-
 }

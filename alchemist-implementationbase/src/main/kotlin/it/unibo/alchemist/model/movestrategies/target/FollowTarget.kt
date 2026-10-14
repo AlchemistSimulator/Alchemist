@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.movestrategies.target
 
+import arrow.core.getOrElse
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -45,9 +46,8 @@ open class FollowTarget<T, P : Position<P>>(
     protected val currentPosition: P get() = environment.getCurrentPosition(node)
 
     override fun getTarget(): P {
-        val conc = node.getConcentration(targetMolecule) ?: return currentPosition
         @Suppress("UNCHECKED_CAST")
-        return when (conc) {
+        return when (val conc = node[targetMolecule].getOrElse { currentPosition }) {
             is Position<*> -> conc as P
             is CharSequence, is Iterable<*> -> conc.extractCoordinates() ?: currentPosition
             else -> conc.toString().extractCoordinates() ?: currentPosition

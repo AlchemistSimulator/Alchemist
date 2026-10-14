@@ -13,6 +13,7 @@ import arrow.core.getOrElse
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.ObservableMutableMap.ObservableMapExtensions.upsertValue
@@ -72,7 +73,6 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
         if (!containsJunction(junction)) {
             return
         }
-
         val inner = junctions[junction].currentOrNull()
         inner?.let {
             when (val links = it[neighbor].current.getOrElse { 0 }) {
@@ -88,7 +88,7 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
             }
             junction.moleculesInCurrentNode.forEach { (biomolecule, value) ->
                 with(node) {
-                    setConcentration(biomolecule, getConcentration(biomolecule) + value)
+                    setConcentration(biomolecule, getOrZeroConcentration(biomolecule) + value)
                 }
             }
         }

@@ -24,9 +24,7 @@ class TestClosestNOnMaps :
                 )
             environment.linkingRule = ClosestN(10)
             environment.addNode(
-                object : GenericNode<Any>(environment) {
-                    override fun createT() = "Nothing"
-                },
+                GenericNode(environment),
                 environment.makePosition(44.139169, 12.237816),
             )
         }

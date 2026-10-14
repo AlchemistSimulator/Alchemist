@@ -9,12 +9,10 @@
 
 package it.unibo.alchemist.model.sapere;
 
-import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.observation.Observable;
 import it.unibo.alchemist.model.observation.ObservableList;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -31,28 +29,17 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
     void addLsa(ILsaMolecule inst);
 
     /**
-     * Deletes an ILsaMolecule from the Node LsaSpace Warning: the method
-     * removes only the first matched ILsaMolecule.
-     *
-     * @param matchedInstance
-     *            the molecule you want to remove
-     * @return true if the remove operation finishes correctly, false otherwise.
-     *
-     */
-    boolean removeOneMatchedLsa(ILsaMolecule matchedInstance);
-
-    /**
      * @return lsaMolecules in the node. This backs the internal LsaSpace: USE READ-ONLY.
      */
     List<ILsaMolecule> getLsaSpace();
 
     /**
-     * @return an {@link ObservableList} view of LSA Molecules in the node.
+     * Finds the LSA instances in this node that [template] matches.
+     *
+     * @param template the LSA template
+     * @return the matched instances, empty if [template] matches none
      */
-    ObservableList<ILsaMolecule> observeLsaSpace();
-
-    @Override
-    List<ILsaMolecule> getConcentration(@Nonnull Molecule mol);
+    List<ILsaMolecule> matching(ILsaMolecule template);
 
     /**
      * Observes the instances that [template] may match: those sharing its first argument when it is a constant
@@ -62,5 +49,21 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
      * @return an observable that emits the instances that [template] may match
      */
     Observable<List<ILsaMolecule>> observeCandidates(ILsaMolecule template);
+
+    /**
+     * @return an {@link ObservableList} view of LSA Molecules in the node.
+     */
+    ObservableList<ILsaMolecule> observeLsaSpace();
+
+    /**
+     * Deletes an ILsaMolecule from the Node LsaSpace Warning: the method
+     * removes only the first matched ILsaMolecule.
+     *
+     * @param matchedInstance
+     *            the molecule you want to remove
+     * @return true if the remove operation finishes correctly, false otherwise.
+     *
+     */
+    boolean removeOneMatchedLsa(ILsaMolecule matchedInstance);
 
 }

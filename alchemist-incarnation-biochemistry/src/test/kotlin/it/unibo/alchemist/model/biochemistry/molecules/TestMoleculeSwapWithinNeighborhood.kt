@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.startSimulationWithoutParameters
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
@@ -76,16 +77,16 @@ class TestMoleculeSwapWithinNeighborhood {
 
 private fun testSimulation() = environment.startSimulationWithoutParameters(
     initialized = {
-        assertEquals(1.0, nodes.first.getConcentration(BIOMOLECULE))
-        assertEquals(0.0, nodes.second.getConcentration(BIOMOLECULE))
+        assertEquals(1.0, nodes.first.getOrZeroConcentration(BIOMOLECULE))
+        assertEquals(0.0, nodes.second.getOrZeroConcentration(BIOMOLECULE))
         assertEquals(1, nodes.toList().sumOf { it.reactions.current.count() })
     },
     stepDone = {
-        assertEquals(1.0, nodes.toList().sumOf { it.getConcentration(BIOMOLECULE) })
+        assertEquals(1.0, nodes.toList().sumOf { it.getOrZeroConcentration(BIOMOLECULE) })
     },
     finished = {
-        assertEquals(0.0, nodes.first.getConcentration(BIOMOLECULE))
-        assertEquals(1.0, nodes.second.getConcentration(BIOMOLECULE))
+        assertEquals(0.0, nodes.first.getOrZeroConcentration(BIOMOLECULE))
+        assertEquals(1.0, nodes.second.getOrZeroConcentration(BIOMOLECULE))
     },
 )
 

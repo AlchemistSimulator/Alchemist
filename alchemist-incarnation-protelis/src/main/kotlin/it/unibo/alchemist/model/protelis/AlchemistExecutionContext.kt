@@ -209,7 +209,7 @@ class AlchemistExecutionContext<P : Position<P>>(
                     "Illegal position type: " + p::class.simpleName + " " + p
                 }
                 if (node.contains(APPROXIMATE_NBR_RANGE)) {
-                    val tolerance = node.getConcentration(APPROXIMATE_NBR_RANGE)
+                    val tolerance = node[APPROXIMATE_NBR_RANGE].getOrNull()
                     check(tolerance is Double) {
                         "APPROXIMATE_NBR_RANGE should be associated with a double concentration"
                     }

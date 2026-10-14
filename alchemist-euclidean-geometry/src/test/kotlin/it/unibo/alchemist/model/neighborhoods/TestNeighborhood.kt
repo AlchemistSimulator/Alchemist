@@ -27,10 +27,7 @@ import kotlin.test.assertTrue
  * Tests pertaining to the `it.unibo.alchemist.model.implementations.neighborhoods` package.
  */
 class TestNeighborhood {
-    private fun createIntNode(environment: Environment<Int, Euclidean2DPosition>): Node<Int> =
-        object : GenericNode<Int>(environment) {
-            override fun createT(): Int = 0
-        }
+    private fun createIntNode(environment: Environment<Int, Euclidean2DPosition>): Node<Int> = GenericNode(environment)
 
     /**
      * Tests whether the clone function of the

@@ -132,19 +132,19 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
             rotate(rotation)
         }
 
-    private fun computeColorOrBlack(node: Node<*>, environment: Environment<*, *>): Color = node
-        .takeIf { it.contains(SimpleMolecule(colorMolecule)) }
-        ?.getConcentration(SimpleMolecule(colorMolecule))
-        ?.let { it as? Number }
-        ?.toDouble()
-        ?.let {
-            Color.getHSBColor(
-                (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.current.toDouble())).toFloat(),
-                1f,
-                1f,
-            )
-        }
-        ?: Color.BLACK
+    private fun computeColorOrBlack(node: Node<*>, environment: Environment<*, *>): Color =
+        node[SimpleMolecule(colorMolecule)]
+            .getOrNull()
+            .let { it as? Number }
+            ?.toDouble()
+            ?.let {
+                Color.getHSBColor(
+                    (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.current.toDouble())).toFloat(),
+                    1f,
+                    1f,
+                )
+            }
+            ?: Color.BLACK
 
     private fun <P : Position2D<P>, T> updateTrajectory(node: Node<T>, environment: Environment<T, P>) {
         val positions = positionsMemory[node.id].orEmpty()
@@ -163,10 +163,9 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         }
     }
 
-    private fun <T> rotation(node: Node<T>): Double = node
-        .takeIf { it.contains(SimpleMolecule(velocityMolecule)) }
-        ?.getConcentration(SimpleMolecule(velocityMolecule))
-        ?.let { it as? DoubleArray }
+    private fun <T> rotation(node: Node<T>): Double = node[SimpleMolecule(velocityMolecule)]
+        .getOrNull()
+        .let { it as? DoubleArray }
         ?.let { atan2(it[0], it[1]) }
         ?: 0.0
 

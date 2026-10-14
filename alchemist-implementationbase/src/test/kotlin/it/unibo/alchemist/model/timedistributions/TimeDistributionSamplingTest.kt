@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.timedistributions
 
+import arrow.core.some
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.model.Environment
@@ -69,7 +70,7 @@ class TimeDistributionSamplingTest {
     fun `a molecule-controlled delay reads the current molecule value at every sample`() {
         val node = mockk<Node<Any?>>()
         var value: Any? = 1.5
-        every { node.getConcentration(MOLECULE) } answers { value }
+        every { node[MOLECULE] } answers { value.some() }
         every { node.id } returns 0
         val distribution = MoleculeControlledTimeDistribution(mockk<Incarnation<Any?, *>>(), node, MOLECULE)
         assertEquals(DoubleTime(1.5), distribution.sample())
@@ -99,7 +100,7 @@ class TimeDistributionSamplingTest {
     fun `a molecule-controlled delay adds one error draw per sample`() {
         val node = mockk<Node<Any>>()
         var value = 1.0
-        every { node.getConcentration(MOLECULE) } answers { value }
+        every { node[MOLECULE] } answers { value.some() }
         every { node.id } returns 0
         val random = CountingRandomGenerator()
         val distribution = MoleculeControlledTimeDistribution(

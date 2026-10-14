@@ -50,12 +50,7 @@ class TestGraphStreamReproducibility :
                             )
                         environment.linkingRule = graphStream.linkingRule
                         graphStream.deployment.forEach {
-                            environment.addNode(
-                                object : GenericNode<Any>(environment) {
-                                    override fun createT(): Any = Any()
-                                },
-                                it,
-                            )
+                            environment.addNode(GenericNode(environment), it)
                         }
                         environment.nodes.current.map { node ->
                             environment.getCurrentPosition(node).coordinates.toList() to

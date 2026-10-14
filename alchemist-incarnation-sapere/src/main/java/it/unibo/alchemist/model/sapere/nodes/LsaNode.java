@@ -91,6 +91,11 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
+    public List<ILsaMolecule> matching(final ILsaMolecule template) {
+        return matchesOf(template, observeCandidates(template).getCurrent());
+    }
+
+    @Override
     @NotNull
     public Observable<List<ILsaMolecule>> observeCandidates(@NotNull final ILsaMolecule template) {
         if (!isIndexable(template)) {
@@ -112,15 +117,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
         if (!(molecule instanceof final ILsaMolecule lsaTemplate)) {
             throw new IllegalArgumentException(molecule + INCOMPATIBLE_MOLECULE);
         }
-        return observeCandidates(lsaTemplate).map(current -> {
-            final ArrayList<ILsaMolecule> res = new ArrayList<>();
-            for (final ILsaMolecule instance : current) {
-                if (lsaTemplate.matches(instance)) {
-                    res.add(instance);
-                }
-            }
-            return new Some<>(res);
-        });
+        return observeCandidates(lsaTemplate).map(candidates -> new Some<>(matchesOf(lsaTemplate, candidates)));
     }
 
     @Override
@@ -237,5 +234,15 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     private static boolean isIndexable(final ILsaMolecule template) {
         final Type type = template.getArg(0).getRootNodeType();
         return type == Type.CONST || type == Type.NUM;
+    }
+
+    private static List<ILsaMolecule> matchesOf(final ILsaMolecule template, final List<ILsaMolecule> candidates) {
+        final List<ILsaMolecule> matches = new ArrayList<>();
+        for (final ILsaMolecule candidate : candidates) {
+            if (template.matches(candidate)) {
+                matches.add(candidate);
+            }
+        }
+        return matches;
     }
 }

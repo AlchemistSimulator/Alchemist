@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.timedistributions
 
+import arrow.core.getOrElse
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
@@ -181,7 +182,7 @@ class MoleculeControlledTimeDistribution<T> private constructor(
                 if (property != null) {
                     incarnation.getProperty(node, molecule, property)
                 } else {
-                    when (val value = node.getConcentration(molecule)) {
+                    when (val value = node[molecule].getOrElse { 0.0 }) {
                         is Number -> value.toDouble()
                         is String -> value.toDouble()
                         is Time -> value.toDouble()

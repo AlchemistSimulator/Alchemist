@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.obstacles;
 
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
@@ -29,16 +28,8 @@ class TestContinuous2DObstacle {
     private static final RectObstacle2D<Euclidean2DPosition> R1021 = new RectObstacle2D<>(1, 0, 1, 1);
     private static final RectObstacle2D<Euclidean2DPosition> R0527 = new RectObstacle2D<>(0, 5, 2, -2);
 
-    private Node<Integer> createIntNode(
-        final Incarnation<Integer, Euclidean2DPosition> incarnation,
-        final Environment<Integer, Euclidean2DPosition> environment
-    ) {
-        return new GenericNode<>(environment) {
-            @Override
-            public Integer createT() {
-                return 0;
-            }
-        };
+    private Node<Integer> createIntNode(final Environment<Integer, Euclidean2DPosition> environment) {
+        return new GenericNode<>(environment);
     }
 
     /**
@@ -51,7 +42,6 @@ class TestContinuous2DObstacle {
         environment.setLinkingRule(new NoLinks<>());
         environment.addObstacle(R1021);
         environment.addObstacle(R0527);
-
         assertEquals(
             new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(1.0, 0.0)),
             environment.next(new Euclidean2DPosition(0, 0), new Euclidean2DPosition(1, 1))
@@ -66,17 +56,16 @@ class TestContinuous2DObstacle {
                 new Euclidean2DPosition(2, 1)
             )
         );
-
-        environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(0, 0));
+        environment.addNode(createIntNode(environment), new Euclidean2DPosition(0, 0));
         assertEquals(1, environment.getNodeCount().getCurrent());
-        environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 1));
+        environment.addNode(createIntNode(environment), new Euclidean2DPosition(1, 1));
         assertEquals(1, environment.getNodeCount().getCurrent());
         // CHECKSTYLE: MagicNumber OFF
-        environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1.5, 0.5));
+        environment.addNode(createIntNode(environment), new Euclidean2DPosition(1.5, 0.5));
         assertEquals(1, environment.getNodeCount().getCurrent());
-        environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 5));
+        environment.addNode(createIntNode(environment), new Euclidean2DPosition(1, 5));
         assertEquals(1, environment.getNodeCount().getCurrent());
-        environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(1, 2.999));
+        environment.addNode(createIntNode(environment), new Euclidean2DPosition(1, 2.999));
         assertEquals(2, environment.getNodeCount().getCurrent());
         assertEquals(2, environment.getObstaclesInRange(0d, 0d, 100d).size());
         assertEquals(1, environment.getObstaclesInRange(0d, 0d, 1d).size());

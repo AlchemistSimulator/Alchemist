@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.apache.commons.math3.random.MersenneTwister
@@ -66,8 +67,8 @@ class CellPropertyTest {
         val (linkedNeighbor, unlinkedNeighbor) = neighbors
         cell.addJunction(loaded, linkedNeighbor)
         cell.removeJunction(loaded, unlinkedNeighbor)
-        assertEquals(0.0, cell.node.getConcentration(held))
+        assertEquals(0.0, cell.node.getOrZeroConcentration(held))
         cell.removeJunction(loaded, linkedNeighbor)
-        assertEquals(1.0, cell.node.getConcentration(held))
+        assertEquals(1.0, cell.node.getOrZeroConcentration(held))
     }
 }

@@ -360,10 +360,10 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
          *
          * my position is changed
          */
-        final List<? extends ILsaMolecule> sourceCacheTemp = getHost().getConcentration(source);
+        final List<? extends ILsaMolecule> sourceCacheTemp = getLsaNode().matching(source);
         final List<? extends ILsaMolecule> contextCacheTemp = context == null
                 ? EMPTY_LIST
-                : getHost().getConcentration(context);
+                : getLsaNode().matching(context);
         final TIntObjectMap<P> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
         final P curPos = this.environment.getCurrentPosition(getHost());
@@ -373,7 +373,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
             final P p = this.environment.getCurrentPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
-            gradCacheTemp.put(n.getId(), n.getConcentration(gradient));
+            gradCacheTemp.put(n.getId(), ((ILsaNode) n).matching(gradient));
             final boolean pConstant = p.equals(positionCache.get(nid));
             if (!pConstant) {
                 neighPositionChanged = true;
@@ -410,7 +410,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
      * neighbors'
      */
     private List<ILsaMolecule> cleanUpExistingAndRecomputeFromSource(final Map<HashString, ITreeNode<?>> matches) {
-        for (final ILsaMolecule g : getHost().getConcentration(gradient)) {
+        for (final ILsaMolecule g : getLsaNode().matching(gradient)) {
             getLsaNode().removeOneMatchedLsa(g);
         }
         final List<ILsaMolecule> createdFromSource = new ArrayList<>(sourceCache.size());

@@ -296,7 +296,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun commit() = Unit
 
-        override fun get(id: String): Any? = shadow[id, node.getConcentration(SimpleMolecule(id))]
+        override fun get(id: String): Any? = shadow[id, node[SimpleMolecule(id)].getOrNull()]
 
         override fun get(id: String, defaultValue: Any): Any = get(id) ?: defaultValue
 
@@ -330,7 +330,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
                     }
                 }.let { Optional.ofNullable(it) }
 
-        fun runCycle(): Any {
+        fun runCycle(): Any? {
             val node = checkNotNull(key.node) { "The node should never be null" }
             vm.orElse(null)?.let {
                 mutex.acquireUninterruptibly()
@@ -341,18 +341,18 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
                     mutex.release()
                 }
             }
-            return if (node is NoNode) key.property else node.getConcentration(key.molecule)
+            return if (node is NoNode) key.property else node[key.molecule].getOrNull()
         }
     }
 
     private data object NoNode : Node<Any> {
         override val contents: MutableMap<Molecule, Any> get() = notImplemented()
 
-        override val observableContents: ObservableMap<Molecule, Any> get() = notImplemented()
-
         override val id: Int get() = notImplemented()
 
         override val moleculeCount: Int get() = notImplemented()
+
+        override val observableContents: ObservableMap<Molecule, Any> get() = notImplemented()
 
         override val observeMoleculeCount: Observable<Int> get() = notImplemented()
 
@@ -360,29 +360,29 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override val reactions: ObservableList<Reaction<Any>> get() = notImplemented()
 
-        override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
+        override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
 
         override fun addReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
         override fun cloneNode(currentTime: Time): Node<Any> = notImplemented()
 
+        override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
+
         override fun contains(molecule: Molecule): Boolean = notImplemented()
 
-        override fun observeContains(molecule: Molecule): Observable<Boolean> = notImplemented()
+        override fun dispose() = notImplemented<Unit>()
 
-        override fun getConcentration(molecule: Molecule): Any = notImplemented()
+        override fun get(molecule: Molecule): Option<Any> = notImplemented()
 
         override fun observeConcentration(molecule: Molecule): Observable<Option<Any>> = notImplemented()
+
+        override fun observeContains(molecule: Molecule): Observable<Boolean> = notImplemented()
 
         override fun removeConcentration(moleculeToRemove: Molecule) = notImplemented<Unit>()
 
         override fun removeReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
         override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
-
-        override fun dispose() = notImplemented<Unit>()
-
-        override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
 
         private fun <A> notImplemented(): A =
             throw UnsupportedOperationException("Method can't be invoked in this context.")

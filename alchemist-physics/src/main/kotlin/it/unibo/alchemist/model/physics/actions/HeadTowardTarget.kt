@@ -46,7 +46,7 @@ constructor(
      * Sets the heading of the node according to the target molecule.
      */
     override fun execute() {
-        targetNode.getConcentration(target)?.also {
+        targetNode[target].onSome {
             val speedRadians = angularSpeedRadians * timeDistributedReaction.finitePositiveMeanDelayOrError
             val targetPosition = it.toPosition(environment)
             val myHeading = environment.getHeading(targetNode)

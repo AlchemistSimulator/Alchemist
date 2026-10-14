@@ -34,8 +34,7 @@ class CameraInjectVisibleNodeClosestToDistance(
         CameraInjectVisibleNodeClosestToDistance(newReaction, environment, distance, visionMolecule, targetMolecule)
 
     override fun execute() {
-        if (targetNode.contains(visionMolecule)) {
-            val visibleNodes = targetNode.getConcentration(visionMolecule)
+        targetNode[visionMolecule].onSome { visibleNodes ->
             require(visibleNodes is List<*>) { "visionMolecule contains ${visibleNodes::class} instead of a List" }
             if (visibleNodes.isEmpty()) {
                 if (targetNode.contains(targetMolecule)) targetNode.removeConcentration(targetMolecule)

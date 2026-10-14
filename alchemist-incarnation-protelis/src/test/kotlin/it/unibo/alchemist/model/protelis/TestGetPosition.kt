@@ -77,7 +77,7 @@ class TestGetPosition {
                     if (step > 0) {
                         Assertions.assertEquals(
                             DatatypeFactory.createTuple(1.0, 1.0),
-                            node.getConcentration(action.asMolecule()),
+                            node[action.asMolecule()].getOrNull(),
                         )
                     }
                 }

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.kotlindsl
 
+import arrow.core.some
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.doubles.shouldBeExactly
@@ -93,9 +94,9 @@ class TestVariables {
         loader.getWith<Any, Euclidean2DPosition>(mapOf("linearVariable" to 10.0)).apply {
             environment.nodes.current.size shouldBe 1
             val node = environment.nodes.current.single()
-            node.getConcentration(SimpleMolecule("mSize")) shouldBe -10.0
-            node.getConcentration(SimpleMolecule("sourceStart")) shouldBe -1.0
-            node.getConcentration(SimpleMolecule("sourceSize")) shouldBe 2.0
+            node[SimpleMolecule("mSize")] shouldBe (-10.0).some()
+            node[SimpleMolecule("sourceStart")] shouldBe (-1.0).some()
+            node[SimpleMolecule("sourceSize")] shouldBe 2.0.some()
         }
     }
 }

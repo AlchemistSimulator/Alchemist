@@ -53,7 +53,7 @@ class LsaActionsTest {
         assertSame(clonedReaction, clone.reaction)
         clone.setExecutionContext(HashMap(), neighbors.toMutableList())
         clone.execute()
-        neighbors.forEach { assertEquals(1, it.getConcentration(LsaMolecule("aaa")).size) }
+        neighbors.forEach { assertEquals(1, it.matching(LsaMolecule("aaa")).size) }
         assertTrue(destination.lsaSpace.isEmpty())
     }
 

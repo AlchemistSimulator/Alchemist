@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.nodes
 
 import arrow.core.Option
-import arrow.core.getOrElse
 import com.google.common.collect.MapMaker
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
@@ -101,9 +100,7 @@ open class GenericNode<T> @JvmOverloads constructor(
 
     final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
 
-    override fun getConcentration(molecule: Molecule): T = observeConcentration(molecule).current.getOrElse {
-        createT()
-    }
+    override fun get(molecule: Molecule): Option<T> = observeConcentration(molecule).current
 
     final override fun hashCode(): Int = id // TODO: better hashing
 
@@ -133,11 +130,6 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
-
-    /**
-     * @return an empty concentration
-     */
-    protected open fun createT(): T = environment.incarnation.createConcentration()
 
     private fun ifRegisteredInEnvironment(action: (it.unibo.alchemist.core.Simulation<T, *>) -> Unit) {
         if (this in environment) {

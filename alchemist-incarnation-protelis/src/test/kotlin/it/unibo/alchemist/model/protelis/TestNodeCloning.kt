@@ -75,7 +75,7 @@ internal class TestNodeCloning<P : Position<P>> {
                         ENABLE_CHECKS
                     ) {
                         expectations.forEach { (node, expected) ->
-                            assertEquals(expected, node.getConcentration(DATAMOL))
+                            assertEquals(expected, node[DATAMOL].getOrNull())
                         }
                     }
                 }

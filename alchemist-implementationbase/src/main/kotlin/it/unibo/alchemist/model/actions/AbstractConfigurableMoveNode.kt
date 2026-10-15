@@ -55,7 +55,7 @@ abstract class AbstractConfigurableMoveNode<T, P : Position<P>> @JvmOverloads pr
             resetRoute()
         }
         val maxWalk = speedSelectionStrategy.getNodeMovementLength(end)
-        val currentPosition = environment.getCurrentPosition(targetNode)
+        val currentPosition = environment.currentPositionOf(targetNode)
         return if (currentPosition.distanceTo(end) <= maxWalk) {
             targetPoint = targetSelectionStrategy.getTarget()
             resetRoute()

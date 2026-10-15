@@ -36,7 +36,7 @@ class MoveForwardAndTeleport<T, P : Position2D<P>>(
         MoveForwardAndTeleport(environment, newReaction, deltaX, minX, maxX)
 
     override fun getNextPosition(): P {
-        val current = environment.getCurrentPosition(targetNode)
+        val current = environment.currentPositionOf(targetNode)
         if (y.isNaN()) {
             y = current.y
         }

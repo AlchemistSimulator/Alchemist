@@ -58,8 +58,8 @@ class SendScafiMessage[T, P <: Position[P]](
   override def execute(): Unit =
     val toSend = program.getExport(getTargetNode.getId).get
     for
-      neighborhood <- environment.getNeighborhood(getTargetNode).getCurrent.getNeighbors.iterator().asScala
+      neighborhood <- environment.neighborhoodOf(getTargetNode).getCurrent.getNeighbors.iterator().asScala
       action <- ScafiIncarnationUtils.allScafiProgramsFor[T, P](neighborhood).filter(program.getClass.isInstance(_))
       if action.programNameMolecule == program.programNameMolecule
     do action.sendExport(getTargetNode.getId, toSend)
-    program.prepareForComputationalCycle
+    program.prepareForComputationalCycle()

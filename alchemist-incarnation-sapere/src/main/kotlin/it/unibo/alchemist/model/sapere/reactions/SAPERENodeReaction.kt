@@ -167,7 +167,7 @@ class SAPERENodeReaction(
     }
 
     private fun currentNeighbors(): List<ILsaNode> =
-        environment.getNeighborhood(host).current.neighbors.filterIsInstance<ILsaNode>()
+        environment.neighborhoodOf(host).current.neighbors.filterIsInstance<ILsaNode>()
 
     private fun executeActions(matches: Map<HashString, ITreeNode<*>>?) {
         sapereActions.forEach { action ->

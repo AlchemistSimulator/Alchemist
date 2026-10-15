@@ -52,7 +52,7 @@ class FollowAtDistance<T>(
     override fun execute() {
         targetNode[target].onSome {
             val targetPosition = it.toPosition(environment)
-            val currentPosition = environment.getCurrentPosition(targetNode)
+            val currentPosition = environment.currentPositionOf(targetNode)
             var destination = targetPosition.surroundingPointAt(currentPosition - targetPosition, distance)
             if (currentPosition != destination) { // avoid "bouncing"
                 val currentSpeed =

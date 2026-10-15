@@ -52,7 +52,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> = when {
         shape.diameter + largestShapeDiameter <= 0 -> emptyList()
         else ->
-            getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
+            nodesAround(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
                 .filter { shape.intersects(getShape(it)) }
     }
 
@@ -63,7 +63,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     }
 
     override fun getShape(node: Node<T>): Euclidean2DShape = shapefulNodes[node].transformed {
-        origin(currentPositionOf(node))
+        origin(this@ContinuousPhysics2DEnvironment.currentPositionOf(node))
         rotate(getHeading(node))
     }
 
@@ -123,7 +123,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         desiredPosition: Euclidean2DPosition,
         hitboxRadius: Double,
     ): Euclidean2DPosition {
-        val currentPosition = currentPositionOf(node)
+        val currentPosition = this@ContinuousPhysics2DEnvironment.currentPositionOf(node)
         val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)
         val nodesOnPath =
             nodesOnPath(node, desiredMovement)

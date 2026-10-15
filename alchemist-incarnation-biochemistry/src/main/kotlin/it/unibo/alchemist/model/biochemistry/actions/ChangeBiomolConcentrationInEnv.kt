@@ -53,19 +53,19 @@ class ChangeBiomolConcentrationInEnv(
         ChangeBiomolConcentrationInEnv(environment, newReaction, biomolecule, deltaConcentration, randomGenerator)
 
     override fun execute() {
-        val surrounding = environment.getNeighborhood(targetNode).current.neighbors
+        val surrounding = environment.neighborhoodOf(targetNode).current.neighbors
             .filterIsInstance<EnvironmentNode>()
             .toMutableList()
         when {
             targetNode is EnvironmentNode -> changeConcentrationInRandomNodes(surrounding)
-            surrounding.map { environment.getDistanceBetweenNodes(targetNode, it) }.distinct().size == 1 ->
+            surrounding.map { environment.distanceBetween(targetNode, it) }.distinct().size == 1 ->
                 if (surrounding.map { it.getOrZeroConcentration(biomolecule) }.distinct().size == 1) {
                     changeConcentrationInRandomNodes(surrounding)
                 } else {
                     changeConcentrationInSortedNodes(surrounding.sortedBy { it.getOrZeroConcentration(biomolecule) })
                 }
             else -> changeConcentrationInSortedNodes(
-                surrounding.sortedBy { environment.getDistanceBetweenNodes(targetNode, it) },
+                surrounding.sortedBy { environment.distanceBetween(targetNode, it) },
             )
         }
     }

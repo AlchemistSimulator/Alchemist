@@ -67,7 +67,7 @@ open class BioRect2DEnvironment(
     override fun moveNodeTo(node: Node<Double>, position: Euclidean2DPosition) {
         val cell = node.asPropertyOrNull<Double, CellProperty<*>>() ?: return
         super.moveNodeTo(node, position)
-        val neighborhood = getNeighborhood(node).current
+        val neighborhood = neighborhoodOf(node).current
         // Iterate over copies, since removing junctions changes the junction maps.
         cell.junctions.current.toList().forEach { (junction, linkedNodes) ->
             linkedNodes.current.toList()

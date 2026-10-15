@@ -21,7 +21,7 @@ interface EuclideanEnvironment<T, P> : Environment<T, P> where P : Position<P>, 
      * Environments constraining movements should override [moveNodeTo] rather than this function,
      * so that their constraints apply to absolute movements as well.
      */
-    fun moveNodeBy(node: Node<T>, displacement: P) = moveNodeTo(node, getCurrentPosition(node) + displacement)
+    fun moveNodeBy(node: Node<T>, displacement: P) = moveNodeTo(node, currentPositionOf(node) + displacement)
 
     /**
      * Create a position corresponding to the origin of this environment.

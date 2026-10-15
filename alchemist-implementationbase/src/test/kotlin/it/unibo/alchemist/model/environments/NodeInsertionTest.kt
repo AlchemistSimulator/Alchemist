@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.environments
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
@@ -42,7 +42,7 @@ class NodeInsertionTest {
         val node = GenericNode(environment)
         environment.addNode(node, environment.makePosition(0, 0))
         val actual = environment.makePosition(SHIFT, 0)
-        assertEquals(actual, environment.getCurrentPosition(node))
+        assertEquals(actual, environment.currentPositionOf(node))
         assertEquals(listOf(actual), environment.notifiedPositions)
         // The environment bounds are widened by one ulp around each included object.
         assertEquals(SHIFT, environment.offset[0], TOLERANCE)
@@ -53,16 +53,16 @@ class NodeInsertionTest {
     fun `node list subscribers can read the neighborhood of a node being added`() {
         val environment = Continuous2DEnvironment(
             SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow(),
-        ).apply { linkingRule = ConnectWithinDistance(1.0) }
+        ).apply { networkModel = connectWithinDistance(1.0) }
         val first = GenericNode(environment).also { environment.addNode(it, environment.makePosition(0, 0)) }
         val neighborsOnArrival = mutableListOf<List<Node<Any>>>()
         environment.nodes.subscribe(invokeOnSubscription = false) { nodes ->
-            neighborsOnArrival += environment.getNeighborhood(nodes.last()).current.neighbors.toList()
+            neighborsOnArrival += environment.neighborhoodOf(nodes.last()).current.neighbors.toList()
         }
         val second = GenericNode(environment).also { environment.addNode(it, environment.makePosition(0.5, 0)) }
-        // The node is published isolated, and linked right after.
-        assertEquals(listOf(emptyList()), neighborsOnArrival)
-        assertEquals(listOf(first), environment.getNeighborhood(second).current.neighbors.toList())
+        // The node is published already linked.
+        assertEquals<List<List<Node<Any>>>>(listOf(listOf(first)), neighborsOnArrival)
+        assertEquals(listOf(first), environment.neighborhoodOf(second).current.neighbors.toList())
     }
 
     private companion object {

@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.observation.Observable
 class NeighborhoodPresent<T>(private val environment: Environment<T, *>, reaction: NodeReaction<T>) :
     AbstractNeighborCondition<T>(environment, reaction) {
     init {
-        setValidity(environment.getNeighborhood(targetNode).map { it.neighbors.any(::isCell) })
+        setValidity(environment.neighborhoodOf(targetNode).map { it.neighbors.any(::isCell) })
     }
 
     override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): NeighborhoodPresent<T> =

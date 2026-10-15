@@ -92,7 +92,7 @@ open class LsaRandomNeighborAction(
         }
         // #NEIGH
         if (initNeigh) {
-            setSyntheticNeigh(environment.getNeighborhood(target).current.neighbors)
+            setSyntheticNeigh(environment.neighborhoodOf(target).current.neighbors)
         }
         // #O
         if (initO) {
@@ -100,7 +100,7 @@ open class LsaRandomNeighborAction(
         }
     }
 
-    private fun computeDistance(target: ILsaNode): Double = environment.getDistanceBetweenNodes(targetNode, target)
+    private fun computeDistance(target: ILsaNode): Double = environment.distanceBetween(targetNode, target)
 
     override fun toString(): String = "+$molecule"
 }

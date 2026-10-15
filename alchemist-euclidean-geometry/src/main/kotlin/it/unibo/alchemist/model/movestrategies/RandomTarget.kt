@@ -44,7 +44,7 @@ class RandomTarget<T>(
         distanceDistribution: RealDistribution,
     ) : this(
         environment,
-        { environment.getCurrentPosition(node) },
+        { environment.currentPositionOf(node) },
         { x, y -> environment.makePosition(x, y) },
         directionRng,
         distanceDistribution,

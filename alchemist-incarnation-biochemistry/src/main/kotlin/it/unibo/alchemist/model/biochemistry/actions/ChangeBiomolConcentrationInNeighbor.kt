@@ -36,7 +36,7 @@ class ChangeBiomolConcentrationInNeighbor(
         ChangeBiomolConcentrationInNeighbor(randomGenerator, environment, newReaction, molecule, deltaConcentration)
 
     override fun execute() {
-        val validNeighbors = environment.getNeighborhood(targetNode).current.filter {
+        val validNeighbors = environment.neighborhoodOf(targetNode).current.neighbors.filter {
             it.asPropertyOrNull<Double, CellProperty<Euclidean2DPosition>>() != null &&
                 (deltaConcentration > 0 || it.getOrZeroConcentration(molecule) >= deltaConcentration)
         }

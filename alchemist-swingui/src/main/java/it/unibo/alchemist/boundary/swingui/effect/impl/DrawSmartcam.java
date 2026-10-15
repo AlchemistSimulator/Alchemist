@@ -11,16 +11,16 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.geometry.AwtShapeCompatible;
-import it.unibo.alchemist.model.geometry.Shape;
-import it.unibo.alchemist.model.actions.CameraSee;
-import it.unibo.alchemist.model.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty;
+import it.unibo.alchemist.model.actions.CameraSee;
+import it.unibo.alchemist.model.geometry.AwtShapeCompatible;
+import it.unibo.alchemist.model.geometry.Shape;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment;
+import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.jooq.lambda.function.Consumer2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public final class DrawSmartcam implements Effect {
             final Wormhole2D<P> wormhole
     ) {
         final double zoom = wormhole.getZoom();
-        final Point viewPoint = wormhole.getViewPoint(environment.getCurrentPosition(node));
+        final Point viewPoint = wormhole.getViewPoint(environment.currentPositionOf(node));
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {

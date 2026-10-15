@@ -33,22 +33,22 @@ abstract class AbstractSAPEREEnvironmentAgent<P : Position<P>> protected constru
     /**
      * The current position of the node.
      */
-    protected val currentPosition: P get() = environment.getCurrentPosition(targetNode)
+    protected val currentPosition: P get() = environment.currentPositionOf(targetNode)
 
     /**
      * The current neighborhood of the node.
      */
     protected val localNeighborhood: Neighborhood<List<ILsaMolecule>>
-        get() = environment.getNeighborhood(targetNode).current
+        get() = environment.neighborhoodOf(targetNode).current
 
     /**
      * Returns the position of [node].
      */
-    protected fun getPosition(node: Node<List<ILsaMolecule>>): P = environment.getCurrentPosition(node)
+    protected fun getPosition(node: Node<List<ILsaMolecule>>): P = environment.currentPositionOf(node)
 
     /**
      * Returns the current neighborhood of [node].
      */
     protected fun getNeighborhood(node: ILsaNode): Neighborhood<List<ILsaMolecule>> =
-        environment.getNeighborhood(node).current
+        environment.neighborhoodOf(node).current
 }

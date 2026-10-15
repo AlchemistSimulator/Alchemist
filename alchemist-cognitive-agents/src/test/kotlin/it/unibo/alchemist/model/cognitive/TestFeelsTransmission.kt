@@ -37,7 +37,7 @@ class TestFeelsTransmission<T> {
 
     private fun Environment<T, Euclidean2DPosition>.directDanger(node: Node<T>): Double =
         requireNotNull(getLayer(incarnation.createMolecule("danger"))) { "Danger layer should be loaded" }
-            .getValue(getCurrentPosition(node))
+            .getValue(currentPositionOf(node))
             .let { requireNotNull(it as? Number) { "Danger layer should contain numeric values" }.toDouble() }
 
     @Test
@@ -77,7 +77,7 @@ class TestFeelsTransmission<T> {
                 val source = directlyExposed.single()
                 (environment as Physics2DEnvironment<T>).setHeading(
                     indirectlyExposed,
-                    environment.getCurrentPosition(source) - environment.getCurrentPosition(indirectlyExposed),
+                    environment.currentPositionOf(source) - environment.currentPositionOf(indirectlyExposed),
                 )
                 val sourceModel = requireNotNull(source.asPropertyOrNull<T, CognitiveProperty<T>>()).cognitiveModel
                 val indirectCognition = requireNotNull(
@@ -93,7 +93,7 @@ class TestFeelsTransmission<T> {
                     "The unexposed pedestrian should see the directly exposed pedestrian",
                 )
                 target = environment.makePosition(-50.0, 0.0)
-                initialDistanceFromTarget = environment.getCurrentPosition(indirectlyExposed).distanceTo(target)
+                initialDistanceFromTarget = environment.currentPositionOf(indirectlyExposed).distanceTo(target)
             },
             atEachStep = { environment, _, _, _ ->
                 assertEquals(
@@ -107,7 +107,7 @@ class TestFeelsTransmission<T> {
                 socialContagionObserved = socialContagionObserved || cognitiveModel.dangerBelief() > 0
                 if (
                     cognitiveModel.wantsToEscape() &&
-                    environment.getCurrentPosition(indirectlyExposed).distanceTo(target) < initialDistanceFromTarget
+                    environment.currentPositionOf(indirectlyExposed).distanceTo(target) < initialDistanceFromTarget
                 ) {
                     evacuationObserved = true
                     environment.simulation.terminate()

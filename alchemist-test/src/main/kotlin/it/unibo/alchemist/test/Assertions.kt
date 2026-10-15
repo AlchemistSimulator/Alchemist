@@ -14,7 +14,7 @@ import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.LinkingRule
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
@@ -74,9 +74,8 @@ infix fun Node<*>.shouldEqual(other: Node<*>) {
     reactions.current.ebeEquals(other.reactions.current) { expected, actual -> actual shouldEqual expected }
 }
 
-infix fun LinkingRule<*, *>.shouldEqual(other: LinkingRule<*, *>) {
-    assertEquals(other::class, this::class, "LinkingRule types don't match")
-    assertEquals(other.isLocallyConsistent(), isLocallyConsistent())
+infix fun NetworkModel<*>.shouldEqual(other: NetworkModel<*>) {
+    assertEquals(other::class, this::class, "NetworkModel types don't match")
 }
 
 infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<T, P>) {
@@ -87,9 +86,9 @@ infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<
     assertEquals(other.dimensions, dimensions)
     assertEquals(other.isTerminated, isTerminated)
     assertContentEquals(other.sizeInDistanceUnits, sizeInDistanceUnits)
-    linkingRule shouldEqual other.linkingRule
-    val positions = nodes.current.sortedBy { it.id }.map { getCurrentPosition(it) }
-    val otherPositions = other.nodes.current.sortedBy { it.id }.map(other::getCurrentPosition)
+    networkModel shouldEqual other.networkModel
+    val positions = nodes.current.sortedBy { it.id }.map { currentPositionOf(it) }
+    val otherPositions = other.nodes.current.sortedBy { it.id }.map(other::currentPositionOf)
     positions.ebeEquals(otherPositions) { expected, actual -> assertEquals(expected, actual) }
     nodes.current.ebeEquals(other.nodes.current) { expected, actual ->
         actual shouldEqual expected

@@ -58,7 +58,7 @@ public interface Effect {
             final Environment<T, P> environment,
             final Wormhole2D<P> wormhole
     ) {
-        final Point viewPoint = wormhole.getViewPoint(environment.getCurrentPosition(n));
+        final Point viewPoint = wormhole.getViewPoint(environment.currentPositionOf(n));
         apply(g, n, viewPoint.x, viewPoint.y); // preserve backward compatibility
     }
 

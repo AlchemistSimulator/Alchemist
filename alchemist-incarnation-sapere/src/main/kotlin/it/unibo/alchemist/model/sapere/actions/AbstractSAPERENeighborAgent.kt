@@ -62,7 +62,7 @@ abstract class AbstractSAPERENeighborAgent<P : Position<P>> private constructor(
     protected fun move(direction: P) {
         environment.moveNodeTo(
             targetNode,
-            environment.getCurrentPosition(targetNode).plus(direction.coordinates),
+            environment.currentPositionOf(targetNode).plus(direction.coordinates),
         )
     }
 

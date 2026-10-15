@@ -48,13 +48,13 @@ class TestGraphStreamReproducibility :
                                 layoutQuality = 0.1,
                                 parameters = parameters.toTypedArray(),
                             )
-                        environment.linkingRule = graphStream.linkingRule
+                        environment.networkModel = graphStream.networkModel
                         graphStream.deployment.forEach {
                             environment.addNode(GenericNode(environment), it)
                         }
                         environment.nodes.current.map { node ->
-                            environment.getCurrentPosition(node).coordinates.toList() to
-                                environment.getNeighborhood(node).current.neighbors.map { it.id }
+                            environment.currentPositionOf(node).coordinates.toList() to
+                                environment.neighborhoodOf(node).current.neighbors.map { it.id }
                         }
                     }
                     val graphs1 = generateGraphs()

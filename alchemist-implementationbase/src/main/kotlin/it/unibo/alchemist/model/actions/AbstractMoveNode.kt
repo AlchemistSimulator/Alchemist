@@ -52,5 +52,5 @@ abstract class AbstractMoveNode<T, P : Position<P>> @JvmOverloads protected cons
     /**
      * The current position of [node].
      */
-    protected fun getNodePosition(node: Node<T>): P = environment.getCurrentPosition(node)
+    protected fun getNodePosition(node: Node<T>): P = environment.currentPositionOf(node)
 }

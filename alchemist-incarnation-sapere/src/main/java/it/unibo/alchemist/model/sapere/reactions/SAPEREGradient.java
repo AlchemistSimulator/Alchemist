@@ -366,11 +366,11 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
                 : getLsaNode().matching(context);
         final TIntObjectMap<P> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
-        final P curPos = this.environment.getCurrentPosition(getHost());
+        final P curPos = this.environment.currentPositionOf(getHost());
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
-        for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getHost()).getCurrent()) {
-            final P p = this.environment.getCurrentPosition(n);
+        for (final Node<List<ILsaMolecule>> n : this.environment.neighborhoodOf(getHost()).getCurrent().getNeighbors()) {
+            final P p = this.environment.currentPositionOf(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
             gradCacheTemp.put(n.getId(), ((ILsaNode) n).matching(gradient));
@@ -441,7 +441,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
          * leaves it, switching the observed nodes accordingly.
          */
         return Observables.switchMap(
-            environment.getNeighborhood(node),
+            environment.neighborhoodOf(node),
             neighborhood -> Observables.combineLatest(
                 Stream.concat(Stream.of(node), neighborhood.getNeighbors().stream())
                     .map(currentNode -> observeNodeState(environment, node, currentNode))
@@ -456,7 +456,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
             final ILsaNode center,
             final Node<List<ILsaMolecule>> node
     ) {
-        final Observable<P> position = environment.getPosition(node);
+        final Observable<P> position = environment.positionOf(node);
         if (node != center && node instanceof final ILsaNode lsaNode) {
             // Neighbor matching depends on both where the node is and which LSAs it currently contains.
             return position.mergeWith(

@@ -52,9 +52,9 @@ constructor(
             val myHeading = environment.getHeading(targetNode)
             if (targetPosition != myHeading) {
                 if (speedRadians >= 2 * Math.PI) {
-                    environment.setHeading(targetNode, targetPosition - environment.getCurrentPosition(targetNode))
+                    environment.setHeading(targetNode, targetPosition - environment.currentPositionOf(targetNode))
                 } else {
-                    val targetAngle = (targetPosition - environment.getCurrentPosition(targetNode)).asAngle
+                    val targetAngle = (targetPosition - environment.currentPositionOf(targetNode)).asAngle
                     val currentAngle = environment.getHeading(targetNode).asAngle
                     val rotation = shortestRotationAngle(currentAngle, targetAngle)
                     val absDistance = abs(rotation)

@@ -23,7 +23,7 @@ import kotlin.test.assertFailsWith
 
 class InteractWithOthersTest {
     private val environment: Environment<Any, Euclidean2DPosition> = mockk {
-        every { getNodesWithinRange(any<Node<Any>>(), any()) } returns emptyList()
+        every { nodesAround(any<Node<Any>>(), any()) } returns emptyList()
     }
 
     @Test

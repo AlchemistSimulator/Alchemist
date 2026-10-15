@@ -29,7 +29,7 @@ open class InfluenceSphere2D<T>(
     override fun influentialNodes(): List<Node<T>> = environment
         .getNodesWithin(
             shape.transformed {
-                origin(environment.getCurrentPosition(owner))
+                origin(environment.currentPositionOf(owner))
                 rotate(environment.getHeading(owner))
             },
         ).minusElement(owner)

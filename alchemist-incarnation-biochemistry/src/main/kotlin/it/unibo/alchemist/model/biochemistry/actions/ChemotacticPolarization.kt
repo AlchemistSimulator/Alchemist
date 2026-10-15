@@ -59,15 +59,15 @@ class ChemotacticPolarization(
     override fun execute() {
         // Neighbors gain and lose the molecule without changing the neighborhood, so the candidates are computed anew.
         val candidates = environment
-            .getNeighborhood(targetNode)
+            .neighborhoodOf(targetNode)
             .current
             .neighbors
             .filter { it is EnvironmentNode && it.contains(biomolecule) }
-        val position = environment.getCurrentPosition(targetNode)
+        val position = environment.currentPositionOf(targetNode)
         val maxConcentrationNode = candidates.maxByOrNull { it.getOrZeroConcentration(biomolecule) }
         when {
             maxConcentrationNode == null -> cell.addPolarizationVersor(Euclidean2DPosition.zero)
-            environment.getCurrentPosition(maxConcentrationNode) == position ->
+            environment.currentPositionOf(maxConcentrationNode) == position ->
                 cell.addPolarizationVersor(environment.makePosition(0, 0))
             else -> {
                 val polarization = weightedAverageVectors(candidates, position)
@@ -87,7 +87,7 @@ class ChemotacticPolarization(
         candidates: List<Node<Double>>,
         position: Euclidean2DPosition,
     ): Euclidean2DPosition = candidates.fold(Euclidean2DPosition.zero) { result, neighbor ->
-        val neighborPosition = environment.getCurrentPosition(neighbor)
+        val neighborPosition = environment.currentPositionOf(neighbor)
         val deltaX = neighborPosition.x - position.x
         val deltaY = neighborPosition.y - position.y
         val module = hypot(deltaX, deltaY)

@@ -23,7 +23,7 @@ abstract class AbstractNeighborCondition<T>(environment: Environment<T, *>, reac
     AbstractLocalCondition<T>(reaction) {
 
     private val validNeighbors: Observable<Map<Node<T>, Double>> = environment
-        .getNeighborhood(targetNode)
+        .neighborhoodOf(targetNode)
         .switchMap { neighborhood ->
             neighborhood.neighbors
                 .map { neighbor -> observeNeighborWeight(neighbor).map { neighbor to it } }

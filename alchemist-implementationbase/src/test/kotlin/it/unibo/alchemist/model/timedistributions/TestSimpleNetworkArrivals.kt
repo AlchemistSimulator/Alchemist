@@ -33,7 +33,7 @@ class TestSimpleNetworkArrivals {
         val incarnation = mockk<Incarnation<Any, Euclidean2DPosition>>()
         val environment = mockk<Environment<Any, Euclidean2DPosition>>()
         val node = mockk<Node<Any>>()
-        every { environment.getNeighborhood(node).current.neighbors } returns persistentListOf()
+        every { environment.neighborhoodOf(node).current.neighbors } returns persistentListOf()
         val propagationDelay = 0.1
         val packetSize = 1000.0
         val bandwidth = 1000.0
@@ -57,7 +57,7 @@ class TestSimpleNetworkArrivals {
         val incarnation = mockk<Incarnation<Any, Euclidean2DPosition>>()
         val environment = mockk<Environment<Any, Euclidean2DPosition>>()
         val node = mockk<Node<Any>>()
-        every { environment.getNeighborhood(node).current.neighbors } returns persistentListOf()
+        every { environment.neighborhoodOf(node).current.neighbors } returns persistentListOf()
         val distribution = SimpleNetworkArrivals(
             incarnation = incarnation,
             node = node,
@@ -119,7 +119,7 @@ class TestSimpleNetworkArrivals {
         neighborhoods.keys.forEachIndexed { id, node ->
             every { node.id } returns id
             every { node.contains(ACCESS_POINT) } returns (node == accessPoint || node == otherAccessPoint)
-            every { environment.getNeighborhood(node).current.neighbors } answers {
+            every { environment.neighborhoodOf(node).current.neighbors } answers {
                 neighborhoods.getValue(node).toPersistentList()
             }
         }

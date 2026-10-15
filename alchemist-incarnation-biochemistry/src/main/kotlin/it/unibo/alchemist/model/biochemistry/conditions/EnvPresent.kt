@@ -21,7 +21,7 @@ class EnvPresent(private val environment: Environment<Double, *>, reaction: Node
     AbstractLocalCondition<Double>(reaction) {
     init {
         setValidity(
-            environment.getNeighborhood(targetNode).map {
+            environment.neighborhoodOf(targetNode).map {
                 it.neighbors.any { neighbor -> neighbor is EnvironmentNode }
             },
         )

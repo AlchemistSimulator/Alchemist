@@ -11,7 +11,7 @@ package it.unibo.alchemist.core
 
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.terminators.StepCount
@@ -36,7 +36,7 @@ internal class TestConcurrency {
         val incarnation = BiochemistryIncarnation()
         val environment = Continuous2DEnvironment(incarnation)
         val node = GenericNode(environment)
-        environment.linkingRule = NoLinks()
+        environment.networkModel = NoLinks()
         val timeDistribution = DiracComb<Double>(1.0)
         val reaction = GenericReaction(node, timeDistribution)
         node.addReaction(reaction)

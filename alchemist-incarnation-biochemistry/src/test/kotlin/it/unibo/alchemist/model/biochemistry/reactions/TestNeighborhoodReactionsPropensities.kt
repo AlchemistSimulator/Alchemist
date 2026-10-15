@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.biochemistry.startSimulationWithoutParameters
 import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.properties.Delegates
@@ -48,7 +48,6 @@ private val JUNCTION =
     )
 private val RANDOM = MersenneTwister()
 private val TIME = ExponentialTime<Double>(1.0, RANDOM)
-private val LINKING_RULE = ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
 private val POSITION = Euclidean2DPosition(0.0, 0.0)
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
 private var centralNode: Node<Double> by Delegates.notNull()
@@ -58,7 +57,7 @@ class TestNeighborhoodReactionsPropensities {
     @BeforeEach
     fun setUp() {
         environment = BioRect2DEnvironment(INCARNATION)
-        environment.linkingRule = LINKING_RULE
+        with(environment) { networkModel = connectWithinDistance(5.0) }
         centralNode = INCARNATION.createNode(RANDOM, environment, null)
         centralNode.setConcentration(BIOMOLECULE, 100.0)
         environment.addNode(centralNode, POSITION)
@@ -68,7 +67,7 @@ class TestNeighborhoodReactionsPropensities {
                 .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
                 .map { it.second }
                 .onEach { environment.addNode(it, POSITION) }
-        assertEquals(neighbors.toList(), environment.getNeighborhood(centralNode).current.neighbors.toList())
+        assertEquals(neighbors.toList(), environment.neighborhoodOf(centralNode).current.neighbors.toList())
     }
 
     @Test

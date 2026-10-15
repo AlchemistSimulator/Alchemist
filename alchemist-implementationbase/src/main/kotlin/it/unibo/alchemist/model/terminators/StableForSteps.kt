@@ -52,7 +52,7 @@ data class StableForSteps<T, P : Position<P>>(private val checkInterval: Long, p
 
     override fun invoke(environment: Environment<T, P>): Boolean {
         if (environment.simulation.step % checkInterval == 0L) {
-            val newPositions = environment.nodes.current.associateWith(environment::getCurrentPosition)
+            val newPositions = environment.nodes.current.associateWith(environment::currentPositionOf)
             // Contents are copied, since concentrations may be null and nodes expose live views.
             val newContents = environment.nodes.current.associateWith { it.contents.toMap() }
             success = if (newPositions == positions && newContents == contents) success + 1 else 0

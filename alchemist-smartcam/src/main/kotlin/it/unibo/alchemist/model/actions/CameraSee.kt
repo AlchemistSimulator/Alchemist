@@ -61,7 +61,7 @@ constructor(
         }
         targetNode.setConcentration(
             outputMolecule,
-            seen.map { VisibleNodeImpl(it, environment.getCurrentPosition(it)) },
+            seen.map { VisibleNodeImpl(it, environment.currentPositionOf(it)) },
         )
     }
 }

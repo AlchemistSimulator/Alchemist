@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.biochemistry.CircularCellProperty;
 import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
+import it.unibo.alchemist.model.networks.ConnectWithinDistance;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.MersenneTwister;
@@ -143,7 +143,7 @@ final class TestEnvironmentNodes {
             .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
             .min(
                 Comparator.comparingDouble(n ->
-                    environment.getCurrentPosition(n).distanceTo(environment.getCurrentPosition(center))
+                    environment.currentPositionOf(n).distanceTo(environment.currentPositionOf(center))
                 )
             )
             .map(node -> getOrZeroConcentration(node, new Biomolecule(A)))
@@ -161,7 +161,7 @@ final class TestEnvironmentNodes {
         final Molecule a = new Biomolecule(A);
         injectAInEnvReaction(cellNode, 1);
         cellNode.setConcentration(a, 1000.0);
-        standardEnvironment.setLinkingRule(new ConnectWithinDistance<>(2));
+        standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 2));
         standardEnvironment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         standardEnvironment.addNode(envNode, new Euclidean2DPosition(0, 1));
         simulate(standardEnvironment);
@@ -185,7 +185,7 @@ final class TestEnvironmentNodes {
         final Molecule a = new Biomolecule(A);
         injectAInEnvReaction(cellNode, 1);
         cellNode.setConcentration(a, 1000.0);
-        standardEnvironment.setLinkingRule(new ConnectWithinDistance<>(2));
+        standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 2));
         standardEnvironment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         simulate(standardEnvironment);
         assertEquals(1000, getOrZeroConcentration(cellNode, a), PRECISION);
@@ -201,7 +201,7 @@ final class TestEnvironmentNodes {
         final Molecule a = new Biomolecule(A);
         injectAInEnvReaction(envNode1, 1);
         envNode1.setConcentration(a, 1000.0);
-        standardEnvironment.setLinkingRule(new ConnectWithinDistance<>(2));
+        standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 2));
         standardEnvironment.addNode(envNode1, new Euclidean2DPosition(0, 0));
         standardEnvironment.addNode(envNode2, new Euclidean2DPosition(0, 1));
         simulate(standardEnvironment);
@@ -246,13 +246,13 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> environment = testNoVar("testEnv5.yml");
         final double conAInEnv1 = environment.getNodes().getCurrent().stream()
             .parallel()
-            .filter(n -> environment.getCurrentPosition(n).equals(new Euclidean2DPosition(0, 0)))
+            .filter(n -> environment.currentPositionOf(n).equals(new Euclidean2DPosition(0, 0)))
             .findAny()
             .map(node -> getOrZeroConcentration(node, new Biomolecule(A)))
             .orElseThrow();
         final double conAInEnv2 = environment.getNodes().getCurrent().stream()
             .parallel()
-            .filter(n -> environment.getCurrentPosition(n).equals(new Euclidean2DPosition(1, 0)))
+            .filter(n -> environment.currentPositionOf(n).equals(new Euclidean2DPosition(1, 0)))
             .findAny()
             .map(node -> getOrZeroConcentration(node, new Biomolecule(A)))
             .orElseThrow();
@@ -276,7 +276,7 @@ final class TestEnvironmentNodes {
         injectAInEnvReaction(envNode2, 1000);
         final double total = 1000.0;
         cellNode.setConcentration(a, 1000.0);
-        standardEnvironment.setLinkingRule(new ConnectWithinDistance<>(1));
+        standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 1));
         final Euclidean2DPosition pos1 = new Euclidean2DPosition(0, -0.75);
         final Euclidean2DPosition pos2 = new Euclidean2DPosition(0, 0.75);
         final Euclidean2DPosition pos3 = new Euclidean2DPosition(0, 1.5);
@@ -317,7 +317,7 @@ final class TestEnvironmentNodes {
     }
 
     private void assertSpreadsToSurroundingNodes(final Node<Double> center) {
-        standardEnvironment.setLinkingRule(new ConnectWithinDistance<>(2));
+        standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 2));
         standardEnvironment.addNode(center, new Euclidean2DPosition(0, 0));
         final Node<Double>[] nodes = populateSurroundingOrigin();
         final Molecule a = new Biomolecule(A);

@@ -34,8 +34,8 @@ class TensionPresent(private val environment: EnvironmentSupportingDeformableCel
         .switchMap { range ->
             if (range > 0.0) {
                 environment
-                    .observeNodesWithinRange(targetNode, range)
-                    .combineLatest(environment::getPosition) { computeMechanicalState(range) }
+                    .observeNodesAround(targetNode, range)
+                    .combineLatest(environment::positionOf) { computeMechanicalState(range) }
             } else {
                 observe(MechanicalState(valid = false, tension = 0.0))
             }
@@ -63,11 +63,11 @@ class TensionPresent(private val environment: EnvironmentSupportingDeformableCel
         var valid = false
         var totalTension = 0.0
         environment
-            .getNodesWithinRange(thisNode, range)
+            .nodesAround(thisNode, range)
             .mapNotNull { neighbor ->
                 neighbor.asPropertyOrNull<Double, CircularCellProperty>()?.let { neighbor to it }
             }.forEach { (neighbor, neighborCell) ->
-                val distance = environment.getDistanceBetweenNodes(neighbor, thisNode)
+                val distance = environment.distanceBetween(neighbor, thisNode)
                 val neighborMaximumRadius =
                     (neighborCell as? CircularDeformableCellProperty)?.maximumRadius ?: neighborCell.radius
                 val maximumRadiusSum = thisCell.maximumRadius + neighborMaximumRadius

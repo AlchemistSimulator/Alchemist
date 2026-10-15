@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.layers.StepLayer;
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
+import it.unibo.alchemist.model.networks.ConnectWithinDistance;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.reactions.GenericReaction;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
@@ -65,8 +65,8 @@ class TestBiomolLayer {
         movement.setActions(List.of(new BrownianMove<>(environment, movement, cellNode, rand, 10)));
         cellNode.addReaction(movement);
         cellNode.setConcentration(a, 0d);
-        environment.setLinkingRule(
-                new ConnectWithinDistance<>(2)
+        environment.setNetworkModel(
+                new ConnectWithinDistance<>(environment, 2)
         );
         environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         environment.addLayer(b, bLayer);
@@ -81,7 +81,7 @@ class TestBiomolLayer {
                 @Nonnull final Time time,
                 final long step
             ) {
-                final Euclidean2DPosition curPos = environment.getCurrentPosition(environment.getNodeByID(0));
+                final Euclidean2DPosition curPos = environment.currentPositionOf(environment.getNodeByID(0));
                 assertEquals(curPos.getX() > 0 && curPos.getY() > 0, underTest.getCanExecute().getCurrent());
             }
 

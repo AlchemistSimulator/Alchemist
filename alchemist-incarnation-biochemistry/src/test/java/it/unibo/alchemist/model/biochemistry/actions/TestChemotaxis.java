@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl;
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
+import it.unibo.alchemist.model.networks.ConnectWithinDistance;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.MersenneTwister;
@@ -58,8 +58,8 @@ class TestChemotaxis {
     @BeforeEach
     public void setUp() {
         environment = new BioRect2DEnvironmentNoOverlap(incarnation);
-        environment.setLinkingRule(
-                new ConnectWithinDistance<>(2)
+        environment.setNetworkModel(
+                new ConnectWithinDistance<>(environment, 2)
         );
         envNode1 = new EnvironmentNodeImpl(environment);
         envNode2 = new EnvironmentNodeImpl(environment);
@@ -243,7 +243,7 @@ class TestChemotaxis {
         r1.execute();
         r2.execute();
         assertEquals(new Euclidean2DPosition(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)),
-                environment.getCurrentPosition(cellNode1)
+                environment.currentPositionOf(cellNode1)
         );
     }
 
@@ -273,11 +273,11 @@ class TestChemotaxis {
         r1.execute();
         r2.execute();
         assertEquals(1,
-                environment.getCurrentPosition(cellNode1).getX(),
+                environment.currentPositionOf(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(1,
-                environment.getCurrentPosition(cellNode1).getY(),
+                environment.currentPositionOf(cellNode1).getY(),
                 PRECISION
                 );
     }
@@ -310,11 +310,11 @@ class TestChemotaxis {
         r2.execute();
         r2.execute();
         assertEquals(0.5,
-                environment.getCurrentPosition(cellNode1).getX(),
+                environment.currentPositionOf(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(0.5,
-                environment.getCurrentPosition(cellNode1).getY(),
+                environment.currentPositionOf(cellNode1).getY(),
                 PRECISION
                 );
     }

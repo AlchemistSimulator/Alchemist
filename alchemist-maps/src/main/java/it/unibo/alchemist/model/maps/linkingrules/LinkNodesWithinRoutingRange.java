@@ -11,46 +11,48 @@ package it.unibo.alchemist.model.maps.linkingrules;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.linkingrules.AbstractLocallyConsistentLinkingRule;
 import it.unibo.alchemist.model.maps.MapEnvironment;
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
+import it.unibo.alchemist.model.networks.ObservingRangeBasedNetworkModel;
+import it.unibo.alchemist.model.observation.Observable;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
+ * Links the nodes whose route is shorter than a range; nodes outside a {@link MapEnvironment} are never linked.
+ *
  * @param <T> concentration type
  */
-public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsistentLinkingRule<T, GeoPosition> {
-
-    private final double range;
+public final class LinkNodesWithinRoutingRange<T> extends ObservingRangeBasedNetworkModel<T, GeoPosition, GeoPosition> {
 
     /**
+     * @param environment the environment whose nodes this model links
      * @param r range
      */
-    public LinkNodesWithinRoutingRange(final double r) {
-        range = r;
+    public LinkNodesWithinRoutingRange(@Nonnull final Environment<T, GeoPosition> environment, final double r) {
+        super(environment, r);
     }
 
+    /**
+     * Routes, computed between the current positions of the nodes, exist only in a {@link MapEnvironment}.
+     */
+    @Override
+    protected boolean isLinked(
+        @Nonnull final Node<T> center,
+        @Nonnull final GeoPosition centerInput,
+        @Nonnull final Node<T> neighbor,
+        @Nonnull final GeoPosition neighborInput
+    ) {
+        return getEnvironment() instanceof final MapEnvironment<T, ?, ?> map
+            && map.computeRoute(center, neighbor).length() < getRange();
+    }
+
+    /**
+     * Routes depend on the positions of both nodes.
+     */
     @Nonnull
     @Override
-    public Neighborhood<T> computeNeighborhood(
-        @Nonnull final Node<T> center,
-        @Nonnull final Environment<T, GeoPosition> environment
-    ) {
-        if (environment instanceof final MapEnvironment<T, ?, ?> menv) {
-            final Stream<? extends Node<T>> stream =
-                menv.getNodesWithinRange(center, range).parallelStream();
-            final List<Node<T>> filtered = stream
-                    .filter(node -> menv.computeRoute(center, node).length() < range)
-                    .collect(Collectors.toList());
-            return Neighborhoods.make(menv, center, filtered);
-        }
-        return Neighborhoods.make(environment, center);
+    protected Observable<GeoPosition> observeInput(@Nonnull final Node<T> node) {
+        return getEnvironment().positionOf(node);
     }
-
 }

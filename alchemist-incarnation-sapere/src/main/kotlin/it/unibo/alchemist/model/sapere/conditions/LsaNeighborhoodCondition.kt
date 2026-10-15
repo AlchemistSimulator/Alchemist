@@ -34,7 +34,7 @@ class LsaNeighborhoodCondition(
      * The matches depend on the LSA space of every neighbor: an update is triggered every time the neighborhood
      * changes, or the LSA space of one of its members changes.
      */
-    private val neighborhoodMatchInput: Observable<*> = environment.getNeighborhood(targetNode)
+    private val neighborhoodMatchInput: Observable<*> = environment.neighborhoodOf(targetNode)
         .map { it.neighbors }
         .switchMap { neighbors ->
             neighbors.filterIsInstance<ILsaNode>().map { it.observeLsaSpace() }.combineLatest { it }

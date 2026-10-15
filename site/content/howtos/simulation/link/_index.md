@@ -8,11 +8,11 @@ summary = "Define how nodes should be connected with each other."
 Alchemist nodes can connect to each other and form a network.
 
 The [`network-model`](/reference/yaml/#network-model) key is used to load the implementation of
-{{% api class="LinkingRule" %}}
+{{% api class="NetworkModel" %}}
 to be used in the simulation,
 which determines the neighborhood of every node.
 
-The key is optional, but defaults to {{% api package="model.linkingrules" class="NoLinks" %}},
+The key is optional, but defaults to {{% api package="model.networks" class="NoLinks" %}},
 so, if unspecified, nodes in the environment don't get connected.
 
 Omitting the key is equivalent to writing any of the following:
@@ -29,7 +29,7 @@ network-model:
 ## Linking nodes based on their respective distance
 
 One of the most common ways of linking nodes is to connect those which are close enough to each other.
-To do so, you can use {{% api package="model.linkingrules" class="ConnectWithinDistance" %}},
+To do so, you can use {{% api package="model.networks" class="ConnectWithinDistance" %}},
 passing a parameter representing the maximum connection distance.
 
 Note that such distance depends on the environment: while the definition of distance is straightforward for euclidean spaces,

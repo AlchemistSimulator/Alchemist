@@ -55,7 +55,7 @@ public abstract class AbstractDrawOnce implements Effect {
              * if marker node is no longer in the environment or it is no longer displayed, we need to change it
              */
             if (markerNode.isEmpty()
-                    || !wormhole.isInsideView(wormhole.getViewPoint(environment.getCurrentPosition(markerNode.get())))) {
+                    || !wormhole.isInsideView(wormhole.getViewPoint(environment.currentPositionOf(markerNode.get())))) {
                 markerNodeID = null;
             }
         }

@@ -30,5 +30,5 @@ abstract class AbstractSAPEREMoveNodeAgent<P : Position<P>> @JvmOverloads constr
      * Moves the node by [direction].
      */
     protected fun move(direction: P) =
-        environment.moveNodeTo(targetNode, environment.getCurrentPosition(targetNode).plus(direction.coordinates))
+        environment.moveNodeTo(targetNode, environment.currentPositionOf(targetNode).plus(direction.coordinates))
 }

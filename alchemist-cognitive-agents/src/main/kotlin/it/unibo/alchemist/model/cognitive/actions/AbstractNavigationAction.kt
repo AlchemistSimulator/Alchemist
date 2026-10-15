@@ -127,7 +127,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * Otherwise the first room containing [pedestrianPosition] is used.
      */
     protected open fun updateCachedVariables() {
-        pedestrianPosition = environment.getCurrentPosition(navigatingNode)
+        pedestrianPosition = environment.currentPositionOf(navigatingNode)
         currentRoom =
             when {
                 (state == MOVING_TO_CROSSING_POINT_1 || state == MOVING_TO_FINAL) &&
@@ -223,7 +223,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
         /*
          * Always up to date current position.
          */
-            else -> environment.getCurrentPosition(navigatingNode)
+            else -> environment.currentPositionOf(navigatingNode)
         }
 
     /**

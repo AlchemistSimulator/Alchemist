@@ -49,7 +49,7 @@ class LsaCountNeighborsAction(
 
     override fun execute() {
         val template = LsaMolecule(moleculeToCount.allocateVar(matches))
-        val count = environment.getNeighborhood(targetNode).current.neighbors
+        val count = environment.neighborhoodOf(targetNode).current.neighbors
             .count { (it as ILsaNode).matching(template).isNotEmpty() }
         checkNotNull(matches)[countVariable] = NumTreeNode(count.toDouble())
     }

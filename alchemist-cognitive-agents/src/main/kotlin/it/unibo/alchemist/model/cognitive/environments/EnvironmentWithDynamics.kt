@@ -61,15 +61,25 @@ constructor(
         } ?: ContinuousPhysics2DEnvironment(incarnation),
 ) : Dynamics2DEnvironment<T>,
     PhysicsEnvWithObstacles<T> by backingEnvironment.asEnvironmentWithObstacles() {
-    private val world: World<PhysicsBody> = World()
+    override val origin: Euclidean2DPosition get() = backingEnvironment.origin
 
-    private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
+    override val reactions: ObservableList<Reaction<T>> get() = hostedReactions
+
+    private val RectObstacle2D<Euclidean2DPosition>.center get() =
+        Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
 
     /*
      * This environment hosts its own reactions instead of delegating membership to the backing environment:
      * the reactions name this environment as their host, which the backing environment would reject.
      */
     private val hostedReactions = ObservableMutableList<Reaction<T>>()
+
+    private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
+
+    private val PhysicsBody.position get() =
+        Euclidean2DPosition(this.transform.translationX, this.transform.translationY)
+
+    private val world: World<PhysicsBody> = World()
 
     private var physicsUpdate = PhysicsUpdate(this, 1.0)
 
@@ -95,7 +105,14 @@ constructor(
         }
     }
 
-    override val reactions: ObservableList<Reaction<T>> get() = hostedReactions
+    override fun addNode(node: Node<T>, position: Euclidean2DPosition): Boolean {
+        if (backingEnvironment.addNode(node, position)) {
+            addNodeBody(node)
+            moveNodeBodyToPosition(node, backingEnvironment.currentPositionOf(node))
+            return true
+        }
+        return false
+    }
 
     override fun addReaction(reaction: Reaction<T>) {
         require(reaction.host === this) { "$reaction is hosted by ${reaction.host}, not by $this" }
@@ -113,6 +130,40 @@ constructor(
         }
     }
 
+    /*
+     * The backing environment publishes positions, and bodies are aligned to it after every move:
+     * reading positions from it keeps them consistent with what position observers are notified about.
+     */
+    override fun currentPositionOf(node: Node<T>): Euclidean2DPosition = backingEnvironment.currentPositionOf(node)
+
+    override fun getVelocity(node: Node<T>) = nodeToBody[node]?.let {
+        Euclidean2DPosition(it.linearVelocity.x, it.linearVelocity.y)
+    } ?: this.origin
+
+    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
+        backingEnvironment.makePosition(*coordinates)
+
+    override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
+        backingEnvironment.makePosition(coordinates)
+
+    override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
+        backingEnvironment.makePosition(coordinates)
+
+    /*
+     * Interface delegation would run the default implementation inside the backing environment,
+     * moving the node through its moveNodeTo and leaving the physical body behind.
+     */
+    override fun moveNodeBy(node: Node<T>, displacement: Euclidean2DPosition) =
+        moveNodeTo(node, currentPositionOf(node) + displacement)
+
+    /**
+     * Moves [node] in the backing environment, which enforces its obstacles, then aligns its physical body.
+     */
+    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) {
+        backingEnvironment.moveNodeTo(node, position)
+        moveNodeBodyToPosition(node, backingEnvironment.currentPositionOf(node))
+    }
+
     override fun removeReaction(reaction: Reaction<T>) {
         if (hostedReactions.remove(reaction)) {
             simulationOrNull?.reactionRemoved(reaction)
@@ -120,27 +171,18 @@ constructor(
         }
     }
 
-    private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {
-        val obstacleBody = Body()
-        obstacleBody.addFixture(Rectangle(obstacle.width, obstacle.height))
-        obstacleBody.setMass(MassType.INFINITE)
-        obstacleBody.transform =
-            Transform().apply {
-                translate(obstacle.center)
-            }
-        world.addBody(obstacleBody)
-    }
+    override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) =
+        nodeToBody[node]?.let { it.linearVelocity = Vector2(velocity.x, velocity.y) }
+            ?: error("Unable to update $node physical state. Check if it was added to this environment.")
 
-    private val RectObstacle2D<Euclidean2DPosition>.center get() =
-        Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
-
-    override fun addNode(node: Node<T>, position: Euclidean2DPosition): Boolean {
-        if (backingEnvironment.addNode(node, position)) {
-            addNodeBody(node)
-            moveNodeBodyToPosition(node, backingEnvironment.getCurrentPosition(node))
-            return true
+    override fun updatePhysics(elapsedTime: Double) {
+        world.update(elapsedTime, Int.MAX_VALUE)
+        /*
+         * Make world and environment position consistent
+         */
+        nodeToBody.forEach { (node, body) ->
+            backingEnvironment.moveNodeTo(node, body.position)
         }
-        return false
     }
 
     private fun addNodeBody(node: Node<T>) {
@@ -161,70 +203,28 @@ constructor(
             }
     }
 
-    private fun moveNodeBodyToPosition(node: Node<T>, position: Euclidean2DPosition) {
-        nodeToBody[node]?.transform =
+    private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {
+        val obstacleBody = Body()
+        obstacleBody.addFixture(Rectangle(obstacle.width, obstacle.height))
+        obstacleBody.setMass(MassType.INFINITE)
+        obstacleBody.transform =
             Transform().apply {
-                translate(position.x, position.y)
+                translate(obstacle.center)
             }
+        world.addBody(obstacleBody)
     }
-
-    /**
-     * Moves [node] in the backing environment, which enforces its obstacles, then aligns its physical body.
-     */
-    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) {
-        backingEnvironment.moveNodeTo(node, position)
-        moveNodeBodyToPosition(node, backingEnvironment.getCurrentPosition(node))
-    }
-
-    /*
-     * Interface delegation would run the default implementation inside the backing environment,
-     * moving the node through its moveNodeTo and leaving the physical body behind.
-     */
-    override fun moveNodeBy(node: Node<T>, displacement: Euclidean2DPosition) =
-        moveNodeTo(node, getCurrentPosition(node) + displacement)
 
     private fun addPhysicalProperties(body: PhysicsBody, radius: Double) {
         body.addFixture(Circle(radius))
         body.setMass(MassType.NORMAL)
     }
 
-    override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) =
-        nodeToBody[node]?.let { it.linearVelocity = Vector2(velocity.x, velocity.y) }
-            ?: error("Unable to update $node physical state. Check if it was added to this environment.")
-
-    override fun getVelocity(node: Node<T>) = nodeToBody[node]?.let {
-        Euclidean2DPosition(it.linearVelocity.x, it.linearVelocity.y)
-    } ?: this.origin
-
-    override fun updatePhysics(elapsedTime: Double) {
-        world.update(elapsedTime, Int.MAX_VALUE)
-        /*
-         * Make world and environment position consistent
-         */
-        nodeToBody.forEach { (node, body) ->
-            backingEnvironment.moveNodeTo(node, body.position)
-        }
+    private fun moveNodeBodyToPosition(node: Node<T>, position: Euclidean2DPosition) {
+        nodeToBody[node]?.transform =
+            Transform().apply {
+                translate(position.x, position.y)
+            }
     }
-
-    /*
-     * The backing environment publishes positions, and bodies are aligned to it after every move:
-     * reading positions from it keeps them consistent with what position observers are notified about.
-     */
-    override fun getCurrentPosition(node: Node<T>): Euclidean2DPosition = backingEnvironment.getCurrentPosition(node)
-
-    private val PhysicsBody.position get() =
-        Euclidean2DPosition(this.transform.translationX, this.transform.translationY)
-
-    override val origin: Euclidean2DPosition get() = backingEnvironment.origin
-
-    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition =
-        backingEnvironment.makePosition(*coordinates)
-
-    override fun makePosition(coordinates: DoubleArray): Euclidean2DPosition =
-        backingEnvironment.makePosition(coordinates)
-
-    override fun makePosition(coordinates: List<Number>): Euclidean2DPosition =
-        backingEnvironment.makePosition(coordinates)
 
     private companion object {
         private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvWithObstacles<T> =

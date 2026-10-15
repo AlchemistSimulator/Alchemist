@@ -126,7 +126,7 @@ constructor(
      */
     override fun get(id: String): Any = incarnation.createMolecule(id).let { molecule ->
         node[molecule].getOrElse {
-            checkNotNull(environment.getLayer(molecule)?.getValue(environment.getCurrentPosition(node))) {
+            checkNotNull(environment.getLayer(molecule)?.getValue(environment.currentPositionOf(node))) {
                 "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
             }
         }

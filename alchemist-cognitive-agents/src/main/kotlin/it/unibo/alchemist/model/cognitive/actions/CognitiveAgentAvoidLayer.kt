@@ -76,7 +76,7 @@ constructor(
      */
     @Suppress("UNCHECKED_CAST")
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
-        val currentPosition = environment.getCurrentPosition(targetNode)
+        val currentPosition = environment.currentPositionOf(targetNode)
         /*
          * environment is euclidean, so if it has obstacles it must be an
          * EnvironmentWithObstacles<*, *, Euclidean2DPosition>. Since generic types can't be checked at runtime, this

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.physics.environments
 
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 class InfiniteHallsTest {
     private val environment =
         InfiniteHalls(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()).apply {
-            linkingRule = NoLinks()
+            networkModel = NoLinks()
         }
     private val node = GenericNode(environment)
 
@@ -44,13 +44,13 @@ class InfiniteHallsTest {
     fun `nodes reach allowed destinations`() {
         environment.addNode(node, Euclidean2DPosition(2.0, 2.0))
         environment.moveNodeTo(node, Euclidean2DPosition(3.0, 3.0))
-        assertEquals(Euclidean2DPosition(3.0, 3.0), environment.getCurrentPosition(node))
+        assertEquals(Euclidean2DPosition(3.0, 3.0), environment.currentPositionOf(node))
     }
 
     @Test
     fun `nodes moving from the room are stopped at the room border`() {
         environment.addNode(node, Euclidean2DPosition(2.0, 2.0))
         environment.moveNodeTo(node, Euclidean2DPosition(2.0, 8.5))
-        assertEquals(Euclidean2DPosition(2.0, environment.sf), environment.getCurrentPosition(node))
+        assertEquals(Euclidean2DPosition(2.0, environment.sf), environment.currentPositionOf(node))
     }
 }

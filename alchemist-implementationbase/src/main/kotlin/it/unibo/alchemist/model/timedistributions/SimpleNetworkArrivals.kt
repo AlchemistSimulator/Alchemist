@@ -78,7 +78,7 @@ class SimpleNetworkArrivals<T> private constructor(
 
     /** Gets the neighbors of a node as a collection. */
     val Node<T>.neighborhood: Collection<Node<T>>
-        get() = environment.getNeighborhood(this).current.neighbors
+        get() = environment.neighborhoodOf(this).current.neighbors
 
     /**
      * Computes the packet size from constants or properties.

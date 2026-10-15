@@ -57,7 +57,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     private var neighborState = ImmutableMap.of<DeviceUID, Map<CodePath, Any>>()
     private var timeAtLastValidityCheck = Double.NEGATIVE_INFINITY
     private val neighborDevices: Set<ProtelisDevice<*>>
-        get() = environment.getNeighborhood(device.node).current.neighbors
+        get() = environment.neighborhoodOf(device.node).current.neighbors
             .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
             .toSet()
 
@@ -122,7 +122,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
                     val destination = neighborDevice.getNetworkManager(program)
                     var packetArrives = true
                     if (distanceLossDistribution != null) {
-                        val distance = environment.getDistanceBetweenNodes(device.node, neighborDevice.node)
+                        val distance = environment.distanceBetween(device.node, neighborDevice.node)
                         val random = program.randomGenerator.nextDouble()
                         packetArrives = random > distanceLossDistribution.cumulativeProbability(distance)
                     }

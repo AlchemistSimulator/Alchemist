@@ -47,7 +47,7 @@ class TestOrientingBehavior<T, P> :
             val target = environment.makePosition(*coords)
             environment.nodes.current
                 .orienting()
-                .forEach { p -> environment.getCurrentPosition(p).distanceTo(target) shouldBeLessThan tolerance }
+                .forEach { p -> environment.currentPositionOf(p).distanceTo(target) shouldBeLessThan tolerance }
         }
 
         /**
@@ -70,7 +70,7 @@ class TestOrientingBehavior<T, P> :
                 steps = 500,
                 onceInitialized = { it.nodes.current.size shouldBe 1 },
                 atEachStep = { environment: Environment<T, P>, _, _, _ ->
-                    val currentPosition = environment.getCurrentPosition(environment.nodes.current.first())
+                    val currentPosition = environment.currentPositionOf(environment.nodes.current.first())
                     previousPositions.add(currentPosition)
                     if (previousPositions.size == expectedSize) {
                         previousPositions.distinct() shouldNotBe 1
@@ -93,7 +93,7 @@ class TestOrientingBehavior<T, P> :
                     if (environment is Euclidean2DEnvironmentWithGraph<*, T, *, *>) {
                         val node = environment.nodes.current.first()
                         val waypointToSkip = environment.makePosition(70, 105)
-                        environment.getCurrentPosition(
+                        environment.currentPositionOf(
                             node,
                         ).shouldNotBeIn(environment.graph.nodeContaining(waypointToSkip))
                     }
@@ -136,7 +136,7 @@ class TestOrientingBehavior<T, P> :
                     if (environment is Euclidean2DEnvironmentWithGraph<*, T, *, *> && !corridorTaken) {
                         val node = environment.nodes.current.orienting().first()
                         val corridorToTake = environment.graph.nodeContaining(environment.makePosition(35.0, 31.0))
-                        corridorTaken = corridorToTake?.contains(environment.getCurrentPosition(node)) ?: false
+                        corridorTaken = corridorToTake?.contains(environment.currentPositionOf(node)) ?: false
                     }
                 },
                 whenFinished = { environment, _, _ ->

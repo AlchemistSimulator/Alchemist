@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
@@ -31,15 +31,15 @@ class TestNeighborhood {
 
     /**
      * Tests whether the clone function of the
-     * [SimpleNeighborhood] class works as expected.
+     * [it.unibo.alchemist.model.Neighborhood] works as expected.
      */
     @Test
     fun `neighborhoods can be cloned`() {
         val environment = Continuous2DEnvironment(incarnation)
         val n1 = createIntNode(environment)
         val n2 = createIntNode(environment)
-        val neigh1 = Neighborhoods.make(environment, n1, mutableListOf(n2))
-        val neigh2 = neigh1.remove(n2)
+        val neigh1 = Neighborhood(n1, mutableListOf(n2))
+        val neigh2 = neigh1 - n2
         assertEquals(0, neigh2.size())
         assertTrue(neigh1.neighbors.contains(n2))
     }
@@ -50,14 +50,14 @@ class TestNeighborhood {
     @Test
     fun `topology changes publish replacement neighborhoods instead of mutating published snapshots`() {
         val environment = Continuous2DEnvironment(incarnation)
-        environment.linkingRule = ConnectWithinDistance(1.0)
+        with(environment) { networkModel = connectWithinDistance(1.0) }
         val center = createIntNode(environment)
         val near = createIntNode(environment)
         val far = createIntNode(environment)
         environment.addNode(center, environment.makePosition(0, 0))
         environment.addNode(near, environment.makePosition(0.5, 0))
         environment.addNode(far, environment.makePosition(5, 0))
-        val observable = environment.getNeighborhood(center)
+        val observable = environment.neighborhoodOf(center)
         val published = observable.current
         val received = mutableListOf<Neighborhood<Int>>()
         val subscription = observable.subscribe(invokeOnSubscription = false) { received += it }

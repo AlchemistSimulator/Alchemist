@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.environments
 import arrow.core.None
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
@@ -29,7 +29,7 @@ class ObservableRangeQueryTest {
     fun `a node leaving a range for a far position is removed from it`() {
         val center = nodeAt(0, 0)
         val member = nodeAt(0.5, 0)
-        val range = environment.observeNodesWithinRange(center, 1.0)
+        val range = environment.observeNodesAround(center, 1.0)
         val subscription = range.subscribe { }
         environment.moveNodeTo(member, environment.makePosition(100, 100))
         assertEquals(emptySet(), range.current)
@@ -38,9 +38,9 @@ class ObservableRangeQueryTest {
 
     @Test
     fun `a node moving within a large range joins it even far from smaller ranges`() {
-        val small = environment.observeNodesWithinRange(nodeAt(0, 0), 1.0)
+        val small = environment.observeNodesAround(nodeAt(0, 0), 1.0)
         val largeCenter = nodeAt(20, 0)
-        val large = environment.observeNodesWithinRange(largeCenter, 5.0)
+        val large = environment.observeNodesAround(largeCenter, 5.0)
         val subscriptions = listOf(small.subscribe { }, large.subscribe { })
         val mover = nodeAt(10, 0)
         environment.moveNodeTo(mover, environment.makePosition(16, 0))
@@ -54,7 +54,7 @@ class ObservableRangeQueryTest {
         val center = nodeAt(0, 0)
         val near = nodeAt(0.5, 0)
         val far = nodeAt(10, 0)
-        val visible = environment.observeNodesWithinRange(center, 1.0)
+        val visible = environment.observeNodesAround(center, 1.0)
         val subscription = visible.subscribe { }
         assertEquals(setOf(near), visible.current)
         environment.moveNodeTo(center, environment.makePosition(10, 0.5))
@@ -68,7 +68,7 @@ class ObservableRangeQueryTest {
     fun `a position-centered range tracks nodes entering and leaving it`() {
         val inside = nodeAt(0.5, 0)
         val outside = nodeAt(5, 0)
-        val visible = environment.observeNodesWithinRange(environment.makePosition(0, 0), 1.0)
+        val visible = environment.observeNodesAround(environment.makePosition(0, 0), 1.0)
         val subscription = visible.subscribe { }
         assertEquals(setOf(inside), visible.current)
         environment.moveNodeTo(outside, environment.makePosition(0, 0.5))
@@ -81,7 +81,7 @@ class ObservableRangeQueryTest {
     fun `a range unobserved when its center is removed is empty`() {
         val center = nodeAt(0, 0)
         nodeAt(0.5, 0)
-        val range = environment.observeNodesWithinRange(center, 1.0)
+        val range = environment.observeNodesAround(center, 1.0)
         environment.removeNode(center)
         assertEquals(emptySet(), range.current)
         val received = mutableListOf<Set<Node<Any>>>()
@@ -93,7 +93,7 @@ class ObservableRangeQueryTest {
     @Test
     fun `a size subscription of a range can be released through the size of the same range`() {
         val center = nodeAt(0, 0)
-        val range = environment.observeNodesWithinRange(center, 1.0)
+        val range = environment.observeNodesAround(center, 1.0)
         val sizes = mutableListOf<Int>()
         range.size.onChange(this, invokeOnRegistration = false) { sizes += it }
         range.size.stopWatching(this)
@@ -103,13 +103,13 @@ class ObservableRangeQueryTest {
 
     @Test
     fun `observers of a range can read the neighborhood of a node added within it`() {
-        environment.linkingRule = ConnectWithinDistance(1.0)
+        with(environment) { networkModel = connectWithinDistance(1.0) }
         val neighbor = nodeAt(0.2, 0)
         val neighborsOfMembers = mutableListOf<List<Node<Any>>>()
-        val subscription = environment.observeNodesWithinRange(environment.makePosition(0, 0), 1.0)
+        val subscription = environment.observeNodesAround(environment.makePosition(0, 0), 1.0)
             .subscribe(invokeOnSubscription = false) { members ->
                 members.filter { it != neighbor }.forEach {
-                    neighborsOfMembers += environment.getNeighborhood(it).current.neighbors.toList()
+                    neighborsOfMembers += environment.neighborhoodOf(it).current.neighbors.toList()
                 }
             }
         nodeAt(0.5, 0)
@@ -121,8 +121,8 @@ class ObservableRangeQueryTest {
     fun `observers of a range find a node added within it through spatial queries`() {
         val center = nodeAt(0, 0)
         val queried = mutableListOf<List<Node<Any>>>()
-        val subscription = environment.observeNodesWithinRange(center, 1.0)
-            .subscribe(invokeOnSubscription = false) { queried += environment.getNodesWithinRange(center, 1.0) }
+        val subscription = environment.observeNodesAround(center, 1.0)
+            .subscribe(invokeOnSubscription = false) { queried += environment.nodesAround(center, 1.0) }
         val added = nodeAt(0.5, 0)
         assertEquals(listOf(listOf(added)), queried)
         subscription.dispose()
@@ -131,9 +131,9 @@ class ObservableRangeQueryTest {
     @Test
     fun `releasing the largest range keeps the smaller ranges up to date`() {
         val center = nodeAt(0, 0)
-        val small = environment.observeNodesWithinRange(center, 1.0)
+        val small = environment.observeNodesAround(center, 1.0)
         val smallSubscription = small.subscribe { }
-        environment.observeNodesWithinRange(nodeAt(50, 0), 10.0).subscribe { }.dispose()
+        environment.observeNodesAround(nodeAt(50, 0), 10.0).subscribe { }.dispose()
         val mover = nodeAt(5, 0)
         environment.moveNodeTo(mover, environment.makePosition(0.5, 0))
         assertEquals(setOf(mover), small.current)
@@ -146,11 +146,11 @@ class ObservableRangeQueryTest {
 
     @Test
     fun `removing a node observed through a neighborhood is safe`() {
-        environment.linkingRule = ConnectWithinDistance(1.0)
+        with(environment) { networkModel = connectWithinDistance(1.0) }
         val center = nodeAt(0, 0)
         val near = nodeAt(0.5, 0)
-        val positions = environment.getNeighborhood(center).switchMap { neighborhood ->
-            neighborhood.neighbors.map(environment::getPosition).combineLatest { it }
+        val positions = environment.neighborhoodOf(center).switchMap { neighborhood ->
+            neighborhood.neighbors.map(environment::positionOf).combineLatest { it }
         }
         val subscription = positions.subscribe { }
         environment.removeNode(near)
@@ -162,8 +162,8 @@ class ObservableRangeQueryTest {
     fun `removing a node observed through a range query is safe`() {
         val center = nodeAt(0, 0)
         val near = nodeAt(0.5, 0)
-        val positions = environment.observeNodesWithinRange(center, 1.0)
-            .combineLatest(environment::getPosition) { it.toList() }
+        val positions = environment.observeNodesAround(center, 1.0)
+            .combineLatest(environment::positionOf) { it.toList() }
         val subscription = positions.subscribe { }
         environment.removeNode(near)
         assertEquals(emptyList(), positions.current)
@@ -175,8 +175,8 @@ class ObservableRangeQueryTest {
         val removedCenter = nodeAt(0, 0)
         val survivingCenter = nodeAt(10, 0)
         val member = nodeAt(10, 0.5)
-        val removedRange = environment.observeNodesWithinRange(removedCenter, 1.0)
-        val survivingRange = environment.observeNodesWithinRange(survivingCenter, 1.0)
+        val removedRange = environment.observeNodesAround(removedCenter, 1.0)
+        val survivingRange = environment.observeNodesAround(survivingCenter, 1.0)
         val subscriptions = listOf(removedRange.subscribe { }, survivingRange.subscribe { })
         assertEquals(setOf(member), survivingRange.current)
         environment.removeNode(removedCenter)

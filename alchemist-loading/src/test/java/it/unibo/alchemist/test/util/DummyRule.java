@@ -9,7 +9,7 @@
 package it.unibo.alchemist.test.util;
 
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.linkingrules.NoLinks;
+import it.unibo.alchemist.model.networks.NoLinks;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import java.util.List;
  * @param <P>
  *            position type
  */
-public final class DummyRule<T, P extends Position<P>> extends NoLinks<T, P> {
+public final class DummyRule<T, P extends Position<P>> extends NoLinks<T> {
 
     /**
      * @param param1

@@ -36,9 +36,9 @@ class CellTensionPolarization(
         CellTensionPolarization(environment, newReaction)
 
     override fun execute() {
-        val position = environment.getCurrentPosition(targetNode)
+        val position = environment.currentPositionOf(targetNode)
         val pushForces = environment
-            .getNodesWithinRange(targetNode, environment.maxDiameterAmongCircularDeformableCells.current)
+            .nodesAround(targetNode, environment.maxDiameterAmongCircularDeformableCells.current)
             .filter { overlaps(it) }
             .map { pushForce(it, position) }
         val resultX = pushForces.sumOf { it.x }
@@ -57,7 +57,7 @@ class CellTensionPolarization(
     private fun overlaps(other: Node<Double>): Boolean {
         val circularCell = other.circularCell ?: return false
         val maxDistance = deformableCell.maximumRadius + (other.deformableCell?.maximumRadius ?: circularCell.radius)
-        return environment.getDistanceBetweenNodes(targetNode, other) < maxDistance
+        return environment.distanceBetween(targetNode, other) < maxDistance
     }
 
     /**
@@ -76,10 +76,10 @@ class CellTensionPolarization(
             1.0
         } else {
             val maxRadiusSum = otherMaxRadius + maxRadius
-            (maxRadiusSum - environment.getDistanceBetweenNodes(other, targetNode)) /
+            (maxRadiusSum - environment.distanceBetween(other, targetNode)) /
                 (maxRadiusSum - otherMinRadius - minRadius)
         }
-        val otherPosition = environment.getCurrentPosition(other)
+        val otherPosition = environment.currentPositionOf(other)
         val deltaX = position.x - otherPosition.x
         val deltaY = position.y - otherPosition.y
         val module = hypot(deltaX, deltaY)

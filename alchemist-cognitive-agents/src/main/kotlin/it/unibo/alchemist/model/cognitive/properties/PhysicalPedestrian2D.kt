@@ -68,7 +68,7 @@ class PhysicalPedestrian2D<T>(
         environment
             .shapeFactory
             .circle(nodeShape.radius + comfortRay)
-            .transformed { origin(environment.getCurrentPosition(node)) }
+            .transformed { origin(environment.currentPositionOf(node)) }
 
     override val rectangleOfInfluence: Euclidean2DShape get() =
         environment
@@ -82,7 +82,7 @@ class PhysicalPedestrian2D<T>(
     private val fallenAgentPerceptionArea
         get() = environment.shapeFactory.circle(FALLEN_AGENT_PERCEPTION_RADIUS).transformed { origin(node.position) }
 
-    private val Node<T>.position get() = environment.getCurrentPosition(this)
+    private val Node<T>.position get() = environment.currentPositionOf(this)
 
     override fun checkAndPossiblyFall() {
         if (!isFallen && shouldFall(repulsionForces())) {
@@ -99,7 +99,7 @@ class PhysicalPedestrian2D<T>(
     }
 
     override fun repulse(other: Node<T>): Euclidean2DPosition {
-        val myShape = nodeShape.transformed { origin(environment.getCurrentPosition(node)) }
+        val myShape = nodeShape.transformed { origin(environment.currentPositionOf(node)) }
         val otherShape = environment.getShape(other)
         return (myShape.centroid - otherShape.centroid).let {
             val desiredDistance = myShape.radius + comfortRay + otherShape.radius
@@ -139,7 +139,7 @@ class PhysicalPedestrian2D<T>(
     }
 
     private fun avoidanceDistanceWeight(other: Node<T>): Double {
-        val weight = environment.getDistanceBetweenNodes(node, other) - rectangleOfInfluenceDimensions.first / 2.0
+        val weight = environment.distanceBetween(node, other) - rectangleOfInfluenceDimensions.first / 2.0
         return weight * weight
     }
 

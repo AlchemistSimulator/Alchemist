@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.biochemistry.actions.CellTensionPolarization;
 import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent;
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.biochemistry.reactions.BiochemicalNodeReaction;
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
+import it.unibo.alchemist.model.networks.ConnectWithinDistance;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
@@ -95,7 +95,7 @@ class TestDeformableCell {
     @BeforeEach
     public void setUp() {
         environment = new BioRect2DEnvironmentNoOverlap(incarnation, XMIN, XMAX, YMIN, YMAX);
-        environment.setLinkingRule(new ConnectWithinDistance<>(2));
+        environment.setNetworkModel(new ConnectWithinDistance<>(environment, 2));
         cellNode1 = createDeformableCell(1, 1); // max rigidity
         cellNode2 = createDeformableCell(1, 0.5);
         cellNode3 = createDeformableCell(2, 0.5);
@@ -116,10 +116,10 @@ class TestDeformableCell {
         environment.addNode(cellNode4, CELL_POS1_4);
 
         assertNotNull(
-            environment.getCurrentPosition(cellNode2), "Position of cellNode2 = " + environment.getCurrentPosition(cellNode2)
+            environment.currentPositionOf(cellNode2), "Position of cellNode2 = " + environment.currentPositionOf(cellNode2)
         );
         assertNotNull(
-            environment.getCurrentPosition(cellNode3), "Position of cellNode3 = " + environment.getCurrentPosition(cellNode3)
+            environment.currentPositionOf(cellNode3), "Position of cellNode3 = " + environment.currentPositionOf(cellNode3)
         );
         assertFalse(environment.getNodes().getCurrent().contains(cellNode4), "unexpected node in the environment");
     }
@@ -421,8 +421,8 @@ class TestDeformableCell {
         environment.moveNodeTo(cellNode1, new Euclidean2DPosition(0, 10));
         assertEquals(
             EXPECTED_POS_MOV1,
-            environment.getCurrentPosition(cellNode1),
-                "Position of cellNode1 = " + environment.getCurrentPosition(cellNode1)
+            environment.currentPositionOf(cellNode1),
+                "Position of cellNode1 = " + environment.currentPositionOf(cellNode1)
         );
     }
 }

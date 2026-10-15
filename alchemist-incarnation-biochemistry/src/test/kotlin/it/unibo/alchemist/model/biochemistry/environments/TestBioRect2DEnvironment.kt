@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.CellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +24,9 @@ import org.apache.commons.math3.random.MersenneTwister
 class TestBioRect2DEnvironment {
     private val randomGenerator = MersenneTwister(0)
     private val incarnation = BiochemistryIncarnation()
-    private val environment = BioRect2DEnvironment(incarnation).apply { linkingRule = ConnectWithinDistance(2.0) }
+    private val environment = BioRect2DEnvironment(incarnation).apply {
+        networkModel = connectWithinDistance(2.0)
+    }
     private val junction = Junction("A-B", emptyMap(), emptyMap())
 
     private fun cellAt(x: Double, y: Double): Node<Double> = incarnation.createNode(randomGenerator, environment, null)

@@ -36,7 +36,7 @@ class BrownianMove<T, P : Position<P>> @JvmOverloads constructor(
 
     override fun execute() {
         val displacement = environment.makePosition(randomOffset() * range, randomOffset() * range)
-        environment.moveNodeTo(targetNode, environment.getCurrentPosition(targetNode).plus(displacement.coordinates))
+        environment.moveNodeTo(targetNode, environment.currentPositionOf(targetNode).plus(displacement.coordinates))
     }
 
     private fun randomOffset(): Double = randomGenerator.nextFloat() - 0.5

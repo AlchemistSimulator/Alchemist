@@ -32,7 +32,7 @@ class LsaAscendingGradientDist<P : Position<P>>(
     override fun execute() {
         var minGrad = getLSAArgumentAsDouble(lsaNode.matching(MOLGRAD)[0], POS)
         val targets = mutableListOf<LsaNode>()
-        for (neighbor in environment.getNeighborhood(targetNode).current.neighbors) {
+        for (neighbor in environment.neighborhoodOf(targetNode).current.neighbors) {
             val lsaNeighbor = neighbor as LsaNode
             for (grad in lsaNeighbor.matching(MOLGRAD)) {
                 val valueGrad = grad.getArg(POS).calculate(null).getValue(null) as Double

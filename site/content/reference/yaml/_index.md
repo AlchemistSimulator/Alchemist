@@ -587,9 +587,9 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 **Type**: SpecMap
 
-Builds a {{% api class="LinkingRule" %}}
+Builds a {{% api class="NetworkModel" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
-If unspecified, defaults to {{% api package="model.linkingrules" class="NoLinks" %}},
+If unspecified, defaults to {{% api package="model.networks" class="NoLinks" %}},
 and no node will have any neighbor.
 
 #### Examples

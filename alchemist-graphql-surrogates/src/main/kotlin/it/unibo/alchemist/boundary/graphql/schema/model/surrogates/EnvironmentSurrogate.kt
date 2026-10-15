@@ -73,7 +73,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      */
     @GraphQLDescription("A list of entries NodeId-Position")
     fun nodeToPos(): NodeToPosMap =
-        origin.nodes.current.associate { it.id to origin.getCurrentPosition(it) }.toNodeToPosMap()
+        origin.nodes.current.associate { it.id to origin.currentPositionOf(it) }.toNodeToPosMap()
 
     /**
      * Returns the neighborhood of the node with the given id.
@@ -83,7 +83,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      */
     @GraphQLDescription("The neighborhood of the node with the given id")
     fun getNeighborhood(nodeId: Int): NeighborhoodSurrogate<T> =
-        origin.getNeighborhood(origin.getNodeByID(nodeId)).current.toGraphQLNeighborhoodSurrogate()
+        origin.neighborhoodOf(origin.getNodeByID(nodeId)).current.toGraphQLNeighborhoodSurrogate()
 
     /**
      * Clone the node associated with the given id to the specified position.

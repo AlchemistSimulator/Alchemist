@@ -36,7 +36,7 @@ class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingSer
     reaction,
     { current, final -> PolygonalChain(current, final) },
     ConstantSpeed(reaction, speed),
-    object : ChangeTargetOnCollision<T, GeoPosition>({ environment.getCurrentPosition(reaction.host) }) {
+    object : ChangeTargetOnCollision<T, GeoPosition>({ environment.currentPositionOf(reaction.host) }) {
         override fun chooseTarget() = positionGenerator
             .stream()
             .findFirst()

@@ -20,14 +20,14 @@ import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.ReactionHost
 import it.unibo.alchemist.model.TerminationPredicate
-import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.CombinedNetworkModel
+import it.unibo.alchemist.model.networks.NoLinks
 import java.util.concurrent.Semaphore
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
@@ -99,11 +99,11 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                     environment.addLayer(molecule, layer)
                     logger.debug("Pushed layer {} -> {}", molecule, layer)
                 }
-            // LINKING RULE
-            val linkingRule =
+            // NETWORK MODEL
+            val networkModel =
                 SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(AlchemistYamlSyntax.LINKING_RULES))
-            environment.linkingRule = linkingRule
-            contextualize(linkingRule)
+            environment.networkModel = networkModel
+            contextualize(networkModel)
             // MONITORS
             val monitors = SimulationModel.visitOutputMonitors<P, T>(context, root[AlchemistYamlSyntax.monitors])
             // DEPLOYMENTS
@@ -263,13 +263,14 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
             // ADDITIONAL LINKING RULES
             deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
                 val composedLinkingRule =
-                    when (val linkingRule = environment.linkingRule) {
+                    when (val linkingRule = environment.networkModel) {
                         is NoLinks -> newLinkingRule
-                        is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
-                        else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
+                        is CombinedNetworkModel ->
+                            CombinedNetworkModel(linkingRule.subRules + listOf(newLinkingRule))
+                        else -> CombinedNetworkModel(listOf(linkingRule, newLinkingRule))
                     }
-                environment.linkingRule = composedLinkingRule
-                contextualize<LinkingRule<T, P>>(composedLinkingRule)
+                environment.networkModel = composedLinkingRule
+                contextualize<NetworkModel<T>>(composedLinkingRule)
             }
             deployment.stream().forEach { position ->
                 val node = SimulationModel.visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)

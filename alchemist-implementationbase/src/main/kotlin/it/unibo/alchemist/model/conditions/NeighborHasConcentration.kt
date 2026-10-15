@@ -35,7 +35,7 @@ class NeighborHasConcentration<T>(
 ) : AbstractLocalCondition<T>(reaction) {
 
     init {
-        val validity = environment.getNeighborhood(targetNode).switchMap { neighborhood ->
+        val validity = environment.neighborhoodOf(targetNode).switchMap { neighborhood ->
             neighborhood.neighbors.map { it.observeConcentration(target) }
                 .combineLatest { neighborsConcentrations ->
                     neighborsConcentrations.any { it.isSome { nConc -> nConc == concentration } }

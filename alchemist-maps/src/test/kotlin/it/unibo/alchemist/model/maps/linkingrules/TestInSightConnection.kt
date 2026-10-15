@@ -32,13 +32,13 @@ class TestInSightConnection :
                 environment.nodeCount.current shouldBe 102
                 val node0 = environment.getNodeByID(0)
                 val node1 = environment.getNodeByID(1)
-                val rule = environment.linkingRule
+                val rule = environment.networkModel
                 rule shouldBe instanceOf<ConnectIfInLineOfSigthOnMap<*>>()
                 val maxRange = (rule as ConnectIfInLineOfSigthOnMap<*>).maxRange
-                environment.getDistanceBetweenNodes(node0, node1) shouldBeLessThan maxRange
+                environment.distanceBetween(node0, node1) shouldBeLessThan maxRange
                 val route = environment.computeRoute(node0, node1)
                 route.length() shouldBeGreaterThan maxRange
-                environment.getNeighborhood(node0).current.contains(node1).shouldBeFalse()
+                environment.neighborhoodOf(node0).current.contains(node1).shouldBeFalse()
             }
         },
     )

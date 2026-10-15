@@ -16,8 +16,8 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.conditions.neighborHasConcentration
 import it.unibo.alchemist.model.deployments.grid
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.genericReaction
 import it.unibo.alchemist.model.scaling.ReactiveScalingTest.Companion.MOLECULE
@@ -44,7 +44,7 @@ class ReactiveScalingTest {
         var result: Result<R>? = null
         simulation2D(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()) {
             environment {
-                networkModel(ConnectWithinDistance(1.5))
+                networkModel(connectWithinDistance(1.5))
                 deployments {
                     deploy(grid(0.0, 0.0, size - 0.5, 0.5, 1.0, 1.0)) {
                         withTimeDistribution(DiracComb<Any>(1.0)) {
@@ -59,7 +59,7 @@ class ReactiveScalingTest {
             steps = 1,
             onceInitialized = { environment ->
                 assertEquals(size, environment.nodeCount.current)
-                val middle = environment.nodes.current.single { environment.getCurrentPosition(it).x == size / 2.0 }
+                val middle = environment.nodes.current.single { environment.currentPositionOf(it).x == size / 2.0 }
                 result = runCatching { environment.check(middle) }
             },
         )
@@ -75,11 +75,11 @@ class ReactiveScalingTest {
         mutation: () -> Unit,
     ): List<Int> {
         val rescheduled = mutableListOf<Int>()
-        val origin = getCurrentPosition(middle).x
+        val origin = currentPositionOf(middle).x
         val subscriptions = nodes.current.flatMap { node ->
             node.reactions.current.map { reaction ->
                 reaction.nextOccurrence.subscribe(invokeOnSubscription = false) {
-                    rescheduled += (getCurrentPosition(node).x - origin).roundToInt()
+                    rescheduled += (currentPositionOf(node).x - origin).roundToInt()
                 }
             }
         }

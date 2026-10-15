@@ -8,20 +8,18 @@
 package it.unibo.alchemist.model.scafi
 
 import it.unibo.alchemist.model
-import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
-
-import java.util.Optional
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.scafi.nodes.NodeManager
 import it.unibo.alchemist.model.times.DoubleTime
-import it.unibo.alchemist.model.{Environment, Layer}
+import it.unibo.alchemist.model.{Environment, Layer, Position}
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation
 import it.unibo.scafi.lib.StandardLibrary
 import it.unibo.scafi.space.{BasicSpatialAbstraction, Point2D, Point3D}
 import it.unibo.scafi.time.BasicTimeAbstraction
 import org.apache.commons.math3.random.RandomGenerator
 
+import java.util.Optional
 import scala.language.implicitConversions
 import scala.util.Random
 
@@ -80,7 +78,7 @@ object ScafiIncarnationForAlchemist
       val layer: Layer[Any, Position[?]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
       val node = alchemistEnvironment.getNodeByID(mid())
       layer
-        .getValue(alchemistEnvironment.getCurrentPosition(node))
+        .getValue(alchemistEnvironment.currentPositionOf(node))
         .asInstanceOf[A]
 
     def senseEnvData[A](name: String): A =

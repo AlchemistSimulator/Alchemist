@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import kotlin.script.experimental.api.ScriptAcceptedLocation
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.acceptedLocations
-import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.defaultImports
 import kotlin.script.experimental.api.hostConfiguration
 import kotlin.script.experimental.api.ide
@@ -44,7 +43,7 @@ object AlchemistCompilationConfiguration : ScriptCompilationConfiguration({
         "it.unibo.alchemist.model.environments.*",
         "it.unibo.alchemist.model.geometry.*",
         "it.unibo.alchemist.model.layers.*",
-        "it.unibo.alchemist.model.linkingrules.*",
+        "it.unibo.alchemist.model.networks.*",
         "it.unibo.alchemist.model.maps.actions.*",
         "it.unibo.alchemist.model.maps.deployments.*",
         "it.unibo.alchemist.model.maps.environments.*",

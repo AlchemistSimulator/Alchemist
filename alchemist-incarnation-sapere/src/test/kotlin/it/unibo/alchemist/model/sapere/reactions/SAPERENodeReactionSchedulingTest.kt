@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
-import it.unibo.alchemist.model.linkingrules.ClosestN
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.closestN
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.sapere.ILsaMolecule
 import it.unibo.alchemist.model.sapere.conditions.LsaStandardCondition
@@ -152,7 +152,7 @@ class SAPERENodeReactionSchedulingTest {
         val randomGenerator = mockk<RandomGenerator>(relaxed = true)
         every { randomGenerator.nextDouble() } returns 0.5
         val environment = Continuous2DEnvironment(SAPEREIncarnation<Euclidean2DPosition>())
-        environment.linkingRule = ConnectWithinDistance(1.0)
+        with(environment) { networkModel = connectWithinDistance(1.0) }
         val node = LsaNode(environment)
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
         val reaction = SAPEREGradient(
@@ -176,7 +176,7 @@ class SAPERENodeReactionSchedulingTest {
         verify(exactly = 0) { randomGenerator.nextDouble() }
         val neighbor = LsaNode(environment)
         assertTrue(environment.addNode(neighbor, Euclidean2DPosition(0.5, 0.0)))
-        assertTrue(environment.getNeighborhood(node).current.neighbors.contains(neighbor))
+        assertTrue(environment.neighborhoodOf(node).current.neighbors.contains(neighbor))
         verify(exactly = 1) { randomGenerator.nextDouble() }
         neighbor.addLsa(LsaMolecule("gradient, 1, 1"))
         verify(exactly = 2) { randomGenerator.nextDouble() }
@@ -188,7 +188,7 @@ class SAPERENodeReactionSchedulingTest {
         verify(exactly = 6) { randomGenerator.nextDouble() }
         environment.removeNode(neighbor)
         verify(exactly = 7) { randomGenerator.nextDouble() }
-        environment.linkingRule = ClosestN(1)
+        with(environment) { networkModel = closestN(1) }
         val closest = LsaNode(environment)
         val replacement = LsaNode(environment)
         assertTrue(environment.addNode(closest, Euclidean2DPosition(0.5, 0.0)))
@@ -196,7 +196,7 @@ class SAPERENodeReactionSchedulingTest {
         assertTrue(environment.addNode(replacement, Euclidean2DPosition(0.75, 0.0)))
         verify(exactly = 8) { randomGenerator.nextDouble() }
         environment.removeNode(closest)
-        assertTrue(environment.getNeighborhood(node).current.neighbors.contains(replacement))
+        assertTrue(environment.neighborhoodOf(node).current.neighbors.contains(replacement))
         verify(exactly = 9) { randomGenerator.nextDouble() }
     }
 
@@ -223,7 +223,7 @@ class SAPERENodeReactionSchedulingTest {
     @Test
     fun `neighbor actions target the neighbors at firing time`() {
         val (randomGenerator, environment, node) = fixture()
-        environment.linkingRule = ConnectWithinDistance(1.0)
+        with(environment) { networkModel = connectWithinDistance(1.0) }
         // As in the engine, invalidations are applied after the mutation completes, not while the reaction fires.
         environment.simulation = mockk<Simulation<List<ILsaMolecule>, Euclidean2DPosition>>(relaxed = true)
         node.addLsa(LsaMolecule("token"))

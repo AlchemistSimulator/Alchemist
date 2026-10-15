@@ -9,11 +9,9 @@
 
 package it.unibo.alchemist.model.environments
 
-import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -27,12 +25,12 @@ import kotlin.test.assertSame
 class ObservableEnvironmentStateTest {
     private val environment =
         Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow())
-            .apply { linkingRule = ConnectWithinDistance(1.0) }
+            .apply { networkModel = connectWithinDistance(1.0) }
 
     @Test
     fun `a neighborhood follows nodes entering, leaving, and being removed`() {
         val center = nodeAt(0.0)
-        val neighbors = environment.getNeighborhood(center).map { it.neighbors.toSet() }.record()
+        val neighbors = environment.neighborhoodOf(center).map { it.neighbors.toSet() }.record()
         val near = nodeAt(0.5)
         val far = nodeAt(5.0)
         environment.moveNodeTo(far, Euclidean2DPosition(0.0, 0.5))
@@ -48,13 +46,13 @@ class ObservableEnvironmentStateTest {
             assertFailsWith<IllegalArgumentException> { environment.addNode(duplicate, Euclidean2DPosition(1.0, 0.0)) }
         }
         assertEquals(listOf(node), environment.nodes.current)
-        assertEquals(Euclidean2DPosition(0.0, 0.0), environment.getCurrentPosition(node))
+        assertEquals(Euclidean2DPosition(0.0, 0.0), environment.currentPositionOf(node))
     }
 
     @Test
     fun `a position follows the movements of its node`() {
         val node = nodeAt(0.0)
-        val positions = environment.getPosition(node).record()
+        val positions = environment.positionOf(node).record()
         environment.moveNodeTo(node, Euclidean2DPosition(1.0, 1.0))
         environment.moveNodeTo(node, Euclidean2DPosition(2.0, 0.0))
         assertEquals(
@@ -74,18 +72,12 @@ class ObservableEnvironmentStateTest {
     }
 
     @Test
-    fun `moving a node to its current position recomputes no neighborhood`() {
-        val rule = ConnectWithinDistance<Any, Euclidean2DPosition>(1.0)
-        var computations = 0
-        environment.linkingRule = object : LinkingRule<Any, Euclidean2DPosition> by rule {
-            override fun computeNeighborhood(center: Node<Any>, environment: Environment<Any, Euclidean2DPosition>) =
-                rule.computeNeighborhood(center, environment).also { computations++ }
-        }
+    fun `moving a node to its current position publishes no neighborhood`() {
         val node = nodeAt(0.0)
-        nodeAt(0.5)
-        computations = 0
+        val neighbor = nodeAt(0.5)
+        val published = listOf(node, neighbor).map { environment.neighborhoodOf(it).record() }
         environment.moveNodeTo(node, Euclidean2DPosition(0.0, 0.0))
-        assertEquals(0, computations)
+        assertEquals(listOf(1, 1), published.map { it.size })
     }
 
     @Test
@@ -96,7 +88,7 @@ class ObservableEnvironmentStateTest {
         }
         nodes.forEach { node -> assertSame(node, environment.getNodeByID(node.id)) }
         // Changing the linking rule recomputes every neighborhood.
-        environment.linkingRule = ConnectWithinDistance(0.1)
+        with(environment) { networkModel = connectWithinDistance(0.1) }
         nodes.forEach { node -> assertSame(node, environment.getNodeByID(node.id)) }
     }
 

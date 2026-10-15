@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.conditions.NeighborHasConcentration
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
@@ -375,7 +375,7 @@ class EngineSchedulingSubscriptionTest {
 
     @Test
     fun `topology changes gate a neighborhood-dependent reaction exactly when its validity changes`() {
-        environment.linkingRule = ConnectWithinDistance(1.0)
+        with(environment) { networkModel = connectWithinDistance(1.0) }
         val molecule = Biomolecule("M")
         val peer = GenericNode(environment).apply { setConcentration(molecule, 1.0) }
         val distribution = countingDistribution()
@@ -419,7 +419,7 @@ class EngineSchedulingSubscriptionTest {
         mutate { newcomer.place(0, 0.5) }
         assertScheduling(finite = true, samples = 4, updates = 7)
         // An environment-wide topology change.
-        mutate { environment.linkingRule = ConnectWithinDistance(0.1) }
+        mutate { with(environment) { networkModel = connectWithinDistance(0.1) } }
         assertScheduling(finite = false, samples = 4, updates = 8)
     }
 

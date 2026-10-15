@@ -32,9 +32,9 @@ abstract class AbstractNeighborAction<T>(
      * Executes this action on a random neighbor, if the node has any; otherwise, does nothing.
      */
     override fun execute() {
-        val neighborhood = environment.getNeighborhood(targetNode).current
+        val neighborhood = environment.neighborhoodOf(targetNode).current
         if (!neighborhood.isEmpty) {
-            execute(neighborhood.randomElement(randomGenerator))
+            execute(neighborhood.neighbors.randomElement(randomGenerator))
         }
     }
 

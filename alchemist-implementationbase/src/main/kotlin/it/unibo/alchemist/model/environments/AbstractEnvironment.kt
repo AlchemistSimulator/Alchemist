@@ -9,29 +9,27 @@
 
 package it.unibo.alchemist.model.environments
 
-import gnu.trove.set.hash.TIntHashSet
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Neighborhood
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
-import it.unibo.alchemist.model.linkingrules.NoLinks
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.observables.ObservableMutableList
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.ObservableMutableSet
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
+import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableSet
-import java.util.Objects
 import java.util.TreeMap
 import java.util.function.Consumer
 import org.danilopianini.util.SpatialIndex
@@ -51,7 +49,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     final override val incarnation: Incarnation<T, P>,
     internalIndex: SpatialIndex<Node<T>>,
 ) : Environment<T, P> {
-
     override val isTerminated: Boolean
         get() = terminationPredicate.test(this)
 
@@ -73,13 +70,16 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         private set
 
     /*
-     * Replacing the rule recomputes every stored neighborhood at once from the current positions, so no snapshot built
-     * by the previous rule survives.
+     * Replacing the model stops following the neighborhoods it published,
+     * and follows those of the new model for every node,
+     * so no neighborhood built by the previous model survives.
      */
-    final override var linkingRule: LinkingRule<T, P> = NoLinks()
+    final override var networkModel: NetworkModel<T> = NoLinks()
         set(value) {
             field = value
-            nodes.current.forEach { node -> neighborhoods.put(node.id, value.computeNeighborhood(node, this)) }
+            neighborhoodSubscriptions.values.forEach(Disposable::dispose)
+            neighborhoodSubscriptions.clear()
+            nodes.current.forEach(::followNeighborhood)
         }
 
     final override var simulation: Simulation<T, P>
@@ -113,12 +113,16 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     /*
      * The authoritative model state is the ordered node list, the position of every node, and the neighborhood of
-     * every node. Neighborhoods are stored rather than recomputed on demand: a linking rule that is not locally
-     * consistent derives a node's neighborhood from the rest of the topology, so only the stored snapshots are
-     * reliable. Positions and neighborhoods are keyed by node id and published through observable maps; each stored
-     * neighborhood is an immutable snapshot that topology changes replace.
+     * every node. The network model observes the state it depends on and publishes every change of a neighborhood,
+     * which is mirrored here. Positions and neighborhoods are keyed by node id and published through observable maps;
+     * each stored neighborhood is an immutable snapshot that topology changes replace.
      */
     private val neighborhoods = ObservableMutableMap<Int, Neighborhood<T>>()
+
+    /*
+     * The subscriptions to the neighborhoods that the network model publishes for each node, by node id.
+     */
+    private val neighborhoodSubscriptions = LinkedHashMap<Int, Disposable>()
 
     private val nodeList = ObservableMutableList<Node<T>>()
 
@@ -147,19 +151,17 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 "Node with id ${node.id} was already existing in this environment."
             }
             /*
-             * The spatial index and position come first, because the linking rule queries them to compute the new
+             * The spatial index and position come first, because the network model queries them to compute the new
              * neighborhood; reactions are announced only once the node is fully part of the model.
              */
             spatialIndex.insert(node, *actualPosition.coordinates)
             nodesToPositions[node.id] = actualPosition
             /*
-             * The node is published isolated, so that observers of the node list can read its neighborhood, and then
-             * linked. It must be among the nodes before linking, because some linking rules (e.g., ClosestN) look
-             * for it there when recomputing the neighborhoods of the other nodes.
+             * The neighborhood of the node is followed before the node gets listed, so that observers of the node list
+             * can read it. Listing and positioning the node then update the neighborhoods of the other nodes.
              */
-            neighborhoods.put(node.id, Neighborhoods.make(this, node))
+            followNeighborhood(node)
             nodeList.add(node)
-            refreshNeighborhoodsAround(node)
             // Observers of the ranges the node entered find it indexed, positioned, listed, and linked.
             updateRangeQueries(node, null, actualPosition)
             ifAttachedToSimulation { simulation -> node.reactions.current.forEach(simulation::reactionAdded) }
@@ -188,20 +190,23 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun contains(node: Node<T>): Boolean = node.id in nodesToPositions.current
 
-    override fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double =
-        currentPositionOf(n1).distanceTo(currentPositionOf(n2))
+    // Reads the position map directly, rather than through an observable.
+    override fun currentPositionOf(node: Node<T>): P = requirePosition(node, nodesToPositions.current[node.id])
+
+    override fun distanceBetween(n1: Node<T>, n2: Node<T>): Double =
+        this@AbstractEnvironment.currentPositionOf(n1).distanceTo(this@AbstractEnvironment.currentPositionOf(n2))
 
     override fun getLayer(molecule: Molecule): Layer<T, P>? = layers[molecule]
-
-    override fun getNeighborhood(node: Node<T>): Observable<Neighborhood<T>> =
-        neighborhoods[node.id].map { requireNeighborhood(node, it.getOrNull()) }
 
     override fun getNodeByID(id: Int): Node<T> = requireNotNull(neighborhoods.current[id]) {
         "Node with id $id does not exist in the environment. Available: ${nodeList.current.map { it.id }.sorted()}"
     }.center
 
-    override fun getNodesWithinRange(node: Node<T>, range: Double): List<Node<T>> {
-        val centerPosition = currentPositionOf(node)
+    override fun neighborhoodOf(node: Node<T>): Observable<Neighborhood<T>> =
+        neighborhoods[node.id].map { requireNeighborhood(node, it.getOrNull()) }
+
+    override fun nodesAround(node: Node<T>, range: Double): List<Node<T>> {
+        val centerPosition = this@AbstractEnvironment.currentPositionOf(node)
         val nodesInRange = queryNodesInRange(centerPosition, range)
         // The center is always within any positive range of itself, unless coordinates lost precision.
         check(node in nodesInRange) {
@@ -212,10 +217,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         return nodesInRange.filterNot { it == node }
     }
 
-    override fun getNodesWithinRange(position: P, range: Double): List<Node<T>> = queryNodesInRange(position, range)
-
-    override fun getPosition(node: Node<T>): Observable<P> =
-        nodesToPositions[node.id].map { requirePosition(node, it.getOrNull()) }
+    override fun nodesAround(position: P, range: Double): List<Node<T>> = queryNodesInRange(position, range)
 
     /*
      * The layer is looked up whenever the position changes or the value is recomputed,
@@ -223,19 +225,22 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * conditions may be created during setup before their layer is associated.
      */
     override fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T?> =
-        getPosition(node).switchMap { position ->
+        positionOf(node).switchMap { position ->
             getLayer(molecule)?.observeValue(position)?.map { it } ?: observe(null)
         }
 
-    override fun observeNodesWithinRange(node: Node<T>, range: Double): ObservableSet<Node<T>> {
+    override fun observeNodesAround(node: Node<T>, range: Double): ObservableSet<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
         return RangeQuery(node, range)
     }
 
-    override fun observeNodesWithinRange(position: P, range: Double): ObservableSet<Node<T>> {
+    override fun observeNodesAround(position: P, range: Double): ObservableSet<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
         return RangeQuery(null, range) { position }
     }
+
+    override fun positionOf(node: Node<T>): Observable<P> =
+        nodesToPositions[node.id].map { requirePosition(node, it.getOrNull()) }
 
     override fun removeNode(node: Node<T>) {
         val reactions = node.reactions.current
@@ -246,22 +251,14 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
          */
         node.dispose()
         val position = requireNotNull(nodesToPositions.current[node.id]) { "Node position cannot be null." }
+        // The neighborhood of the node stops being followed before it leaves, so that it is never published again.
+        checkNotNull(neighborhoodSubscriptions.remove(node.id)) {
+            "Node neighborhood cannot be unobserved."
+        }.dispose()
+        val neigh = checkNotNull(neighborhoods.remove(node.id)) { "Node neighborhood cannot be null." }
         spatialIndex.remove(node, *position.coordinates)
+        // Unlisting and unpositioning the node update the neighborhoods of the other nodes.
         nodeList.remove(node)
-        val neigh = requireNotNull(neighborhoods.remove(node.id)) { "Node neighborhood cannot be null." }
-        // A locally consistent rule only loses the removed node; any other rule may rewire the remaining topology.
-        if (linkingRule.isLocallyConsistent()) {
-            neigh.forEach {
-                with(currentNeighborhoodOf(it).remove(node)) {
-                    neighborhoods.put(it.id, this)
-                }
-            }
-        } else {
-            nodes.current.forEach { remainingNode ->
-                val updatedNeighborhood = linkingRule.computeNeighborhood(remainingNode, this)
-                neighborhoods.put(remainingNode.id, updatedNeighborhood)
-            }
-        }
         updateRangeQueries(node, position, null)
         /*
          * The position goes last. Observers reach a node's position through the node list, a neighborhood, or a range
@@ -304,11 +301,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         requireNeighborhood(node, neighborhoods.current[node.id])
 
     /**
-     * The current position of [node], which must be part of this environment.
-     */
-    protected fun currentPositionOf(node: Node<T>): P = requirePosition(node, nodesToPositions.current[node.id])
-
-    /**
      * Executes [action] on the simulation this environment is attached to, if any.
      */
     protected fun ifAttachedToSimulation(action: Consumer<Simulation<T, P>>) {
@@ -346,111 +338,41 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     protected open fun nodeShouldBeAdded(node: Node<T>, position: P): Boolean = true
 
     /**
-     * Recomputes the neighborhoods affected by the addition or movement of [node]: its own, and those of the nodes
-     * it joined or left, or every neighborhood the linking rule rewires when the rule is not locally consistent.
-     */
-    protected fun refreshNeighborhoodsAround(node: Node<T>) {
-        /*
-         * With a locally consistent rule, a node's neighborhood depends only on its own position: recompute it, then
-         * add or remove the node in exactly the neighborhoods it entered or left. Any other rule may change the
-         * neighborhoods of nodes that did not move, so recomputation spreads from the moved node through every node
-         * whose neighborhood changed, visiting each node at most once.
-         */
-        if (linkingRule.isLocallyConsistent()) {
-            val newNeighborhood = linkingRule.computeNeighborhood(node, this)
-            val oldNeighborhood = neighborhoods.current[node.id]
-            neighborhoods.put(node.id, newNeighborhood)
-            oldNeighborhood?.let {
-                it.neighbors.asSequence()
-                    .filterNot(newNeighborhood::contains)
-                    .map(this::currentNeighborhoodOf)
-                    .filter { neigh -> neigh.contains(node) }
-                    .forEach { neighborhoodToChange ->
-                        val formerNeighbor = neighborhoodToChange.center
-                        with(neighborhoodToChange.remove(node)) {
-                            neighborhoods.put(formerNeighbor.id, this)
-                        }
-                    }
-            }
-            val newNeighbors = newNeighborhood.neighbors
-            val oldNeighbors = oldNeighborhood?.neighbors.orEmpty()
-            (newNeighbors - oldNeighbors).forEach { newNeighbor ->
-                with(currentNeighborhoodOf(newNeighbor).add(node)) {
-                    neighborhoods.put(newNeighbor.id, this)
-                }
-            }
-        } else {
-            val processed = TIntHashSet(nodes.current.size).apply { add(node.id) }
-            val nodesToUpdate = recomputeNeighborhood(node).toMutableList()
-            while (nodesToUpdate.isNotEmpty()) {
-                val next = nodesToUpdate.removeLast()
-                if (processed.add(next.id)) {
-                    nodesToUpdate.addAll(recomputeNeighborhood(next))
-                }
-            }
-        }
-    }
-
-    /**
-     * Adds or updates a node's position in the position map.
+     * Moves [n], which must be part of this environment, to [p]; moving it to its current position does nothing.
      *
      * @param n the node
      * @param p its new position
      */
     protected fun setPosition(n: Node<T>, p: P) {
-        val pos = nodesToPositions.current[n.id]
+        val pos = this@AbstractEnvironment.currentPositionOf(n)
         /*
          * The position map is updated before the range queries, so that queries centered on the moved node see its
          * new position.
          */
         if (pos != p) {
-            require(pos == null || spatialIndex.move(n, pos.coordinates, p.coordinates)) {
-                "Tried to move a node not previously present in the environment:\nNode: $n\nRequested position: $p"
+            check(spatialIndex.move(n, pos.coordinates, p.coordinates)) {
+                "The spatial index lost track of $n, which could not be moved to $p"
             }
             nodesToPositions[n.id] = p
             updateRangeQueries(n, pos, p)
         }
     }
 
-    private fun affectedNeighbors(
-        center: Node<T>,
-        oldNeighborhood: Neighborhood<T>?,
-        newNeighborhood: Neighborhood<T>,
-    ): Sequence<Node<T>> = lostNeighbors(center, oldNeighborhood, newNeighborhood) +
-        foundNeighbors(center, oldNeighborhood, newNeighborhood)
-
-    private fun foundNeighbors(
-        center: Node<T>,
-        oldNeighborhood: Neighborhood<T>?,
-        newNeighborhood: Neighborhood<T>,
-    ): Sequence<Node<T>> = newNeighborhood
-        .neighbors
-        .asSequence()
-        .filterNot { it in (oldNeighborhood ?: emptySet()) || currentNeighborhoodOf(it).contains(center) }
-
-    private fun lostNeighbors(
-        center: Node<T>,
-        oldNeighborhood: Neighborhood<T>?,
-        newNeighborhood: Neighborhood<T>,
-    ): Sequence<Node<T>> = oldNeighborhood
-        ?.neighbors
-        ?.asSequence()
-        ?.filter { neigh -> !newNeighborhood.contains(neigh) && currentNeighborhoodOf(neigh).contains(center) }
-        .orEmpty()
+    private fun followNeighborhood(node: Node<T>) {
+        neighborhoodSubscriptions[node.id] = networkModel.neighborhoodOf(node).subscribe { neighborhood ->
+            check(neighborhood.center == node) {
+                "The network model $networkModel published the neighborhood of ${neighborhood.center} for $node"
+            }
+            neighborhoods.put(node.id, neighborhood)
+        }
+    }
 
     private fun queryNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
         return spatialIndex
             .query(*center.boundingBox(range).map { it.coordinates }.toTypedArray())
-            .filter { currentPositionOf(it).distanceTo(center) <= range }
+            .filter { this@AbstractEnvironment.currentPositionOf(it).distanceTo(center) <= range }
             .distinct()
-    }
-
-    private fun recomputeNeighborhood(node: Node<T>): Sequence<Node<T>> {
-        val newNeighborhood = linkingRule.computeNeighborhood(Objects.requireNonNull(node), this)
-        val oldNeighborhood = neighborhoods.current[node.id]
-        neighborhoods.put(node.id, newNeighborhood)
-        return affectedNeighbors(node, oldNeighborhood, newNeighborhood)
     }
 
     private fun requireNeighborhood(node: Node<T>, neighborhood: Neighborhood<T>?): Neighborhood<T> =
@@ -547,7 +469,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     private inner class RangeQuery(
         val centerNode: Node<T>?,
         val radius: Double,
-        private val centerPosition: () -> P = { currentPositionOf(checkNotNull(centerNode)) },
+        private val centerPosition: () -> P = { this@AbstractEnvironment.currentPositionOf(checkNotNull(centerNode)) },
     ) : ObservableSet<Node<T>> {
         override val current: Set<Node<T>>
             get() = when {

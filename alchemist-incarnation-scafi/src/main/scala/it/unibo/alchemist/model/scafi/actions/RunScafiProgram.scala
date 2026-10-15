@@ -84,7 +84,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       case 1 => Point3D(point.getCoordinate(0), 0, 0)
       case 2 => Point3D(point.getCoordinate(0), point.getCoordinate(1), 0)
       case 3 => Point3D(point.getCoordinate(0), point.getCoordinate(1), point.getCoordinate(2))
-    val position: P = environment.getCurrentPosition(node)
+    val position: P = environment.currentPositionOf(node)
     // NB: We assume it.unibo.alchemist.model.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
     val alchemistCurrentTime = Try(environment.getSimulation)
@@ -109,7 +109,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     val neighborhoodSensors = scala.collection.mutable.Map[CNAME, Map[ID, Any]]()
     val exports: Iterable[(ID, EXPORT)] = neighborhoodManager.view.mapValues(_.exportData)
     val context = new ContextImpl(node.getId, exports, localSensors, Map.empty):
-      override def nbrSense[T](nsns: CNAME)(nbr: ID): Option[T] =
+      override def nbrSense[A](nsns: CNAME)(nbr: ID): Option[A] =
         neighborhoodSensors
           .getOrElseUpdate(
             nsns,
@@ -140,9 +140,9 @@ sealed class RunScafiProgram[T, P <: Position[P]](
                 )
           )
           .get(nbr)
-          .map(_.asInstanceOf[T])
+          .map(_.asInstanceOf[A])
 
-      override def sense[T](lsns: String): Option[T] = (lsns match
+      override def sense[A](lsns: String): Option[A] = (lsns match
         case LSNS_ALCHEMIST_COORDINATES => Some(position.getCoordinates)
         case commonNames.LSNS_DELTA_TIME => Some(FiniteDuration(deltaTime, TimeUnit.NANOSECONDS))
         case commonNames.LSNS_POSITION =>
@@ -167,7 +167,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
         case LSNS_ALCHEMIST_RANDOM => Some(randomGenerator)
         case LSNS_ALCHEMIST_TIMESTAMP => Some(alchemistCurrentTime)
         case _ => localSensors.get(lsns)
-      ).map(_.asInstanceOf[T])
+      ).map(_.asInstanceOf[A])
     val computed = program(context)
     node.setConcentration(programName, computed.root[T]())
     val toSend = NeighborData(computed, position, alchemistCurrentTime)
@@ -182,7 +182,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
 
   def observeComputationalCycleComplete: Observable[Boolean] = _completed
 
-  def prepareForComputationalCycle: Unit = _completed.update(_ => false)
+  def prepareForComputationalCycle(): Unit = _completed.update(_ => false)
 
 object RunScafiProgram:
   private[actions] def meanDelay[T](reaction: NodeReaction[T]): Double = reaction match

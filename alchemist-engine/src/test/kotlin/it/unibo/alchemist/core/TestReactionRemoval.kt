@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
@@ -43,7 +43,7 @@ class TestReactionRemoval : FreeSpec({
             node.addReaction(it)
         }
         environment.addTerminator { it.simulation.time > DoubleTime(10.0) }
-        environment.linkingRule = NoLinks()
+        environment.networkModel = NoLinks()
         environment.addNode(node, environment.makePosition(0, 0))
         val engine = Engine(environment)
         engine.play()

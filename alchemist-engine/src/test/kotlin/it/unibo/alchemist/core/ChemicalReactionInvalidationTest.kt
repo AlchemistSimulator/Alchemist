@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
@@ -48,7 +48,7 @@ private fun chemicalReactionFixture(): ChemicalReactionFixture {
     val randomGenerator = MersenneTwister(10)
     val incarnation = BiochemistryIncarnation()
     val environment = Continuous2DEnvironment(incarnation).apply {
-        linkingRule = ConnectWithinDistance(1.0)
+        networkModel = connectWithinDistance(1.0)
     }
     val reactionsByNode = listOf(0.0 to 0.0, 0.5 to 0.0).map { (x, y) ->
         val node = incarnation.createNode(randomGenerator, environment, null)

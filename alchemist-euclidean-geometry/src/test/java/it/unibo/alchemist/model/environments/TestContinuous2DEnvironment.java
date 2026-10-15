@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.environments;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.SupportedIncarnations;
-import it.unibo.alchemist.model.linkingrules.NoLinks;
+import it.unibo.alchemist.model.networks.NoLinks;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +45,7 @@ final class TestContinuous2DEnvironment {
     @BeforeEach
     public void setUp() {
         environment = new Continuous2DEnvironment<>(INCARNATION);
-        environment.setLinkingRule(new NoLinks<>());
+        environment.setNetworkModel(new NoLinks<>());
     }
 
     private Node<Integer> createIntNode() {
@@ -92,7 +92,7 @@ final class TestContinuous2DEnvironment {
         final Node<Integer> dummy = createIntNode();
         environment.addNode(dummy, new Euclidean2DPosition(ZEROS));
         try {
-            environment.getNodesWithinRange(dummy, -1);
+            environment.nodesAround(dummy, -1);
             fail();
         } catch (final IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());
@@ -110,7 +110,7 @@ final class TestContinuous2DEnvironment {
         environment.addNode(dummy, new Euclidean2DPosition(ZEROS));
         environment.addNode(dummy2, new Euclidean2DPosition(ZEROS));
         assertEquals(2, environment.getNodeCount().getCurrent());
-        assertEquals(Collections.singletonList(dummy2), environment.getNodesWithinRange(dummy, Math.nextUp(0)));
+        assertEquals(Collections.singletonList(dummy2), environment.nodesAround(dummy, Math.nextUp(0)));
     }
 
 }

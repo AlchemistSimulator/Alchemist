@@ -76,7 +76,7 @@ class TimeDistributionMeanDelayTest {
     fun `network arrivals have the current transmission time as mean delay`() {
         val environment = mockk<Environment<Any, *>>()
         val node = mockk<Node<Any>>()
-        every { environment.getNeighborhood(node).current.neighbors } returns persistentListOf()
+        every { environment.neighborhoodOf(node).current.neighbors } returns persistentListOf()
         val distribution = SimpleNetworkArrivals(mockk(), node, environment, 0.1, 1000.0, 500.0)
         assertEquals(2.1, distribution.meanDelay)
     }

@@ -94,7 +94,7 @@ class AlchemistExecutionContext<P : Position<P>>(
      * The device position, in form of [Position].
      */
     val devicePosition: P
-        get() = environmentAccess.getCurrentPosition(node)
+        get() = environmentAccess.currentPositionOf(node)
 
     /**
      * @param environment
@@ -128,7 +128,7 @@ class AlchemistExecutionContext<P : Position<P>>(
 
     /**
      * Computes the distance between two nodes, through
-     * [Environment.getDistanceBetweenNodes].
+     * [Environment.distanceBetween].
      *
      * @param target
      * the target device
@@ -138,19 +138,18 @@ class AlchemistExecutionContext<P : Position<P>>(
         check(target is ProtelisDevice<*>) {
             "Not a valid " + ProtelisDevice::class.simpleName + ": " + target
         }
-        return environmentAccess.getDistanceBetweenNodes(node, target.node)
+        return environmentAccess.distanceBetween(node, target.node)
     }
 
     /**
      * Computes the distance between two nodes, through
-     * [Environment.getDistanceBetweenNodes].
+     * [Environment.distanceBetween].
      *
      * @param target
      * the target device
      * @return the distance
      */
-    fun distanceTo(target: Int): Double =
-        environmentAccess.getDistanceBetweenNodes(node, environmentAccess.getNodeByID(target))
+    fun distanceTo(target: Int): Double = environmentAccess.distanceBetween(node, environmentAccess.getNodeByID(target))
 
     override fun equals(other: Any?) = this === other ||
         other is AlchemistExecutionContext<*> &&
@@ -244,7 +243,7 @@ class AlchemistExecutionContext<P : Position<P>>(
      * @return the distance on a map
      */
     fun routingDistance(dest: Node<Any>): Double =
-        routingDistance(environmentAccess.getCurrentPosition(dest) as GeoPosition)
+        routingDistance(environmentAccess.currentPositionOf(dest) as GeoPosition)
 
     /**
      * Computes the distance along a map. Requires a [MapEnvironment].

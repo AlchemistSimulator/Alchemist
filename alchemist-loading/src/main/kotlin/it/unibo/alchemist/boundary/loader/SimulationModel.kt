@@ -44,8 +44,8 @@ import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
@@ -54,8 +54,8 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.CombinedNetworkModel
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
@@ -259,15 +259,15 @@ internal object SimulationModel {
             )
         }
 
-    internal fun <P : Position<P>, T> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
-        val linkingRules =
+    internal fun <P : Position<P>, T> visitLinkingRule(localContext: Context, root: Any?): NetworkModel<T> {
+        val networkModels =
             visitRecursively(localContext, root, JavaType) { element ->
-                visitBuilding<LinkingRule<T, P>>(localContext, element)
+                visitBuilding<NetworkModel<T>>(localContext, element)
             }
         return when {
-            linkingRules.isEmpty() -> NoLinks()
-            linkingRules.size == 1 -> linkingRules.first()
-            else -> CombinedLinkingRule(linkingRules)
+            networkModels.isEmpty() -> NoLinks()
+            networkModels.size == 1 -> networkModels.first()
+            else -> CombinedNetworkModel(networkModels)
         }
     }
 

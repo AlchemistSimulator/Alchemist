@@ -79,20 +79,20 @@ open class SAPEREWalkerRiseGradient(
 
         override fun getTarget(): GeoPosition {
             val matches = (node as ILsaNode).matching(template)
-            val position = environment.getCurrentPosition(node)
+            val position = environment.currentPositionOf(node)
             // If there is no gradient and there is no goal, or the goal has already been reached, then remain still.
             if (matches.isEmpty()) {
                 return currentPosition?.takeUnless { it == position } ?: position
             }
             val nextHop = (matches[0].getArg(argPos).rootNodeData as Double).toInt()
             // If the current target node has moved, the destination should be re-computed.
-            val currentNodePosition = environment.getCurrentPosition(currentNode)
+            val currentNodePosition = environment.currentPositionOf(currentNode)
             if (currentNode == node ||
                 currentPosition != currentNodePosition ||
-                environment.getNeighborhood(node).current.contains(currentNode)
+                environment.neighborhoodOf(node).current.contains(currentNode)
             ) {
                 currentNode = environment.getNodeByID(nextHop).asILsaNode()
-                currentPosition = environment.getCurrentPosition(currentNode)
+                currentPosition = environment.currentPositionOf(currentNode)
             }
             return checkNotNull(currentPosition)
         }

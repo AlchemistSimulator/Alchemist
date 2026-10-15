@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.sapere.actions
 
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule
 import it.unibo.alchemist.model.sapere.nodes.LsaNode
@@ -23,7 +23,7 @@ import org.apache.commons.math3.random.MersenneTwister
 
 class LsaAscendingAgentTest {
     private val environment = Continuous2DEnvironment(SAPEREIncarnation<Euclidean2DPosition>()).apply {
-        linkingRule = ConnectWithinDistance(5.0)
+        networkModel = connectWithinDistance(5.0)
     }
     private val randomGenerator = MersenneTwister(1)
     private val agent = node(0.0, 0.0)
@@ -41,7 +41,7 @@ class LsaAscendingAgentTest {
 
     private fun assertAgentAt(x: Double, y: Double) {
         action.execute()
-        assertEquals(environment.makePosition(x, y), environment.getCurrentPosition(agent))
+        assertEquals(environment.makePosition(x, y), environment.currentPositionOf(agent))
     }
 
     @Test

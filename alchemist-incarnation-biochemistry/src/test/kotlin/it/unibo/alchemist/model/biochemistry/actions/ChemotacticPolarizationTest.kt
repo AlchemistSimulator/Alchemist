@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.biochemistry.CircularCellProperty
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironmentNoOverlap
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.test.Test
@@ -26,7 +26,7 @@ class ChemotacticPolarizationTest {
     private val randomGenerator = MersenneTwister(0)
     private val incarnation = BiochemistryIncarnation()
     private val environment = BioRect2DEnvironmentNoOverlap(incarnation)
-        .apply { linkingRule = ConnectWithinDistance(2.0) }
+        .apply { networkModel = connectWithinDistance(2.0) }
     private val cell = incarnation.createNode(randomGenerator, environment, null)
         .also { environment.addNode(it, Euclidean2DPosition(0.0, 0.0)) }
     private val source = EnvironmentNodeImpl(environment)

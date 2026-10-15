@@ -9,19 +9,20 @@
 
 package it.unibo.alchemist.model
 
-import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.toPersistentList
 
 /**
  * A neighborhood, namely the set of nodes to which a "central" node is connected to.
  *
  * @param <T> concentration type
 </T> */
-interface Neighborhood<T> : Iterable<Node<T>> {
+interface Neighborhood<T> {
 
     /**
      * Returns a neighborhood with [node] among its neighbors.
      */
-    fun add(node: Node<T>): Neighborhood<T>
+    operator fun plus(node: Node<T>): Neighborhood<T> = Neighborhood(center, neighbors + node)
 
     /**
      * Checks whether [node] belongs to this neighborhood.
@@ -39,7 +40,7 @@ interface Neighborhood<T> : Iterable<Node<T>> {
     /**
      * An ordered, read-only view of every node in the neighborhood.
      */
-    val neighbors: ImmutableList<Node<T>>
+    val neighbors: PersistentList<Node<T>>
 
     /**
      * @return true if this neighborhood has no neighbors
@@ -49,12 +50,41 @@ interface Neighborhood<T> : Iterable<Node<T>> {
     /**
      * Returns a neighborhood without [node].
      */
-    fun remove(node: Node<T>): Neighborhood<T>
+    operator fun minus(node: Node<T>): Neighborhood<T> = Neighborhood(center, neighbors.remove(node))
 
     /**
      * Returns the number of neighbors.
      */
     fun size(): Int = neighbors.size
 
-    override fun iterator(): Iterator<Node<T>> = neighbors.iterator()
+    /**
+     * Builders of [Neighborhood]s, whose neighbors are always sorted.
+     */
+    companion object {
+        private operator fun <T> invoke(centerNode: Node<T>, sortedNeighbors: PersistentList<Node<T>>) =
+            object : Neighborhood<T> {
+                override val center: Node<T> get() = centerNode
+                override val neighbors: PersistentList<Node<T>> get() = sortedNeighbors
+                private val asString by lazy { "NeighborhoodOf(${center.id})=${neighbors.map { it.id }}" }
+
+                override fun toString() = asString
+
+                override fun equals(other: Any?): Boolean = other is Neighborhood<*> &&
+                    other.center == center &&
+                    other.neighbors == neighbors
+
+                override fun hashCode(): Int = arrayOf(center, neighbors).contentHashCode()
+            }
+
+        /**
+         * The neighborhood of [center] made of [neighbors], sorted.
+         */
+        operator fun <T> invoke(center: Node<T>, neighbors: Set<Node<T>>) =
+            Neighborhood(center, neighbors.sorted().toPersistentList())
+
+        /**
+         * The neighborhood of [center] made of the distinct [neighbors], sorted.
+         */
+        operator fun <T> invoke(center: Node<T>, neighbors: Iterable<Node<T>>) = Neighborhood(center, neighbors.toSet())
+    }
 }

@@ -1,12 +1,20 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.maps.linkingrules
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.linkingrules.AbstractLocallyConsistentLinkingRule
 import it.unibo.alchemist.model.maps.MapEnvironment
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods
+import it.unibo.alchemist.model.networks.ObservingRangeBasedNetworkModel
+import it.unibo.alchemist.model.observation.Observable
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -23,22 +31,29 @@ import kotlin.math.min
  */
 class ConnectIfInLineOfSigthOnMap<T>
 @JvmOverloads
-constructor(val maxRange: Double, val tolerance: Double = 0.1) :
-    AbstractLocallyConsistentLinkingRule<T, GeoPosition>() {
-    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, GeoPosition>): Neighborhood<T> {
-        require(environment is MapEnvironment<T, *, *>) {
-            "Cannot operate of environments of type " + environment::class.simpleName
-        }
-        val inRange =
-            environment
-                .getNodesWithinRange(center, maxRange)
-                .filter { target ->
-                    val losDistance = environment.getDistanceBetweenNodes(center, target)
-                    val outbound = environment.computeRoute(center, target)
-                    val inbound = environment.computeRoute(target, center)
-                    val shortest = min(outbound.length(), inbound.length())
-                    shortest <= maxRange && abs(shortest - losDistance) < tolerance * shortest
-                }
-        return Neighborhoods.make(environment, center, inRange)
+constructor(
+    environment: Environment<T, GeoPosition>,
+    val maxRange: Double,
+    val tolerance: Double = 0.1,
+) : ObservingRangeBasedNetworkModel<T, GeoPosition, GeoPosition>(environment, maxRange) {
+
+    private val map: MapEnvironment<T, *, *> = requireNotNull(environment as? MapEnvironment<T, *, *>) {
+        "Cannot operate of environments of type " + environment::class.simpleName
     }
+
+    override fun isLinked(
+        center: Node<T>,
+        centerInput: GeoPosition,
+        neighbor: Node<T>,
+        neighborInput: GeoPosition,
+    ): Boolean {
+        val losDistance = centerInput.distanceTo(neighborInput)
+        val outbound = map.computeRoute(center, neighbor)
+        val inbound = map.computeRoute(neighbor, center)
+        val shortest = min(outbound.length(), inbound.length())
+        return shortest <= maxRange && abs(shortest - losDistance) < tolerance * shortest
+    }
+
+    // Routes depend on the positions of both nodes.
+    override fun observeInput(node: Node<T>): Observable<GeoPosition> = map.positionOf(node)
 }

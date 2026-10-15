@@ -123,9 +123,9 @@ open class Explore<T, L : Euclidean2DConvexShape, R>(
      */
     protected open val ConvexPolygon.congestionLevel: Double get() =
         environment
-            .getNodesWithinRange(centroid, radius)
+            .nodesAround(centroid, radius)
             .asSequence()
-            .map { environment.getCurrentPosition(it) }
+            .map { environment.currentPositionOf(it) }
             .count { contains(it) }
             .let { it * node.area / area }
             .coerceAtMost(1.0)

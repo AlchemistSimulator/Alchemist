@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironmentNoOverlap
 import it.unibo.alchemist.model.biochemistry.properties.CircularDeformableCell
 import it.unibo.alchemist.model.biochemistry.reactions.BiochemicalNodeReaction
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
@@ -27,7 +27,7 @@ import org.apache.commons.math3.random.MersenneTwister
 class TensionPresentTest {
     private val randomGenerator = MersenneTwister(0)
     private val environment = BioRect2DEnvironmentNoOverlap(BiochemistryIncarnation())
-        .apply { linkingRule = ConnectWithinDistance(1.0) }
+        .apply { networkModel = connectWithinDistance(1.0) }
 
     private fun deformableCell(maximumDiameter: Double, rigidity: Double): Node<Double> = GenericNode(environment)
         .also { node -> node.addProperty(CircularDeformableCell(environment, node, maximumDiameter, rigidity)) }

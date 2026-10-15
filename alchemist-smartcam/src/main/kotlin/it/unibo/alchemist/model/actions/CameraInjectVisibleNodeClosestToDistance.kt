@@ -48,7 +48,7 @@ class CameraInjectVisibleNodeClosestToDistance(
                 }
                 @Suppress("UNCHECKED_CAST")
                 val nodes = visibleNodes as List<VisibleNode<*, Euclidean2DPosition>>
-                val myPosition = environment.getCurrentPosition(targetNode).surroundingPointAt(
+                val myPosition = environment.currentPositionOf(targetNode).surroundingPointAt(
                     versor = environment.getHeading(targetNode),
                     distance = distance,
                 )

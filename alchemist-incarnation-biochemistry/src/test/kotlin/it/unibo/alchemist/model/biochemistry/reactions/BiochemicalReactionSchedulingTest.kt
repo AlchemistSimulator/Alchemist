@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.biochemistry.conditions.TensionPresent.Mechanica
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.biochemistry.nodes.EnvironmentNodeImpl
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -118,7 +118,7 @@ class BiochemicalReactionSchedulingTest {
         every { randomGenerator.nextDouble() } returns 0.5
         val incarnation = BiochemistryIncarnation()
         val environment = BioRect2DEnvironment(incarnation).apply {
-            linkingRule = ConnectWithinDistance(1.0)
+            networkModel = connectWithinDistance(1.0)
         }
         val node = incarnation.createNode(randomGenerator, environment, null)
         val environmentNode = EnvironmentNodeImpl(environment)

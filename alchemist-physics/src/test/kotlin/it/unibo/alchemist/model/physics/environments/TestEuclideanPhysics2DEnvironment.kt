@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.physics.environments
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.physics.properties.CircularArea
@@ -42,7 +42,7 @@ class TestEuclideanPhysics2DEnvironment {
     fun setUp() {
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()
         environment = ContinuousPhysics2DEnvironment(incarnation)
-        environment.linkingRule = NoLinks()
+        environment.networkModel = NoLinks()
         node1 = createCircleNode(environment, DEFAULT_SHAPE_SIZE / 2)
         node2 = createCircleNode(environment, DEFAULT_SHAPE_SIZE / 2)
         node3 = createCircleNode(environment, DEFAULT_SHAPE_SIZE / 2)
@@ -60,8 +60,8 @@ class TestEuclideanPhysics2DEnvironment {
     fun `Cannot move into other nodes`() {
         environment.addNode(node1, Euclidean2DPosition(0.0, 0.0))
         environment.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
-        environment.moveNodeTo(node2, environment.getCurrentPosition(node1))
-        val distance = environment.getCurrentPosition(node1).distanceTo(environment.getCurrentPosition(node2))
+        environment.moveNodeTo(node2, environment.currentPositionOf(node1))
+        val distance = environment.currentPositionOf(node1).distanceTo(environment.currentPositionOf(node2))
         distance.shouldBeAbout(getNodeRadius(node1) + getNodeRadius(node2))
     }
 
@@ -87,10 +87,10 @@ class TestEuclideanPhysics2DEnvironment {
         environment.addNode(node1, Euclidean2DPosition(2.0, 2.0))
         environment.addNode(node2, Euclidean2DPosition(6.0, 2.0))
         val target = Euclidean2DPosition(8.0, 2.0)
-        val node2toTarget = environment.getCurrentPosition(node2).distanceTo(target)
+        val node2toTarget = environment.currentPositionOf(node2).distanceTo(target)
         environment.moveNodeTo(node1, target)
         environment
-            .getCurrentPosition(node1)
+            .currentPositionOf(node1)
             .distanceTo(target)
             .shouldBeAbout(node2toTarget + getNodeRadius(node1) + getNodeRadius(node2))
     }
@@ -102,7 +102,7 @@ class TestEuclideanPhysics2DEnvironment {
         environment.addNode(node3, Euclidean2DPosition(8.0, 2.5))
         val target = Euclidean2DPosition(8.0, 2.0)
         environment.moveNodeTo(node1, target)
-        assertTrue(environment.getCurrentPosition(node1).distanceTo(target) > getNodeRadius(node1))
+        assertTrue(environment.currentPositionOf(node1).distanceTo(target) > getNodeRadius(node1))
     }
 
     companion object {

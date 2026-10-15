@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule
 import it.unibo.alchemist.model.conditions.NeighborHasConcentration
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
@@ -43,7 +43,7 @@ class EngineTest : FreeSpec({
     "Neighbor Condition: Reaction executes when neighbor has concentration" {
         val incarnation = BiochemistryIncarnation()
         val environment = Continuous2DEnvironment(incarnation)
-        environment.linkingRule = ConnectWithinDistance(2.0)
+        with(environment) { networkModel = connectWithinDistance(2.0) }
 
         val nodeA = GenericNode(environment)
         val nodeB = GenericNode(environment)

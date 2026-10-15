@@ -58,7 +58,7 @@ open class Weighted<T>(
      * the closest target is picked.
      */
     override fun computeTarget(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
-        environment.getCurrentPosition(node).let { currPos ->
+        environment.currentPositionOf(node).let { currPos ->
             actions
                 .filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
                 .map { it.target() }

@@ -21,7 +21,7 @@ simulation2D(SAPEREIncarnation()) {
     val rate: Double by variable(GeometricVariable(2.0, 0.1, 10.0, 9))
     val size: Double by variable(LinearVariable(5.0, 1.0, 10.0, 1.0))
     environment {
-        networkModel(ConnectWithinDistance(0.5))
+        networkModel(connectWithinDistance(0.5))
         val mSize = -size
         val sourceStart = mSize / 10.0
         val sourceSize = size / 5.0

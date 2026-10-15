@@ -50,7 +50,7 @@ internal class TestNodeCloning<P : Position<P>> {
             environment.makeNode(-26.3700008392334, -9.899999618530274, false, false)
         }
         val nid: (Int) -> Node<Any> = { environment.getNodeByID(it) }
-        val distance: (Int, Int) -> Double = { a, b -> environment.getDistanceBetweenNodes(nid(a), nid(b)) }
+        val distance: (Int, Int) -> Double = { a, b -> environment.distanceBetween(nid(a), nid(b)) }
         simulation.addOutputMonitor(
             object : OutputMonitor<Any, P> {
                 override fun stepDone(

@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.obstacles;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.SupportedIncarnations;
-import it.unibo.alchemist.model.linkingrules.NoLinks;
+import it.unibo.alchemist.model.networks.NoLinks;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.physics.environments.Continuous2DObstacles;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
@@ -39,7 +39,7 @@ class TestContinuous2DObstacle {
     void test() {
         final var incarnation = SupportedIncarnations.<Integer, Euclidean2DPosition>get("protelis").orElseThrow();
         final Continuous2DObstacles<Integer> environment = new Continuous2DObstacles<>(incarnation);
-        environment.setLinkingRule(new NoLinks<>());
+        environment.setNetworkModel(new NoLinks<>());
         environment.addObstacle(R1021);
         environment.addObstacle(R0527);
         assertEquals(

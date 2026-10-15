@@ -83,7 +83,7 @@ public final class BioRect2DEnvironmentNoOverlap
                 }
                 final double nodeRadius = node.asProperty(CircularCellProperty.class).getRadius();
                 return range <= 0
-                        || getNodesWithinRange(position, range).stream()
+                        || nodesAround(position, range).stream()
                             .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
                             .noneMatch(n -> currentPositionOf(n).distanceTo(position) < nodeRadius
                                     + n.asProperty(CircularCellProperty.class).getRadius());
@@ -145,7 +145,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final Euclidean2DPosition midPoint = originalPos.plus(vecToMid1);
         // compute optimum scanning range
         double range = FastMath.sqrt(FastMath.pow(halfDistance, 2) + FastMath.pow(maxDiameter, 2));
-        final double newMaxDiameter = getNodesWithinRange(midPoint, range).stream()
+        final double newMaxDiameter = nodesAround(midPoint, range).stream()
                 .parallel()
                 .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
                 .mapToDouble(n -> n.asProperty(CircularCellProperty.class).getDiameter())
@@ -157,7 +157,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final Euclidean2DPosition vecToMid2 = new Euclidean2DPosition(xVer * newHalfDistance, yVer * newHalfDistance);
         final Euclidean2DPosition newMidPoint = originalPos.plus(vecToMid2);
         range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
-        return getNodesWithinRange(newMidPoint, range).stream()
+        return nodesAround(newMidPoint, range).stream()
                 .filter(n -> !n.equals(nodeToMove) && n.asPropertyOrNull(CircularCellProperty.class) != null)
                 .filter(n -> selectNodes(n, nodeToMove, currentPositionOf(nodeToMove), requestedPos, xVer, yVer))
                 .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx))

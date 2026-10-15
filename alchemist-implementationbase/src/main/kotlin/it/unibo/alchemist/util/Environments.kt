@@ -27,7 +27,7 @@ object Environments {
     ): (Node<T>, Node<T>) -> Double = { n1, n2 ->
         when {
             n1 == n2 -> 0.0
-            n2 in getNeighborhood(n1).current -> computeDistance(n1, n2)
+            n2 in neighborhoodOf(n1).current -> computeDistance(n1, n2)
             else -> POSITIVE_INFINITY
         }
     }
@@ -35,7 +35,7 @@ object Environments {
     private fun <T> Environment<T, *>.hopDistance() = neighborDistanceMetric { n1, n2 -> 1.0 }
 
     private fun <T> Environment<T, *>.environmentMetricDistance() =
-        neighborDistanceMetric { n1, n2 -> getDistanceBetweenNodes(n1, n2) }
+        neighborDistanceMetric { n1, n2 -> distanceBetween(n1, n2) }
 
     /**
      * Computes the diameter of all subnetworks in the environment.
@@ -121,7 +121,7 @@ object Environments {
     private fun <T> Environment<T, *>.allShortestPaths(
         computeDistance: (Node<T>, Node<T>) -> Double =
             neighborDistanceMetric { n1, n2 ->
-                getDistanceBetweenNodes(n1, n2)
+                distanceBetween(n1, n2)
             },
     ): SymmetricMatrix<Double> {
         val nodes = nodes.current
@@ -158,7 +158,7 @@ object Environments {
         while (toExplore.isNotEmpty()) {
             val current = toExplore.first()
             explored += current
-            val neighbors = getNeighborhood(current).current.toMutableSet()
+            val neighbors = neighborhoodOf(current).current.neighbors.toMutableSet()
             toExplore += neighbors
             toExplore -= explored
         }

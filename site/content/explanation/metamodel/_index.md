@@ -32,8 +32,8 @@ The world of Alchemist is composed of the following entities:
         1. Where the nodes are in the space - i.e. their *position*
         2. The distance between two *nodes*
         3. Optionally, support for moving *nodes*
-* **{{% api package="model" class="LinkingRule" %}}**
-    * A function of the current status of the environment that associates to each *node* a *neighborhood*
+* **{{% api package="model" class="NetworkModel" %}}**
+    * Observes the status of the environment and associates to each *node* a *neighborhood*, updated as the status changes
 * **{{% api package="model" class="Neighborhood" %}}**
     * An entity composed by a *node* (centre) and a set of *nodes* (neighbors)
 * **{{% api package="model" class="Reaction" %}}**

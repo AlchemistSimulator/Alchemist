@@ -12,14 +12,14 @@ package it.unibo.alchemist.boundary.kotlindsl
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.CombinedNetworkModel
+import it.unibo.alchemist.model.networks.NoLinks
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * - deploying nodes through a [DeploymentsContext];
  * - registering global reactions;
  * - registering layers (molecule → [Layer] mappings);
- * - configuring the environment network model ([LinkingRule]);
+ * - configuring the environment network model ([NetworkModel]);
  * - registering termination predicates.
  *
  * Most operations rely on Kotlin context receivers: the relevant [Environment] (and, when applicable,
@@ -107,18 +107,19 @@ fun interface EnvironmentContext<T, P : Position<P>> {
     /**
      * Configures (or extends) the environment network model by adding the provided [model].
      *
-     * The current linking rule is updated as follows:
+     * The current network model is updated as follows:
      * - if the environment currently uses [NoLinks], it is replaced with [model];
-     * - if the environment currently uses [CombinedLinkingRule], [model] is appended to its sub-rules;
-     * - otherwise, the existing rule and [model] are combined into a new [CombinedLinkingRule].
+     * - if the environment currently uses [CombinedNetworkModel], [model] is appended to its sub-rules;
+     * - otherwise, the existing rule and [model] are combined into a new [CombinedNetworkModel].
      *
-     * @param model the linking rule to set or append.
+     * @param model the network model to set or append, bound to the environment.
      */
     context(environment: Environment<T, P>)
-    fun networkModel(model: LinkingRule<T, P>) = when (val currentRule = environment.linkingRule) {
-        is NoLinks<T, P> -> environment.linkingRule = model
-        is CombinedLinkingRule<T, P> -> environment.linkingRule = CombinedLinkingRule(currentRule.subRules + model)
-        else -> environment.linkingRule = CombinedLinkingRule(listOf(environment.linkingRule, model))
+    fun networkModel(model: NetworkModel<T>) = when (val currentRule = environment.networkModel) {
+        is NoLinks<T> -> environment.networkModel = model
+        is CombinedNetworkModel<T> ->
+            environment.networkModel = CombinedNetworkModel(currentRule.subRules + model)
+        else -> environment.networkModel = CombinedNetworkModel(listOf(environment.networkModel, model))
     }
 
     /**

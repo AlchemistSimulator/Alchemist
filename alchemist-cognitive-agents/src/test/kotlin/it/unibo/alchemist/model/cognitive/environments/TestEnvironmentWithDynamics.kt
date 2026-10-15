@@ -70,9 +70,9 @@ class TestEnvironmentWithDynamics<T, P> :
                 .shouldBeInstanceOf<EnvironmentWithDynamics<T>>()
             val node = environment.nodes.current.single()
             environment.moveNodeTo(node, Euclidean2DPosition(5.0, 5.0))
-            environment.getCurrentPosition(node) shouldBe Euclidean2DPosition(5.0, 5.0)
+            environment.currentPositionOf(node) shouldBe Euclidean2DPosition(5.0, 5.0)
             environment.moveNodeBy(node, Euclidean2DPosition(1.0, -2.0))
-            environment.getCurrentPosition(node) shouldBe Euclidean2DPosition(6.0, 3.0)
+            environment.currentPositionOf(node) shouldBe Euclidean2DPosition(6.0, 3.0)
         }
         "PhysicsUpdate can be overriden only once" {
             val environment =

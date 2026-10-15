@@ -28,7 +28,7 @@ class KotlinDslProviderTest {
         val script = """
             simulation2D(SAPEREIncarnation()) {
                 environment {
-                    networkModel(ConnectWithinDistance(5.0))
+                    networkModel(connectWithinDistance(5.0))
                     deployments {
                         deploy(point(0.0, 0.0))
                         deploy(point(0.0, 1.0))

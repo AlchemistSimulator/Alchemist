@@ -28,7 +28,7 @@ class BiomolPresentInEnv<P : Position<out P>>(
 ) : GenericMoleculePresent<Double>(reaction, biomolecule, requiredQuantity) {
 
     override val quantity: Observable<Double> = environment
-        .getNeighborhood(targetNode)
+        .neighborhoodOf(targetNode)
         .switchMap { neighborhood ->
             neighborhood.neighbors
                 .filterIsInstance<EnvironmentNode>()

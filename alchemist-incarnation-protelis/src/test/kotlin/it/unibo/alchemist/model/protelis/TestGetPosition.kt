@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
 import it.unibo.alchemist.model.reactions.GenericReaction
@@ -53,7 +53,7 @@ class TestGetPosition {
 
     @BeforeEach
     fun setUp() {
-        environment.linkingRule = NoLinks()
+        environment.networkModel = NoLinks()
         reaction.actions = listOf(action)
         node.addReaction(reaction)
         environment.addNode(node, environment.makePosition(1, 1))

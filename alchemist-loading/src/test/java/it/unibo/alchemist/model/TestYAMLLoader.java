@@ -153,7 +153,7 @@ class TestYAMLLoader {
     void testScalaVar() {
         final Environment<Object, ?> environment = testNoVar("synthetic/scalavar.yml").getEnvironment();
         assertNotNull(environment);
-        assertEquals(environment.makePosition(3, 10), environment.getCurrentPosition(environment.getNodeByID(0)));
+        assertEquals(environment.makePosition(3, 10), environment.currentPositionOf(environment.getNodeByID(0)));
     }
 
     /**

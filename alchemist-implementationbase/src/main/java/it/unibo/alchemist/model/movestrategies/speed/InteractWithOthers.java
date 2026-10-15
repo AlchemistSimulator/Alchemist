@@ -97,12 +97,12 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     public double getNodeMovementLength(final P target) {
         double crowd = 0;
         final Collection<? extends Node<T>> neighs = radius > 0
-            ? environment.getNodesWithinRange(node, radius)
+            ? environment.nodesAround(node, radius)
             : Collections.emptyList();
         if (neighs.size() > 1 / interaction) {
             for (final Node<T> neigh : neighs) {
                 if (neigh.contains(interactingMolecule)) {
-                    crowd += 1 / environment.getDistanceBetweenNodes(node, neigh);
+                    crowd += 1 / environment.distanceBetween(node, neigh);
                 }
             }
         }

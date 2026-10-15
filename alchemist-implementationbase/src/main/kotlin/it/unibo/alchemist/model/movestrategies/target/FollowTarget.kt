@@ -43,7 +43,7 @@ open class FollowTarget<T, P : Position<P>>(
     /**
      * the current position.
      */
-    protected val currentPosition: P get() = environment.getCurrentPosition(node)
+    protected val currentPosition: P get() = environment.currentPositionOf(node)
 
     override fun getTarget(): P {
         @Suppress("UNCHECKED_CAST")

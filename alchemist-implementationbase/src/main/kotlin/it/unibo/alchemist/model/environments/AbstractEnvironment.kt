@@ -512,6 +512,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             members.stopWatching(registrant)
             if (!isActive) {
                 activeRangeQueries -= this
+                // Unobserved members go stale: later subscribers recompute them, or get none if the center left.
+                members.clearAndAddAll(emptySet())
             }
         }
 

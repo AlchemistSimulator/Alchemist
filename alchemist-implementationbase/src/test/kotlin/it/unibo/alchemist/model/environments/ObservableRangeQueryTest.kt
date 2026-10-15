@@ -91,6 +91,19 @@ class ObservableRangeQueryTest {
     }
 
     @Test
+    fun `a range observed again after its center is removed is empty`() {
+        val center = nodeAt(0, 0)
+        nodeAt(0.5, 0)
+        val range = environment.observeNodesAround(center, 1.0)
+        range.subscribe { }.dispose()
+        environment.removeNode(center)
+        val received = mutableListOf<Set<Node<Any>>>()
+        val subscription = range.subscribe { received += it }
+        assertEquals(listOf(emptySet()), received)
+        subscription.dispose()
+    }
+
+    @Test
     fun `a size subscription of a range can be released through the size of the same range`() {
         val center = nodeAt(0, 0)
         val range = environment.observeNodesAround(center, 1.0)

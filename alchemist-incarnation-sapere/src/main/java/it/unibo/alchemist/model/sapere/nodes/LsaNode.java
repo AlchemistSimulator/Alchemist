@@ -60,22 +60,19 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public void addLsa(final ILsaMolecule inst) {
-        if (inst.isIstance()) {
+    public void addLsa(final ILsaMolecule instance) {
+        if (instance.isIstance()) {
             synchronized (instancesByName) {
-                final String name = indexOf(inst);
+                final String name = indexOf(instance);
                 final List<ILsaMolecule> list = instancesByName.computeIfAbsent(name, k -> new ArrayList<>());
-                list.add(inst);
+                list.add(instance);
+                allInstances.add(instance);
+                bucketChanged(instance, name, list);
+                // The count is updated last, so that its observers find the rest of the node already updated.
                 moleculeCount.update(c -> c + 1);
-                allInstances.add(inst);
-                updateCount(inst, list);
-                final var obs = observablesByName.get(name);
-                if (obs != null) {
-                    obs.update(it -> new ArrayList<>(list));
-                }
             }
         } else {
-            throw new IllegalStateException("Tried to insert uninstanced " + inst + " into " + this);
+            throw new IllegalStateException("Tried to insert uninstanced " + instance + " into " + this);
         }
     }
 
@@ -156,9 +153,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                 throw new NoSuchElementException(lsa + " was not present in node " + getId());
             }
             final int removed = copies - bucket.size();
-            moleculeCount.update(c -> c - removed);
             allInstances.removeAll(lsa::equals);
             bucketChanged(lsa, name, bucket);
+            moleculeCount.update(c -> c - removed);
         }
     }
 
@@ -174,9 +171,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                     final String name = indexOf(candidate);
                     final List<ILsaMolecule> bucket = instancesByName.get(name);
                     bucket.remove(candidate);
-                    moleculeCount.update(c -> c - 1);
                     allInstances.remove(candidate);
                     bucketChanged(candidate, name, bucket);
+                    moleculeCount.update(c -> c - 1);
                     return true;
                 }
             }

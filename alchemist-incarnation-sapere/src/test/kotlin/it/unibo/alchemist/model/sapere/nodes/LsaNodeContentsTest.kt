@@ -40,6 +40,24 @@ class LsaNodeContentsTest {
     }
 
     @Test
+    fun `observers of the molecule count read a node already updated`() {
+        val other = LsaMolecule("other, 2")
+        val received = mutableListOf<Triple<Int, Int, Int>>()
+        node.moleculeCount.onChange(this, invokeOnRegistration = false) { count ->
+            received += Triple(count, node.lsaSpace.size, node.matching(molecule).size)
+        }
+        node.addLsa(molecule)
+        node.addLsa(molecule)
+        node.addLsa(other)
+        node.removeOneMatchedLsa(molecule)
+        node.removeAllConcentrationOf(molecule as Molecule)
+        assertEquals(
+            listOf(Triple(1, 1, 1), Triple(2, 2, 2), Triple(3, 3, 2), Triple(2, 2, 1), Triple(1, 1, 0)),
+            received,
+        )
+    }
+
+    @Test
     fun `removing a molecule through the node API removes every copy from the LSA space`() {
         val other = LsaMolecule("other, 2")
         node.addLsa(molecule)

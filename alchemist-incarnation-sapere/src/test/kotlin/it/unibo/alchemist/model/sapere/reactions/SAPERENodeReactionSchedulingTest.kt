@@ -93,7 +93,7 @@ class SAPERENodeReactionSchedulingTest {
         assertTrue(environment.addNode(destination, Euclidean2DPosition(5.0, 0.0)))
         reaction.conditions = listOf(LsaStandardCondition(LsaMolecule("token"), reaction))
         reaction.initializationComplete(Time.ZERO, environment)
-        val clone = reaction.cloneOnNewNode(destination, Time.ZERO)
+        val clone = reaction.cloneOnNewNode(destination)
         clone.initializationComplete(Time.ZERO, environment)
         assertTrue(reaction.nextOccurrence.current.isInfinite)
         assertTrue(clone.nextOccurrence.current.isInfinite)

@@ -122,8 +122,7 @@ interface Node<T> :
      * Creates a new Node which is a clone of the current Node. The new Node
      * will have all the current Node's properties, such as reactions and
      * molecules, but it will also have a different ID.
-     * The cloning happens at the current time of the simulation, or at [Time.ZERO]
-     * if the environment of this node is not attached to any simulation.
+     * Its reactions are cloned through [NodeReaction.cloneOnNewNode].
      *
      * @return A new Node which is a clone of the current one.
      *

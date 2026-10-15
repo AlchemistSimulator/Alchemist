@@ -57,7 +57,7 @@ class BiochemicalReactionSchedulingTest {
         ).apply {
             conditions = listOf(BiomolPresentInCell(this, molecule, 1.0))
         }
-        val clonedReaction = reaction.cloneOnNewNode(destination, Time.ZERO)
+        val clonedReaction = reaction.cloneOnNewNode(destination)
         val clonedCondition = assertIs<BiomolPresentInCell>(clonedReaction.conditions.single())
         assertSame(clonedReaction, clonedCondition.reaction)
         assertSame(destination, clonedCondition.targetNode)
@@ -77,7 +77,7 @@ class BiochemicalReactionSchedulingTest {
         destination[molecule] = 1.0
         assertTrue(environment.addNode(destination, Euclidean2DPosition(5.0, 0.0)))
         reaction.initializationComplete(Time.ZERO, environment)
-        val clone = reaction.cloneOnNewNode(destination, Time.ZERO)
+        val clone = reaction.cloneOnNewNode(destination)
         clone.initializationComplete(Time.ZERO, environment)
         verify(exactly = 2) { randomGenerator.nextDouble() }
         val sourceOccurrence = reaction.nextOccurrence.current

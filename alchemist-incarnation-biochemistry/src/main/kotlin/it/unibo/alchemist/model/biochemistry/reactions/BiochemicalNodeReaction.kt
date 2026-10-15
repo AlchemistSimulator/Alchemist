@@ -45,9 +45,8 @@ class BiochemicalNodeReaction(
     private val neighborConditions: List<AbstractNeighborCondition<Double>>
         get() = conditions.filterIsInstance<AbstractNeighborCondition<Double>>()
 
-    override fun cloneOnNewNode(node: Node<Double>, currentTime: Time): BiochemicalNodeReaction = prepareClone(
+    override fun cloneOnNewNode(node: Node<Double>): BiochemicalNodeReaction = prepareClone(
         BiochemicalNodeReaction(node, timeDistribution.newInstanceOn(node), environment, randomGenerator),
-        currentTime,
     )
 
     override fun validateConditions(conditions: List<Condition<Double>>) {

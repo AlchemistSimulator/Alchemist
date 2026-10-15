@@ -32,7 +32,7 @@ private class LambdaNodeReaction<T>(
     private val operation: () -> Unit,
 ) : AbstractNodeReaction<T>(node, distribution) {
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): NodeReaction<T> =
+    override fun cloneOnNewNode(node: Node<T>): NodeReaction<T> =
         throw UnsupportedOperationException("A test-only lambda reaction cannot be cloned")
 
     override fun performModelMutation() = operation()

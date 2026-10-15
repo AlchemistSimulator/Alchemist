@@ -75,11 +75,9 @@ class SAPERENodeReaction(
     private var totalPropensity = 0.0
     private var validNodes: List<ILsaNode> = emptyList()
 
-    override fun cloneOnNewNode(node: Node<List<ILsaMolecule>>, currentTime: Time): NodeReaction<List<ILsaMolecule>> =
-        prepareClone(
-            SAPERENodeReaction(environment, node as ILsaNode, randomGenerator, timeDistribution.newInstanceOn(node)),
-            currentTime,
-        )
+    override fun cloneOnNewNode(node: Node<List<ILsaMolecule>>): NodeReaction<List<ILsaMolecule>> = prepareClone(
+        SAPERENodeReaction(environment, node as ILsaNode, randomGenerator, timeDistribution.newInstanceOn(node)),
+    )
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<List<ILsaMolecule>, *>) {
         if (!isNewlyInstantiatedProgram) {

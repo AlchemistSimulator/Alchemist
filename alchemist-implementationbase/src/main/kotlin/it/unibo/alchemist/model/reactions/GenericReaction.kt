@@ -23,6 +23,6 @@ import it.unibo.alchemist.model.TimeDistribution
 open class GenericReaction<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
     AbstractNodeReaction<T>(node, timeDistribution) {
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): GenericReaction<T> =
-        makeClone(node, currentTime) { freshGenerator -> GenericReaction(node, freshGenerator) }
+    override fun cloneOnNewNode(node: Node<T>): GenericReaction<T> =
+        makeClone(node) { freshGenerator -> GenericReaction(node, freshGenerator) }
 }

@@ -30,8 +30,7 @@ import it.unibo.alchemist.model.reactions.AbstractNodeReaction
 class CognitiveBehavior<T, V, A>(node: Node<T>, timeDistribution: TimeDistribution<T>) :
     AbstractNodeReaction<T>(node, timeDistribution)
     where V : Vector<V>, A : Transformation<V> {
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
-        makeClone(node, currentTime) { CognitiveBehavior<T, V, A>(node, it) }
+    override fun cloneOnNewNode(node: Node<T>) = makeClone(node) { CognitiveBehavior<T, V, A>(node, it) }
 
     /**
      * Executes the actions, then advances the cognitive model by one step.

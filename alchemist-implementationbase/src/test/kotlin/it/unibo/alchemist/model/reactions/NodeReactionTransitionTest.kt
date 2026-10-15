@@ -283,10 +283,9 @@ class NodeReactionTransitionTest {
             )
         }
 
-        override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ObservableRateReaction<T> =
-            makeClone(node, currentTime) { freshGenerator ->
-                ObservableRateReaction(node, freshGenerator as ExponentialTime<T>, observableRate)
-            }
+        override fun cloneOnNewNode(node: Node<T>): ObservableRateReaction<T> = makeClone(node) { freshGenerator ->
+            ObservableRateReaction(node, freshGenerator as ExponentialTime<T>, observableRate)
+        }
 
         override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
             if (!isNewlyInstantiatedProgram) {

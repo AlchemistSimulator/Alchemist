@@ -48,7 +48,7 @@ class LsaActionsTest {
             SAPEREExponentialTime("1", randomGenerator),
             "--> *{aaa}",
         )
-        val clonedReaction = reaction.cloneOnNewNode(destination, Time.ZERO)
+        val clonedReaction = reaction.cloneOnNewNode(destination)
         val clone = assertIs<LsaAllNeighborsAction>(clonedReaction.actions.single())
         assertSame(clonedReaction, clone.reaction)
         clone.setExecutionContext(HashMap(), neighbors.toMutableList())

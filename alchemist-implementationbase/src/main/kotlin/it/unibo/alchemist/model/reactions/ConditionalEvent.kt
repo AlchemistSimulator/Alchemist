@@ -54,8 +54,8 @@ class ConditionalEvent<T>(node: Node<T>, timeDistribution: TimeDistribution<T>) 
         host.removeReaction(this)
     }
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ConditionalEvent<T> =
-        makeClone(node, currentTime) { freshGenerator -> ConditionalEvent(node, freshGenerator) }
+    override fun cloneOnNewNode(node: Node<T>): ConditionalEvent<T> =
+        makeClone(node) { freshGenerator -> ConditionalEvent(node, freshGenerator) }
 
     private fun armIfValid(currentTime: Time) {
         if (!armed && canExecute.current) {

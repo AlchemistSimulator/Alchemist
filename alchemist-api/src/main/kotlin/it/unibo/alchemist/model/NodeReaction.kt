@@ -26,12 +26,12 @@ interface NodeReaction<T> : Reaction<T> {
      * The clone must be returned uninitialized. A [TimeDistributedReaction] receives a fresh [TimeDistribution]
      * and schedule. The engine subsequently initializes the clone, and no consumed occurrence or residual delay is
      * resurrected. Host-neutral reactions are deliberately not cloned with a node.
+     * The clone starts from the time of its initialization: the current time of the simulation,
+     * or [Time.ZERO] if none is running.
      *
      * @param node
      * The node where to clone this Reaction
-     * @param currentTime
-     * the time at which the clone is created
      * @return the cloned reaction
      */
-    fun cloneOnNewNode(node: Node<T>, currentTime: Time): NodeReaction<T>
+    fun cloneOnNewNode(node: Node<T>): NodeReaction<T>
 }

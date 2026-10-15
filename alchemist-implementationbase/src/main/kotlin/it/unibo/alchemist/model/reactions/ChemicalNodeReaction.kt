@@ -31,8 +31,8 @@ open class ChemicalNodeReaction<T>(node: Node<T>, timeDistribution: TimeDistribu
 
     final override val rate: Double get() = currentRate
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): ChemicalNodeReaction<T> =
-        makeClone(node, currentTime) { freshGenerator -> ChemicalNodeReaction(node, freshGenerator) }
+    override fun cloneOnNewNode(node: Node<T>): ChemicalNodeReaction<T> =
+        makeClone(node) { freshGenerator -> ChemicalNodeReaction(node, freshGenerator) }
 
     override fun onInitializationComplete(atTime: Time, environment: Environment<T, *>) {
         if (!isNewlyInstantiatedProgram && canExecute.current) {

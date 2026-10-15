@@ -31,12 +31,11 @@ abstract class AbstractNodeReaction<T>(
 
     override val meanDelay: Double get() = timeDistribution.meanDelay
 
-    /** Whether this reaction is awaiting initialization as a newly instantiated program. */
-    protected val isNewlyInstantiatedProgram: Boolean get() = newlyInstantiatedAt != null
-
     override val schedulingAsString: String get() = "meanDelay=$meanDelay"
 
-    private var newlyInstantiatedAt: Time? = null
+    /** Whether this reaction is awaiting initialization as a newly instantiated program. */
+    protected var isNewlyInstantiatedProgram: Boolean = false
+        private set
 
     /** Refreshes reaction state after firing, then applies firing scheduling policy. */
     final override fun updateSchedulingAfterFiring(currentTime: Time) {
@@ -53,11 +52,10 @@ abstract class AbstractNodeReaction<T>(
     }
 
     override fun afterInitializationComplete(atTime: Time, environment: Environment<T, *>) {
-        newlyInstantiatedAt?.let { cloneTime ->
-            val schedulingTime = maxOf(cloneTime, atTime)
-            refreshReactionState(schedulingTime, environment)
-            initializeNewProgramScheduling(schedulingTime)
-            newlyInstantiatedAt = null
+        if (isNewlyInstantiatedProgram) {
+            refreshReactionState(atTime, environment)
+            initializeNewProgramScheduling(atTime)
+            isNewlyInstantiatedProgram = false
         }
     }
 
@@ -69,25 +67,21 @@ abstract class AbstractNodeReaction<T>(
     /**
      * Creates a clone and populates it with cloned actions and conditions.
      */
-    protected fun <R : AbstractNodeReaction<T>> makeClone(
-        node: Node<T>,
-        currentTime: Time,
-        builder: (TimeDistribution<T>) -> R,
-    ): R {
+    protected fun <R : AbstractNodeReaction<T>> makeClone(node: Node<T>, builder: (TimeDistribution<T>) -> R): R {
         val freshGenerator = timeDistribution.newInstanceOn(node)
         check(freshGenerator !== timeDistribution) {
             "The time distribution of $this returned itself from newInstanceOn($node)"
         }
-        return prepareClone(builder(freshGenerator), currentTime)
+        return prepareClone(builder(freshGenerator))
     }
 
     /**
      * Populates a freshly constructed specialized reaction with cloned actions and conditions.
      */
-    protected fun <R : AbstractNodeReaction<T>> prepareClone(result: R, currentTime: Time): R = result.also { clone ->
+    protected fun <R : AbstractNodeReaction<T>> prepareClone(result: R): R = result.also { clone ->
         clone.conditions = conditions.map { condition -> condition.cloneCondition(clone) }
         clone.actions = actions.map { action -> action.cloneAction(clone) }
-        clone.newlyInstantiatedAt = currentTime
+        clone.isNewlyInstantiatedProgram = true
     }
 
     /** Applies scheduling policy after a reactive invalidation without firing the reaction. */

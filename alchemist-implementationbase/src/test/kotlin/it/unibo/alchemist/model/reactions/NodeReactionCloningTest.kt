@@ -42,13 +42,13 @@ class NodeReactionCloningTest {
     private val environment = mockk<Environment<Any, *>>()
 
     @Test
-    fun `a clone owns a new deterministic generator and starts at clone time`() {
+    fun `a clone owns a new deterministic generator and starts at its initialization time`() {
         val sourceDistribution = DiracComb<Any>(0.5)
         val source = GenericReaction(mockk<Node<Any>>(), sourceDistribution)
         source.initializationComplete(Time.ZERO, environment)
         source.updateSchedulingAfterFiring(DoubleTime(3.0))
 
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
+        val clone = source.cloneOnNewNode(mockk())
         clone.initializationComplete(DoubleTime(10.0), environment)
 
         assertNotSame(sourceDistribution, clone.timeDistribution)
@@ -60,7 +60,7 @@ class NodeReactionCloningTest {
     fun `a clone respects the configured absolute start before sampling`() {
         val source = GenericReaction(mockk<Node<Any>>(), DiracComb(DoubleTime(20.0), 0.5))
 
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
+        val clone = source.cloneOnNewNode(mockk())
         clone.initializationComplete(DoubleTime(10.0), environment)
 
         assertEquals(DoubleTime(22.0), clone.nextOccurrence.current)
@@ -73,7 +73,7 @@ class NodeReactionCloningTest {
         source.initializationComplete(Time.ZERO, environment)
         source.updateSchedulingAfterFiring(Time.ZERO)
 
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
+        val clone = source.cloneOnNewNode(mockk())
         clone.initializationComplete(DoubleTime(10.0), environment)
         source.updateSchedulingAfterFiring(DoubleTime(1.0))
 
@@ -103,7 +103,7 @@ class NodeReactionCloningTest {
         )
         val source = GenericReaction(sourceNode, sourceDistribution)
 
-        val clone = source.cloneOnNewNode(destinationNode, DoubleTime(10.0))
+        val clone = source.cloneOnNewNode(destinationNode)
         clone.initializationComplete(DoubleTime(10.0), environment)
 
         val cloneDistribution = assertIs<MoleculeControlledTimeDistribution<*>>(clone.timeDistribution)
@@ -116,7 +116,7 @@ class NodeReactionCloningTest {
         val rng = Well19937c(0)
         val source = GenericReaction(mockk<Node<Any>>(), ExponentialTime(2.0, rng))
 
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
+        val clone = source.cloneOnNewNode(mockk())
         clone.initializationComplete(DoubleTime(10.0), environment)
 
         assertNotSame(source.timeDistribution, clone.timeDistribution)
@@ -141,7 +141,7 @@ class NodeReactionCloningTest {
         source.updateSchedulingAfterFiring(sourceOccurrence)
         val sourceRescheduled = source.nextOccurrence.current
 
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
+        val clone = source.cloneOnNewNode(mockk())
         clone.initializationComplete(DoubleTime(10.0), environment)
 
         assertEquals(3, samples)
@@ -154,7 +154,7 @@ class NodeReactionCloningTest {
     fun `a non-memoryless built-in generator is reconstructed with its configured law`() {
         val source = GenericReaction(mockk<Node<Any>>(), WeibullTime(2.0, 0.5, Well19937c(0)))
 
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
+        val clone = source.cloneOnNewNode(mockk())
         clone.initializationComplete(DoubleTime(10.0), environment)
 
         assertNotSame(source.timeDistribution, clone.timeDistribution)
@@ -171,7 +171,7 @@ class NodeReactionCloningTest {
         )
 
         distributions.forEach { distribution ->
-            val clone = GenericReaction(node, distribution).cloneOnNewNode(mockk(), DoubleTime(10.0))
+            val clone = GenericReaction(node, distribution).cloneOnNewNode(mockk())
             clone.initializationComplete(DoubleTime(10.0), environment)
 
             assertNotSame(distribution, clone.timeDistribution)
@@ -184,7 +184,7 @@ class NodeReactionCloningTest {
         val source = GenericReaction(mockk<Node<Any>>(), AnyRealDistribution(DiracDeltaDistribution(1.0)))
 
         val error = assertFailsWith<IllegalStateException> {
-            source.cloneOnNewNode(mockk(), Time.ZERO)
+            source.cloneOnNewNode(mockk())
         }
 
         assertTrue(error.message.orEmpty().contains("override newInstanceOn"))

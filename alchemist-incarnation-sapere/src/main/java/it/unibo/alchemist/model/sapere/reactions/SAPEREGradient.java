@@ -231,10 +231,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
 
     @Nonnull
     @Override
-    public NodeReaction<List<ILsaMolecule>> cloneOnNewNode(
-        @Nonnull final Node<List<ILsaMolecule>> node,
-        @Nonnull final Time currentTime
-    ) {
+    public NodeReaction<List<ILsaMolecule>> cloneOnNewNode(@Nonnull final Node<List<ILsaMolecule>> node) {
         throw new UnsupportedOperationException();
     }
 

@@ -30,7 +30,7 @@ class TestNodeReaction<T>(
 
     private fun notImplementedError(): Nothing = error("This code should not be reached for this test.")
 
-    override fun cloneOnNewNode(node: Node<T>, currentTime: Time): NodeReaction<T> = notImplementedError()
+    override fun cloneOnNewNode(node: Node<T>): NodeReaction<T> = notImplementedError()
 }
 
 class TestReactionRemoval : FreeSpec({

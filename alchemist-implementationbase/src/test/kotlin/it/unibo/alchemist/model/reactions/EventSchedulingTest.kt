@@ -100,7 +100,7 @@ class EventSchedulingTest {
     fun `cloning a conditional event creates a fresh event and draws once from a fresh distribution`() {
         val sourceDistribution = SequenceDistribution(2.0)
         val source = ConditionalEvent(mockk<Node<Any>>(), sourceDistribution)
-        val clone = source.cloneOnNewNode(mockk(), DoubleTime(10.0))
+        val clone = source.cloneOnNewNode(mockk())
         val (environment, setTime) = environmentWithMutableTime()
         setTime(DoubleTime(10.0))
         clone.initializationComplete(DoubleTime(10.0), environment)

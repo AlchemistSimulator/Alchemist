@@ -40,7 +40,7 @@ class TestNeighborhood {
         val n2 = createIntNode(environment)
         val neigh1 = Neighborhood(n1, mutableListOf(n2))
         val neigh2 = neigh1 - n2
-        assertEquals(0, neigh2.size())
+        assertEquals(0, neigh2.neighbors.size)
         assertTrue(neigh1.neighbors.contains(n2))
     }
 

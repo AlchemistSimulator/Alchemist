@@ -46,7 +46,7 @@ class ConnectViaAccessPoint<T, P : Position<P>>(
      * on all their positions.
      */
     override fun observeInput(node: Node<T>): Observable<Role<T>> =
-        node.observeContains(accessPointId).mergeWith(observeClosestAccessPoint(node), ::Role)
+        node.containsMolecule(accessPointId).mergeWith(observeClosestAccessPoint(node), ::Role)
 
     private fun closestAccessPoint(node: Node<T>): Node<T>? = environment.nodesAround(node, range)
         .asSequence()
@@ -56,7 +56,7 @@ class ConnectViaAccessPoint<T, P : Position<P>>(
     private fun observeClosestAccessPoint(node: Node<T>): Observable<Node<T>?> =
         environment.observeNodesAround(node, range)
             .combineLatest({ member ->
-                member.observeContains(accessPointId).mergeWith(environment.positionOf(member)) { isAccessPoint, at ->
+                member.containsMolecule(accessPointId).mergeWith(environment.positionOf(member)) { isAccessPoint, at ->
                     Triple(member, isAccessPoint, at)
                 }
             }) { it.toList() }

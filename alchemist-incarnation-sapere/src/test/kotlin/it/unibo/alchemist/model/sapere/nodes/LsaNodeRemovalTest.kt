@@ -27,11 +27,11 @@ class LsaNodeRemovalTest {
         listOf(removed, kept, LsaMolecule("grad, 1")).forEach(node::addLsa)
         val spaces = mutableListOf<List<ILsaMolecule>>()
         node.observeLsaSpace().subscribe(invokeOnSubscription = false) { spaces += it }
-        node.removeConcentration(LsaMolecule("grad, 1"))
+        node.removeAllConcentrationOf(LsaMolecule("grad, 1"))
         assertEquals(listOf<List<ILsaMolecule>>(listOf(kept)), spaces)
-        assertEquals(1, node.moleculeCount)
-        assertEquals(setOf(kept), node.contents.keys)
-        assertFailsWith<NoSuchElementException> { node.removeConcentration(removed) }
+        assertEquals(1, node.currentMoleculeCount)
+        assertEquals(setOf(kept), node.contents.current.keys)
+        assertFailsWith<NoSuchElementException> { node.removeAllConcentrationOf(removed) }
     }
 
     @Test
@@ -42,6 +42,6 @@ class LsaNodeRemovalTest {
         node.removeOneMatchedLsa(LsaMolecule("grad, X"))
         assertEquals(listOf(kept), node.lsaSpace)
         assertEquals(listOf(kept), node.observeLsaSpace().current)
-        assertEquals(1, node.moleculeCount)
+        assertEquals(1, node.currentMoleculeCount)
     }
 }

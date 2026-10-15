@@ -86,7 +86,7 @@ class ObservableLayerTest {
         val environment = environment()
         environment.simulation = mockk(relaxed = true)
         assertFailsWith<IllegalStateException> { environment.addLayer(LAYER, StepLayer(HIGH, LOW)) }
-        assertNull(environment.getLayer(LAYER))
+        assertNull(environment.layerFor(LAYER))
     }
 
     /**
@@ -94,9 +94,9 @@ class ObservableLayerTest {
      */
     private class ScaledLayer(val scale: MutableObservable<Double>) :
         Layer<Any, Euclidean2DPosition> {
-        override fun getValue(position: Euclidean2DPosition): Any = position.x * scale.current
+        override fun currentValueAt(position: Euclidean2DPosition): Any = position.x * scale.current
 
-        override fun observeValue(position: Euclidean2DPosition): Observable<Any> = scale.map { position.x * it }
+        override fun valueAt(position: Euclidean2DPosition): Observable<Any> = scale.map { position.x * it }
     }
 
     private companion object {

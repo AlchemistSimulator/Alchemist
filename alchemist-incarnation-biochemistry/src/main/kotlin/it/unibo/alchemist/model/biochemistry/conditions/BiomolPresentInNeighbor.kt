@@ -45,7 +45,7 @@ class BiomolPresentInNeighbor(
     override fun observeNeighborWeight(neighbor: Node<Double>): Observable<Double> =
         neighbor.takeIf { it.asPropertyOrNull<Double, CellProperty<*>>() != null }?.let { n ->
             // the neighbor is eligible, its propensity is computed using the concentration of the biomolecule
-            n.observeConcentration(molecule).map { maybeValue ->
+            n.concentrationOf(molecule).map { maybeValue ->
                 maybeValue.fold(
                     ifEmpty = { 0.0 },
                     ifSome = {

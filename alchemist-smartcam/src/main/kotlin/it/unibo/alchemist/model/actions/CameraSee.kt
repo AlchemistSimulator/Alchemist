@@ -48,7 +48,7 @@ constructor(
         )
 
     init {
-        targetNode.setConcentration(outputMolecule, emptyList<Any>())
+        targetNode[outputMolecule] = emptyList<Any>()
     }
 
     override fun cloneOnNodeReaction(newReaction: NodeReaction<Any>) =
@@ -59,9 +59,6 @@ constructor(
         filterByMolecule?.run {
             seen = seen.filter { it.contains(filterByMolecule) }
         }
-        targetNode.setConcentration(
-            outputMolecule,
-            seen.map { VisibleNodeImpl(it, environment.currentPositionOf(it)) },
-        )
+        targetNode[outputMolecule] = seen.map { VisibleNodeImpl(it, environment.currentPositionOf(it)) }
     }
 }

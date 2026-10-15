@@ -21,7 +21,7 @@ trait NodeManager:
 
 class SimpleNodeManager[T](val node: Node[T]) extends NodeManager:
   override def put[V](molecule: String, concentration: V): Unit =
-    node.setConcentration(new SimpleMolecule(molecule), concentration.asInstanceOf[T])
+    node.set(new SimpleMolecule(molecule), concentration.asInstanceOf[T])
 
   override def get[V](molecule: String): V = node.get(new SimpleMolecule(molecule)).getOrNull().asInstanceOf[V]
 
@@ -29,4 +29,4 @@ class SimpleNodeManager[T](val node: Node[T]) extends NodeManager:
 
   override def has(molecule: String): Boolean = node.contains(new SimpleMolecule(molecule))
 
-  override def remove(molecule: String): Unit = node.removeConcentration(new SimpleMolecule(molecule))
+  override def remove(molecule: String): Unit = node.removeAllConcentrationOf(new SimpleMolecule(molecule))

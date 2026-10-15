@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -54,7 +54,7 @@ interface EnvironmentWithObstacles<W, T, P> :
      *              end position
      * @return true if the line connecting start and end touches an obstacle
      */
-    fun intersectsObstacle(start: P, end: P): Boolean
+    fun shortestPathIntersectsObstacle(start: P, end: P): Boolean
 
     /**
      * This method must calculate the ABSOLUTE next allowed position given the
@@ -71,5 +71,23 @@ interface EnvironmentWithObstacles<W, T, P> :
      * @return the next allowed position, where the node can actually move. This
      * position MUST be considered as a vector whose start point is [current].
      */
-    fun next(current: P, desired: P): P
+    fun farthestValidPositionFromTo(current: P, desired: P): P
+
+    /**
+     * The farthest position reachable moving from this position towards [other], see [farthestValidPositionFromTo].
+     */
+    fun P.farthestValidPositionTowards(other: P): P = farthestValidPositionFromTo(this, other)
+
+    /**
+     * Whether the segment connecting this position and [other] touches an obstacle,
+     * see [shortestPathIntersectsObstacle].
+     */
+    fun P.shortestPathToIntersectsObstacle(other: P): Boolean = shortestPathIntersectsObstacle(this, other)
+
+    /**
+     * Removes this obstacle from the environment, see [removeObstacle].
+     *
+     * @return true if the obstacle has actually been removed
+     */
+    fun W.remove(): Boolean = removeObstacle(this)
 }

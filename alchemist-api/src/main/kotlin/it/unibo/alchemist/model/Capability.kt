@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,7 @@ package it.unibo.alchemist.model
 /**
  * Represents a node's capability.
  */
-interface NodeProperty<T> {
+interface Capability<T> {
     /**
      * The node to which the capability is added.
      */
@@ -21,5 +21,5 @@ interface NodeProperty<T> {
     /**
      * Clones this property to be added on a new [node].
      */
-    fun cloneOnNewNode(node: Node<T>): NodeProperty<T>
+    fun cloneOnNewNode(node: Node<T>): Capability<T>
 }

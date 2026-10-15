@@ -48,12 +48,12 @@ fun <T, P, TS, PS> checkToNodeSurrogate(
     nodeSurrogate: NodeSurrogate<TS, PS>,
 ) where T : Any, P : Position<out P>, TS : Any, PS : PositionSurrogate {
     node.id shouldBe nodeSurrogate.id
-    node.contents.forAllKeys { molecule ->
+    node.contents.current.forAllKeys { molecule ->
         val surrogateContentKey = molecule.toMoleculeSurrogate()
         checkToMoleculeSurrogate(molecule, surrogateContentKey)
         nodeSurrogate.contents.containsKey(surrogateContentKey)
         nodeSurrogate.contents[surrogateContentKey] shouldBe EmptyConcentrationSurrogate
     }
-    node.contents.size shouldBe nodeSurrogate.contents.size
+    node.contents.current.size shouldBe nodeSurrogate.contents.size
     checkToPositionSurrogate(environment.currentPositionOf(node), nodeSurrogate.position)
 }

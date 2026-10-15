@@ -19,6 +19,6 @@ class DummyAction(reaction: NodeReaction<Int>) : AbstractLocalAction<Int>(reacti
 
     override fun execute() {
         // Do nothing, this is a dummy action
-        targetNode.setConcentration(SimpleMolecule("dummy"), 0)
+        targetNode[SimpleMolecule("dummy")] = 0
     }
 }

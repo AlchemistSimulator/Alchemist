@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.cognitive.properties
 
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.cognitive.HeterogeneousPedestrianModel
 import it.unibo.alchemist.model.cognitive.impact.individual.Age
 import it.unibo.alchemist.model.cognitive.impact.individual.Gender
@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.geometry.Vector
  * @param S the concrete Vector type used for geometry operations.
  * @param A the concrete Transformation type compatible with [S].
  */
-interface HumanProperty<T, S : Vector<S>, A : Transformation<S>> : NodeProperty<T> {
+interface HumanProperty<T, S : Vector<S>, A : Transformation<S>> : Capability<T> {
     /** The age of this pedestrian. */
     val age: Age
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -57,7 +57,7 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
 
     override fun hasMobileObstacles(): Boolean = false
 
-    override fun intersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition): Boolean {
+    override fun shortestPathIntersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition): Boolean {
         val (sx, sy) = start
         val (ex, ey) = end
         return query(sx, sy, ex, ey, 0.0).any { obstacle ->
@@ -69,8 +69,10 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
     override fun isAllowed(position: Euclidean2DPosition): Boolean =
         rtree.search(Geometries.point(position.x, position.y)).isEmpty.toBlocking().single()
 
-    override fun next(current: Euclidean2DPosition, desired: Euclidean2DPosition): Euclidean2DPosition =
-        next(current.x, current.y, desired.x, desired.y)
+    override fun farthestValidPositionFromTo(
+        current: Euclidean2DPosition,
+        desired: Euclidean2DPosition,
+    ): Euclidean2DPosition = next(current.x, current.y, desired.x, desired.y)
 
     override fun next(curX: Double, curY: Double, newX: Double, newY: Double): Euclidean2DPosition {
         val obstacles = query(curX, curY, newX, newY, TOLERANCE_MULTIPLIER).toMutableList()
@@ -84,7 +86,10 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
             fyCache = fy
             obstacles.iterator().run {
                 while (hasNext()) {
-                    val shortest = next().next(Euclidean2DPosition(curX, curY), Euclidean2DPosition(fx, fy))
+                    val shortest = next().farthestValidVectorFromTo(
+                        Euclidean2DPosition(curX, curY),
+                        Euclidean2DPosition(fx, fy),
+                    )
                     val (sfx, sfy) = shortest
                     if (sfx != fx || sfy != fy) {
                         fx = sfx

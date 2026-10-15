@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.physics.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.commons.math3.random.RandomGenerator
@@ -37,7 +37,7 @@ class PhysicalPedestrian2D<T>(
      */
     val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     PhysicalPedestrian2D<T> {
     private val pedestrian by lazy { node.asProperty<T, PedestrianProperty<T>>() }
 

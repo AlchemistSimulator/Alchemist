@@ -23,7 +23,7 @@ object TestEnvironmentsDiameterWithHopDistance {
         assertEquals<Int>(expected.count, allSubNetworksWithHopDistance().size)
 
     private fun <T> Environment<T, *>.diameterOfSubnetworkWithNode(id: Int): Double =
-        diameterOfSubnetworkWithNode(getNodeByID(id))
+        diameterOfSubnetworkWithNode(nodeWithId(id))
 
     private fun <T> Environment<T, *>.diameterOfSubnetworkWithNode(node: Node<T>) =
         allSubNetworksByNodeWithHopDistance().getValue(node).diameter

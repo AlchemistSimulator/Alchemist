@@ -22,5 +22,5 @@ class SetLocalMoleculeConcentration<T>(reaction: NodeReaction<T>, molecule: Mole
     override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): SetLocalMoleculeConcentration<T> =
         SetLocalMoleculeConcentration(newReaction, molecule, value)
 
-    override fun execute() = targetNode.setConcentration(molecule, value)
+    override fun execute() = targetNode.set(molecule, value)
 }

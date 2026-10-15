@@ -31,16 +31,16 @@ public final class EnvironmentNodeImpl extends GenericNode<Double> implements En
     }
 
     @Override
-    public void setConcentration(@Nonnull final Molecule molecule, @Nonnull final Double concentration) {
+    public void set(@Nonnull final Molecule molecule, @Nonnull final Double concentration) {
         if (concentration < 0) {
             throw new IllegalArgumentException(
                 "No negative concentrations allowed (" + molecule + " -> " + concentration + ")"
             );
         }
         if (concentration > 0) {
-            super.setConcentration(molecule, concentration);
+            super.set(molecule, concentration);
         } else {
-            removeConcentration(molecule);
+            removeAllConcentrationOf(molecule);
         }
     }
 }

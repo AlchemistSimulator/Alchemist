@@ -4,7 +4,7 @@ environment:
 deployments:
   - type: FromGPSTrace
     parameters: ["trace/ok/5min.nmea.txt", "AlignToSimulationTime"]
-    properties:
+    capabilities:
       - type: AISVessel
         parameters: ["trace/ok/5min.nmea.txt", "AlignToSimulationTime"]
     programs:

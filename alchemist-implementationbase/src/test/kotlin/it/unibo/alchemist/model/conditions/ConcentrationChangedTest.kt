@@ -29,7 +29,7 @@ class ConcentrationChangedTest {
     /** A condition on a node whose [molecule] is observed as [initial]. */
     private fun conditionOn(initial: Option<Double?>) = observe(initial).let { observed ->
         val node = mockk<Node<Double?>>(relaxed = true) {
-            every { observeConcentration(molecule) } returns observed
+            every { concentrationOf(molecule) } returns observed
         }
         observed to ConcentrationChanged(GenericReaction(node, ExponentialTime(1.0, MersenneTwister(1))), molecule)
     }

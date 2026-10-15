@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.cognitive.properties
 
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.cognitive.Group
 
 /**
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.cognitive.Group
  *
  * @param T the concentration type.
  */
-interface SocialProperty<T> : NodeProperty<T> {
+interface SocialProperty<T> : Capability<T> {
     /** The group the pedestrian currently belongs to. */
     val group: Group<T>
 }

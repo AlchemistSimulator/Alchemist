@@ -62,7 +62,7 @@ private fun chemicalReactionFixture(): ChemicalReactionFixture {
             ).also(node::addReaction)
         }
         listOf("a", "b", "c").forEach { molecule ->
-            node.setConcentration(incarnation.createMolecule(molecule), 1.0)
+            node[incarnation.createMolecule(molecule)] = 1.0
         }
         environment.addNode(node, environment.makePosition(x, y))
         reactions

@@ -66,7 +66,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> = when (environment) {
         is EnvironmentWithObstacles<*, T, P> ->
-            map { (environment as EnvironmentWithObstacles<*, T, P>).next(currentPosition, it) }
+            map { (environment as EnvironmentWithObstacles<*, T, P>).farthestValidPositionFromTo(currentPosition, it) }
         else -> this
     }
 

@@ -84,10 +84,10 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
         final Integer markerNodeID = getMarkerNodeID();
         if (cognitiveMap == null
                 && markerNodeID != null
-                && environment.getNodeByID(markerNodeID).asPropertyOrNull(OrientingProperty.class) != null
+                && environment.nodeWithId(markerNodeID).asPropertyOrNull(OrientingProperty.class) != null
                 && environment instanceof Environment2DWithObstacles
                 && environment.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            cognitiveMap = environment.getNodeByID(markerNodeID).asProperty(OrientingProperty.class).getCognitiveMap();
+            cognitiveMap = environment.nodeWithId(markerNodeID).asProperty(OrientingProperty.class).getCognitiveMap();
         }
     }
 

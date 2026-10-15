@@ -31,8 +31,9 @@ class ChangeBiomolConcentrationInCell(
     override fun cloneOnNodeReaction(newReaction: NodeReaction<Double>): ChangeBiomolConcentrationInCell =
         ChangeBiomolConcentrationInCell(newReaction, molecule as Biomolecule, deltaConcentration)
 
-    override fun execute() =
-        targetNode.setConcentration(molecule, targetNode.getOrZeroConcentration(molecule) + deltaConcentration)
+    override fun execute() {
+        targetNode[molecule] = targetNode.getOrZeroConcentration(molecule) + deltaConcentration
+    }
 
     override fun toString(): String =
         if (deltaConcentration >= 0) "${molecule.name}+$deltaConcentration" else "${molecule.name}$deltaConcentration"

@@ -36,7 +36,7 @@ class NeighborHasConcentration<T>(
 
     init {
         val validity = environment.neighborhoodOf(targetNode).switchMap { neighborhood ->
-            neighborhood.neighbors.map { it.observeConcentration(target) }
+            neighborhood.neighbors.map { it.concentrationOf(target) }
                 .combineLatest { neighborsConcentrations ->
                     neighborsConcentrations.any { it.isSome { nConc -> nConc == concentration } }
                 }.map { it.getOrElse { false } }

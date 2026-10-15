@@ -27,7 +27,7 @@ _cognitive_behavior: &cognitive_behavior
   type: CognitiveBehavior
 
 _pedestrian: &pedestrian
-  properties:
+  capabilities:
     - type: Human
       parameters: ["adult", "male"]
     - type: CognitivePedestrian

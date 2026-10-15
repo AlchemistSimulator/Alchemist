@@ -35,5 +35,5 @@ class StepLayer<T, P : Position2D<out P>>(
      */
     constructor(maxValue: T, minValue: T) : this(0.0, 0.0, maxValue, minValue)
 
-    override fun getValue(position: P): T = if (position.x > mx && position.y > my) maxValue else minValue
+    override fun currentValueAt(position: P): T = if (position.x > mx && position.y > my) maxValue else minValue
 }

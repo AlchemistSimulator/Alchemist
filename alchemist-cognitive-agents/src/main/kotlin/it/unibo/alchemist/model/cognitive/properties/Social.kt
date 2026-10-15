@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitive.Group
 import it.unibo.alchemist.model.cognitive.groups.Alone
 import it.unibo.alchemist.model.cognitive.groups.GenericGroup
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 
 /**
  * Base implementation of a [SocialProperty].
@@ -23,7 +23,7 @@ data class Social<T>
 constructor(
     override val node: Node<T>,
     override val group: Group<T> = Alone(node),
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     SocialProperty<T> {
     override fun cloneOnNewNode(node: Node<T>) = Social(node, GenericGroup(listOf(node)))
 

@@ -81,9 +81,9 @@ sealed class RunScafiProgram[T, P <: Position[P]](
   override def execute(): Unit =
     import scala.jdk.CollectionConverters.*
     implicit def euclideanToPoint(point: P): Point3D = point.getDimensions match
-      case 1 => Point3D(point.getCoordinate(0), 0, 0)
-      case 2 => Point3D(point.getCoordinate(0), point.getCoordinate(1), 0)
-      case 3 => Point3D(point.getCoordinate(0), point.getCoordinate(1), point.getCoordinate(2))
+      case 1 => Point3D(point.get(0), 0, 0)
+      case 2 => Point3D(point.get(0), point.get(1), 0)
+      case 3 => Point3D(point.get(0), point.get(1), point.get(2))
     val position: P = environment.currentPositionOf(node)
     // NB: We assume it.unibo.alchemist.model.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
@@ -102,9 +102,10 @@ sealed class RunScafiProgram[T, P <: Position[P]](
         id == node.getId || data.executionTime >= alchemistCurrentTime - retentionTime
     val deltaTime: Long =
       currentTime - neighborhoodManager.get(node.getId).map(d => alchemistTimeToNanos(d.executionTime)).getOrElse(0L)
-    val localSensors = node.getContents.asScala
-      .map:
-        case (k, v) => k.getName -> v
+    // Iterating the entries avoids capturing the wildcard value type of the current contents.
+    val localSensors = node.getContents.getCurrent.entrySet.asScala.iterator
+      .map(entry => entry.getKey.getName -> (entry.getValue: Any))
+      .toMap
 
     val neighborhoodSensors = scala.collection.mutable.Map[CNAME, Map[ID, Any]]()
     val exports: Iterable[(ID, EXPORT)] = neighborhoodManager.view.mapValues(_.exportData)
@@ -149,9 +150,9 @@ sealed class RunScafiProgram[T, P <: Position[P]](
           val k = position.getDimensions
           Some(
             Point3D(
-              position.getCoordinate(0),
-              if k >= 2 then position.getCoordinate(1) else 0,
-              if k >= 3 then position.getCoordinate(2) else 0
+              position.get(0),
+              if k >= 2 then position.get(1) else 0,
+              if k >= 3 then position.get(2) else 0
             )
           )
         case commonNames.LSNS_TIMESTAMP => Some(currentTime)
@@ -169,7 +170,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
         case _ => localSensors.get(lsns)
       ).map(_.asInstanceOf[A])
     val computed = program(context)
-    node.setConcentration(programName, computed.root[T]())
+    node.set(programName, computed.root[T]())
     val toSend = NeighborData(computed, position, alchemistCurrentTime)
     neighborhoodManager = neighborhoodManager + (node.getId -> toSend)
     _completed.update(_ => true)

@@ -28,11 +28,6 @@ interface Node<T> :
     Disposable,
     ReactionHost<T> {
     /**
-     * @return the molecule corresponding to the i-th position
-     */
-    val contents: Map<Molecule, T>
-
-    /**
      * @return an univocal id for this node in the environment
      */
     val id: Int
@@ -40,22 +35,22 @@ interface Node<T> :
     /**
      * @return the count of different molecules in this node
      */
-    val moleculeCount: Int
+    val currentMoleculeCount: Int
 
     /**
      * @return an observable view of the molecule corresponding to the i-th position
      */
-    val observableContents: ObservableMap<Molecule, T>
+    val contents: ObservableMap<Molecule, T>
 
     /**
      * Observes the count of different molecules in this node.
      */
-    val observeMoleculeCount: Observable<Int>
+    val moleculeCount: Observable<Int>
 
     /**
      * @return a list of the node's properties/capabilities
      */
-    val properties: List<NodeProperty<T>>
+    val properties: List<Capability<T>>
 
     /**
      * This method allows to access all the reaction of the node.
@@ -69,44 +64,44 @@ interface Node<T> :
      * Properties are part of the node setup: adding one fails once the node is in an environment,
      * so properties can be read without being observed.
      *
-     * @param nodeProperty the capability you want to add to the node
+     * @param capability the capability you want to add to the node
      */
-    fun addProperty(nodeProperty: NodeProperty<T>)
+    fun addProperty(capability: Capability<T>)
 
     /**
-     * returns a [NodeProperty] of the provided [superType] [C].
+     * returns a [Capability] of the provided [superType] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : NodeProperty<T>> asProperty(superType: KClass<C>): C = requireNotNull(asPropertyOrNull(superType)) {
+    fun <C : Capability<T>> asProperty(superType: KClass<C>): C = requireNotNull(asPropertyOrNull(superType)) {
         "A ${superType.simpleName} is required for node ${this.id} but is missing"
     }
 
     /**
-     * returns a [NodeProperty] of the provided [superType] [C].
+     * returns a [Capability] of the provided [superType] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : NodeProperty<T>> asProperty(superType: Class<C>): C = asProperty(superType.kotlin)
+    fun <C : Capability<T>> asProperty(superType: Class<C>): C = asProperty(superType.kotlin)
 
     /**
-     * returns a [NodeProperty] of the provided [superType] [C].
+     * returns a [Capability] of the provided [superType] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : NodeProperty<T>> asPropertyOrNull(superType: Class<in C>): C? = asPropertyOrNull(superType.kotlin)
+    fun <C : Capability<T>> asPropertyOrNull(superType: Class<in C>): C? = asPropertyOrNull(superType.kotlin)
 
     /**
-     * returns a [NodeProperty] of the provided [superType] [C].
+     * returns a [Capability] of the provided [superType] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
     @Suppress("UNCHECKED_CAST")
-    fun <C : NodeProperty<T>> asPropertyOrNull(superType: KClass<in C>): C? = when {
+    fun <C : Capability<T>> asPropertyOrNull(superType: KClass<in C>): C? = when {
         properties.size <= 1 -> properties.firstOrNull()?.takeIfInstance(superType)
         else -> {
             val validProperties: List<C> = properties.mapNotNull { it.takeIfInstance(superType) }
@@ -114,8 +109,8 @@ interface Node<T> :
                 validProperties.size <= 1 -> validProperties.firstOrNull()
                 else -> {
                     validProperties
-                        .mapNotNull { nodeProperty: NodeProperty<T> ->
-                            nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it }
+                        .mapNotNull { capability: Capability<T> ->
+                            capability::class.distanceFrom(superType)?.let { capability to it }
                         }.minByOrNull { it.second }
                         ?.first as? C
                 }
@@ -168,7 +163,7 @@ interface Node<T> :
      *
      * @param molecule the molecule whose concentration will be returned
      */
-    fun observeConcentration(molecule: Molecule): Observable<Option<T>>
+    fun concentrationOf(molecule: Molecule): Observable<Option<T>>
 
     /**
      * Observes whether a node contains a [Molecule].
@@ -176,12 +171,12 @@ interface Node<T> :
      * @param molecule * the molecule to check
      * @return emit true if the molecule is present, false otherwise
      */
-    fun observeContains(molecule: Molecule): Observable<Boolean>
+    fun containsMolecule(molecule: Molecule): Observable<Boolean>
 
     /**
      * @param moleculeToRemove the molecule that should be removed
      */
-    fun removeConcentration(moleculeToRemove: Molecule)
+    fun removeAllConcentrationOf(moleculeToRemove: Molecule)
 
     /**
      * Sets the concentration of mol to c.
@@ -191,7 +186,7 @@ interface Node<T> :
      * @param concentration
      * the concentration you want for mol
      */
-    fun setConcentration(molecule: Molecule, concentration: T)
+    operator fun set(molecule: Molecule, concentration: T)
 
     /**
      * Utilities for [Node]s.
@@ -204,7 +199,7 @@ interface Node<T> :
          * @return the property of type [C].
          * @throws IllegalArgumentException if no compatible property is present.
          */
-        inline fun <T, reified C : NodeProperty<T>> Node<T>.asProperty(): C = asProperty(C::class)
+        inline fun <T, reified C : Capability<T>> Node<T>.asProperty(): C = asProperty(C::class)
 
         /**
          * Returns the node property of the reified type [C], or null if the node does not have a compatible property.
@@ -212,7 +207,7 @@ interface Node<T> :
          * @receiver the node from which to retrieve the property.
          * @return the property of type [C] if present, or null otherwise.
          */
-        inline fun <T, reified C : NodeProperty<T>> Node<T>.asPropertyOrNull(): C? = when {
+        inline fun <T, reified C : Capability<T>> Node<T>.asPropertyOrNull(): C? = when {
             properties.size <= 1 -> properties.firstOrNull() as? C
             else -> {
                 val validProperties: List<C> = properties.filterIsInstance<C>()
@@ -221,8 +216,8 @@ interface Node<T> :
                         validProperties.firstOrNull()
                     else ->
                         validProperties
-                            .mapNotNull { nodeProperty: NodeProperty<T> ->
-                                nodeProperty::class.distanceFrom(C::class)?.let { nodeProperty to it }
+                            .mapNotNull { capability: Capability<T> ->
+                                capability::class.distanceFrom(C::class)?.let { capability to it }
                             }.minByOrNull { it.second }
                             ?.first as? C
                 }
@@ -242,7 +237,7 @@ interface Node<T> :
         }
 
         @Suppress("UNCHECKED_CAST")
-        private fun <T, C : NodeProperty<T>> NodeProperty<T>.takeIfInstance(type: KClass<in C>): C? =
+        private fun <T, C : Capability<T>> Capability<T>.takeIfInstance(type: KClass<in C>): C? =
             this.takeIf { type.isInstance(it) }?.let { it as? C }
     }
 }

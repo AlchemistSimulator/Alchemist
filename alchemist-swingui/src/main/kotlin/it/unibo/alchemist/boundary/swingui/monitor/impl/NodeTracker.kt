@@ -69,7 +69,9 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) :
                 |${environment.currentPositionOf(node)}
                 |
                 |$CONTENT
-                |${node.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString(System.lineSeparator())}
+                |${node.contents.current.map { (k, v) ->
+                    "${k.name} -> $v"
+                }.sorted().joinToString(System.lineSeparator())}
                 |
                 |$PROGRAM
                 |${node.reactions.current.joinToString(System.lineSeparator()) { it.toString() }}

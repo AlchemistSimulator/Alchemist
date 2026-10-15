@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.biochemistry
 
 import arrow.core.getOrElse
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
 import it.unibo.alchemist.model.geometry.Vector
@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.observation.Observable
 /**
  * A node's capability to behave as a cell.
  */
-interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
+interface CellProperty<P : Vector<P>> : Capability<Double> {
 
     /**
      * The map junction - node - quantity.
@@ -88,7 +88,7 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
             }
             junction.moleculesInCurrentNode.forEach { (biomolecule, value) ->
                 with(node) {
-                    setConcentration(biomolecule, getOrZeroConcentration(biomolecule) + value)
+                    this[biomolecule] = getOrZeroConcentration(biomolecule) + value
                 }
             }
         }

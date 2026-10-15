@@ -170,7 +170,7 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
             final Incarnation<T, ?> currentInc = incarnation.getCurrent();
             for (final Node<T> n : affectedNodes) {
                 try {
-                    n.setConcentration(currentInc.createMolecule(mol), currentInc.createConcentration(conc));
+                    n.set(currentInc.createMolecule(mol), currentInc.createConcentration(conc));
                     // CHECKSTYLE: IllegalCatch OFF
                 } catch (Exception | AbstractMethodError e) { // NOPMD
                     L.error("Unable to set new concentration: ", e);

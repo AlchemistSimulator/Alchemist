@@ -91,7 +91,7 @@ class ReactiveScalingTest {
     @Test
     fun `a local concentration change reschedules the same reactions whatever the population`() {
         val change: EuclideanEnvironment<Any, Euclidean2DPosition>.(Node<Any>) -> List<Int> = { middle ->
-            rescheduledBy(middle) { middle.setConcentration(MOLECULE, 1.0) }
+            rescheduledBy(middle) { middle.set(MOLECULE, 1.0) }
         }
         val small = onLine(SMALL, change)
         assertEquals(listOf(-1, 1), small)
@@ -102,7 +102,7 @@ class ReactiveScalingTest {
     fun `a local movement reschedules the same reactions whatever the population`() {
         // The middle node leaves the range of its left neighbor and enters the one of the node two steps right.
         val movement: EuclideanEnvironment<Any, Euclidean2DPosition>.(Node<Any>) -> List<Int> = { middle ->
-            middle.setConcentration(MOLECULE, 1.0)
+            middle[MOLECULE] = 1.0
             rescheduledBy(middle) { moveNodeBy(middle, Euclidean2DPosition(0.6, 0.0)) }
         }
         val small = onLine(SMALL, movement)
@@ -113,7 +113,7 @@ class ReactiveScalingTest {
     @Test
     fun `a node is observed only by its neighbors whatever the population`() {
         val observers: EuclideanEnvironment<Any, Euclidean2DPosition>.(Node<Any>) -> Int = { middle ->
-            middle.observeConcentration(MOLECULE).observers.size
+            middle.concentrationOf(MOLECULE).observers.size
         }
         assertEquals(onLine(SMALL, observers), onLine(LARGE, observers))
     }
@@ -122,7 +122,7 @@ class ReactiveScalingTest {
     fun `removing the reactions releases every subscription to node contents`() {
         val remaining = onLine(SMALL) {
             nodes.current.forEach { node -> node.reactions.current.forEach(node::removeReaction) }
-            nodes.current.sumOf { node -> node.observeConcentration(MOLECULE).observers.size }
+            nodes.current.sumOf { node -> node.concentrationOf(MOLECULE).observers.size }
         }
         assertEquals(0, remaining)
     }

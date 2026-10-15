@@ -61,7 +61,7 @@ constructor(
     private val targetNeighborCount = max(desiredNeighbors, 0)
 
     final override fun neighborhoodOf(center: Node<T>): Observable<Neighborhood<T>> =
-        super.neighborhoodOf(center).map { neighborhood -> neighborhood.also { converge(center, it.size()) } }
+        super.neighborhoodOf(center).map { neighborhood -> neighborhood.also { converge(center, it.neighbors.size) } }
 
     /**
      * Acts as a filter: whether [neighbor], a node within the range of [center], must not be linked to it.

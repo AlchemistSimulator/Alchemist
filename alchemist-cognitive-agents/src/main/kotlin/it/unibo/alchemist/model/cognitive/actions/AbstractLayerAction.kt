@@ -43,7 +43,7 @@ abstract class AbstractLayerAction(
      * @returns the layer containing [targetMolecule] or fails.
      */
     protected fun getLayerOrFail(): Layer<Number, Euclidean2DPosition> =
-        checkNotNull(environment.getLayer(targetMolecule)) { "no layer containing $targetMolecule" }
+        checkNotNull(environment.layerFor(targetMolecule)) { "no layer containing $targetMolecule" }
 
     /**
      * @returns the center of the layer or null if there's no center.
@@ -55,5 +55,5 @@ abstract class AbstractLayerAction(
      * @returns the concentration of the layer in the given [position].
      */
     protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
-        getValue(position).toDouble()
+        currentValueAt(position).toDouble()
 }

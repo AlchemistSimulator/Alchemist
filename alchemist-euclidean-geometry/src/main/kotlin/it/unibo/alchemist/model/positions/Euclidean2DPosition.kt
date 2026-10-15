@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -35,9 +35,9 @@ class Euclidean2DPosition :
     }
 
     override val x: Double
-        get() = getCoordinate(0)
+        get() = get(0)
     override val y: Double
-        get() = getCoordinate(1)
+        get() = get(1)
 
     override fun div(other: Double) = Euclidean2DPosition(x / other, y / other)
 

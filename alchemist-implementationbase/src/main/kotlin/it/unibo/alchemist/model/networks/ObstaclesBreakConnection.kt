@@ -31,7 +31,7 @@ class ObstaclesBreakConnection<T, P>(environment: Environment<T, P>, radius: Dou
     private val obstacles = environment as? EnvironmentWithObstacles<*, T, P>
 
     override fun isLinked(center: Node<T>, centerInput: P, neighbor: Node<T>, neighborInput: P): Boolean =
-        obstacles?.intersectsObstacle(centerInput, neighborInput) != true
+        obstacles?.shortestPathIntersectsObstacle(centerInput, neighborInput) != true
 
     override fun observeInput(node: Node<T>): Observable<P> = environment.positionOf(node)
 }

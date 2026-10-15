@@ -19,12 +19,12 @@ class ConcentrationChanged<T>(reaction: NodeReaction<T>, private val target: Mol
     private val resets = observe(0L)
 
     // Options, because an absent molecule must neither read as the default nor as a present null.
-    private var previous = targetNode.observeConcentration(target).current
+    private var previous = targetNode.concentrationOf(target).current
     private var changed = false
 
     init {
         setValidity(
-            targetNode.observeConcentration(target).mergeWith(resets) { concentration, _ ->
+            targetNode.concentrationOf(target).mergeWith(resets) { concentration, _ ->
                 if (!changed && concentration != previous) {
                     changed = true
                     previous = concentration

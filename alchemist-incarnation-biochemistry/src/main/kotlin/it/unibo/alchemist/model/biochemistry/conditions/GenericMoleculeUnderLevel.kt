@@ -23,7 +23,7 @@ class GenericMoleculeUnderLevel<T : Number>(reaction: NodeReaction<T>, molecule:
     init {
         val threshold = requiredQuantity.toDouble()
         setValidity(
-            targetNode.observeConcentration(molecule).map { concentration ->
+            targetNode.concentrationOf(molecule).map { concentration ->
                 concentration.fold(ifEmpty = { Double.NEGATIVE_INFINITY }, ifSome = Number::toDouble) < threshold
             },
         )

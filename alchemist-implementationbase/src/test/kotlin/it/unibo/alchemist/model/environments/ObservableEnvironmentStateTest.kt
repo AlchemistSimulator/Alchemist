@@ -67,7 +67,7 @@ class ObservableEnvironmentStateTest {
         environment.removeNode(removed)
         val neverAdded = GenericNode(environment)
         listOf(removed, neverAdded).forEach { node ->
-            assertFailsWith<IllegalArgumentException> { environment.getNodeByID(node.id) }
+            assertFailsWith<IllegalArgumentException> { environment.nodeWithId(node.id) }
         }
     }
 
@@ -86,10 +86,10 @@ class ObservableEnvironmentStateTest {
         nodes.reversed().forEachIndexed { index, node ->
             environment.addNode(node, Euclidean2DPosition(index * 0.5, 0.0))
         }
-        nodes.forEach { node -> assertSame(node, environment.getNodeByID(node.id)) }
+        nodes.forEach { node -> assertSame(node, environment.nodeWithId(node.id)) }
         // Changing the linking rule recomputes every neighborhood.
         with(environment) { networkModel = connectWithinDistance(0.1) }
-        nodes.forEach { node -> assertSame(node, environment.getNodeByID(node.id)) }
+        nodes.forEach { node -> assertSame(node, environment.nodeWithId(node.id)) }
     }
 
     @Test

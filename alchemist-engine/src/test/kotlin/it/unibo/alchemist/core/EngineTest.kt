@@ -50,17 +50,17 @@ class EngineTest : FreeSpec({
         val molM = Biomolecule("M")
         val molN = Biomolecule("N")
 
-        nodeA.setConcentration(molN, 0.0)
-        nodeB.setConcentration(molM, 0.0)
+        nodeA[molN] = 0.0
+        nodeB[molM] = 0.0
 
         nodeB.addReaction(
             LambdaNodeReaction(nodeB, DiracComb(1.0)) {
-                nodeB.setConcentration(molM, 1.0)
+                nodeB[molM] = 1.0
             },
         )
 
         LambdaNodeReaction(nodeA, DiracComb(1.0)) {
-            nodeA.setConcentration(molN, 1.0)
+            nodeA[molN] = 1.0
         }.apply {
             conditions = listOf(NeighborHasConcentration(this, environment, molM, 1.0))
             nodeA.addReaction(this)

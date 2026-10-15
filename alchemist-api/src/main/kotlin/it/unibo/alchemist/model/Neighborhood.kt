@@ -53,11 +53,6 @@ interface Neighborhood<T> {
     operator fun minus(node: Node<T>): Neighborhood<T> = Neighborhood(center, neighbors.remove(node))
 
     /**
-     * Returns the number of neighbors.
-     */
-    fun size(): Int = neighbors.size
-
-    /**
      * Builders of [Neighborhood]s, whose neighbors are always sorted.
      */
     companion object {

@@ -13,7 +13,7 @@ environment:
 deployments:
   - type: Point
     parameters: [50, 50]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: PhysicalPedestrian2D
       - type: CircularArea

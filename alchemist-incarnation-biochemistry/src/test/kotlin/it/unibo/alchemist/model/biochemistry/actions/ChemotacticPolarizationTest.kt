@@ -41,7 +41,7 @@ class ChemotacticPolarizationTest {
 
     @Test
     fun `a neighbor gaining the molecule after construction attracts the cell`() {
-        source.setConcentration(Biomolecule("A"), 1.0)
+        source[Biomolecule("A")] = 1.0
         polarization.execute()
         assertEquals(
             Euclidean2DPosition(1.0, 0.0),

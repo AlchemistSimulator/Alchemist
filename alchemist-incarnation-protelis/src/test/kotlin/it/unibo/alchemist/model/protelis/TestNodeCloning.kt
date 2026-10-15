@@ -23,9 +23,9 @@ import org.kaikikm.threadresloader.ResourceLoader
 /** Tests node cloning. */
 internal class TestNodeCloning<P : Position<P>> {
     private fun Environment<Any, P>.makeNode(x: Double, y: Double, enabled: Boolean, source: Boolean) {
-        getNodeByID(0).cloneNode(Time.ZERO).apply {
-            setConcentration(SOURCEMOL, source)
-            setConcentration(ENABLEDMOL, enabled)
+        nodeWithId(0).cloneNode(Time.ZERO).apply {
+            this[SOURCEMOL] = source
+            this[ENABLEDMOL] = enabled
             addNode(this, makePosition(x, y))
         }
     }
@@ -40,16 +40,16 @@ internal class TestNodeCloning<P : Position<P>> {
                 ).getWith<Any, P>(emptyMap<String, Nothing>())
         val environment = simulation.environment
         simulation.schedule {
-            environment.getNodeByID(0).apply {
-                setConcentration(SOURCEMOL, false)
-                setConcentration(ENABLEDMOL, true)
+            environment.nodeWithId(0).apply {
+                this[SOURCEMOL] = false
+                this[ENABLEDMOL] = true
                 environment.moveNodeTo(this, environment.makePosition(-30.72191619873047, -9.75))
             }
             environment.makeNode(-34.62321853637695, -6.039149761199951, true, false)
             environment.makeNode(-33.585994720458987, -1.3899999856948853, true, true)
             environment.makeNode(-26.3700008392334, -9.899999618530274, false, false)
         }
-        val nid: (Int) -> Node<Any> = { environment.getNodeByID(it) }
+        val nid: (Int) -> Node<Any> = { environment.nodeWithId(it) }
         val distance: (Int, Int) -> Double = { a, b -> environment.distanceBetween(nid(a), nid(b)) }
         simulation.addOutputMonitor(
             object : OutputMonitor<Any, P> {
@@ -69,7 +69,7 @@ internal class TestNodeCloning<P : Position<P>> {
                     if (step ==
                         ENABLE_STEP
                     ) {
-                        simulation.schedule { currentEnvironment.getNodeByID(3).setConcentration(ENABLEDMOL, true) }
+                        simulation.schedule { currentEnvironment.nodeWithId(3).set(ENABLEDMOL, true) }
                     }
                     if (step >
                         ENABLE_CHECKS

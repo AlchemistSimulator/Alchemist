@@ -38,5 +38,5 @@ constructor(
      */
     val function = BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
 
-    override fun getValue(position: P) = baseline + function.value(position.x, position.y)
+    override fun currentValueAt(position: P) = baseline + function.value(position.x, position.y)
 }

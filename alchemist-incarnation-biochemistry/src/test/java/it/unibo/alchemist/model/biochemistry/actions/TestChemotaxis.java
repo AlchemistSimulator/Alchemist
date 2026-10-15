@@ -85,18 +85,18 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        envNode4.setConcentration(biomolA, CONCENTRATION2);
-        envNode2.setConcentration(biomolA, CONCENTRATION1);
-        envNode3.setConcentration(biomolA, CONCENTRATION1);
+        envNode4.set(biomolA, CONCENTRATION2);
+        envNode2.set(biomolA, CONCENTRATION1);
+        envNode3.set(biomolA, CONCENTRATION1);
         final NodeReaction<Double> r = incarnation.createReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
+        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(0),
                 FastMath.sqrt(0.5),
                 PRECISION
                 );
-        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
+        assertEquals(cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(1),
                 FastMath.sqrt(0.5),
                 PRECISION
                 );
@@ -117,19 +117,19 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        envNode4.setConcentration(biomolA, CONCENTRATION2);
-        envNode2.setConcentration(biomolA, CONCENTRATION1);
-        envNode3.setConcentration(biomolA, CONCENTRATION1);
+        envNode4.set(biomolA, CONCENTRATION2);
+        envNode2.set(biomolA, CONCENTRATION1);
+        envNode3.set(biomolA, CONCENTRATION1);
         final NodeReaction<Double> r = incarnation.createReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
         assertEquals(0,
-            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(0),
                 PRECISION
                 );
         assertEquals(0,
-            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(1),
                 PRECISION
                 );
     }
@@ -154,11 +154,11 @@ class TestChemotaxis {
         );
         r.execute();
         assertEquals(0,
-            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(0),
             PRECISION
         );
         assertEquals(0,
-            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(1),
             PRECISION
         );
     }
@@ -175,11 +175,11 @@ class TestChemotaxis {
         );
         r.execute();
         assertEquals(0,
-            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(0),
                 PRECISION
                 );
         assertEquals(0,
-            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(1),
                 PRECISION
                 );
     }
@@ -195,8 +195,8 @@ class TestChemotaxis {
         environment.addNode(cellNode1, p1);
         final Molecule a = new Biomolecule("A");
         final Molecule b = new Biomolecule("B");
-        envNode1.setConcentration(a, CONCENTRATION3);
-        envNode2.setConcentration(b, CONCENTRATION3);
+        envNode1.set(a, CONCENTRATION3);
+        envNode2.set(b, CONCENTRATION3);
         environment.addNode(envNode1, p2);
         environment.addNode(envNode2, p3);
         final NodeReaction<Double> r1 = incarnation.createReaction(
@@ -208,11 +208,11 @@ class TestChemotaxis {
         r1.execute();
         r2.execute();
         assertEquals(0,
-            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(0),
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(0),
                 PRECISION
                 );
         assertEquals(0,
-            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().getCoordinate(1),
+            cellNode1.asProperty(CircularCellProperty.class).getPolarizationVersor().get(1),
                 PRECISION
                 );
     }
@@ -233,9 +233,9 @@ class TestChemotaxis {
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
         assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
-        envNode4.setConcentration(biomolA, CONCENTRATION2);
-        envNode2.setConcentration(biomolA, CONCENTRATION1);
-        envNode3.setConcentration(biomolA, CONCENTRATION1);
+        envNode4.set(biomolA, CONCENTRATION2);
+        envNode2.set(biomolA, CONCENTRATION1);
+        envNode3.set(biomolA, CONCENTRATION1);
         final NodeReaction<Double> r1 = incarnation.createReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
@@ -263,9 +263,9 @@ class TestChemotaxis {
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
         assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
-        envNode4.setConcentration(biomolA, CONCENTRATION2);
-        envNode2.setConcentration(biomolA, CONCENTRATION1);
-        envNode3.setConcentration(biomolA, CONCENTRATION1);
+        envNode4.set(biomolA, CONCENTRATION2);
+        envNode2.set(biomolA, CONCENTRATION1);
+        envNode3.set(biomolA, CONCENTRATION1);
         final NodeReaction<Double> r1 = incarnation.createReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
@@ -298,10 +298,10 @@ class TestChemotaxis {
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
         assertEquals(EXPECTED_NODES, environment.getNodeCount().getCurrent());
-        envNode4.setConcentration(biomolA, CONCENTRATION2);
-        envNode2.setConcentration(biomolA, CONCENTRATION2);
-        envNode3.setConcentration(biomolA, CONCENTRATION2);
-        envNode1.setConcentration(biomolA, CONCENTRATION2);
+        envNode4.set(biomolA, CONCENTRATION2);
+        envNode2.set(biomolA, CONCENTRATION2);
+        envNode3.set(biomolA, CONCENTRATION2);
+        envNode1.set(biomolA, CONCENTRATION2);
         final NodeReaction<Double> r1 = incarnation.createReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );

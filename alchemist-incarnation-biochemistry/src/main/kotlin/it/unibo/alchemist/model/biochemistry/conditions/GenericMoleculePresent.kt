@@ -22,7 +22,7 @@ open class GenericMoleculePresent<T : Number>(
     val requiredQuantity: T,
 ) : AbstractLocalCondition<T>(reaction) {
 
-    private val nodeQuantity: Observable<Double> = targetNode.observeConcentration(molecule).map { concentration ->
+    private val nodeQuantity: Observable<Double> = targetNode.concentrationOf(molecule).map { concentration ->
         concentration.fold(ifEmpty = { 0.0 }, ifSome = Number::toDouble)
     }
 

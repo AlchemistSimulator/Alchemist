@@ -23,7 +23,7 @@ data class NeighborhoodSurrogate<T>(@param:GraphQLIgnore override val origin: Ne
      * @return the size of this neighborhood.
      */
     val size: Int
-        get() = origin.size()
+        get() = origin.neighbors.size
 
     /**
      * @return the central node of this neighborhood.

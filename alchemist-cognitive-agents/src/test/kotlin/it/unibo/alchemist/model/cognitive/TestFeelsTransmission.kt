@@ -36,8 +36,8 @@ class TestFeelsTransmission<T> {
     }
 
     private fun Environment<T, Euclidean2DPosition>.directDanger(node: Node<T>): Double =
-        requireNotNull(getLayer(incarnation.createMolecule("danger"))) { "Danger layer should be loaded" }
-            .getValue(currentPositionOf(node))
+        requireNotNull(layerFor(incarnation.createMolecule("danger"))) { "Danger layer should be loaded" }
+            .currentValueAt(currentPositionOf(node))
             .let { requireNotNull(it as? Number) { "Danger layer should contain numeric values" }.toDouble() }
 
     @Test

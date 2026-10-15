@@ -33,37 +33,37 @@ class ObservableNodeStateTest {
     @Test
     fun `a molecule stored with a null concentration can be removed`() {
         val nullableNode = GenericNode(mockk<Environment<Any?, *>>(relaxed = true))
-        nullableNode.setConcentration(molecule, null)
-        nullableNode.removeConcentration(molecule)
-        assertTrue(nullableNode.contents.isEmpty())
+        nullableNode[molecule] = null
+        nullableNode.removeAllConcentrationOf(molecule)
+        assertTrue(nullableNode.contents.current.isEmpty())
     }
 
     @Test
     fun `concentrations follow setting, changing, and removing a molecule`() {
-        val concentrations: List<Option<Any>> = node.observeConcentration(molecule).record()
-        node.setConcentration(molecule, 1)
-        node.setConcentration(other, 5)
-        node.setConcentration(molecule, 2)
-        node.removeConcentration(molecule)
+        val concentrations: List<Option<Any>> = node.concentrationOf(molecule).record()
+        node[molecule] = 1
+        node[other] = 5
+        node[molecule] = 2
+        node.removeAllConcentrationOf(molecule)
         assertEquals(listOf(None, 1.some(), 2.some(), None), concentrations)
     }
 
     @Test
     fun `molecule presence follows the node contents`() {
-        val presence = node.observeContains(molecule).record()
-        node.setConcentration(molecule, 1)
-        node.setConcentration(molecule, 2)
-        node.removeConcentration(molecule)
+        val presence = node.containsMolecule(molecule).record()
+        node[molecule] = 1
+        node[molecule] = 2
+        node.removeAllConcentrationOf(molecule)
         assertEquals(listOf(false, true, false), presence)
     }
 
     @Test
     fun `the molecule count follows the node contents`() {
-        val counts = node.observeMoleculeCount.record()
-        node.setConcentration(molecule, 1)
-        node.setConcentration(other, 1)
-        node.setConcentration(molecule, 2)
-        node.removeConcentration(other)
+        val counts = node.moleculeCount.record()
+        node[molecule] = 1
+        node[other] = 1
+        node[molecule] = 2
+        node.removeAllConcentrationOf(other)
         assertEquals(listOf(0, 1, 2, 1), counts)
     }
 

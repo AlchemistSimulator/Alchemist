@@ -10,10 +10,10 @@ package it.unibo.alchemist.model.nodes
 
 import arrow.core.Option
 import com.google.common.collect.MapMaker
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
@@ -42,33 +42,31 @@ open class GenericNode<T> @JvmOverloads constructor(
      * The node's molecules.
      */
     molecules: MutableMap<Molecule, T> = LinkedHashMap(),
-    properties: MutableList<NodeProperty<T>> = ArrayList(),
+    properties: MutableList<Capability<T>> = ArrayList(),
 ) : Node<T> {
-    override val contents: Map<Molecule, T> get() = observableContents.current
+    override val currentMoleculeCount: Int get() = moleculeCount.current
 
-    override val moleculeCount: Int get() = observeMoleculeCount.current
+    override val contents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
 
-    override val observableContents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
+    override val moleculeCount: Observable<Int> = contents.map { it.size }
 
-    override val observeMoleculeCount: Observable<Int> = observableContents.map { it.size }
-
-    final override val properties: List<NodeProperty<T>>
-        field: MutableList<NodeProperty<T>> = properties
+    final override val properties: List<Capability<T>>
+        field: MutableList<Capability<T>> = properties
 
     // Out of order: reactions is initialized from it.
     private val observableReactions = ObservableMutableList<Reaction<T>>()
 
     final override val reactions: ObservableList<Reaction<T>> = observableReactions
 
-    final override fun addProperty(nodeProperty: NodeProperty<T>) {
+    final override fun addProperty(capability: Capability<T>) {
         check(this !in environment) {
-            "Properties are part of the node setup: $nodeProperty cannot be added to node $id, already in $environment"
+            "Properties are part of the node setup: $capability cannot be added to node $id, already in $environment"
         }
-        check(properties.none { it::class == nodeProperty::class }) {
-            "Node with id ${this.id} already contains a property of type ${nodeProperty::class}, " +
+        check(properties.none { it::class == capability::class }) {
+            "Node with id ${this.id} already contains a property of type ${capability::class}, " +
                 "this may lead to an inconsistent state"
         }
-        properties.add(nodeProperty)
+        properties.add(capability)
     }
 
     final override fun addReaction(reaction: Reaction<T>) {
@@ -81,7 +79,7 @@ open class GenericNode<T> @JvmOverloads constructor(
 
     override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
         this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
-        this.contents.forEach(it::setConcentration)
+        this.contents.current.forEach(it::set)
         this.reactions.current.filterIsInstance<NodeReaction<T>>().forEach { reaction ->
             it.addReaction(reaction.cloneOnNewNode(it, currentTime))
         }
@@ -89,33 +87,33 @@ open class GenericNode<T> @JvmOverloads constructor(
 
     final override fun compareTo(@Nonnull other: Node<T>): Int = id.compareTo(other.id)
 
-    override fun contains(molecule: Molecule): Boolean = observeContains(molecule).current
+    override fun contains(molecule: Molecule): Boolean = containsMolecule(molecule).current
 
     override fun dispose() {
         observableReactions.current.forEach(Disposable::dispose)
         observableReactions.clear()
-        observableContents.dispose()
-        observeMoleculeCount.dispose()
+        contents.dispose()
+        moleculeCount.dispose()
     }
 
     final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
 
-    override fun get(molecule: Molecule): Option<T> = observeConcentration(molecule).current
+    override fun get(molecule: Molecule): Option<T> = concentrationOf(molecule).current
 
     final override fun hashCode(): Int = id // TODO: better hashing
 
-    override fun observeConcentration(molecule: Molecule): Observable<Option<T>> = observableContents[molecule]
+    override fun concentrationOf(molecule: Molecule): Observable<Option<T>> = contents[molecule]
 
-    override fun observeContains(molecule: Molecule): Observable<Boolean> = observableContents.map {
+    override fun containsMolecule(molecule: Molecule): Observable<Boolean> = contents.map {
         it.contains(molecule)
     }
 
-    override fun removeConcentration(moleculeToRemove: Molecule) {
+    override fun removeAllConcentrationOf(moleculeToRemove: Molecule) {
         // The concentration may be null: the presence of the molecule is checked on the keys.
-        if (moleculeToRemove !in observableContents.current) {
+        if (moleculeToRemove !in contents.current) {
             throw NoSuchElementException("$moleculeToRemove was not present in node $id")
         }
-        observableContents.remove(moleculeToRemove)
+        contents.remove(moleculeToRemove)
     }
 
     final override fun removeReaction(reaction: Reaction<T>) {
@@ -125,11 +123,11 @@ open class GenericNode<T> @JvmOverloads constructor(
         }
     }
 
-    override fun setConcentration(molecule: Molecule, concentration: T) {
-        observableContents[molecule] = concentration
+    override operator fun set(molecule: Molecule, concentration: T) {
+        contents[molecule] = concentration
     }
 
-    override fun toString(): String = "Node$id{ properties: $properties, molecules: ${observableContents.current}}"
+    override fun toString(): String = "Node$id{ properties: $properties, molecules: ${contents.current}}"
 
     private fun ifRegisteredInEnvironment(action: (it.unibo.alchemist.core.Simulation<T, *>) -> Unit) {
         if (this in environment) {

@@ -19,15 +19,14 @@ import it.unibo.alchemist.model.observation.Observable
  * @param T concentration type
  */
 interface NetworkModel<T> {
-
-    /**
-     * The neighborhood of this node, as provided by [neighborhoodOf].
-     */
-    val Node<T>.neighborhood: Observable<Neighborhood<T>> get() = neighborhoodOf(this)
-
     /**
      * The neighborhood of [center], a node of the environment of this model, as an observable of immutable snapshots
      * that emits whenever the neighborhood changes.
      */
     fun neighborhoodOf(center: Node<T>): Observable<Neighborhood<T>>
+
+    /**
+     * The neighborhood of this node, as provided by [neighborhoodOf].
+     */
+    val Node<T>.neighborhood: Observable<Neighborhood<T>> get() = neighborhoodOf(this)
 }

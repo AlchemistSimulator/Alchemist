@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -112,13 +112,12 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
                 Color(colorBase.red, colorBase.green, colorBase.blue, max(1, (alpha * (index + 1)).toInt()))
 
             @Suppress("UNCHECKED_CAST")
-            val transform =
-                computeTransform(
-                    wormhole2D.getViewPoint(position as P).x,
-                    wormhole2D.getViewPoint(position).y,
-                    nodeSize.`val`.toDouble(),
-                    rotation,
-                )
+            val transform = computeTransform(
+                wormhole2D.getViewPoint(position as P).x,
+                wormhole2D.getViewPoint(position).y,
+                nodeSize.`val`.toDouble(),
+                rotation,
+            )
             val transformedShape = transform.createTransformedShape(shape)
             graphics2D.color = colorFaded
             graphics2D.fill(transformedShape)

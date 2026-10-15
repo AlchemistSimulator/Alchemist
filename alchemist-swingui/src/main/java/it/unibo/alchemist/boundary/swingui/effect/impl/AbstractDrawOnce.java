@@ -46,7 +46,7 @@ public abstract class AbstractDrawOnce implements Effect {
         if (markerNodeID != null) {
             /*
              * We want to check if the cached id belongs to a node still present in
-             * the environment, thus we don't use getNodeByID to avoid exceptions
+             * the environment, thus we don't use nodeWithId to avoid exceptions
              */
             final Optional<? extends Node<T>> markerNode = environment.getNodes().getCurrent().stream()
                     .filter(it -> it.getId() == markerNodeID)

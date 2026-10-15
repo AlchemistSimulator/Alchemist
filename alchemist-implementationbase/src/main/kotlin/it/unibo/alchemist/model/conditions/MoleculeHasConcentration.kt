@@ -21,7 +21,7 @@ class MoleculeHasConcentration<T>(reaction: NodeReaction<T>, private val molecul
     AbstractLocalCondition<T>(reaction) {
     init {
         setValidity(
-            targetNode.observeConcentration(molecule).map {
+            targetNode.concentrationOf(molecule).map {
                 it.fold({ false }) { current -> current == value }
             },
         )

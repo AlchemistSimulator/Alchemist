@@ -40,6 +40,7 @@ import it.unibo.alchemist.boundary.variables.Constant
 import it.unibo.alchemist.boundary.variables.JSR223Variable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -47,7 +48,6 @@ import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 import it.unibo.alchemist.model.Reaction
@@ -447,23 +447,23 @@ internal object SimulationModel {
         }
     }
 
-    internal fun <T, P : Position<P>> visitProperty(
+    internal fun <T, P : Position<P>> visitCapabilities(
         context: Context,
         root: Map<*, *>,
-    ): List<Pair<List<PositionBasedFilter<P>>, NodeProperty<T>>> {
-        logger.debug("Visiting properties: {}", root)
-        val capabilitiesKey = AlchemistYamlSyntax.Deployment.properties
+    ): List<Pair<List<PositionBasedFilter<P>>, Capability<T>>> {
+        logger.debug("Visiting capabilities: {}", root)
+        val capabilitiesKey = AlchemistYamlSyntax.Deployment.capabilities
         val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
-        return visitRecursively(context, allCapabilities, AlchemistYamlSyntax.Deployment.Property) { element ->
+        return visitRecursively(context, allCapabilities, AlchemistYamlSyntax.Deployment.Capability) { element ->
             (element as? Map<*, *>)?.let {
                 val filters = visitFilter<P>(context, element)
-                val nodeProperty =
-                    visitBuilding<NodeProperty<T>>(context, element)?.getOrThrow() ?: cantBuildWith<NodeProperty<T>>(
+                val capability =
+                    visitBuilding<Capability<T>>(context, element)?.getOrThrow() ?: cantBuildWith<Capability<T>>(
                         root,
                         JavaType,
                     )
-                logger.debug("Property: {}", nodeProperty)
-                Result.success(Pair(filters, nodeProperty))
+                logger.debug("Capability: {}", capability)
+                Result.success(Pair(filters, capability))
             }
         }
     }

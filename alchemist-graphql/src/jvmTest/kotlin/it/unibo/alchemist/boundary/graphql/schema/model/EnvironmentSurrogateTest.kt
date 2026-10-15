@@ -58,7 +58,7 @@ class EnvironmentSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<
 
     companion object {
         fun <T> checkNeighborhood(neighborhood: Neighborhood<T>, neighborhoodSurrogate: NeighborhoodSurrogate<T>) {
-            assertEquals(neighborhood.size(), neighborhoodSurrogate.size)
+            assertEquals(neighborhood.neighbors.size, neighborhoodSurrogate.size)
             assertEquals(neighborhood.isEmpty, neighborhoodSurrogate.isEmpty())
             assertEquals(neighborhood.center.toGraphQLNodeSurrogate(), neighborhoodSurrogate.getCenter())
             if (!neighborhood.isEmpty) {

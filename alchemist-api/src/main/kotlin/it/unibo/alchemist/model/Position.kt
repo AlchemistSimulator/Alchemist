@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -47,7 +47,7 @@ interface Position<P : Position<P>> {
      *            could be the X-axis and 1 the Y-axis
      * @return the coordinate value
      */
-    fun getCoordinate(dimension: Int): Double
+    operator fun get(dimension: Int): Double
 
     /**
      * @return the number of dimensions of this {@link Position}.

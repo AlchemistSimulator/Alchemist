@@ -65,9 +65,6 @@ constructor(
 
     override val reactions: ObservableList<Reaction<T>> get() = hostedReactions
 
-    private val RectObstacle2D<Euclidean2DPosition>.center get() =
-        Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
-
     /*
      * This environment hosts its own reactions instead of delegating membership to the backing environment:
      * the reactions name this environment as their host, which the backing environment would reject.
@@ -75,9 +72,6 @@ constructor(
     private val hostedReactions = ObservableMutableList<Reaction<T>>()
 
     private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
-
-    private val PhysicsBody.position get() =
-        Euclidean2DPosition(this.transform.translationX, this.transform.translationY)
 
     private val world: World<PhysicsBody> = World()
 
@@ -226,6 +220,12 @@ constructor(
             }
     }
 
+    private val PhysicsBody.position get() =
+        Euclidean2DPosition(this.transform.translationX, this.transform.translationY)
+
+    private val RectObstacle2D<Euclidean2DPosition>.center get() =
+        Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
+
     private companion object {
         private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvWithObstacles<T> =
             if (this is EuclideanPhysics2DEnvironmentWithObstacles<*, T>) {
@@ -249,9 +249,13 @@ constructor(
                     override val obstacles: List<RectObstacle2D<Euclidean2DPosition>>
                         get() = emptyList()
 
-                    override fun intersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition) = false
+                    override fun shortestPathIntersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition) =
+                        false
 
-                    override fun next(current: Euclidean2DPosition, desired: Euclidean2DPosition) = desired
+                    override fun farthestValidPositionFromTo(
+                        current: Euclidean2DPosition,
+                        desired: Euclidean2DPosition,
+                    ) = desired
 
                     override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
                         error("This Environment instance does not support obstacle removal")

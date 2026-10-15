@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,9 +10,9 @@
 package it.unibo.alchemist.model.protelis.properties
 
 import arrow.core.getOrElse
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
@@ -33,7 +33,7 @@ constructor(
     val environment: Environment<Any, P>,
     override val node: Node<Any>,
     networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf(),
-) : NodeProperty<Any>,
+) : Capability<Any>,
     ExecutionEnvironment,
     DeviceUID {
     private val incarnation: ProtelisIncarnation<*> =
@@ -126,7 +126,7 @@ constructor(
      */
     override fun get(id: String): Any = incarnation.createMolecule(id).let { molecule ->
         node[molecule].getOrElse {
-            checkNotNull(environment.getLayer(molecule)?.getValue(environment.currentPositionOf(node))) {
+            checkNotNull(environment.layerFor(molecule)?.currentValueAt(environment.currentPositionOf(node))) {
                 "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
             }
         }
@@ -154,7 +154,7 @@ constructor(
      * Stores a [value] associated with [key].
      */
     override fun put(key: String, value: Any): Boolean {
-        node.setConcentration(incarnation.createMolecule(key), value)
+        node[incarnation.createMolecule(key)] = value
         return true
     }
 
@@ -162,7 +162,7 @@ constructor(
      * Stores a [value] associated with [key].
      */
     fun putField(key: String, value: Field<*>): Boolean {
-        node.setConcentration(incarnation.createMolecule(key), value)
+        node[incarnation.createMolecule(key)] = value
         return true
     }
 
@@ -171,14 +171,14 @@ constructor(
      */
     override fun remove(id: String): Any {
         val value = get(id)
-        node.removeConcentration(incarnation.createMolecule(id))
+        node.removeAllConcentrationOf(incarnation.createMolecule(id))
         return value
     }
 
     /**
      * Return all stored variables names.
      */
-    override fun keySet(): Set<String> = node.contents.keys
+    override fun keySet(): Set<String> = node.contents.current.keys
         .mapNotNull { it.name }
         .toSet()
 

@@ -37,10 +37,10 @@ open class ToggleMolecule<T>(
     /**
      * Switch off the molecule, or remove it.
      */
-    private fun switchOff() = targetNode.removeConcentration(molecule)
+    private fun switchOff() = targetNode.removeAllConcentrationOf(molecule)
 
     /**
      * Switch on the molecule and set its concentration.
      */
-    private fun switchOn() = targetNode.setConcentration(molecule, concentration)
+    private fun switchOn() = targetNode.set(molecule, concentration)
 }

@@ -13,7 +13,7 @@ Layers belong to the environment setup: each molecule is associated with at most
 and no layer can be associated once the environment is part of a running simulation.
 
 A {{% api class="Layer" %}} maps each position to a value that may change over time:
-its `observeValue` notifies every change of the value at a position.
+its `valueAt` notifies every change of the value at a position.
 {{% api class="Environment" %}}'s `observeLayerValue` observes a layer at the position of a node:
 it notifies a new value whenever the node moves to a position with a different value,
 or the layer changes the value at the node's current position.
@@ -27,10 +27,10 @@ and publish the resulting changes through their `nextOccurrence`, as described i
 [Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/).
 
 A custom layer whose spatial distribution never changes extends
-{{% api package="model.layers" class="TimeInvariantLayer" %}} and implements only `getValue`.
-A layer whose values change over time implements `observeValue` instead:
+{{% api package="model.layers" class="TimeInvariantLayer" %}} and implements only `currentValueAt`.
+A layer whose values change over time implements `valueAt` instead:
 the returned observable emits every new value at the observed position,
-and `getValue` reads its current value.
+and `currentValueAt` reads its current value.
 
 Layers are created with the [`type/parameter` syntax](/reference/yaml/#arbitrary-class-loading-system),
 as in this example:

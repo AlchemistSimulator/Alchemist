@@ -51,7 +51,7 @@ class TestMoleculeSwapWithinNeighborhood {
             assertTrue(neighborhoodOf(nodesToAdd.first).current.neighbors.contains(nodesToAdd.second))
             assertTrue(neighborhoodOf(nodesToAdd.second).current.neighbors.contains(nodesToAdd.first))
         }
-        nodesToAdd.first.setConcentration(BIOMOLECULE, 1.0)
+        nodesToAdd.first[BIOMOLECULE] = 1.0
     }
 
     @Test

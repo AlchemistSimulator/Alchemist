@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.biochemistry.CircularCellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 
 /**
  * Base implementation of a [CircularCellProperty].
@@ -29,7 +29,7 @@ constructor(
     override val diameter: Double = 0.0,
     override val junctions: ObservableMutableMap<Junction, ObservableMutableMap<Node<Double>, Int>> =
         ObservableMutableMap(),
-) : AbstractNodeProperty<Double>(node),
+) : AbstractCapability<Double>(node),
     CircularCellProperty,
     CellProperty<Euclidean2DPosition> by Cell(environment, node, junctions) {
     init {

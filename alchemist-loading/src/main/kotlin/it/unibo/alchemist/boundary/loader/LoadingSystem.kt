@@ -202,14 +202,14 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                     if (filters.isEmpty() || filters.any { nodePosition in it }) {
                         val concentration = concentrationMaker()
                         logger.debug("Injecting {} ==> {} in node {}", molecule, concentration, node.id)
-                        node.setConcentration(molecule, concentration)
+                        node[molecule] = concentration
                     }
                 }
         }
 
         private fun <T, P : Position<P>> loadPropertiesOnNode(node: Node<T>, nodePosition: P, descriptor: Map<*, *>) {
             SimulationModel
-                .visitProperty<T, P>(context, descriptor)
+                .visitCapabilities<T, P>(context, descriptor)
                 .filter { (filters, _) -> filters.isEmpty() || filters.any { nodePosition in it } }
                 .forEach { (_, property) -> node.addProperty(property) }
         }

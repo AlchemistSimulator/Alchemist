@@ -48,8 +48,8 @@ class CellMove(
         CellMove(environment, newReaction, inPercent, requestedDelta)
 
     override fun getNextPosition(): Euclidean2DPosition = Euclidean2DPosition(
-        delta * cell.polarizationVersor.getCoordinate(0),
-        delta * cell.polarizationVersor.getCoordinate(1),
+        delta * cell.polarizationVersor.get(0),
+        delta * cell.polarizationVersor.get(1),
     )
 
     override fun execute() {

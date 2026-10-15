@@ -20,16 +20,16 @@ import it.unibo.alchemist.model.observation.Observable
  */
 fun interface Layer<T, P : Position<out P>> {
     /**
-     * Observes the value at [position]; the returned observable emits every change of that value.
+     * The value at [position], as an observable emitting every change of that value.
      *
      * The returned observable is lazy: it consumes no resources until subscribed. Subscribers own the returned
      * subscription handles and dispose them when they no longer need updates; they must not dispose the observable
      * itself.
      */
-    fun observeValue(position: P): Observable<T>
+    fun valueAt(position: P): Observable<T>
 
     /**
      * The current value at [position].
      */
-    fun getValue(position: P): T = observeValue(position).current
+    fun currentValueAt(position: P): T = valueAt(position).current
 }

@@ -37,7 +37,7 @@ class CameraInjectVisibleNodeClosestToDistance(
         targetNode[visionMolecule].onSome { visibleNodes ->
             require(visibleNodes is List<*>) { "visionMolecule contains ${visibleNodes::class} instead of a List" }
             if (visibleNodes.isEmpty()) {
-                if (targetNode.contains(targetMolecule)) targetNode.removeConcentration(targetMolecule)
+                if (targetNode.contains(targetMolecule)) targetNode.removeAllConcentrationOf(targetMolecule)
             } else {
                 val aNode = visibleNodes.first()
                 require(aNode is VisibleNode<*, *>) {
@@ -54,7 +54,7 @@ class CameraInjectVisibleNodeClosestToDistance(
                 )
                 nodes.map { it.position }
                     .reduce { n1, n2 -> minOf(n1, n2, compareBy { it.distanceTo(myPosition) }) }
-                    .also { targetNode.setConcentration(targetMolecule, it) }
+                    .also { targetNode.set(targetMolecule, it) }
             }
         }
     }

@@ -19,10 +19,10 @@ simulation2D(SAPEREIncarnation()) {
         deployments {
             deploy(circle(1000, 0.0, 0.0, 15.0)) {
                 if (position in Rectangle(-3.0, -3.0, 2.0, 2.0)) {
-                    nodeProperty(testNodeProperty("a"))
+                    capability(testCapability("a"))
                 }
                 if (position in Rectangle(3.0, 3.0, 2.0, 2.0)) {
-                    nodeProperty(testNodeProperty("b"))
+                    capability(testCapability("b"))
                 }
             }
         }

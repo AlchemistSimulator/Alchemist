@@ -91,7 +91,7 @@ open class SAPEREWalkerRiseGradient(
                 currentPosition != currentNodePosition ||
                 environment.neighborhoodOf(node).current.contains(currentNode)
             ) {
-                currentNode = environment.getNodeByID(nextHop).asILsaNode()
+                currentNode = environment.nodeWithId(nextHop).asILsaNode()
                 currentPosition = environment.currentPositionOf(currentNode)
             }
             return checkNotNull(currentPosition)

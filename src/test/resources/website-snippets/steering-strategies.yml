@@ -17,7 +17,7 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [0, 0]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: Perceptive2D
       - type: CircularArea

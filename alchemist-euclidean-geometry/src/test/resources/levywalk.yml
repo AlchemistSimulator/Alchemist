@@ -6,7 +6,7 @@ environment:
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 200]
-    properties:
+    capabilities:
       - type: CircularArea
         parameters: [1]
     programs:

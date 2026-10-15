@@ -48,7 +48,7 @@ class BiochemicalReactionSchedulingTest {
         val source = incarnation.createNode(randomGenerator, environment, null)
         val destination = incarnation.createNode(randomGenerator, environment, null)
         val molecule = incarnation.createMolecule("token")
-        destination.setConcentration(molecule, 2.0)
+        destination[molecule] = 2.0
         val reaction = BiochemicalNodeReaction(
             source,
             ExponentialTime(1.0, randomGenerator),
@@ -74,7 +74,7 @@ class BiochemicalReactionSchedulingTest {
         every { randomGenerator.nextDouble() } returns 0.5
         val (environment, source, molecule, _, reaction) = createFixture(randomGenerator)
         val destination = BiochemistryIncarnation().createNode(randomGenerator, environment, null)
-        destination.setConcentration(molecule, 1.0)
+        destination[molecule] = 1.0
         assertTrue(environment.addNode(destination, Euclidean2DPosition(5.0, 0.0)))
         reaction.initializationComplete(Time.ZERO, environment)
         val clone = reaction.cloneOnNewNode(destination, Time.ZERO)
@@ -82,16 +82,16 @@ class BiochemicalReactionSchedulingTest {
         verify(exactly = 2) { randomGenerator.nextDouble() }
         val sourceOccurrence = reaction.nextOccurrence.current
         val cloneOccurrence = clone.nextOccurrence.current
-        source.setConcentration(molecule, 2.0)
+        source[molecule] = 2.0
         assertEquals(sourceOccurrence * 0.5, reaction.nextOccurrence.current)
         assertEquals(cloneOccurrence, clone.nextOccurrence.current)
-        destination.setConcentration(molecule, 2.0)
+        destination[molecule] = 2.0
         assertEquals(sourceOccurrence * 0.5, reaction.nextOccurrence.current)
         assertEquals(cloneOccurrence * 0.5, clone.nextOccurrence.current)
         clone.dispose()
-        destination.setConcentration(molecule, 4.0)
+        destination[molecule] = 4.0
         assertEquals(cloneOccurrence * 0.5, clone.nextOccurrence.current)
-        source.setConcentration(molecule, 4.0)
+        source[molecule] = 4.0
         assertEquals(sourceOccurrence * 0.25, reaction.nextOccurrence.current)
         verify(exactly = 2) { randomGenerator.nextDouble() }
     }
@@ -105,7 +105,7 @@ class BiochemicalReactionSchedulingTest {
         reaction.initializationComplete(Time.ZERO, environment)
         val initialOccurrence = reaction.nextOccurrence.current
         verify(exactly = 1) { randomGenerator.nextDouble() }
-        node.setConcentration(molecule, 2.0)
+        node[molecule] = 2.0
         assertEquals(2.0, condition.quantity.current)
         assertTrue(reaction.canExecute.current)
         assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
@@ -123,7 +123,7 @@ class BiochemicalReactionSchedulingTest {
         val node = incarnation.createNode(randomGenerator, environment, null)
         val environmentNode = EnvironmentNodeImpl(environment)
         val molecule = assertIs<Biomolecule>(incarnation.createMolecule("token"))
-        environmentNode.setConcentration(molecule, 2.0)
+        environmentNode[molecule] = 2.0
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
         assertTrue(environment.addNode(environmentNode, Euclidean2DPosition(0.5, 0.0)))
         val reaction = BiochemicalNodeReaction(
@@ -136,7 +136,7 @@ class BiochemicalReactionSchedulingTest {
         reaction.conditions = listOf(condition)
         reaction.initializationComplete(Time.ZERO, environment)
         val initialOccurrence = reaction.nextOccurrence.current
-        environmentNode.setConcentration(molecule, 4.0)
+        environmentNode[molecule] = 4.0
         assertEquals(4.0, condition.quantity.current)
         assertTrue(reaction.canExecute.current)
         assertEquals(initialOccurrence * 0.5, reaction.nextOccurrence.current)
@@ -186,7 +186,7 @@ class BiochemicalReactionSchedulingTest {
             val randomGenerator = mockk<RandomGenerator>(relaxed = true)
             val (environment, node, molecule, _, reaction) = createFixture(randomGenerator)
             reaction.initializationComplete(Time.ZERO, environment)
-            assertFailsWith<IllegalArgumentException> { node.setConcentration(molecule, invalidQuantity) }
+            assertFailsWith<IllegalArgumentException> { node.set(molecule, invalidQuantity) }
         }
     }
 
@@ -206,7 +206,7 @@ class BiochemicalReactionSchedulingTest {
         val environment = BioRect2DEnvironment(incarnation)
         val node = incarnation.createNode(randomGenerator, environment, null)
         val malformedMolecule = incarnation.createMolecule("malformed")
-        node.setConcentration(malformedMolecule, 1.0)
+        node[malformedMolecule] = 1.0
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
         val reaction = BiochemicalNodeReaction(
             node,
@@ -225,7 +225,7 @@ class BiochemicalReactionSchedulingTest {
             )
         }
         reaction.initializationComplete(Time.ZERO, environment)
-        assertFailsWith<IllegalArgumentException> { node.setConcentration(malformedMolecule, Double.NaN) }
+        assertFailsWith<IllegalArgumentException> { node.set(malformedMolecule, Double.NaN) }
     }
 
     @Test
@@ -283,7 +283,7 @@ class BiochemicalReactionSchedulingTest {
         val environment = BioRect2DEnvironment(incarnation)
         val node = incarnation.createNode(randomGenerator, environment, null)
         val molecule = incarnation.createMolecule("token")
-        node.setConcentration(molecule, 1.0)
+        node[molecule] = 1.0
         assertTrue(environment.addNode(node, Euclidean2DPosition(0.0, 0.0)))
         val reaction = BiochemicalNodeReaction(
             node,

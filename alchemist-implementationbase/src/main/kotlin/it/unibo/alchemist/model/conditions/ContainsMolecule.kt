@@ -19,7 +19,7 @@ class ContainsMolecule<T>(reaction: NodeReaction<T>, private val molecule: Molec
     AbstractLocalCondition<T>(reaction) {
 
     init {
-        setValidity(targetNode.observeContains(molecule))
+        setValidity(targetNode.containsMolecule(molecule))
     }
 
     override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): ContainsMolecule<T> =

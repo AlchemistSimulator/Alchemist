@@ -9,20 +9,20 @@
 
 package it.unibo.alchemist.boundary.properties
 
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 import org.apache.commons.math3.random.RandomGenerator
 
-class TestNodeProperty<T, P : Position<P>>(
+class TestCapability<T, P : Position<P>>(
     val rng: RandomGenerator,
     val environment: Environment<T, P>,
     node: Node<T>,
     val s: String,
-) : AbstractNodeProperty<T>(node) {
-    override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = TestNodeProperty(
+) : AbstractCapability<T>(node) {
+    override fun cloneOnNewNode(node: Node<T>): Capability<T> = TestCapability(
         rng,
         environment,
         node,

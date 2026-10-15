@@ -30,7 +30,7 @@ class SimpleFunctionalTest :
                         .asSequence()
                         .find { it.id == 3 }
                         ?.contents
-                        ?.values
+                        ?.current?.values
                 requireNotNull(valuesOfLastNode)
                 valuesOfLastNode shouldContain 3.0
             }

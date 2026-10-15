@@ -160,7 +160,7 @@ final class TestEnvironmentNodes {
         final EnvironmentNode envNode = new EnvironmentNodeImpl(standardEnvironment);
         final Molecule a = new Biomolecule(A);
         injectAInEnvReaction(cellNode, 1);
-        cellNode.setConcentration(a, 1000.0);
+        cellNode.set(a, 1000.0);
         standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 2));
         standardEnvironment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         standardEnvironment.addNode(envNode, new Euclidean2DPosition(0, 1));
@@ -184,7 +184,7 @@ final class TestEnvironmentNodes {
         final Node<Double> cellNode = createNode();
         final Molecule a = new Biomolecule(A);
         injectAInEnvReaction(cellNode, 1);
-        cellNode.setConcentration(a, 1000.0);
+        cellNode.set(a, 1000.0);
         standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 2));
         standardEnvironment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         simulate(standardEnvironment);
@@ -200,7 +200,7 @@ final class TestEnvironmentNodes {
         final EnvironmentNode envNode2 = new EnvironmentNodeImpl(standardEnvironment);
         final Molecule a = new Biomolecule(A);
         injectAInEnvReaction(envNode1, 1);
-        envNode1.setConcentration(a, 1000.0);
+        envNode1.set(a, 1000.0);
         standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 2));
         standardEnvironment.addNode(envNode1, new Euclidean2DPosition(0, 0));
         standardEnvironment.addNode(envNode2, new Euclidean2DPosition(0, 1));
@@ -275,7 +275,7 @@ final class TestEnvironmentNodes {
         injectAInEnvReaction(envNode1, 1000);
         injectAInEnvReaction(envNode2, 1000);
         final double total = 1000.0;
-        cellNode.setConcentration(a, 1000.0);
+        cellNode.set(a, 1000.0);
         standardEnvironment.setNetworkModel(new ConnectWithinDistance<>(standardEnvironment, 1));
         final Euclidean2DPosition pos1 = new Euclidean2DPosition(0, -0.75);
         final Euclidean2DPosition pos2 = new Euclidean2DPosition(0, 0.75);
@@ -322,7 +322,7 @@ final class TestEnvironmentNodes {
         final Node<Double>[] nodes = populateSurroundingOrigin();
         final Molecule a = new Biomolecule(A);
         injectAInEnvReaction(center, 1);
-        center.setConcentration(a, 1000.0);
+        center.set(a, 1000.0);
         simulate(standardEnvironment);
         assertEquals(0, getOrZeroConcentration(center, a));
         assertTrue(Arrays.stream(nodes).noneMatch(it -> getOrZeroConcentration(it, a) == 0));

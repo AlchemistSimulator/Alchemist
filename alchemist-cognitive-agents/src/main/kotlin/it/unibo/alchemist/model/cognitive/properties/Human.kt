@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.cognitive.impact.individual.Compliance
 import it.unibo.alchemist.model.cognitive.impact.individual.Gender
 import it.unibo.alchemist.model.cognitive.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitive.impact.individual.Speed
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -31,7 +31,7 @@ constructor(
     override val speed: Speed = Speed(age, gender, randomGenerator),
     override val compliance: Double = Compliance(age, gender).level,
     override val helpAttitude: HelpAttitude = HelpAttitude(age, gender),
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     Human2DProperty<T> {
     @JvmOverloads
     constructor(

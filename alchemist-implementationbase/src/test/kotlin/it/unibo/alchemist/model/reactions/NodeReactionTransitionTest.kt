@@ -196,7 +196,7 @@ class NodeReactionTransitionTest {
         val concentration = observe<Option<Any>>(initialConcentration.some())
         every { environment.simulationOrNull } returns null
         every { node[molecule] } answers { concentration.current }
-        every { node.observeConcentration(molecule) } returns concentration
+        every { node.concentrationOf(molecule) } returns concentration
         val randomGenerator = mockk<RandomGenerator>()
         var samples = 0
         every { randomGenerator.nextDouble() } answers {

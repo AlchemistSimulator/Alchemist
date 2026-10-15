@@ -64,7 +64,7 @@ class TestBiomolLayer {
         final NodeReaction<Double> movement = new GenericReaction<>(cellNode, new DiracComb<>(100d));
         movement.setActions(List.of(new BrownianMove<>(environment, movement, cellNode, rand, 10)));
         cellNode.addReaction(movement);
-        cellNode.setConcentration(a, 0d);
+        cellNode.set(a, 0d);
         environment.setNetworkModel(
                 new ConnectWithinDistance<>(environment, 2)
         );
@@ -81,7 +81,7 @@ class TestBiomolLayer {
                 @Nonnull final Time time,
                 final long step
             ) {
-                final Euclidean2DPosition curPos = environment.currentPositionOf(environment.getNodeByID(0));
+                final Euclidean2DPosition curPos = environment.currentPositionOf(environment.nodeWithId(0));
                 assertEquals(curPos.getX() > 0 && curPos.getY() > 0, underTest.getCanExecute().getCurrent());
             }
 

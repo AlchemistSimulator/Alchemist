@@ -377,7 +377,7 @@ class EngineSchedulingSubscriptionTest {
     fun `topology changes gate a neighborhood-dependent reaction exactly when its validity changes`() {
         with(environment) { networkModel = connectWithinDistance(1.0) }
         val molecule = Biomolecule("M")
-        val peer = GenericNode(environment).apply { setConcentration(molecule, 1.0) }
+        val peer = GenericNode(environment).apply { set(molecule, 1.0) }
         val distribution = countingDistribution()
         val reaction = GenericReaction(node, distribution).apply {
             conditions = listOf(NeighborHasConcentration(this, environment, molecule, 1.0))
@@ -408,14 +408,14 @@ class EngineSchedulingSubscriptionTest {
         mutate { environment.moveNodeTo(peer, environment.makePosition(0.5, 0)) }
         assertScheduling(finite = true, samples = 2, updates = 3)
         // The neighbor's concentration changes while topology stays the same.
-        mutate { peer.setConcentration(molecule, 2.0) }
+        mutate { peer.set(molecule, 2.0) }
         assertScheduling(finite = false, samples = 2, updates = 4)
-        mutate { peer.setConcentration(molecule, 1.0) }
+        mutate { peer.set(molecule, 1.0) }
         assertScheduling(finite = true, samples = 3, updates = 5)
         // Node removal and addition.
         mutate { environment.removeNode(peer) }
         assertScheduling(finite = false, samples = 3, updates = 6)
-        val newcomer = GenericNode(environment).apply { setConcentration(molecule, 1.0) }
+        val newcomer = GenericNode(environment).apply { set(molecule, 1.0) }
         mutate { newcomer.place(0, 0.5) }
         assertScheduling(finite = true, samples = 4, updates = 7)
         // An environment-wide topology change.

@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.nodes
 
 import io.mockk.every
 import io.mockk.mockk
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
@@ -27,7 +27,7 @@ class NodePropertiesTest {
     private val environment =
         Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow())
 
-    private fun propertyOf(node: Node<Any>): NodeProperty<Any> = mockk {
+    private fun propertyOf(node: Node<Any>): Capability<Any> = mockk {
         every { this@mockk.node } returns node
         every { cloneOnNewNode(any()) } answers { propertyOf(firstArg()) }
     }
@@ -38,7 +38,7 @@ class NodePropertiesTest {
         val property = propertyOf(node)
         node.addProperty(property)
         environment.addNode(node, environment.makePosition(0, 0))
-        assertEquals(listOf<NodeProperty<Any>>(property), node.properties)
+        assertEquals(listOf<Capability<Any>>(property), node.properties)
     }
 
     @Test

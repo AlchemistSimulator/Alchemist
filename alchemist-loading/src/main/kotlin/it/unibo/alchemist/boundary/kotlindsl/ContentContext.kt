@@ -38,7 +38,7 @@ object ContentContext {
      */
     context(incarnation: Incarnation<T, *>, node: Node<T>)
     operator fun <T> Molecule.invoke(concentration: T = incarnation.createConcentration()) =
-        node.setConcentration(this, concentration)
+        node.set(this, concentration)
 
     /**
      * Create the [Molecule] identified by this string using the current [Incarnation]

@@ -52,7 +52,7 @@ _homogeneous_properties: &homogeneous_properties
 deployments:
   - type: Circle
     parameters: [8, 0, 0, 15]
-    properties:
+    capabilities:
       <<: *homogeneous_properties
       social:
         type: Social
@@ -60,7 +60,7 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [4, 0, 0, 15]
-    properties:
+    capabilities:
       <<: *homogeneous_properties
       social:
         type: Social
@@ -68,7 +68,7 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [10, 0, 0, 15]
-    properties:
+    capabilities:
       <<: *homogeneous_properties
       social:
         type: Social
@@ -76,7 +76,7 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [2, 0, 0, 15]
-    properties:
+    capabilities:
       <<: *homogeneous_properties
       social:
         type: Social

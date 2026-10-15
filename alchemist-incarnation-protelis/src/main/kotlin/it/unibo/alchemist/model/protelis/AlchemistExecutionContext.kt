@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -149,7 +149,7 @@ class AlchemistExecutionContext<P : Position<P>>(
      * the target device
      * @return the distance
      */
-    fun distanceTo(target: Int): Double = environmentAccess.distanceBetween(node, environmentAccess.getNodeByID(target))
+    fun distanceTo(target: Int): Double = environmentAccess.distanceBetween(node, environmentAccess.nodeWithId(target))
 
     override fun equals(other: Any?) = this === other ||
         other is AlchemistExecutionContext<*> &&
@@ -253,7 +253,7 @@ class AlchemistExecutionContext<P : Position<P>>(
      * Non-integer numbers will be cast to integers.
      * @return the distance on a map
      */
-    fun routingDistance(dest: Number): Double = routingDistance(environmentAccess.getNodeByID(dest.toInt()))
+    fun routingDistance(dest: Number): Double = routingDistance(environmentAccess.nodeWithId(dest.toInt()))
 
     /**
      * Computes the distance along a map. Requires a [MapEnvironment].

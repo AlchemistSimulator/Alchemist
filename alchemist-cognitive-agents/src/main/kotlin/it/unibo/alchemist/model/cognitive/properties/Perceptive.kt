@@ -11,13 +11,13 @@ package it.unibo.alchemist.model.cognitive.properties
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.physics.InfluenceSphere
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 
 /**
  * Base implementation of a pedestrian's capability to influence each other.
  */
 data class Perceptive<T>(override val node: Node<T>, override val fieldOfView: InfluenceSphere<T>) :
-    AbstractNodeProperty<T>(node),
+    AbstractCapability<T>(node),
     PerceptiveProperty<T> {
     override fun cloneOnNewNode(node: Node<T>) = Perceptive(node, fieldOfView)
 }

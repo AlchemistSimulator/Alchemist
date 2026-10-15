@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,10 +14,6 @@ package it.unibo.alchemist.model
  * @param <P>
 </P> */
 interface Position2D<P : Position2D<P>> : Position<P> {
-
-    @Deprecated("Access to coordinates in a 2D manifold should be performed using getX / getY")
-    override fun getCoordinate(dimension: Int): Double
-
     /**
      * @return horizontal position
      */
@@ -27,4 +23,10 @@ interface Position2D<P : Position2D<P>> : Position<P> {
      * @return vertical position
      */
     val y: Double
+
+    @Deprecated(
+        "Access the coordinates of a 2D position through x and y",
+        ReplaceWith("coordinates[dimension]"),
+    )
+    override operator fun get(dimension: Int): Double
 }

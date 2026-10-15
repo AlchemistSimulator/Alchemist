@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -32,7 +32,7 @@ import java.util.function.Function;
  * (i.e., layers for which the values are {@link Number}s).
  * However, one could have
  * a "non-numerical" layer whose
- * {@link Layer#getValue(Position)}
+ * {@link Layer#currentValueAt(Position)}
  * return type is an object from which a value can be extracted somehow.
  * In the end,
  * drawing a layer's values makes sense as long as there is a way to map

@@ -30,7 +30,7 @@ class StableForStepsTest {
         val environment = Continuous2DEnvironment(incarnation)
         environment.simulation = mockk<Simulation<Any?, Euclidean2DPosition>> { every { step } returns 0 }
         val node = GenericNode(environment)
-        node.setConcentration(SimpleMolecule("empty"), null)
+        node[SimpleMolecule("empty")] = null
         environment.addNode(node, environment.makePosition(0, 0))
         val terminator = StableForSteps<Any?, Euclidean2DPosition>(checkInterval = 1, equalIntervals = 2)
         assertEquals(listOf(false, false, true), List(3) { terminator(environment) })

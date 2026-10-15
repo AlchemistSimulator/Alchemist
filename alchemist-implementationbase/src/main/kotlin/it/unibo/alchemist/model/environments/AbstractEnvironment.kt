@@ -193,20 +193,15 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     // Reads the position map directly, rather than through an observable.
     override fun currentPositionOf(node: Node<T>): P = requirePosition(node, nodesToPositions.current[node.id])
 
-    override fun distanceBetween(n1: Node<T>, n2: Node<T>): Double =
-        this@AbstractEnvironment.currentPositionOf(n1).distanceTo(this@AbstractEnvironment.currentPositionOf(n2))
+    override fun distanceBetween(n1: Node<T>, n2: Node<T>): Double = n1.currentPosition.distanceTo(n2.currentPosition)
 
-    override fun getLayer(molecule: Molecule): Layer<T, P>? = layers[molecule]
-
-    override fun getNodeByID(id: Int): Node<T> = requireNotNull(neighborhoods.current[id]) {
-        "Node with id $id does not exist in the environment. Available: ${nodeList.current.map { it.id }.sorted()}"
-    }.center
+    override fun layerFor(molecule: Molecule): Layer<T, P>? = layers[molecule]
 
     override fun neighborhoodOf(node: Node<T>): Observable<Neighborhood<T>> =
         neighborhoods[node.id].map { requireNeighborhood(node, it.getOrNull()) }
 
     override fun nodesAround(node: Node<T>, range: Double): List<Node<T>> {
-        val centerPosition = this@AbstractEnvironment.currentPositionOf(node)
+        val centerPosition = node.currentPosition
         val nodesInRange = queryNodesInRange(centerPosition, range)
         // The center is always within any positive range of itself, unless coordinates lost precision.
         check(node in nodesInRange) {
@@ -219,14 +214,18 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     override fun nodesAround(position: P, range: Double): List<Node<T>> = queryNodesInRange(position, range)
 
+    override fun nodeWithId(id: Int): Node<T> = requireNotNull(neighborhoods.current[id]) {
+        "Node with id $id does not exist in the environment. Available: ${nodeList.current.map { it.id }.sorted()}"
+    }.center
+
     /*
      * The layer is looked up whenever the position changes or the value is recomputed,
      * not when the observable is built:
      * conditions may be created during setup before their layer is associated.
      */
     override fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T?> =
-        positionOf(node).switchMap { position ->
-            getLayer(molecule)?.observeValue(position)?.map { it } ?: observe(null)
+        node.position.switchMap { position ->
+            layerFor(molecule)?.valueAt(position)?.map { it } ?: observe(null)
         }
 
     override fun observeNodesAround(node: Node<T>, range: Double): ObservableSet<Node<T>> {
@@ -344,7 +343,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * @param p its new position
      */
     protected fun setPosition(n: Node<T>, p: P) {
-        val pos = this@AbstractEnvironment.currentPositionOf(n)
+        val pos = n.currentPosition
         /*
          * The position map is updated before the range queries, so that queries centered on the moved node see its
          * new position.
@@ -371,7 +370,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         require(range > 0) { "Range query must be positive (provided: $range)" }
         return spatialIndex
             .query(*center.boundingBox(range).map { it.coordinates }.toTypedArray())
-            .filter { this@AbstractEnvironment.currentPositionOf(it).distanceTo(center) <= range }
+            .filter { it.currentPosition.distanceTo(center) <= range }
             .distinct()
     }
 
@@ -469,7 +468,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     private inner class RangeQuery(
         val centerNode: Node<T>?,
         val radius: Double,
-        private val centerPosition: () -> P = { this@AbstractEnvironment.currentPositionOf(checkNotNull(centerNode)) },
+        private val centerPosition: () -> P = { checkNotNull(centerNode).currentPosition },
     ) : ObservableSet<Node<T>> {
         override val current: Set<Node<T>>
             get() = when {

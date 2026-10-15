@@ -335,9 +335,9 @@ class TestDeformableCell {
         .orElseThrow().execute();
         assertEquals(
                 cellNode1.asProperty(CircularDeformableCellProperty.class)
-                        .getPolarizationVersor().getCoordinate(0),
+                        .getPolarizationVersor().get(0),
                 cellNode1.asProperty(CircularDeformableCellProperty.class)
-                        .getPolarizationVersor().getCoordinate(0),
+                        .getPolarizationVersor().get(0),
                 PRECISION
         );
         environment.moveNodeTo(cellNode3, new Euclidean2DPosition(-1, 1));
@@ -349,9 +349,9 @@ class TestDeformableCell {
         .orElseThrow().execute();
         assertEquals(
                 cellNode1.asProperty(CircularDeformableCellProperty.class)
-                        .getPolarizationVersor().getCoordinate(0),
+                        .getPolarizationVersor().get(0),
                 -cellNode1.asProperty(CircularDeformableCellProperty.class)
-                        .getPolarizationVersor().getCoordinate(1),
+                        .getPolarizationVersor().get(1),
                 PRECISION
         );
     }

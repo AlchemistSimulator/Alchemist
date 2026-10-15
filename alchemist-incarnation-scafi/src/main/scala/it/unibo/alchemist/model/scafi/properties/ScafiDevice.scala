@@ -10,15 +10,15 @@
 package it.unibo.alchemist.model.scafi.properties
 
 import it.unibo.alchemist.model.scafi.actions.{RunScafiProgram, SendScafiMessage}
-import it.unibo.alchemist.model.{Node, NodeProperty}
+import it.unibo.alchemist.model.{Capability, Node}
 import org.slf4j.LoggerFactory
 
 import scala.jdk.CollectionConverters.*
 
-class ScafiDevice[E](node: Node[E]) extends NodeProperty[E]:
+class ScafiDevice[E](node: Node[E]) extends Capability[E]:
   override def getNode: Node[E] = node
 
-  override def cloneOnNewNode(node: Node[E]): NodeProperty[E] = new ScafiDevice[E](node)
+  override def cloneOnNewNode(node: Node[E]): Capability[E] = new ScafiDevice[E](node)
 
   /**
    * Validates that the node has the required send actions for communication. Warns the user if ScafiDevice nodes are

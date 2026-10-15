@@ -33,7 +33,7 @@ class SAPEREChemotaxis<P : Position<P>>(
     }
 
     override fun execute() {
-        val destination = environment.getNodeByID(getLSAArgumentAsInt(gradient, idPosition)) as ILsaNode
+        val destination = environment.nodeWithId(getLSAArgumentAsInt(gradient, idPosition)) as ILsaNode
         allocateAndInject(response, destination)
     }
 }

@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.physics.PhysicsEnvironment
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 
 /**
  * The node's [CognitiveModel].
@@ -30,7 +30,7 @@ constructor(
     private val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
     override val danger: Molecule? = null,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     CognitiveProperty<T>
     where P : Position<P>,
           P : Vector<P>,
@@ -43,7 +43,8 @@ constructor(
         ) {
             when (danger) {
                 null -> 0.0
-                else -> environment.getLayer(danger)?.getValue(environment.currentPositionOf(node)) as? Double ?: 0.0
+                else -> environment.layerFor(danger)?.currentValueAt(environment.currentPositionOf(node)) as? Double
+                    ?: 0.0
             }
         }
     }

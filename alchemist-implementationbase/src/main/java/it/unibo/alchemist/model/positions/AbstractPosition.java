@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -85,7 +85,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     }
 
     @Override
-    public final double getCoordinate(final int dimension) {
+    public final double get(final int dimension) {
         if (dimension < 0 || dimension >= c.length) {
             throw new IllegalArgumentException(dimension + "is not an allowed dimension, only values between 0 and "
                     + (c.length - 1) + "are allowed.");

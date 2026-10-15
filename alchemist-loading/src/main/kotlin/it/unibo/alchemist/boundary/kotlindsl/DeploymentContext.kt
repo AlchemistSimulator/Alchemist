@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.boundary.kotlindsl
 
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.TimeDistribution
@@ -24,7 +24,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * A [DeploymentContext] is typically entered once per deployed position, and provides:
  * - the target [position] being deployed;
  * - utilities to create and attach reactions (optionally configuring actions/conditions);
- * - utilities to initialize node contents and attach [NodeProperty] instances.
+ * - utilities to initialize node contents and attach [Capability] instances.
  *
  * Most operations rely on Kotlin context receivers, so the relevant [Incarnation], [Environment],
  * [RandomGenerator], and [Node] instances are expected to be available in the surrounding scope.
@@ -126,13 +126,13 @@ interface DeploymentContext<T, P : Position<P>> {
     }
 
     /**
-     * Attaches a [NodeProperty] to the current node.
+     * Attaches [capability] to the current node.
      *
-     * @param property the property instance to add to the node.
+     * @param capability the capability to add to the node.
      */
     context(node: Node<T>)
-    fun nodeProperty(property: NodeProperty<T>) {
-        node.addProperty(property)
+    fun capability(capability: Capability<T>) {
+        node.addProperty(capability)
     }
 
     private companion object {

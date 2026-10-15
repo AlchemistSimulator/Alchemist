@@ -269,9 +269,9 @@ If left unspecified, nodes get created through
 * Creation of heterogeneous pedestrians
   {{<code path="alchemist-cognitive-agents/src/test/resources/heterogeneous-pedestrians.yml" >}}
 
-### `deployment.properties`
+### `deployment.capabilities`
 
-**Type**: Traversable of [`property`](#property)
+**Type**: Traversable of [`capability`](#capability)
 
 ### `deployment.programs`
 
@@ -317,7 +317,7 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 
 **Type**: Traversable of [shapeFilter](#shapefilter)
 
-### `property`
+### `capability`
 
 **Type**: SpecMap
 
@@ -327,15 +327,15 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 |----------------|--------------------|
 | `type`         | `parameters`, `in` |
 
-### `property.type`
+### `capability.type`
 
 Same as [type](#type)
 
-### `property.parameters`
+### `capability.parameters`
 
 Same as [parameters](#parameters)
 
-### `property.in`
+### `capability.in`
 
 **Type**: Traversable of [shapeFilter](#shapefilter)
 

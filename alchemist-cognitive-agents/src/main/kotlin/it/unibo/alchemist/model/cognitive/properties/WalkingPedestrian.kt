@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.cognitive.properties
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitive.impact.individual.Speed
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 
 /**
  * Implementation of a basic [WalkingPedestrianProperty].
@@ -21,7 +21,7 @@ data class WalkingPedestrian<T>
 constructor(
     override val node: Node<T>,
     override val walkingSpeed: Double = Speed.default,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     WalkingPedestrianProperty<T> {
     override fun cloneOnNewNode(node: Node<T>) = WalkingPedestrian(node, walkingSpeed)
 }

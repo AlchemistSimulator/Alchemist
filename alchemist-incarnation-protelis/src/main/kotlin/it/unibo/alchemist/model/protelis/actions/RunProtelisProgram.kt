@@ -197,7 +197,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
 
     override fun execute() {
         vm.runCycle()
-        targetNode.setConcentration(name, vm.currentValue)
+        targetNode[name] = vm.currentValue
         computationalCycleIsComplete.update { true }
     }
 

@@ -39,7 +39,7 @@ class ConditionalClosestN<T, P : Position<P>>(
     override fun nodeIsEnabled(node: Node<T>): Boolean = node[molecule].map { it == value }.getOrElse { false }
 
     override val Node<T>.canBeLinked: Observable<Boolean> get() =
-        observeConcentration(molecule).map { concentration ->
+        concentrationOf(molecule).map { concentration ->
             concentration.map { it == value }.getOrElse { false }
         }
 }

@@ -17,16 +17,16 @@ import it.unibo.alchemist.model.observation.Observable
  * A [Layer] whose spatial distribution never changes over time: the value observed at a position is fixed, so
  * observers of a node's layer value are notified only when the node moves.
  *
- * Implementations define the distribution through [getValue].
+ * Implementations define the distribution through [currentValueAt].
  *
  * @param T the type of the value measuring the substance at a position
  * @param P the position type
  */
 abstract class TimeInvariantLayer<T, P : Position<out P>> : Layer<T, P> {
-    abstract override fun getValue(position: P): T
+    abstract override fun currentValueAt(position: P): T
 
-    final override fun observeValue(position: P): Observable<T> = object : Observable<T> {
-        override val current: T = getValue(position)
+    final override fun valueAt(position: P): Observable<T> = object : Observable<T> {
+        override val current: T = currentValueAt(position)
 
         override val observers: List<Any> = emptyList()
 

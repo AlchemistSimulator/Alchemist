@@ -44,14 +44,14 @@ class TestContinuous2DObstacle {
         environment.addObstacle(R0527);
         assertEquals(
             new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(1.0, 0.0)),
-            environment.next(new Euclidean2DPosition(0, 0), new Euclidean2DPosition(1, 1))
+            environment.farthestValidPositionFromTo(new Euclidean2DPosition(0, 0), new Euclidean2DPosition(1, 1))
         );
         assertEquals(
             new Euclidean2DPosition(0, 0),
-            environment.next(new Euclidean2DPosition(1, 1), new Euclidean2DPosition(0, 0)));
+            environment.farthestValidPositionFromTo(new Euclidean2DPosition(1, 1), new Euclidean2DPosition(0, 0)));
         assertEquals(
             new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(0.5, 0.0)),
-            environment.next(
+            environment.farthestValidPositionFromTo(
                 new Euclidean2DPosition(0, 0),
                 new Euclidean2DPosition(2, 1)
             )

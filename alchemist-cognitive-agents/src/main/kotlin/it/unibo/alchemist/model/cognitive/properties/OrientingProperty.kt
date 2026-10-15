@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.cognitive.properties
 
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexShape
@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph
  * @param E the type of edges in the navigation graph.
  */
 interface OrientingProperty<T, P, A, L, N, E> :
-    NodeProperty<T>
+    Capability<T>
     where P : Position<P>,
           P : Vector<P>,
           A : Transformation<P>,

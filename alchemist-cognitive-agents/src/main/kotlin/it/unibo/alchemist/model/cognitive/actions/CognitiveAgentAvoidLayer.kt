@@ -84,7 +84,7 @@ constructor(
          */
         val visualTrajectoryOccluded =
             (environment as? EnvironmentWithObstacles<*, *, Euclidean2DPosition>)
-                ?.intersectsObstacle(currentPosition, center)
+                ?.shortestPathIntersectsObstacle(currentPosition, center)
                 ?: false
         center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded
     } ?: true

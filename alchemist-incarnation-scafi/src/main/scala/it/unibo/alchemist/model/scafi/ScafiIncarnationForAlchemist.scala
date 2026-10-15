@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -75,10 +76,10 @@ object ScafiIncarnationForAlchemist
       if optional.isPresent then Some(optional.get()) else None
 
     private def findInLayers[A](name: String): A =
-      val layer: Layer[Any, Position[?]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
-      val node = alchemistEnvironment.getNodeByID(mid())
+      val layer: Layer[Any, Position[?]] = alchemistEnvironment.layerFor(new SimpleMolecule(name))
+      val node = alchemistEnvironment.nodeWithId(mid())
       layer
-        .getValue(alchemistEnvironment.currentPositionOf(node))
+        .currentValueAt(alchemistEnvironment.currentPositionOf(node))
         .asInstanceOf[A]
 
     def senseEnvData[A](name: String): A =

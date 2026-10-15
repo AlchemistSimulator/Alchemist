@@ -29,4 +29,7 @@ interface ReactionHost<T> {
 
     /** Unregisters [reaction] and notifies the running simulation when it was actually present. */
     fun removeReaction(reaction: Reaction<T>)
+
+    /** Unregisters this reaction from its host, see [removeReaction]. */
+    fun Reaction<T>.remove() = removeReaction(this)
 }

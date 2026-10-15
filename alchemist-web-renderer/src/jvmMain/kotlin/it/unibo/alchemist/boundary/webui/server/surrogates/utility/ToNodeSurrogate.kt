@@ -35,6 +35,6 @@ fun <T, P, TS, PS> Node<T>.toNodeSurrogate(
 ): NodeSurrogate<TS, PS>
     where TS : Any, P : Position<out P>, PS : PositionSurrogate = NodeSurrogate(
     id,
-    contents.map { it.key.toMoleculeSurrogate() to toConcentrationSurrogate(it.value) }.toMap(),
+    contents.current.map { it.key.toMoleculeSurrogate() to toConcentrationSurrogate(it.value) }.toMap(),
     toPositionSurrogate(environment.currentPositionOf(this)),
 )

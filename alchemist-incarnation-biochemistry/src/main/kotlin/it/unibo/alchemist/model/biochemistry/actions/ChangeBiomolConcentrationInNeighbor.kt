@@ -46,7 +46,7 @@ class ChangeBiomolConcentrationInNeighbor(
     }
 
     override fun execute(neighbor: Node<Double>) {
-        neighbor.setConcentration(molecule, neighbor.getOrZeroConcentration(molecule) + deltaConcentration)
+        neighbor[molecule] = neighbor.getOrZeroConcentration(molecule) + deltaConcentration
     }
 
     override fun toString(): String = if (deltaConcentration >= 0) {

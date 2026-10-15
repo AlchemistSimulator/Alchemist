@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -201,7 +201,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double getCoordinate(final int dimension) {
+    public double get(final int dimension) {
         if (dimension == 0) {
             return getLatitude();
         }

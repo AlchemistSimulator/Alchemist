@@ -14,7 +14,7 @@ variables:
 deployments:
   - type: Circle
     parameters: [10, 0, 0, 20]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: Perceptive2D
       - type: CircularArea
@@ -22,7 +22,7 @@ deployments:
         parameters: [*group1]
   - type: Circle
     parameters: [15, 0, 0, 20]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: Perceptive2D
       - type: CircularArea

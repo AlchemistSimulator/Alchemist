@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -28,7 +28,7 @@ data class NodeSurrogate<T>(@param:GraphQLIgnore override val origin: Node<T>, v
      * The number of [Molecule]s in this node.
      */
     val moleculeCount: Int
-        get() = origin.moleculeCount
+        get() = origin.currentMoleculeCount
 
     /**
      * @return the list of properties/capabilities of this node as a string.
@@ -46,7 +46,7 @@ data class NodeSurrogate<T>(@param:GraphQLIgnore override val origin: Node<T>, v
      * @return the molecule corresponding to the i-th position.
      */
     @GraphQLDescription("List of Molecule-Concentration pairs")
-    fun contents() = origin.contents.toMoleculeToConcentrationMap()
+    fun contents() = origin.contents.current.toMoleculeToConcentrationMap()
 
     /**
      * Calculates the concentration of a molecule.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -41,18 +41,18 @@ class NodeSurrogateTest<T, P> where T : Any, P : Position<P>, P : Vector<P> {
     companion object {
         fun <T : Any> checkNodeSurrogate(node: Node<T>, nodeSurrogate: NodeSurrogate<T>) {
             assertEquals(node.id, nodeSurrogate.id, "Node ID mismatch")
-            assertEquals(node.moleculeCount, nodeSurrogate.moleculeCount, "Molecule count mismatch")
+            assertEquals(node.currentMoleculeCount, nodeSurrogate.moleculeCount, "Molecule count mismatch")
             assertEquals(node.reactions.current.size, nodeSurrogate.reactions().size, "Reaction count mismatch")
             node.reactions.current.forEach { reaction ->
                 checkReactionSurrogate(node, reaction.toGraphQLReactionSurrogate(node))
             }
-            node.contents.forEach { (molecule, concentration) ->
+            node.contents.current.forEach { (molecule, concentration) ->
                 val surrogate = nodeSurrogate.contents()[MoleculeInput(molecule.name)]
                 assertNotNull(surrogate, "Surrogate concentration should not be null for molecule ${molecule.name}")
                 checkConcentrationContent(concentration, surrogate)
             }
-            assertEquals(node.contents.size, nodeSurrogate.contents().size, "Content map size mismatch")
-            node.contents.forEach { (molecule, concentration) ->
+            assertEquals(node.contents.current.size, nodeSurrogate.contents().size, "Content map size mismatch")
+            node.contents.current.forEach { (molecule, concentration) ->
                 val moleculeInput = MoleculeInput(molecule.name)
                 assertTrue(nodeSurrogate.contains(moleculeInput), "NodeSurrogate should contain $moleculeInput")
                 val actual = nodeSurrogate.getConcentration(moleculeInput)

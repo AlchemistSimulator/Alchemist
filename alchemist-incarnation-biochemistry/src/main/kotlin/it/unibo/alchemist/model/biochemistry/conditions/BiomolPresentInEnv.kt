@@ -32,7 +32,7 @@ class BiomolPresentInEnv<P : Position<out P>>(
         .switchMap { neighborhood ->
             neighborhood.neighbors
                 .filterIsInstance<EnvironmentNode>()
-                .map { neighbor -> neighbor.observeConcentration(biomolecule).map { it.getOrElse { 0.0 } } }
+                .map { neighbor -> neighbor.concentrationOf(biomolecule).map { it.getOrElse { 0.0 } } }
                 .combineLatest { quantities -> quantities.sum() }
                 .map { it.getOrElse { 0.0 } }
         }.mergeWith(environment.observeLayerValue(biomolecule, targetNode)) { neighboringQuantity, layerQuantity ->

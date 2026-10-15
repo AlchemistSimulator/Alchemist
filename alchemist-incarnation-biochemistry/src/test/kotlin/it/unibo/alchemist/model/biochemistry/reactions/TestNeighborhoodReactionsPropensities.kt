@@ -59,12 +59,12 @@ class TestNeighborhoodReactionsPropensities {
         environment = BioRect2DEnvironment(INCARNATION)
         with(environment) { networkModel = connectWithinDistance(5.0) }
         centralNode = INCARNATION.createNode(RANDOM, environment, null)
-        centralNode.setConcentration(BIOMOLECULE, 100.0)
+        centralNode[BIOMOLECULE] = 100.0
         environment.addNode(centralNode, POSITION)
         neighbors =
             (1..10)
                 .map { Pair(it * 10.0, INCARNATION.createNode(RANDOM, environment, null)) }
-                .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
+                .onEach { it.second.set(BIOMOLECULE, it.first) }
                 .map { it.second }
                 .onEach { environment.addNode(it, POSITION) }
         assertEquals(neighbors.toList(), environment.neighborhoodOf(centralNode).current.neighbors.toList())

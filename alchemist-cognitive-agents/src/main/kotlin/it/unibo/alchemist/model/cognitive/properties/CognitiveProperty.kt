@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.cognitive.properties
 
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.cognitive.CognitiveModel
 
 /**
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.cognitive.CognitiveModel
  *
  * @param T the concentration type of the environment.
  */
-interface CognitiveProperty<T> : NodeProperty<T> {
+interface CognitiveProperty<T> : Capability<T> {
     /**
      * The molecule used to signal danger in the environment, if any.
      */

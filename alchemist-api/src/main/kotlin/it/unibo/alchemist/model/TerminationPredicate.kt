@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -27,7 +27,7 @@ fun interface TerminationPredicate<T, P : Position<out P>> : (Environment<T, P>)
     /**
      * Builds a predicate that is true if both `this` and the [other] predicate are true.
      */
-    fun or(other: TerminationPredicate<T, P>): TerminationPredicate<T, P> = TerminationPredicate<T, P> {
+    fun or(other: TerminationPredicate<T, P>): TerminationPredicate<T, P> = TerminationPredicate {
         this(it) || other(it)
     }
 }

@@ -135,14 +135,7 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
      * Get the [Layer] associate to the given [molecule]. If no Layer is associated
      * with the given molecule, return `null`.
      */
-    fun getLayer(molecule: Molecule): Layer<T, P>?
-
-    /**
-     * Allows accessing a [Node] in this [Environment] known its [id].
-     * Depending on the implementation, this method may or may not be optimized
-     * (namely, id could run in constant or linear time with the number of nodes).
-     */
-    fun getNodeByID(id: Int): Node<T>
+    fun layerFor(molecule: Molecule): Layer<T, P>?
 
     /**
      * Given the [coordinates] of the point,
@@ -195,6 +188,13 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     fun nodesAround(position: P, range: Double): List<Node<T>>
 
     /**
+     * Allows accessing a [Node] in this [Environment] known its [id].
+     * Depending on the implementation, this method may or may not be optimized
+     * (namely, id could run in constant or linear time with the number of nodes).
+     */
+    fun nodeWithId(id: Int): Node<T>
+
+    /**
      * Observes the value of the [Layer] associated with [molecule] at the position of [node].
      * The observable emits when [node] moves to a position where the value differs, and when the layer changes the
      * value at the current position of [node]. Its value is `null` while no layer is associated with [molecule]; the
@@ -222,4 +222,59 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
      * If node removal is unsupported, it does nothing.
      */
     fun removeNode(node: Node<T>)
+
+    /**
+     * A position with these coordinates, see [makePosition].
+     */
+    fun DoubleArray.toPosition(): P = makePosition(this)
+
+    /**
+     * The current position of this node, see [currentPositionOf].
+     */
+    val Node<T>.currentPosition: P get() = currentPositionOf(this)
+
+    /**
+     * The observable neighborhood of this node, see [neighborhoodOf].
+     */
+    val Node<T>.neighborhood: Observable<Neighborhood<T>> get() = neighborhoodOf(this)
+
+    /**
+     * The observable position of this node, see [positionOf].
+     */
+    val Node<T>.position: Observable<P> get() = positionOf(this)
+
+    /**
+     * The distance between this node and [other], see [distanceBetween].
+     */
+    fun Node<T>.distanceTo(other: Node<T>): Double = distanceBetween(this, other)
+
+    /**
+     * Moves this node to [position], see [moveNodeTo].
+     */
+    fun Node<T>.moveTo(position: P): Unit = moveNodeTo(this, position)
+
+    /**
+     * The nodes within [range] of this node, see [nodesAround].
+     */
+    fun Node<T>.nodesInRange(range: Double): List<Node<T>> = nodesAround(this, range)
+
+    /**
+     * Observes the nodes within [range] of this node, see [observeNodesAround].
+     */
+    fun Node<T>.observeNodesInRange(range: Double): ObservableSet<Node<T>> = observeNodesAround(this, range)
+
+    /**
+     * Removes this node, see [removeNode].
+     */
+    fun Node<T>.remove(): Unit = removeNode(this)
+
+    /**
+     * The nodes within [range] of this position, see [nodesAround].
+     */
+    fun P.nodesInRange(range: Double): List<Node<T>> = nodesAround(this, range)
+
+    /**
+     * Observes the nodes within [range] of this position, see [observeNodesAround].
+     */
+    fun P.observeNodesInRange(range: Double): ObservableSet<Node<T>> = observeNodesAround(this, range)
 }

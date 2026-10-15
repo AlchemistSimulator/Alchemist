@@ -28,7 +28,7 @@ class LsaNodeContentsTest {
     @Test
     fun `subscribers of the observable contents receive the molecule counts`() {
         val received = mutableListOf<Map<Molecule, Any?>>()
-        node.observableContents.onChange(this, invokeOnRegistration = false) { received += count(it) }
+        node.contents.onChange(this, invokeOnRegistration = false) { received += count(it) }
         node.addLsa(molecule)
         node.addLsa(molecule)
         node.removeOneMatchedLsa(molecule)
@@ -45,10 +45,10 @@ class LsaNodeContentsTest {
         node.addLsa(molecule)
         node.addLsa(molecule)
         node.addLsa(other)
-        node.removeConcentration(molecule as Molecule)
+        node.removeAllConcentrationOf(molecule as Molecule)
         assertEquals(listOf<ILsaMolecule>(other), node.lsaSpace)
-        assertEquals(mapOf<Molecule, Any?>(other to 1.0), count(node.contents))
+        assertEquals(mapOf<Molecule, Any?>(other to 1.0), count(node.contents.current))
         node.addLsa(molecule)
-        assertEquals(mapOf<Molecule, Any?>(other to 1.0, molecule to 1.0), count(node.contents))
+        assertEquals(mapOf<Molecule, Any?>(other to 1.0, molecule to 1.0), count(node.contents.current))
     }
 }

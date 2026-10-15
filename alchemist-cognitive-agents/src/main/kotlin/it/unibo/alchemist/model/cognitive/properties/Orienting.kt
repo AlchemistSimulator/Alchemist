@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph
 import it.unibo.alchemist.model.geometry.navigationgraph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 import it.unibo.alchemist.util.Iterables.shuffled
 import it.unibo.alchemist.util.Lists.takeFraction
 import org.apache.commons.math3.random.RandomGenerator
@@ -48,7 +48,7 @@ constructor(
      * them).
      */
     private val minArea: Double = 10.0,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     OrientingProperty<T, P, A, L, N, DefaultEdge>
     where P : Position<P>,
           P : Vector<P>,

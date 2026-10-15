@@ -9,14 +9,14 @@
 
 package it.unibo.alchemist.model.cognitive.properties
 
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Capability
 
 /**
  * Capability that allows a node to run.
  *
  * @param T the concentration type.
  */
-interface RunningPedestrianProperty<T> : NodeProperty<T> {
+interface RunningPedestrianProperty<T> : Capability<T> {
     /** The node's running speed. */
     val runningSpeed: Double
 }

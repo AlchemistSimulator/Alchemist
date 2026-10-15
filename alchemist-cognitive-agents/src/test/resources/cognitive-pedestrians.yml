@@ -26,7 +26,7 @@ _cognitive_properties: &properties
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
-    properties:
+    capabilities:
       <<: *properties
       human:
         type: Human
@@ -34,7 +34,7 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [50, 0, 0, 20]
-    properties:
+    capabilities:
       <<: *properties
       human:
         type: Human

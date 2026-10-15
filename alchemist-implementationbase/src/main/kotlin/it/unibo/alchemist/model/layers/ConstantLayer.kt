@@ -20,5 +20,5 @@ import it.unibo.alchemist.model.Position
  * @param level the value of the layer
  */
 class ConstantLayer<T, P : Position<out P>>(private val level: T) : TimeInvariantLayer<T, P>() {
-    override fun getValue(position: P): T = level
+    override fun currentValueAt(position: P): T = level
 }

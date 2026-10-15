@@ -59,7 +59,7 @@ constructor(
         super.conditionForRemoval(environment, center, neighbor, centerRange, neighRange)
 
     // Whether a node carries the filter molecule, which qualifies it as a neighbor.
-    final override fun observeRemovalInputs(node: Node<T>): Observable<*> = node.observeContains(moleculeType)
+    final override fun observeRemovalInputs(node: Node<T>): Observable<*> = node.containsMolecule(moleculeType)
 
     /**
      * Default parameters.

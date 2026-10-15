@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.cognitive.properties
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitive.impact.individual.Speed
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -28,7 +28,7 @@ constructor(
     override val node: Node<T>,
     override val walkingSpeed: Double = Speed.default,
     override val runningSpeed: Double = Speed.default * 3,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     PedestrianProperty<T>,
     WalkingPedestrianProperty<T> by WalkingPedestrian(node, walkingSpeed),
     RunningPedestrianProperty<T> by RunningPedestrian(node, runningSpeed) {

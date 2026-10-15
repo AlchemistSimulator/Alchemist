@@ -66,7 +66,7 @@ class ConnectionBeam<T>(
         neighbor: Node<T>,
         neighborInput: Euclidean2DPosition,
     ): Boolean = obstacleEnvironment?.let {
-        !it.intersectsObstacle(centerInput, neighborInput) ||
+        !it.shortestPathIntersectsObstacle(centerInput, neighborInput) ||
             projectedBeamOvercomesObstacle(centerInput, neighborInput)
     } ?: true
 

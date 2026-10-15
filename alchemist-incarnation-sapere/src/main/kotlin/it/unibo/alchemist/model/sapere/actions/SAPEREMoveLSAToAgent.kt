@@ -33,7 +33,7 @@ class SAPEREMoveLSAToAgent(
         reaction: NodeReaction<List<ILsaMolecule>>,
         destinationId: Int,
         template: ILsaMolecule,
-    ) : this(reaction, environment.getNodeByID(destinationId) as ILsaNode, template)
+    ) : this(reaction, environment.nodeWithId(destinationId) as ILsaNode, template)
 
     override fun execute() {
         val instance = allocateVarsAndBuildLSA(template)

@@ -37,7 +37,7 @@ class LsaNodeConcurrencyTest {
                             // Readers must never observe a ConcurrentModificationException.
                             node.contents
                             node.lsaSpace
-                            assertTrue(node.moleculeCount >= 0)
+                            assertTrue(node.currentMoleculeCount >= 0)
                         } else {
                             write(node, threadId, operation)
                         }
@@ -50,14 +50,14 @@ class LsaNodeConcurrencyTest {
             executor.shutdownNow()
             assertTrue(executor.awaitTermination(TIMEOUT_SECONDS, TimeUnit.SECONDS))
         }
-        assertTrue(node.moleculeCount >= 0)
+        assertTrue(node.currentMoleculeCount >= 0)
     }
 
     private fun write(node: LsaNode, threadId: Int, operation: Int) {
         val molecule: ILsaMolecule = LsaMolecule("thread${threadId}x$operation")
         node.addLsa(molecule)
         // Occasionally remove molecules to simulate concurrent modifications.
-        if (operation % REMOVAL_PERIOD == 0 && node.moleculeCount > MIN_MOLECULES) {
+        if (operation % REMOVAL_PERIOD == 0 && node.currentMoleculeCount > MIN_MOLECULES) {
             // Another thread may have already removed the molecule.
             runCatching { node.removeOneMatchedLsa(molecule) }
                 .onFailure { check(it is IllegalStateException) { "Unexpected failure: $it" } }
@@ -68,15 +68,15 @@ class LsaNodeConcurrencyTest {
     fun `basic node operations work`() {
         val node = newNode()
         val molecule: ILsaMolecule = LsaMolecule("test")
-        assertEquals(0, node.moleculeCount)
+        assertEquals(0, node.currentMoleculeCount)
         assertFalse(node.contains(molecule))
         node.addLsa(molecule)
-        assertEquals(1, node.moleculeCount)
+        assertEquals(1, node.currentMoleculeCount)
         assertTrue(node.contains(molecule))
-        assertEquals(1, node.contents.size)
+        assertEquals(1, node.contents.current.size)
         assertEquals(1, node.lsaSpace.size)
         assertTrue(node.removeOneMatchedLsa(molecule))
-        assertEquals(0, node.moleculeCount)
+        assertEquals(0, node.currentMoleculeCount)
         assertFalse(node.contains(molecule))
     }
 

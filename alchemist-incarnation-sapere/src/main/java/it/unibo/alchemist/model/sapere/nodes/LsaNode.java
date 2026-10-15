@@ -86,7 +86,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     @NotNull
-    public Observable<Integer> getObserveMoleculeCount() {
+    public Observable<Integer> getMoleculeCount() {
         return moleculeCount;
     }
 
@@ -113,7 +113,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     @NotNull
-    public Observable<Option<List<ILsaMolecule>>> observeConcentration(@NotNull final Molecule molecule) {
+    public Observable<Option<List<ILsaMolecule>>> concentrationOf(@NotNull final Molecule molecule) {
         if (!(molecule instanceof final ILsaMolecule lsaTemplate)) {
             throw new IllegalArgumentException(molecule + INCOMPATIBLE_MOLECULE);
         }
@@ -122,7 +122,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
 
     @Override
     @NotNull
-    public Observable<Boolean> observeContains(@NotNull final Molecule molecule) {
+    public Observable<Boolean> containsMolecule(@NotNull final Molecule molecule) {
         if (molecule instanceof final ILsaMolecule toMatch) {
             return observeCandidates(toMatch).map(molecules ->
                 molecules.stream().anyMatch(mol -> mol.matches(toMatch))
@@ -143,7 +143,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
      * @throws java.util.NoSuchElementException if the node contains no copy of it
      */
     @Override
-    public void removeConcentration(@Nonnull final Molecule moleculeToRemove) {
+    public void removeAllConcentrationOf(@Nonnull final Molecule moleculeToRemove) {
         if (!(moleculeToRemove instanceof final ILsaMolecule lsa)) {
             throw new IllegalArgumentException(moleculeToRemove + INCOMPATIBLE_MOLECULE);
         }
@@ -185,7 +185,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public void setConcentration(@Nonnull final Molecule molecule, final List<ILsaMolecule> c) {
+    public void set(@Nonnull final Molecule molecule, final List<ILsaMolecule> c) {
         if (molecule instanceof final ILsaMolecule il) {
             addLsa(il);
         } else {
@@ -214,7 +214,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
      */
     private void updateCount(final ILsaMolecule instance, final List<ILsaMolecule> bucket) {
         final long count = bucket.stream().filter(instance::equals).count();
-        final ObservableMutableMap<Molecule, List<ILsaMolecule>> contents = getObservableContents();
+        final ObservableMutableMap<Molecule, List<ILsaMolecule>> contents = getContents();
         if (count > 0) {
             final IExpression countExpression = new Expression(new NumTreeNode((double) count));
             contents.put(instance, List.of(new LsaMolecule(Collections.singletonList(countExpression))));

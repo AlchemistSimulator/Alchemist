@@ -14,6 +14,7 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
@@ -21,7 +22,6 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
@@ -308,7 +308,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun setup() = Unit
 
-        override fun keySet(): Set<String> = node.contents.keys
+        override fun keySet(): Set<String> = node.contents.current.keys
             .map { it.getName() }
             .toSet() + shadow.keySet()
     }
@@ -346,21 +346,19 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     }
 
     private data object NoNode : Node<Any> {
-        override val contents: MutableMap<Molecule, Any> get() = notImplemented()
-
         override val id: Int get() = notImplemented()
 
-        override val moleculeCount: Int get() = notImplemented()
+        override val currentMoleculeCount: Int get() = notImplemented()
 
-        override val observableContents: ObservableMap<Molecule, Any> get() = notImplemented()
+        override val contents: ObservableMap<Molecule, Any> get() = notImplemented()
 
-        override val observeMoleculeCount: Observable<Int> get() = notImplemented()
+        override val moleculeCount: Observable<Int> get() = notImplemented()
 
-        override val properties: List<NodeProperty<Any>> = emptyList()
+        override val properties: List<Capability<Any>> = emptyList()
 
         override val reactions: ObservableList<Reaction<Any>> get() = notImplemented()
 
-        override fun addProperty(nodeProperty: NodeProperty<Any>) = notImplemented<Unit>()
+        override fun addProperty(capability: Capability<Any>) = notImplemented<Unit>()
 
         override fun addReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
@@ -374,15 +372,15 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun get(molecule: Molecule): Option<Any> = notImplemented()
 
-        override fun observeConcentration(molecule: Molecule): Observable<Option<Any>> = notImplemented()
+        override fun concentrationOf(molecule: Molecule): Observable<Option<Any>> = notImplemented()
 
-        override fun observeContains(molecule: Molecule): Observable<Boolean> = notImplemented()
+        override fun containsMolecule(molecule: Molecule): Observable<Boolean> = notImplemented()
 
-        override fun removeConcentration(moleculeToRemove: Molecule) = notImplemented<Unit>()
+        override fun removeAllConcentrationOf(moleculeToRemove: Molecule) = notImplemented<Unit>()
 
         override fun removeReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
-        override fun setConcentration(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
+        override fun set(molecule: Molecule, concentration: Any) = notImplemented<Unit>()
 
         private fun <A> notImplemented(): A =
             throw UnsupportedOperationException("Method can't be invoked in this context.")

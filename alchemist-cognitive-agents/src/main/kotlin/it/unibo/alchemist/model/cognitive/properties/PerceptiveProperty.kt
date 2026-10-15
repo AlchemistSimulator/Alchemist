@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.cognitive.properties
 
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.physics.InfluenceSphere
 
 /**
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.physics.InfluenceSphere
  *
  * @param T the concentration type.
  */
-interface PerceptiveProperty<T> : NodeProperty<T> {
+interface PerceptiveProperty<T> : Capability<T> {
     /** The agent's primary field of view. */
     val fieldOfView: InfluenceSphere<T>
 

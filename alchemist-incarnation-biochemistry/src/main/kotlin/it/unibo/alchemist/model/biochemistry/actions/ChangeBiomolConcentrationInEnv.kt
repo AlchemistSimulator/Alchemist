@@ -76,16 +76,16 @@ class ChangeBiomolConcentrationInEnv(
             for (target in sorted) {
                 val concentration = target.getOrZeroConcentration(biomolecule)
                 if (concentration >= abs(remaining)) {
-                    target.setConcentration(biomolecule, concentration + remaining)
+                    target[biomolecule] = concentration + remaining
                     break
                 }
                 // Remove all the molecules of the species from this node, then continue with the next one.
                 remaining += concentration
-                target.removeConcentration(biomolecule)
+                target.removeAllConcentrationOf(biomolecule)
             }
         } else {
             val target = sorted.first()
-            target.setConcentration(biomolecule, target.getOrZeroConcentration(biomolecule) + deltaConcentration)
+            target[biomolecule] = target.getOrZeroConcentration(biomolecule) + deltaConcentration
         }
     }
 
@@ -97,17 +97,17 @@ class ChangeBiomolConcentrationInEnv(
                 val target = candidates[index]
                 val concentration = target.getOrZeroConcentration(biomolecule)
                 if (concentration >= abs(remaining)) {
-                    target.setConcentration(biomolecule, concentration + remaining)
+                    target[biomolecule] = concentration + remaining
                     break
                 }
                 // Remove all the molecules of the species from this node, then continue with another one.
                 remaining += concentration
-                target.removeConcentration(biomolecule)
+                target.removeAllConcentrationOf(biomolecule)
                 candidates.removeAt(index)
             }
         } else {
             val target = candidates[randomGenerator.nextInt(candidates.size)]
-            target.setConcentration(biomolecule, target.getOrZeroConcentration(biomolecule) + deltaConcentration)
+            target[biomolecule] = target.getOrZeroConcentration(biomolecule) + deltaConcentration
         }
     }
 

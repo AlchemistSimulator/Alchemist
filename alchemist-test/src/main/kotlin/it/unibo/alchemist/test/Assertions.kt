@@ -12,11 +12,11 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
@@ -61,13 +61,13 @@ infix fun Reaction<*>.shouldEqual(other: Reaction<*>) {
     actions.ebeEquals(other.actions) { expected, actual -> actual shouldEqual expected }
 }
 
-infix fun NodeProperty<*>.shouldEqual(other: NodeProperty<*>) {
-    assertEquals(other::class, this::class, "NodeProperty types don't match")
+infix fun Capability<*>.shouldEqual(other: Capability<*>) {
+    assertEquals(other::class, this::class, "Capability types don't match")
 }
 
 infix fun Node<*>.shouldEqual(other: Node<*>) {
     assertEquals(other.id, id)
-    assertEquals(other.moleculeCount, moleculeCount)
+    assertEquals(other.currentMoleculeCount, currentMoleculeCount)
     assertEquals(other.contents, contents)
     assertEquals(other.properties.size, properties.size)
     properties.ebeEquals(other.properties) { expected, actual -> actual shouldEqual expected }
@@ -100,8 +100,8 @@ infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<
         assertEquals(expected.first, actual.first, "Layer molecules don't match")
         positions.forEach { position ->
             assertEquals(
-                expected.second.getValue(position),
-                actual.second.getValue(position),
+                expected.second.currentValueAt(position),
+                actual.second.currentValueAt(position),
                 "Layer values at position $position don't match",
             )
         }

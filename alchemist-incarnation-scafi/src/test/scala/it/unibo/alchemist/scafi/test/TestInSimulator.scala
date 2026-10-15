@@ -41,7 +41,7 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers:
       .iterator()
       .asScala
       .foreach: node =>
-        val contents = node.getContents.asScala
+        val contents = node.getContents.getCurrent.asScala
         contents(new SimpleMolecule("it.unibo.alchemist.scafi.test.ScafiGradientProgram"))
           .asInstanceOf[Double] should (be >= 0.0 and be <= 100.0)
 
@@ -52,7 +52,7 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers:
       .asScala
       .foreach: node =>
         import ScafiEnvProgram.*
-        val contents = node.getContents.asScala
+        val contents = node.getContents.getCurrent.asScala
         def getValue[T](name: String) = contents(new SimpleMolecule(name)).asInstanceOf[T]
         def inputMolecule = getValue[Int]("number")
         def outputMolecule = getValue[Int]("number2")

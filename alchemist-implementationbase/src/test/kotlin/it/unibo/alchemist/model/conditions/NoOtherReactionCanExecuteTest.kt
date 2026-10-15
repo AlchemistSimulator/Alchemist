@@ -40,7 +40,7 @@ class NoOtherReactionCanExecuteTest {
         }
         node.addReaction(competitor)
         assertTrue(validity.current)
-        node.setConcentration(MOLECULE, 1)
+        node[MOLECULE] = 1
         assertFalse(validity.current)
         node.removeReaction(competitor)
         assertTrue(validity.current)

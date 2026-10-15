@@ -57,7 +57,7 @@ class BiomolGradientLayer<P : Position2D<P>>(
      */
     val parameters: DoubleArray get() = doubleArrayOf(a, b, c)
 
-    override fun getValue(position: P): Double = position.x * a + position.y * b + c
+    override fun currentValueAt(position: P): Double = position.x * a + position.y * b + c
 
     override fun toString(): String = "Layer representing a gradient of the molecule. " +
         "The equation describing this gradient is: concentration = ${a}x + ${b}y + $c"

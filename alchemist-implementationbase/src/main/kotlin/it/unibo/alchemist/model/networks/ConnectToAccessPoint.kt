@@ -35,5 +35,5 @@ class ConnectToAccessPoint<T, P : Position<P>>(
         centerInput || neighborInput
 
     // Whether a node is an access point.
-    override fun observeInput(node: Node<T>): Observable<Boolean> = node.observeContains(accessPointId)
+    override fun observeInput(node: Node<T>): Observable<Boolean> = node.containsMolecule(accessPointId)
 }

@@ -362,7 +362,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
 
         override fun addReaction(reaction: Reaction<Any>) = notImplemented<Unit>()
 
-        override fun cloneNode(currentTime: Time): Node<Any> = notImplemented()
+        override fun cloneNode(): Node<Any> = notImplemented()
 
         override fun compareTo(@Nonnull other: Node<Any>): Int = notImplemented()
 

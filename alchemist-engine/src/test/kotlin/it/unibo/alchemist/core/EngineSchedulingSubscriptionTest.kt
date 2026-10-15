@@ -229,7 +229,7 @@ class EngineSchedulingSubscriptionTest {
         node.addReaction(conditional)
         environment.addReaction(environmentEvent)
         node.place()
-        val clonedBeforeFiring = node.cloneNode(Time.ZERO).reactions.current
+        val clonedBeforeFiring = node.cloneNode().reactions.current
         assertEquals(1, clonedBeforeFiring.size)
         assertIs<ConditionalEvent<Double>>(clonedBeforeFiring.single())
         assertNotSame(conditional, clonedBeforeFiring.single())
@@ -248,7 +248,7 @@ class EngineSchedulingSubscriptionTest {
         }
         assertTrue(node.reactions.current.isEmpty())
         assertTrue(environment.reactions.current.isEmpty())
-        assertTrue(node.cloneNode(DoubleTime(3.0)).reactions.current.isEmpty())
+        assertTrue(node.cloneNode().reactions.current.isEmpty())
         engine.stepForTest()
         actions.forEach { verify(exactly = 1) { it.execute() } }
         assertEquals(events.size.toLong(), engine.step)

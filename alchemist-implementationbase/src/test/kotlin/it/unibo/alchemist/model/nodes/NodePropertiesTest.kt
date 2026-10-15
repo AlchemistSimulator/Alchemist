@@ -14,7 +14,6 @@ import io.mockk.mockk
 import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.test.Test
@@ -53,7 +52,7 @@ class NodePropertiesTest {
     fun `cloned nodes receive the properties of the original`() {
         val node = GenericNode(environment).apply { addProperty(propertyOf(this)) }
         environment.addNode(node, environment.makePosition(0, 0))
-        val clone = node.cloneNode(Time.ZERO)
+        val clone = node.cloneNode()
         assertFalse(clone in environment)
         assertEquals(clone, clone.properties.single().node)
     }

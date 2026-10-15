@@ -842,7 +842,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     final Collection<Node<T>> newNodes = new ArrayList<>(selectedNodes.size());
                     try {
                         for (final Node<T> n : selectedNodes) {
-                            newNodes.add(n.cloneNode(engine.getTime()));
+                            newNodes.add(n.cloneNode());
                         }
                         for (final Node<T> n : newNodes) {
                             currentEnv.addNode(n, envEnding);

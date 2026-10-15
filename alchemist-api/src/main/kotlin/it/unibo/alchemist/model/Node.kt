@@ -122,16 +122,15 @@ interface Node<T> :
      * Creates a new Node which is a clone of the current Node. The new Node
      * will have all the current Node's properties, such as reactions and
      * molecules, but it will also have a different ID.
-     *
-     * @param currentTime
-     * the time at which the cloning operation happens
+     * The cloning happens at the current time of the simulation, or at [Time.ZERO]
+     * if the environment of this node is not attached to any simulation.
      *
      * @return A new Node which is a clone of the current one.
      *
      * @throws UnsupportedOperationException
      * if the implementation does not support node cloning.
      */
-    fun cloneNode(currentTime: Time): Node<T>
+    fun cloneNode(): Node<T>
 
     /**
      * Tests whether a node contains a [Molecule].

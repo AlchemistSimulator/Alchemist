@@ -77,7 +77,8 @@ open class GenericNode<T> @JvmOverloads constructor(
         }
     }
 
-    override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
+    override fun cloneNode(): Node<T> = GenericNode(environment).also {
+        val currentTime = environment.simulationOrNull?.time ?: Time.ZERO
         this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
         this.contents.current.forEach(it::set)
         this.reactions.current.filterIsInstance<NodeReaction<T>>().forEach { reaction ->

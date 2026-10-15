@@ -93,8 +93,8 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @return true if the node has been cloned, false otherwise
      */
     @GraphQLDescription("Clone the node associated with the given id to the specified position")
-    suspend fun cloneNode(nodeId: Int, position: PositionInput, time: Double): NodeSurrogate<T>? {
-        val newNode = origin.nodeWithId(nodeId).cloneNode(DoubleTime(time))
+    suspend fun cloneNode(nodeId: Int, position: PositionInput): NodeSurrogate<T>? {
+        val newNode = origin.nodeWithId(nodeId).cloneNode()
         val mutex = Semaphore(1, 1)
         var isAdded = false
         origin.simulation.schedule {

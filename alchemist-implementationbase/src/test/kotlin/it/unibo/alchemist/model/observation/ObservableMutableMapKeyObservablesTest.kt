@@ -72,4 +72,30 @@ class ObservableMutableMapKeyObservablesTest {
         map.put("initial", 2)
         assertEquals(listOf(2.some()), seen)
     }
+
+    @Test
+    fun `key observers of a replaced map read the whole replacement`() {
+        val seen = mutableListOf<Map<String, Int>>()
+        map["initial"].subscribe(invokeOnSubscription = false) { seen += map.current }
+        map.clearAndPutAll(mapOf("replacement" to 2))
+        assertEquals(listOf(mapOf("replacement" to 2)), seen)
+    }
+
+    @Test
+    fun `map observers receive each map once when a key observer changes the map on a put`() {
+        map["initial"].subscribe(invokeOnSubscription = false) { if (it == 2.some()) map.put("other", 3) }
+        val seen = mutableListOf<Map<String, Int>>()
+        map.subscribe(invokeOnSubscription = false) { seen += it }
+        map.put("initial", 2)
+        assertEquals(listOf(mapOf("initial" to 2, "other" to 3)), seen)
+    }
+
+    @Test
+    fun `map observers receive each map once when a key observer changes the map on a remove`() {
+        map["initial"].subscribe(invokeOnSubscription = false) { if (it == none<Int>()) map.put("other", 3) }
+        val seen = mutableListOf<Map<String, Int>>()
+        map.subscribe(invokeOnSubscription = false) { seen += it }
+        map.remove("initial")
+        assertEquals(listOf(mapOf("other" to 3)), seen)
+    }
 }

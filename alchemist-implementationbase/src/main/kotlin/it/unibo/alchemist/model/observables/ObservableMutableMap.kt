@@ -57,24 +57,18 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
      * @param from A map containing the new key-value pairs to populate the map with.
      */
     fun clearAndPutAll(from: Map<K, V>) {
-        var changed = false
         val keysToRemove = backingMap.keys - from.keys
-        if (keysToRemove.isNotEmpty()) {
-            backingMap = backingMap.mutate { it -= keysToRemove }
-            keysToRemove.forEach { key -> notifyKeyObservers(key, none()) }
-            changed = true
-        }
-        if (from.isNotEmpty()) {
-            from.forEach { (key, value) ->
-                if (backingMap.valueWouldBeNewOrChanged(key, value)) {
-                    backingMap = backingMap.put(key, value)
-                    notifyKeyObservers(key, value.some())
-                    changed = true
-                }
+        val changedEntries = from.filter { (key, value) -> backingMap.valueWouldBeNewOrChanged(key, value) }
+        if (keysToRemove.isNotEmpty() || changedEntries.isNotEmpty()) {
+            // The whole replacement is applied first, so that per-key observers never see an intermediate map.
+            val updated = backingMap.mutate {
+                it -= keysToRemove
+                it += changedEntries
             }
-        }
-        if (changed) {
-            notifyMapObservers()
+            backingMap = updated
+            keysToRemove.forEach { key -> notifyKeyObservers(key, none()) }
+            changedEntries.forEach { (key, value) -> notifyKeyObservers(key, value.some()) }
+            notifyMapObserversUnlessChangedSince(updated)
         }
     }
 
@@ -100,9 +94,10 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
      */
     fun put(key: K, value: V) {
         if (backingMap.valueWouldBeNewOrChanged(key, value)) {
-            backingMap = backingMap.put(key, value)
+            val updated = backingMap.put(key, value)
+            backingMap = updated
             notifyKeyObservers(key, value.some())
-            notifyMapObservers()
+            notifyMapObserversUnlessChangedSince(updated)
         }
     }
 
@@ -116,9 +111,10 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
     fun remove(key: K): V? {
         val previous = backingMap[key]
         if (previous != null || key in backingMap) {
-            backingMap = backingMap.remove(key)
+            val updated = backingMap.remove(key)
+            backingMap = updated
             notifyKeyObservers(key, none())
-            notifyMapObservers()
+            notifyMapObserversUnlessChangedSince(updated)
         }
         return previous
     }
@@ -137,9 +133,14 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
         KeyObservable(key).notifyCurrentObservers(value) { backingMap.getOrNone(key) == value }
     }
 
-    private fun notifyMapObservers() {
-        val snapshot = backingMap
-        notifyCurrentObservers(snapshot) { backingMap === snapshot }
+    /*
+     * A key observer that changed the map again has already notified the map observers of the newer map,
+     * so they are notified only if the map is still the one produced by the change.
+     */
+    private fun notifyMapObserversUnlessChangedSince(updated: PersistentMap<K, V>) {
+        if (backingMap === updated) {
+            notifyCurrentObservers(updated) { backingMap === updated }
+        }
     }
 
     private fun stopWatchingKey(key: K, registrant: Any) {

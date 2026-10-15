@@ -68,7 +68,7 @@ infix fun Capability<*>.shouldEqual(other: Capability<*>) {
 infix fun Node<*>.shouldEqual(other: Node<*>) {
     assertEquals(other.id, id)
     assertEquals(other.currentMoleculeCount, currentMoleculeCount)
-    assertEquals(other.contents, contents)
+    assertEquals(other.contents.current, contents.current)
     assertEquals(other.properties.size, properties.size)
     properties.ebeEquals(other.properties) { expected, actual -> actual shouldEqual expected }
     reactions.current.ebeEquals(other.reactions.current) { expected, actual -> actual shouldEqual expected }

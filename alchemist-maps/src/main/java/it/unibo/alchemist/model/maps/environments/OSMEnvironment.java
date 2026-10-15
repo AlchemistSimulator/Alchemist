@@ -240,23 +240,6 @@ public final class OSMEnvironment<T>
         return computeRoute(node, currentPositionOf(node2));
     }
 
-    @Override
-    public void enableBenchmark() {
-        this.benchmarking = true;
-    }
-
-    @Override
-    public double getBenchmarkResult() {
-        if (benchmarking) {
-            if (routecache != null) {
-                return routecache.stats().hitRate();
-            }
-            return 0;
-        } else {
-            throw new IllegalStateException("You should call doBenchmark() before.");
-        }
-    }
-
     /**
      * @return the maximum latitude
      */

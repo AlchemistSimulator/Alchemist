@@ -50,6 +50,7 @@ import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.ProtelisLoader
 import org.protelis.lang.datatype.DeviceUID
+import org.protelis.lang.datatype.Option as ProtelisOption
 import org.protelis.vm.CodePath
 import org.protelis.vm.ExecutionEnvironment
 import org.protelis.vm.NetworkManager
@@ -119,16 +120,20 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         }
     }
 
-    override fun createConcentration(descriptor: Any?): Any? = try {
-        descriptor?.toString()?.let { program ->
-            SynchronizedVM(CacheKey(NoNode, createMolecule(program), program)).runCycle()
-        } ?: descriptor
-    } catch (e: IllegalArgumentException) {
-        LOGGER.warn("Invalid Protelis program injected as concentration:\n{}", descriptor, e)
-        descriptor
+    /**
+     * Evaluates [descriptor] as a Protelis program, falling back to [descriptor] itself if it is not a valid program.
+     * Molecules declared without a value get an empty Protelis [ProtelisOption], as Protelis never accepts null.
+     */
+    override fun createConcentration(descriptor: Any?): Any = when (descriptor) {
+        null -> ProtelisOption.empty<Any>()
+        else -> try {
+            SynchronizedVM(CacheKey(NoNode, createMolecule(descriptor.toString()), descriptor.toString())).runCycle()
+                ?: descriptor
+        } catch (e: IllegalArgumentException) {
+            LOGGER.warn("Invalid Protelis program injected as concentration:\n{}", descriptor, e)
+            descriptor
+        }
     }
-
-    override fun createConcentration(): Any? = null
 
     override fun createCondition(
         randomGenerator: RandomGenerator,
@@ -183,6 +188,12 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
     override fun createReaction(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
+        parameter: Any?,
+    ): Reaction<Any> = throw UnsupportedOperationException("Protelis does not support environment-level reactions")
+
+    override fun createNodeReaction(
+        randomGenerator: RandomGenerator,
+        environment: Environment<Any, P>,
         node: Node<Any>,
         timeDistribution: TimeDistribution<Any>,
         parameter: Any?,
@@ -218,10 +229,10 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         throw e
     }
 
-    override fun getProperty(node: Node<Any>, molecule: Molecule, property: String?): Double =
+    override fun readConcentration(node: Node<Any>, molecule: Molecule, property: String): Double =
         @Suppress("TooGenericExceptionCaught")
         try {
-            val vm = cache.get(CacheKey(requireNotNull(node), requireNotNull(molecule), property.orEmpty()))
+            val vm = cache.get(CacheKey(node, molecule, property))
             when (val result = vm.runCycle()) {
                 is Number -> result.toDouble()
                 is String -> result.toDoubleOrNull() ?: if (result == property) 1.0 else 0.0
@@ -309,7 +320,7 @@ class ProtelisIncarnation<P : Position<P>> : Incarnation<Any, P> {
         override fun setup() = Unit
 
         override fun keySet(): Set<String> = node.contents.current.keys
-            .map { it.getName() }
+            .map { it.name }
             .toSet() + shadow.keySet()
     }
 

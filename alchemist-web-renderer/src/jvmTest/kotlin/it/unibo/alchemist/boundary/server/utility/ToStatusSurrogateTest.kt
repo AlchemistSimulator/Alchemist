@@ -13,15 +13,15 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate
 import it.unibo.alchemist.boundary.webui.server.surrogates.utility.toStatusSurrogate
-import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.core.SimulationState
 
 class ToStatusSurrogateTest :
     StringSpec({
         "ToStatusSurrogate should map a Status to a StatusSurrogate" {
-            Status.INIT.toStatusSurrogate() shouldBe StatusSurrogate.INIT
-            Status.READY.toStatusSurrogate() shouldBe StatusSurrogate.READY
-            Status.PAUSED.toStatusSurrogate() shouldBe StatusSurrogate.PAUSED
-            Status.RUNNING.toStatusSurrogate() shouldBe StatusSurrogate.RUNNING
-            Status.TERMINATED.toStatusSurrogate() shouldBe StatusSurrogate.TERMINATED
+            SimulationState.INIT.toStatusSurrogate() shouldBe StatusSurrogate.INIT
+            SimulationState.READY.toStatusSurrogate() shouldBe StatusSurrogate.READY
+            SimulationState.PAUSED.toStatusSurrogate() shouldBe StatusSurrogate.PAUSED
+            SimulationState.RUNNING.toStatusSurrogate() shouldBe StatusSurrogate.RUNNING
+            SimulationState.TERMINATED.toStatusSurrogate() shouldBe StatusSurrogate.TERMINATED
         }
     })

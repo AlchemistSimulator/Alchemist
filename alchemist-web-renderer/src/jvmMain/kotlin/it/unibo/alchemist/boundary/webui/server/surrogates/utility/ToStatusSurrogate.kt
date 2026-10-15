@@ -10,15 +10,15 @@
 package it.unibo.alchemist.boundary.webui.server.surrogates.utility
 
 import it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate
-import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.core.SimulationState
 
 /**
- * Map a [Status] to [StatusSurrogate].
+ * Map a [SimulationState] to [StatusSurrogate].
  */
-fun Status.toStatusSurrogate(): StatusSurrogate = when (this) {
-    Status.INIT -> StatusSurrogate.INIT
-    Status.READY -> StatusSurrogate.READY
-    Status.PAUSED -> StatusSurrogate.PAUSED
-    Status.RUNNING -> StatusSurrogate.RUNNING
-    Status.TERMINATED -> StatusSurrogate.TERMINATED
+fun SimulationState.toStatusSurrogate(): StatusSurrogate = when (this) {
+    SimulationState.INIT -> StatusSurrogate.INIT
+    SimulationState.READY -> StatusSurrogate.READY
+    SimulationState.PAUSED -> StatusSurrogate.PAUSED
+    SimulationState.RUNNING -> StatusSurrogate.RUNNING
+    SimulationState.TERMINATED -> StatusSurrogate.TERMINATED
 }

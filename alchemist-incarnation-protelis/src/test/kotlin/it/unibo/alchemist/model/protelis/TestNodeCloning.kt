@@ -54,7 +54,7 @@ internal class TestNodeCloning<P : Position<P>> {
         simulation.addOutputMonitor(
             object : OutputMonitor<Any, P> {
                 override fun stepDone(
-                    currentEnvironment: Environment<Any, P>,
+                    environment: Environment<Any, P>,
                     reaction: Reaction<Any>?,
                     time: Time,
                     step: Long,
@@ -69,7 +69,7 @@ internal class TestNodeCloning<P : Position<P>> {
                     if (step ==
                         ENABLE_STEP
                     ) {
-                        simulation.schedule { currentEnvironment.nodeWithId(3).set(ENABLEDMOL, true) }
+                        simulation.schedule { environment.nodeWithId(3).set(ENABLEDMOL, true) }
                     }
                     if (step >
                         ENABLE_CHECKS
@@ -83,7 +83,7 @@ internal class TestNodeCloning<P : Position<P>> {
         )
         simulation.play()
         simulation.run()
-        simulation.error.ifPresent { throw it }
+        simulation.error.onSome { throw it }
     }
 
     companion object {

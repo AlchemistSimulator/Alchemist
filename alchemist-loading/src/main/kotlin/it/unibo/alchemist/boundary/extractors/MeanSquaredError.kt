@@ -88,13 +88,13 @@ constructor(
             statistic
                 .evaluate(
                     environment.nodes.current.map {
-                        incarnation.getProperty(it, mReference, pReference)
+                        incarnation.readConcentration(it, mReference, pReference)
                     }.toDoubleArray(),
                 )
         val mse: Double =
             environment.nodes.current
                 .parallelStream()
-                .mapToDouble { incarnation.getProperty(it, mActual, pActual) - value }
+                .mapToDouble { incarnation.readConcentration(it, mActual, pActual) - value }
                 .map { it * it }
                 .average()
                 .orElse(Double.NaN)

@@ -26,7 +26,6 @@ import it.unibo.alchemist.test.AlchemistTesting;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
-import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -826,9 +825,10 @@ class TestBioRect2DEnvironmentNoOverlap {
         });
         sim.play();
         sim.run();
-        sim.getError().ifPresent(CheckedConsumer.unchecked(it -> {
-            throw it;
-        }));
+        final Throwable error = sim.getError().getOrNull();
+        if (error != null) {
+            throw new AssertionError(error);
+        }
     }
 
     private String getFailureTestString(final String nodeName, final Node<Double> n, final Position<?> expected) {

@@ -37,5 +37,5 @@ class SendToNeighbor(reaction: NodeReaction<Any>, val protelisProgram: RunProtel
         protelisProgram.prepareForComputationalCycle()
     }
 
-    override fun toString(): String = "broadcast " + protelisProgram.asMolecule().getName() + " data"
+    override fun toString(): String = "broadcast " + protelisProgram.asMolecule().name + " data"
 }

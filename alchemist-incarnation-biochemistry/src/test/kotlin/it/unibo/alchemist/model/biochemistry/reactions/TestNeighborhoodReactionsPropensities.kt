@@ -106,7 +106,7 @@ class TestNeighborhoodReactionsPropensities {
 }
 
 private fun testSimulation(reactionText: String) {
-    val reaction = INCARNATION.createReaction(RANDOM, environment, centralNode, TIME, reactionText)
+    val reaction = INCARNATION.createNodeReaction(RANDOM, environment, centralNode, TIME, reactionText)
     centralNode.addReaction(reaction)
     environment.startSimulationWithoutParameters(
         stepDone = {

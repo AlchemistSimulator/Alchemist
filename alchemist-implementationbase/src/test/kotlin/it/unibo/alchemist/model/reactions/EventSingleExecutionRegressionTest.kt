@@ -23,7 +23,7 @@ class EventSingleExecutionRegressionTest : FreeSpec({
         val simulation: Simulation<Nothing, Nothing> =
             LoadAlchemist.from(ResourceLoader.getResource(resource)).getDefault()
         simulation.runInCurrentThread()
-        simulation.error.ifPresent { throw it }
+        simulation.error.onSome { throw it }
     }
     "YAML constructs an event that owns no time distribution" {
         val simulation: Simulation<Nothing, Nothing> =

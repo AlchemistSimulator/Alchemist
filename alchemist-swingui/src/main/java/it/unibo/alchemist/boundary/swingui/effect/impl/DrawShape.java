@@ -138,7 +138,7 @@ public final class DrawShape implements Effect {
                 final int maxV = (int) (maxprop.getVal() * FastMath.pow(PROPERTY_SCALE, propoom.getVal()));
                 if (minV < maxV) {
                     @SuppressWarnings({ "rawtypes", "unchecked" })
-                    double propval = incarnation.getProperty((Node) n, molecule, property);
+                    double propval = incarnation.readConcentration((Node) n, molecule, property);
                     if (isWritingPropertyValue()) {
                         g.setColor(colorCache);
                         g.drawString(Double.toString(propval), startx + sizex, starty + sizey);

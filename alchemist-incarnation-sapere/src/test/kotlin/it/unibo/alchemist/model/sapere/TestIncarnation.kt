@@ -100,7 +100,7 @@ class TestIncarnation {
 
     private fun assertNoReaction(parameter: String) {
         val error = assertFailsWith<IllegalArgumentException> {
-            incarnation.createReaction(randomGenerator, environment, node, timeDistribution, parameter)
+            incarnation.createNodeReaction(randomGenerator, environment, node, timeDistribution, parameter)
         }
         assertFalse(error.message.isNullOrEmpty())
     }
@@ -113,7 +113,7 @@ class TestIncarnation {
         neighborActions: Int = 0,
         allNeighborsActions: Int = 0,
     ) {
-        val reaction = incarnation.createReaction(randomGenerator, environment, node, timeDistribution, parameter)
+        val reaction = incarnation.createNodeReaction(randomGenerator, environment, node, timeDistribution, parameter)
         assertEquals(conditions, reaction.conditions.size)
         assertEquals(actions, reaction.actions.size)
         assertEquals(neighborConditions, reaction.conditions.count { it::class == LsaNeighborhoodCondition::class })

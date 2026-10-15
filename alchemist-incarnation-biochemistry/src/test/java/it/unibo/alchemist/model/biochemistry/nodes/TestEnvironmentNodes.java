@@ -337,7 +337,7 @@ final class TestEnvironmentNodes {
     }
 
     private void injectReaction(final String reaction, final Node<Double> destination, final double rate) {
-        destination.addReaction(INCARNATION.createReaction(
+        destination.addReaction(INCARNATION.createNodeReaction(
                 rand,
             standardEnvironment,
                 destination,

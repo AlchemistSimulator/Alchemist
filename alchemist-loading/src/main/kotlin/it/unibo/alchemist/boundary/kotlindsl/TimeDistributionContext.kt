@@ -65,7 +65,7 @@ interface TimeDistributionContext<T, P : Position<P>> {
     /**
      * Creates a [NodeReaction] from an incarnation-specific program descriptor and registers it on the current [Node].
      *
-     * The [program] parameter is forwarded to [Incarnation.createReaction] and its meaning depends on the
+     * The [program] parameter is forwarded to [Incarnation.createNodeReaction] and its meaning depends on the
      * concrete incarnation in use. A `null` descriptor delegates the choice of the program to the incarnation.
      *
      * The created reaction uses the current [timeDistribution] context receiver, and is created within the
@@ -85,7 +85,7 @@ interface TimeDistributionContext<T, P : Position<P>> {
         timeDistribution: TimeDistribution<T>
     )
     fun program(program: String?, block: context(NodeReaction<T>) ActionableContext.() -> Unit = { }) = program(
-        incarnation.createReaction(randomGenerator, environment, node, timeDistribution, program),
+        incarnation.createNodeReaction(randomGenerator, environment, node, timeDistribution, program),
         block,
     )
 }

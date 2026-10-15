@@ -206,7 +206,7 @@ class SAPERENodeReactionSchedulingTest {
         // With rate 1/N, the match with N = 0 has infinite propensity, even if it is not the last match.
         node.addLsa(LsaMolecule("token, 0"))
         node.addLsa(LsaMolecule("token, 1"))
-        val reaction = SAPEREIncarnation<Euclidean2DPosition>().createReaction(
+        val reaction = SAPEREIncarnation<Euclidean2DPosition>().createNodeReaction(
             randomGenerator,
             environment,
             node,
@@ -227,7 +227,7 @@ class SAPERENodeReactionSchedulingTest {
         // As in the engine, invalidations are applied after the mutation completes, not while the reaction fires.
         environment.simulation = mockk<Simulation<List<ILsaMolecule>, Euclidean2DPosition>>(relaxed = true)
         node.addLsa(LsaMolecule("token"))
-        val reaction = SAPEREIncarnation<Euclidean2DPosition>().createReaction(
+        val reaction = SAPEREIncarnation<Euclidean2DPosition>().createNodeReaction(
             randomGenerator,
             environment,
             node,

@@ -76,7 +76,7 @@ class TestSimpleNetworkArrivals {
         val node = mockk<Node<Any>>()
         val values = mutableMapOf(DELAY to 0.5, SIZE to 100.0, BANDWIDTH to 50.0)
         val incarnation = mockk<Incarnation<Any, Euclidean2DPosition>>()
-        every { incarnation.getProperty(node, any(), PROPERTY) } answers { values.getValue(secondArg()) }
+        every { incarnation.readConcentration(node, any(), PROPERTY) } answers { values.getValue(secondArg()) }
         val distribution = SimpleNetworkArrivals(
             incarnation,
             mockk<Environment<Any, Euclidean2DPosition>>(),

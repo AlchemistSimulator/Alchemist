@@ -84,7 +84,7 @@ constructor(
                         runCatching { loader.getWith<Any?, Nothing>(instance).configured() }
                             .mapCatching { simulation ->
                                 simulation.run()
-                                simulation.error.ifPresent { throw it }
+                                simulation.error.onSome { throw it }
                                 logger.info("Simulation with {} completed successfully", instance)
                             }.onFailure {
                                 logger.error("Failure for simulation with $instance", it)

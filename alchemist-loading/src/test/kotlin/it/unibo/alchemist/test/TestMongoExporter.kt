@@ -38,7 +38,9 @@ class TestMongoExporter<T, P : Position<P>> :
                 assertNotNull(loader)
                 val simulation: Simulation<T, P> = loader.getDefault()
 
-                fun checkForErrors() = simulation.error.ifPresent { throw it }
+                fun checkForErrors() {
+                    simulation.error.onSome { throw it }
+                }
                 simulation.addOutputMonitor(
                     object : OutputMonitor<T, P> {
                         override fun finished(environment: Environment<T, P>, time: Time, step: Long) = checkForErrors()

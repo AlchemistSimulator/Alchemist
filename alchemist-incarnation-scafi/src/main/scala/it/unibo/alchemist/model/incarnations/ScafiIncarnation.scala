@@ -85,14 +85,14 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]:
 
   /** NOTE: String v may be prefixed by the "_" symbol to avoid caching the value resulting from its interpretation */
   override def createConcentration(data: Any): T =
-    /*
-     * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
-     */
-    val dataString = data.toString
-    val doCacheValue = !dataString.startsWith("_")
-    CachedInterpreter[AnyRef](if doCacheValue then dataString else dataString.tail, doCacheValue).asInstanceOf[T]
-
-  override def createConcentration(): T = null.asInstanceOf[T]
+    if data == null then null.asInstanceOf[T]
+    else
+      /*
+       * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
+       */
+      val dataString = data.toString
+      val doCacheValue = !dataString.startsWith("_")
+      CachedInterpreter[AnyRef](if doCacheValue then dataString else dataString.tail, doCacheValue).asInstanceOf[T]
 
   override def createCondition(
       randomGenerator: RandomGenerator,
@@ -139,6 +139,12 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]:
   override def createReaction(
       randomGenerator: RandomGenerator,
       environment: Environment[T, P],
+      parameter: Any
+  ): Reaction[T] = throw new UnsupportedOperationException("ScaFi does not support environment-level reactions")
+
+  override def createNodeReaction(
+      randomGenerator: RandomGenerator,
+      environment: Environment[T, P],
       node: Node[T],
       time: TimeDistribution[T],
       parameters: Any
@@ -170,7 +176,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]:
       )
     new DiracComb[T](new DoubleTime(randomGenerator.nextDouble() / frequency), frequency)
 
-  override def getProperty(node: Node[T], molecule: Molecule, propertyName: String): Double =
+  override def readConcentration(node: Node[T], molecule: Molecule, propertyName: String): Double =
     val target = node.get(molecule).getOrNull()
     if propertyName == null || propertyName.trim.isEmpty then toDouble(target)
     else toDouble(ScalaInterpreter("val value = " + target + ";" + propertyName))

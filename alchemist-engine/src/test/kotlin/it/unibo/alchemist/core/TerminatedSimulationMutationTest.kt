@@ -39,7 +39,7 @@ class TerminatedSimulationMutationTest {
         environment.removeNode(node)
         assertFalse(node in environment)
         assertEquals(0, environment.nodeCount.current)
-        assertTrue(engine.error.isEmpty)
+        assertTrue(engine.error.isNone())
     }
 
     @Test
@@ -62,14 +62,14 @@ class TerminatedSimulationMutationTest {
             },
         )
         terminate()
-        assertTrue(engine.error.isEmpty, engine.error.map { it.stackTraceToString() }.orElse(""))
+        assertTrue(engine.error.isNone(), engine.error.fold({ "" }) { it.stackTraceToString() })
         assertEquals(0, environment.nodeCount.current)
     }
 
     private fun terminate() {
         engine.play()
         engine.run()
-        assertEquals(Status.TERMINATED, engine.status)
+        assertEquals(SimulationState.TERMINATED, engine.state)
     }
 
     private companion object {

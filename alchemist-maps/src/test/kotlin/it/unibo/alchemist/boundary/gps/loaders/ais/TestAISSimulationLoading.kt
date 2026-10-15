@@ -30,7 +30,7 @@ class TestAISSimulationLoading :
             simulation.environment.nodeCount.current shouldBeGreaterThan 0
             simulation.play()
             simulation.run()
-            simulation.error.ifPresent { throw it }
+            simulation.error.onSome { throw it }
         }
     })
 

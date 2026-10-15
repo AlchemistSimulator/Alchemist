@@ -38,7 +38,7 @@ import static java.util.Objects.requireNonNull;
 public final class BiochemistryIncarnation implements Incarnation<Double, Euclidean2DPosition> {
 
     @Override
-    public double getProperty(final Node<Double> node, final Molecule molecule, final String property) {
+    public double readConcentration(final Node<Double> node, final Molecule molecule, final String property) {
         return Nodes.getOrZeroConcentration(node, molecule);
     }
 
@@ -87,7 +87,16 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     }
 
     @Override
-    public NodeReaction<Double> createReaction(
+    public Reaction<Double> createReaction(
+        final RandomGenerator randomGenerator,
+        final Environment<Double, Euclidean2DPosition> environment,
+        @Nullable final Object parameter
+    ) {
+        throw new UnsupportedOperationException("Biochemistry does not support environment-level reactions");
+    }
+
+    @Override
+    public NodeReaction<Double> createNodeReaction(
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
@@ -139,11 +148,6 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
             return 1d;
         }
         return Double.parseDouble(descriptor.toString());
-    }
-
-    @Override
-    public Double createConcentration() {
-        return 0d;
     }
 
     @Override

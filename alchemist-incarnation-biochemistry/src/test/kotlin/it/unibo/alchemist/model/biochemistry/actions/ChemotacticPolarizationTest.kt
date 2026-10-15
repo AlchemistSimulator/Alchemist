@@ -31,7 +31,7 @@ class ChemotacticPolarizationTest {
         .also { environment.addNode(it, Euclidean2DPosition(0.0, 0.0)) }
     private val source = EnvironmentNodeImpl(environment)
         .also { environment.addNode(it, Euclidean2DPosition(1.0, 0.0)) }
-    private val polarization = incarnation.createReaction(
+    private val polarization = incarnation.createNodeReaction(
         randomGenerator,
         environment,
         cell,

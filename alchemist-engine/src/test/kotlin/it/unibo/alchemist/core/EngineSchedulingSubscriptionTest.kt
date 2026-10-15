@@ -331,7 +331,7 @@ class EngineSchedulingSubscriptionTest {
         val worker = Thread(engine::run)
         worker.start()
         try {
-            assertEquals(Status.READY, engine.waitFor(Status.READY, 5, TimeUnit.SECONDS))
+            assertEquals(SimulationState.READY, engine.waitFor(SimulationState.READY, 5, TimeUnit.SECONDS))
             assertTrue(reaction.isScheduled())
             assertFailsWith<IllegalStateException> { reaction.emit(DoubleTime(3.0)) }
             verify(exactly = 0) { scheduler.updateReaction(reaction) }

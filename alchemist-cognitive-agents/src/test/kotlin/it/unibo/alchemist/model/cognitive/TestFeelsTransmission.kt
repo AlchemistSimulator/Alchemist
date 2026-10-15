@@ -49,7 +49,7 @@ class TestFeelsTransmission<T> {
                 .startSimulation()
         val aggregateDangerWithoutLayer =
             loadYamlSimulation<T, Euclidean2DPosition>("feels-transmission-without-layer.yml")
-                .also { assertTrue(it.getEnvironment().layers.isEmpty(), "Expected empty layers") }
+                .also { assertTrue(it.environment.layers.isEmpty(), "Expected empty layers") }
                 .startSimulation()
         assertTrue(
             aggregateDangerWithLayer.perceivedDanger() > aggregateDangerWithoutLayer.perceivedDanger(),

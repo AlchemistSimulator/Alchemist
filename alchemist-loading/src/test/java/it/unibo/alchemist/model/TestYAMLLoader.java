@@ -183,7 +183,10 @@ class TestYAMLLoader {
         simulation.getEnvironment().addTerminator(new StepCount<>(1_000)); // Was working with 10_000
         simulation.play();
         simulation.run();
-        simulation.getError().ifPresent(e -> fail(e.getMessage()));
+        final Throwable error = simulation.getError().getOrNull();
+        if (error != null) {
+            fail(error.getMessage());
+        }
         return simulation;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,7 +17,7 @@ import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeGroup;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeMainFeature;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.core.Status;
+import it.unibo.alchemist.core.SimulationState;
 
 import java.awt.event.ActionListener;
 import java.io.Serial;
@@ -80,7 +80,7 @@ public final class SimControlPanel extends JTapeGroup {
     private static synchronized void checkOldAndRemove() {
         final Set<Simulation<?, ?>> toRemove = new HashSet<>();
         for (final Simulation<?, ?> sim : SIMCONTROLMAP.keySet()) {
-            if (sim.getStatus().equals(Status.TERMINATED) || SIMCONTROLMAP.get(sim).isEmpty()) {
+            if (sim.getState().equals(SimulationState.TERMINATED) || SIMCONTROLMAP.get(sim).isEmpty()) {
                 toRemove.add(sim);
             }
         }

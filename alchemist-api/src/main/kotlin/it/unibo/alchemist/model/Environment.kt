@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.observation.ObservableSet
 /**
  * Interface for an environment.
  * Every environment must implement this specification.
- * [T] is the [Concentration] type, [P] is the [Position] type.
+ * [T] is the concentration type, [P] is the [Position] type.
  */
 @Suppress("TooManyFunctions")
 interface Environment<T, P : Position<out P>> : ReactionHost<T> {

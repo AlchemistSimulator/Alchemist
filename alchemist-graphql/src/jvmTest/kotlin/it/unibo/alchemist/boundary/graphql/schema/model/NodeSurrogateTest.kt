@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.graphql.schema.model
 
 import it.unibo.alchemist.boundary.GraphQLTestEnvironments
-import it.unibo.alchemist.boundary.graphql.schema.model.ConcentrationSurrogateTest.Companion.checkConcentrationContent
+import it.unibo.alchemist.boundary.graphql.schema.model.ContentEncodingTest.Companion.checkConcentrationContent
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.MoleculeInput
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.NodeSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.ReactionSurrogate

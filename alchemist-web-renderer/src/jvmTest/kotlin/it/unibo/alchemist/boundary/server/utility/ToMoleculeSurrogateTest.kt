@@ -18,7 +18,9 @@ import it.unibo.alchemist.model.Molecule
 class ToMoleculeSurrogateTest :
     StringSpec({
 
-        val molecule = Molecule { "Alchemist Molecule" }
+        val molecule = object : Molecule {
+            override val name = "Alchemist Molecule"
+        }
 
         "ToMoleculeSurrogate should map a Molecule to a MoleculeSurrogate" {
             checkToMoleculeSurrogate(molecule, molecule.toMoleculeSurrogate())

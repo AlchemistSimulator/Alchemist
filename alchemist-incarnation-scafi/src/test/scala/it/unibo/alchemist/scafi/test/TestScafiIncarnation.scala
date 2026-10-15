@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -33,7 +34,7 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers:
     val standard: TimeDistribution[Any] = INC.createTimeDistribution(rng, env, node, "3")
     assertNotNull(standard)
 
-    val generic: NodeReaction[Any] = INC.createReaction(rng, env, node, standard, null)
+    val generic: NodeReaction[Any] = INC.createNodeReaction(rng, env, node, standard, null)
     assertNotNull(generic)
     assertTrue(generic.isInstanceOf[GenericReaction[?]])
     generic.asInstanceOf[GenericReaction[Any]].getMeanDelay shouldEqual 1d / 3

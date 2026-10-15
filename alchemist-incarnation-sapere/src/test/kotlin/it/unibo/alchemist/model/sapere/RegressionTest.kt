@@ -22,7 +22,7 @@ class RegressionTest :
                     .terminatingAfterSteps(100)
                     .runInCurrentThread()
                     .error
-                    .ifPresent { throw it }
+                    .onSome { throw it }
             }
         },
     )

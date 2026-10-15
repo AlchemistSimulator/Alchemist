@@ -12,7 +12,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.observation.Disposable
-import org.jooq.lambda.fi.lang.CheckedRunnable
 
 /**
  * Represents a simulation engine that manages execution and scheduling.
@@ -28,10 +27,8 @@ import org.jooq.lambda.fi.lang.CheckedRunnable
  * Reaction execution and scheduled commands form invalidation transactions that refresh each affected reaction
  * once before the next scheduler selection.
  */
-open class Engine<T, P : Position<out P>>(
-    private val environment: Environment<T, P>,
-    protected val scheduler: Scheduler<T>,
-) : AbstractEngine<T, P>(environment) {
+open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protected val scheduler: Scheduler<T>) :
+    AbstractEngine<T, P>(environment) {
 
     private val dirtyReactions = mutableSetOf<Reaction<T>>()
 
@@ -58,7 +55,7 @@ open class Engine<T, P : Position<out P>>(
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
     override fun reactionAdded(reactionToAdd: Reaction<T>) {
-        if (status != Status.TERMINATED) {
+        if (state != SimulationState.TERMINATED) {
             pendingAdditions.add(reactionToAdd)
             scheduleUnlessTerminated {
                 if (pendingAdditions.remove(reactionToAdd)) {
@@ -85,7 +82,7 @@ open class Engine<T, P : Position<out P>>(
     }
 
     override fun reactionRemoved(reactionToRemove: Reaction<T>) {
-        if (status != Status.TERMINATED) {
+        if (state != SimulationState.TERMINATED) {
             if (modelMutationDepth > 0) {
                 dirtyReactions.remove(reactionToRemove)
             }
@@ -106,7 +103,7 @@ open class Engine<T, P : Position<out P>>(
     }
 
     override fun doStep() {
-        val nextEvent = scheduler.getNext() ?: run {
+        val nextEvent = scheduler.next ?: run {
             terminate()
             LOGGER.info("No more reactions.")
             return
@@ -144,7 +141,7 @@ open class Engine<T, P : Position<out P>>(
         environment.nodes.current.forEach { it.reactions.current.forEach(::scheduleReaction) }
     }
 
-    override fun processCommand(command: CheckedRunnable) = modelMutation {
+    override fun processCommand(command: () -> Unit) = modelMutation {
         super.processCommand(command)
     }
 
@@ -213,8 +210,8 @@ open class Engine<T, P : Position<out P>>(
      * OutputMonitor.finished or a GUI: their notifications are ignored rather than failing the host mutation.
      * A command queued while the simulation terminates is never processed, as no step follows.
      */
-    private fun scheduleUnlessTerminated(command: CheckedRunnable) {
-        if (status != Status.TERMINATED) {
+    private fun scheduleUnlessTerminated(command: () -> Unit) {
+        if (state != SimulationState.TERMINATED) {
             commands.add(command)
         }
     }

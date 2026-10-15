@@ -48,19 +48,19 @@ internal class TestConcurrency {
         val container: ExecutorService = Executors.newFixedThreadPool(inWaitCount + 1)
         container.submit(simulation)
         Assertions.assertNotEquals(
-            Status.RUNNING,
-            simulation.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS),
+            SimulationState.RUNNING,
+            simulation.waitFor(SimulationState.RUNNING, 2, TimeUnit.SECONDS),
         )
-        Assertions.assertEquals(Status.PAUSED, simulation.waitFor(Status.PAUSED, 1, TimeUnit.MINUTES))
+        Assertions.assertEquals(SimulationState.PAUSED, simulation.waitFor(SimulationState.PAUSED, 1, TimeUnit.MINUTES))
         /*
          * Launch a hundred waiting processes, make sure they are started, then make sure everyone got notified
          */
         val latch = CountDownLatch(inWaitCount)
-        val waitList: List<Future<Status?>> =
+        val waitList: List<Future<SimulationState?>> =
             generateSequence {
-                container.submit<Status?> {
+                container.submit<SimulationState?> {
                     latch.countDown()
-                    simulation.waitFor(Status.RUNNING, 1, TimeUnit.MINUTES)
+                    simulation.waitFor(SimulationState.RUNNING, 1, TimeUnit.MINUTES)
                 }
             }.take(inWaitCount)
                 .toList()
@@ -69,7 +69,7 @@ internal class TestConcurrency {
         Thread.sleep(1000)
         simulation.play()
         for (result in waitList) {
-            Assertions.assertEquals(Status.RUNNING, result.get())
+            Assertions.assertEquals(SimulationState.RUNNING, result.get())
         }
         /*
          * this test does only 10 steps, so, after reaching RUNNING status, the simulation stops almost
@@ -77,16 +77,16 @@ internal class TestConcurrency {
          * simulation executes the fake reaction you can see below, which simply does nothing.
          */
         Assertions.assertEquals(
-            Status.TERMINATED,
-            simulation.waitFor(Status.TERMINATED, 1, TimeUnit.MINUTES),
+            SimulationState.TERMINATED,
+            simulation.waitFor(SimulationState.TERMINATED, 1, TimeUnit.MINUTES),
         )
         /*
          * the method must return immediately with a message error because is not
          * possible to reach RUNNING or PAUSED status while in STOPPED
          */
         Assertions.assertEquals(
-            Status.TERMINATED,
-            simulation.waitFor(Status.RUNNING, 100, TimeUnit.MILLISECONDS),
+            SimulationState.TERMINATED,
+            simulation.waitFor(SimulationState.RUNNING, 100, TimeUnit.MILLISECONDS),
         )
     }
 }

@@ -29,6 +29,7 @@ import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
+import org.protelis.lang.datatype.Option;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -60,7 +61,7 @@ class TestIncarnation {
         final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(INCARNATION);
         final Node<Object> node = INCARNATION.createNode(rng, environment, null);
         environment.addNode(node, environment.makePosition(0, 0));
-        final NodeReaction<Object> program = INCARNATION.createReaction(
+        final NodeReaction<Object> program = INCARNATION.createNodeReaction(
             rng,
             environment,
             node,
@@ -98,22 +99,23 @@ class TestIncarnation {
         assertNotNull(node);
         final TimeDistribution<Object> immediately = INCARNATION.createTimeDistribution(rng, environment, node, null);
         assertNotNull(immediately);
-        final NodeReaction<Object> immediateReaction = INCARNATION.createReaction(rng, environment, node, immediately, null);
+        final NodeReaction<Object> immediateReaction = INCARNATION.createNodeReaction(rng, environment, node, immediately, null);
         final TimeDistributedReaction<?> immediateRecurrence =
             assertInstanceOf(TimeDistributedReaction.class, immediateReaction);
         assertEquals(0d, immediateRecurrence.getMeanDelay());
         final TimeDistribution<Object> standard = INCARNATION.createTimeDistribution(rng, environment, node, "3");
         assertNotNull(standard);
-        final NodeReaction<Object> generic = INCARNATION.createReaction(rng, environment, node, standard, null);
+        final NodeReaction<Object> generic = INCARNATION.createNodeReaction(rng, environment, node, standard, null);
         assertEquals(1d / 3, assertInstanceOf(TimeDistributedReaction.class, generic).getMeanDelay());
         assertNotNull(generic);
         assertInstanceOf(GenericReaction.class, generic);
-        final NodeReaction<Object> program = INCARNATION.createReaction(rng, environment, node, standard, PROGRAM);
+        final NodeReaction<Object> program = INCARNATION.createNodeReaction(rng, environment, node, standard, PROGRAM);
         testIsProtelisProgram(program);
-        final NodeReaction<Object> program2 = INCARNATION.createReaction(rng, environment, node, standard, "testprotelis:test");
+        final NodeReaction<Object> program2 =
+            INCARNATION.createNodeReaction(rng, environment, node, standard, "testprotelis:test");
         testIsProtelisProgram(program2);
         try {
-            INCARNATION.createReaction(rng, environment, node, standard, SEND);
+            INCARNATION.createNodeReaction(rng, environment, node, standard, SEND);
             fail();
         } catch (final IllegalStateException e) {
             assertNotNull(e.getMessage());
@@ -121,13 +123,13 @@ class TestIncarnation {
         node.addReaction(program);
         node.addReaction(program2);
         try {
-            INCARNATION.createReaction(rng, environment, node, standard, SEND);
+            INCARNATION.createNodeReaction(rng, environment, node, standard, SEND);
             fail();
         } catch (final IllegalStateException e) {
             assertNotNull(e.getMessage());
         }
         node.removeReaction(program2);
-        final NodeReaction<Object> send = INCARNATION.createReaction(rng, environment, node, standard, SEND);
+        final NodeReaction<Object> send = INCARNATION.createNodeReaction(rng, environment, node, standard, SEND);
         testIsSendToNeighbor(send);
     }
 
@@ -139,6 +141,8 @@ class TestIncarnation {
         assertEquals("aString", INCARNATION.createConcentration("aString"));
         assertEquals(1.0, INCARNATION.createConcentration(UNIT_RATE));
         assertEquals("foo", INCARNATION.createConcentration("let a = \"foo\"; a"));
+        final Object missing = INCARNATION.createConcentration(null);
+        assertFalse(assertInstanceOf(Option.class, missing).isPresent());
     }
 
     @Test
@@ -152,12 +156,12 @@ class TestIncarnation {
         final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
             rng, environment, node, UNIT_RATE
         );
-        final NodeReaction<Object> program = INCARNATION.createReaction(
+        final NodeReaction<Object> program = INCARNATION.createNodeReaction(
             rng, environment, node, programDistribution, PROGRAM
         );
         node.addReaction(program);
         final TimeDistribution<Object> distribution = new ExponentialTime<>(1.0, dedicatedRng);
-        final NodeReaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
+        final NodeReaction<Object> reaction = INCARNATION.createNodeReaction(rng, environment, node, distribution, SEND);
         node.addReaction(reaction);
         program.initializationComplete(Time.ZERO, environment);
         reaction.initializationComplete(Time.ZERO, environment);
@@ -190,12 +194,12 @@ class TestIncarnation {
         final TimeDistribution<Object> programDistribution = INCARNATION.createTimeDistribution(
             rng, environment, node, UNIT_RATE
         );
-        final NodeReaction<Object> program = INCARNATION.createReaction(
+        final NodeReaction<Object> program = INCARNATION.createNodeReaction(
             rng, environment, node, programDistribution, PROGRAM
         );
         node.addReaction(program);
         final CountingDistribution distribution = new CountingDistribution();
-        final NodeReaction<Object> reaction = INCARNATION.createReaction(rng, environment, node, distribution, SEND);
+        final NodeReaction<Object> reaction = INCARNATION.createNodeReaction(rng, environment, node, distribution, SEND);
         assertInstanceOf(TimeDistributedReaction.class, reaction);
         node.addReaction(reaction);
         program.initializationComplete(Time.ZERO, environment);

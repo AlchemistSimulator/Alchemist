@@ -158,7 +158,7 @@ class TestDeformableCell {
     void testTensionPresent1() {
         environment.addNode(cellNode1, CELL_POS_TENSPRES1_1);
         environment.addNode(cellNode2, CELL_POS_TENSPRES1_2);
-        final var reaction = incarnation.createReaction(
+        final var reaction = incarnation.createNodeReaction(
             rand,
             environment,
             cellNode1,
@@ -202,7 +202,7 @@ class TestDeformableCell {
     void testTensionPresent2() {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 1));
-        final var reaction = incarnation.createReaction(
+        final var reaction = incarnation.createNodeReaction(
             rand,
             environment,
             cellNode1,
@@ -252,7 +252,7 @@ class TestDeformableCell {
     void testTensionPolarization1() {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 1));
-        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
+        cellNode1.addReaction(incarnation.createNodeReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode1.getReactions().getCurrent().isEmpty());
         cellNode1.getReactions().getCurrent().stream()
         .findFirst()
@@ -287,7 +287,7 @@ class TestDeformableCell {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 1));
         environment.addNode(cellNode2, MOVE_TO_POS_TENSPOL2_3);
-        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
+        cellNode1.addReaction(incarnation.createNodeReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode1.getReactions().getCurrent().isEmpty());
         cellNode1.getReactions().getCurrent().stream()
         .findFirst()
@@ -319,7 +319,7 @@ class TestDeformableCell {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(-1, 1));
         environment.addNode(cellNode5, new Euclidean2DPosition(-1, -1));
-        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
+        cellNode1.addReaction(incarnation.createNodeReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode1.getReactions().getCurrent().isEmpty());
         cellNode1.getReactions().getCurrent().stream()
         .findFirst()
@@ -364,7 +364,7 @@ class TestDeformableCell {
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode5, new Euclidean2DPosition(-1, 0));
         environment.addNode(cellNode2, CELL_POS_TENSPOL4_1);
-        cellNode3.addReaction(incarnation.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
+        cellNode3.addReaction(incarnation.createNodeReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().getCurrent().isEmpty());
         cellNode3.getReactions().getCurrent().stream()
         .findFirst()
@@ -382,7 +382,7 @@ class TestDeformableCell {
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode5, new Euclidean2DPosition(-1, 0));
         environment.addNode(cellNode2, CELL_POS_TENSPOL5_1);
-        cellNode3.addReaction(incarnation.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
+        cellNode3.addReaction(incarnation.createNodeReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().getCurrent().isEmpty());
         cellNode3.getReactions().getCurrent().stream()
         .findFirst()
@@ -400,7 +400,7 @@ class TestDeformableCell {
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode4, CELL_POS_TENSPOL6_1);
         environment.addNode(cellNode2, CELL_POS_TENSPOL6_2);
-        cellNode3.addReaction(incarnation.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
+        cellNode3.addReaction(incarnation.createNodeReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().getCurrent().isEmpty());
         cellNode3.getReactions().getCurrent().stream()
         .findFirst()

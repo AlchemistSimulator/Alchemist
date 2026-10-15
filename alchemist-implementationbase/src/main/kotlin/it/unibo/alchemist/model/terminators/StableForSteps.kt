@@ -20,7 +20,7 @@ import java.util.function.Predicate
  * nodes (meaning their position and concentration) have
  * remained unchanged for a certain amount of steps.
  *
- * The check isn't performed on every [step][it.unibo.alchemist.core.Simulation.getStep]
+ * The check isn't performed on every [step][it.unibo.alchemist.core.Simulation.step]
  * of a [simulation][it.unibo.alchemist.core.Simulation],
  * instead an interval that determines how many steps are
  * to be skipped between each check is specified.

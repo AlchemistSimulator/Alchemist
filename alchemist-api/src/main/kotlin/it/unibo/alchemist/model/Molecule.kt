@@ -7,16 +7,14 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.protelis.concentrations
+package it.unibo.alchemist.model
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-
-class LocalTest {
-    @Test
-    fun `an empty local is printable, comparable, and hashable`() {
-        assertEquals("null", Local().toString())
-        assertEquals(Local(), Local(null))
-        assertEquals(Local().hashCode(), Local(null).hashCode())
-    }
+/**
+ * A molecule, identified by its [name].
+ */
+interface Molecule {
+    /**
+     * The name of this [Molecule].
+     */
+    val name: String
 }

@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.times.DoubleTime
  * then they will be used as identifiers for properties to be obtained through [the incarnation][Incarnation]
  *
  * @param propagationDelayMolecule The propagation delay molecule. If the string is parsable as [Double],
- * then it will get used as a constant delay. Otherwise, the String will be used within [Incarnation.getProperty]
+ * then it will get used as a constant delay. Otherwise, the String will be used within [Incarnation.readConcentration]
  *
  */
 class SimpleNetworkArrivals<T> private constructor(
@@ -52,7 +52,7 @@ class SimpleNetworkArrivals<T> private constructor(
     /** Computes the effective bandwidth considering access point load balancing. */
     val bandwidth: Double
         get() = (
-            constantBandwidth ?: incarnation.getProperty(node, bandwidthMolecule, bandwidthProperty)
+            constantBandwidth ?: propertyOf(bandwidthMolecule, bandwidthProperty)
             ).let { bw ->
             accessPointIdentificator?.let { id ->
                 if (node.isAccessPoint || myNeighborhood.isEmpty()) {
@@ -86,13 +86,13 @@ class SimpleNetworkArrivals<T> private constructor(
      */
     val packetSize: Double
         get() = constantPacketSize
-            ?: incarnation.getProperty(node, packetSizeMolecule, packetSizeProperty).takeIf { it.isFinite() && it >= 0 }
+            ?: propertyOf(packetSizeMolecule, packetSizeProperty).takeIf { it.isFinite() && it >= 0 }
             ?: 1.0
 
     /** Computes the propagation delay from constants or properties. */
     val propagationDelay: Double
         get() = constantPropagationDelay
-            ?: incarnation.getProperty(node, propagationDelayMolecule, propagationDelayProperty)
+            ?: propertyOf(propagationDelayMolecule, propagationDelayProperty)
 
     private val Node<T>.isAccessPoint
         get() = accessPointIdentificator?.let { this.contains(it) } ?: false
@@ -204,8 +204,14 @@ class SimpleNetworkArrivals<T> private constructor(
 
     override fun sample(): Time = DoubleTime(meanDelay)
 
+    private fun propertyOf(molecule: Molecule?, property: String?): Double = incarnation.readConcentration(
+        node,
+        checkNotNull(molecule) { "Neither a constant nor a molecule were provided for a network parameter" },
+        checkNotNull(property) { "Neither a constant nor a property were provided for a network parameter" },
+    )
+
     private companion object {
         private val Molecule?.isMeaningful: Molecule?
-            get() = this?.takeUnless { name.isNullOrBlank() }
+            get() = this?.takeUnless { name.isBlank() }
     }
 }

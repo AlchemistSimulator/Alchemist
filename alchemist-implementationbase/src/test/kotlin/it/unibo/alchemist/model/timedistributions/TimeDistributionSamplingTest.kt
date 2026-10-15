@@ -89,7 +89,7 @@ class TimeDistributionSamplingTest {
         val node = mockk<Node<Any>>()
         val incarnation = mockk<Incarnation<Any, *>>()
         var value = 2.0
-        every { incarnation.getProperty(node, MOLECULE, "delay") } answers { value }
+        every { incarnation.readConcentration(node, MOLECULE, "delay") } answers { value }
         val distribution = MoleculeControlledTimeDistribution(incarnation, node, MOLECULE, "delay")
         assertEquals(DoubleTime(2.0), distribution.sample())
         value = 0.5

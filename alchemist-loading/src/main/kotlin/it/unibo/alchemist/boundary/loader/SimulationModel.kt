@@ -436,7 +436,9 @@ internal object SimulationModel {
                     "molecule $moleculeElement$type is not a scalar value." +
                         "This might be caused by a missing quotation of a String."
                 }
-                val molecule = incarnation.createMolecule(moleculeElement?.toString())
+                val molecule = incarnation.createMolecule(
+                    requireNotNull(moleculeElement) { "Missing molecule in content $contentDescriptor" }.toString(),
+                )
                 logger.debug("Molecule: {}", molecule)
                 val concentrationKey = AlchemistYamlSyntax.Deployment.Contents.concentration
                 val concentrationMaker: () -> T = {
@@ -629,7 +631,10 @@ internal object SimulationModel {
                 visitBuilding<Layer<T, P>>(
                     context,
                     origin,
-                )?.map { incarnation.createMolecule(origin[LayerSyntax.molecule]?.toString()) to it }
+                )?.map { layer ->
+                    val molecule = requireNotNull(origin[LayerSyntax.molecule]) { "Missing molecule in layer $origin" }
+                    incarnation.createMolecule(molecule.toString()) to layer
+                }
             }
         }
 
@@ -780,10 +785,10 @@ internal object SimulationModel {
     ): Result<Reaction<T>>? = when {
         root.containsKey(ProgramSyntax.program) ->
             Result.success(
-                incarnation.createReaction(
+                incarnation.createNodeReaction(
                     simulationRNG,
                     environment,
-                    node,
+                    requireNotNull(node) { "The program of a reaction requires a node, found in $root" },
                     timeDistribution,
                     root[ProgramSyntax.program],
                 ),

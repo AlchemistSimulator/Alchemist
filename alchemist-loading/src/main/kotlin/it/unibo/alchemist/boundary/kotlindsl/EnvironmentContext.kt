@@ -95,14 +95,13 @@ fun interface EnvironmentContext<T, P : Position<P>> {
     /**
      * Registers a [Layer] associated with a molecule identified by [molecule] in the current [Environment].
      *
-     * The molecule is created via [Incarnation.createMolecule]. The meaning of a `null` molecule name, if any,
-     * depends on the concrete incarnation.
+     * The molecule is created via [Incarnation.createMolecule].
      *
-     * @param molecule the molecule name, possibly `null` (incarnation-dependent semantics).
+     * @param molecule the molecule name.
      * @param layer the layer instance to register.
      */
     context(incarnation: Incarnation<T, P>, environment: Environment<T, P>)
-    fun layer(molecule: String? = null, layer: Layer<T, P>) = layer(incarnation.createMolecule(molecule), layer)
+    fun layer(molecule: String, layer: Layer<T, P>) = layer(incarnation.createMolecule(molecule), layer)
 
     /**
      * Configures (or extends) the environment network model by adding the provided [model].

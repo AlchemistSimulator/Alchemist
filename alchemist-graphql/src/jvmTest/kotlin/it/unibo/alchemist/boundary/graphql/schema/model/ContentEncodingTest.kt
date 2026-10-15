@@ -9,9 +9,7 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.model
 
-import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLConcentrationSurrogate
 import it.unibo.alchemist.boundary.graphql.schema.util.encodeConcentrationContentToString
-import it.unibo.alchemist.model.Concentration
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlinx.serialization.Serializable
@@ -20,20 +18,14 @@ import kotlinx.serialization.serializer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 
-class ConcentrationSurrogateTest {
+class ContentEncodingTest {
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
-    fun `ConcentrationSurrogate should map a Concentration to a GraphQL compliant object`() {
-        // Basic concentration content test
-        val c1: Concentration<Double> = Concentration { 1.0 }
-        checkConcentrationContent(c1.content, c1.toGraphQLConcentrationSurrogate().content)
-        // Test with a serializable content
-        val c2: Concentration<TestSerializableContent> = Concentration { TestSerializableContent(1, "a") }
-        checkConcentrationContent(c2.content, c2.toGraphQLConcentrationSurrogate().content)
-        // Test with a non-serializable content
-        val c3: Concentration<TestNonSerializableContent> = Concentration { TestNonSerializableContent(1, "a") }
-        checkConcentrationContent(c3.content, c3.toGraphQLConcentrationSurrogate().content)
+    fun `concentration contents are encoded as Json when serializable, as strings otherwise`() {
+        listOf(1.0, TestSerializableContent(1, "a"), TestNonSerializableContent(1, "a")).forEach { content ->
+            checkConcentrationContent(content, encodeConcentrationContentToString(content))
+        }
     }
 
     @Serializable

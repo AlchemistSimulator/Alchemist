@@ -75,9 +75,7 @@ class EngineTest : FreeSpec({
         engine.play()
         engine.run()
 
-        if (engine.error.isPresent) {
-            throw engine.error.get()
-        }
+        engine.error.onSome { throw it }
 
         // B should have M=1.0 (from Node B's Reaction)
         nodeB[molM] shouldBe 1.0.some()

@@ -32,7 +32,6 @@ import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.test.AlchemistTesting;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.jetbrains.annotations.NotNull;
-import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
@@ -55,7 +54,7 @@ class TestBiomolLayer {
         final MersenneTwister rand = new MersenneTwister(0);
         final Node<Double> cellNode = INCARNATION.createNode(rand, environment, null);
         final Molecule a = new Biomolecule("A");
-        final NodeReaction<Double> underTest = INCARNATION.createReaction(
+        final NodeReaction<Double> underTest = INCARNATION.createNodeReaction(
             rand, environment, cellNode,
             INCARNATION.createTimeDistribution(rand, environment, cellNode, "1"),
             "[B in env] --> [A]"
@@ -91,8 +90,9 @@ class TestBiomolLayer {
             }
         });
         sim.run();
-        sim.getError().ifPresent(CheckedConsumer.unchecked(it -> {
-            throw it;
-        }));
+        final Throwable error = sim.getError().getOrNull();
+        if (error != null) {
+            throw new AssertionError(error);
+        }
     }
 }

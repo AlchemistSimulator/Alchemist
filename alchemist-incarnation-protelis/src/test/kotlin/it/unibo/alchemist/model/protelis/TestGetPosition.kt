@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.protelis
 
+import arrow.core.None
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
@@ -24,7 +25,6 @@ import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
-import java.util.Optional
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -84,6 +84,6 @@ class TestGetPosition {
             },
         )
         sim.runInCurrentThread()
-        Assertions.assertEquals(Optional.empty<Any>(), sim.error)
+        Assertions.assertEquals(None, sim.error)
     }
 }

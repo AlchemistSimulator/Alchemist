@@ -15,11 +15,11 @@ import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
-import it.unibo.alchemist.core.Status.INIT
-import it.unibo.alchemist.core.Status.PAUSED
-import it.unibo.alchemist.core.Status.READY
-import it.unibo.alchemist.core.Status.RUNNING
-import it.unibo.alchemist.core.Status.TERMINATED
+import it.unibo.alchemist.core.SimulationState.INIT
+import it.unibo.alchemist.core.SimulationState.PAUSED
+import it.unibo.alchemist.core.SimulationState.READY
+import it.unibo.alchemist.core.SimulationState.RUNNING
+import it.unibo.alchemist.core.SimulationState.TERMINATED
 
 /**
  * Tests that the state machine is coherent.
@@ -27,25 +27,25 @@ import it.unibo.alchemist.core.Status.TERMINATED
 class TestStatus :
     StringSpec({
         "subsequent statuses should be reachable, previous ones should not" {
-            val allStatuses = Status.entries.toSet()
+            val allSimulationStates = SimulationState.entries.toSet()
             forAll(
-                row(INIT, allStatuses),
-                row(READY, allStatuses.minusElement(INIT)),
+                row(INIT, allSimulationStates),
+                row(READY, allSimulationStates.minusElement(INIT)),
                 row(PAUSED, setOf(RUNNING, TERMINATED)),
                 row(RUNNING, setOf(PAUSED, TERMINATED)),
                 row(TERMINATED, emptySet()),
             ) { initial, states ->
                 val reachable = states + initial
                 reachable.forEach { it should beReachableFrom(initial) }
-                allStatuses.minus(reachable).forEach {
+                allSimulationStates.minus(reachable).forEach {
                     it shouldNot beReachableFrom(initial)
                 }
             }
         }
     }) {
     companion object {
-        fun beReachableFrom(initial: Status) = object : Matcher<Status> {
-            override fun test(value: Status) = MatcherResult(
+        fun beReachableFrom(initial: SimulationState) = object : Matcher<SimulationState> {
+            override fun test(value: SimulationState) = MatcherResult(
                 value.isReachableFrom(initial),
                 { "$value should be reachable from $initial" },
                 { "$value should not be reachable from $initial" },

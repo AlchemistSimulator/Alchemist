@@ -95,5 +95,5 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers:
     sim.getEnvironment.addTerminator(new StepCount[T, P](maxSteps))
     sim.play()
     sim.run()
-    if sim.getError.isPresent then throw new Exception(sim.getError.get().getMessage)
+    Option(sim.getError.getOrNull()).foreach(error => throw new Exception(error.getMessage, error))
     sim.getEnvironment

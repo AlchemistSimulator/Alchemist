@@ -44,7 +44,7 @@ class SAPEREIncarnation<P : Position<out P>> : Incarnation<List<ILsaMolecule>, P
     private var moleculeCache: Molecule? = null
     private var propertyCache: String? = null
 
-    override fun getProperty(node: Node<List<ILsaMolecule>>, molecule: Molecule, property: String?): Double {
+    override fun readConcentration(node: Node<List<ILsaMolecule>>, molecule: Molecule, property: String): Double {
         if (molecule is ILsaMolecule && node is ILsaNode && node.contains(molecule)) {
             val cacheUpdated = molecule != moleculeCache || property != propertyCache
             if (cacheUpdated) {
@@ -120,6 +120,13 @@ class SAPEREIncarnation<P : Position<out P>> : Incarnation<List<ILsaMolecule>, P
     override fun createReaction(
         randomGenerator: RandomGenerator,
         environment: Environment<List<ILsaMolecule>, P>,
+        parameter: Any?,
+    ): Reaction<List<ILsaMolecule>> =
+        throw UnsupportedOperationException("SAPERE does not support environment-level reactions")
+
+    override fun createNodeReaction(
+        randomGenerator: RandomGenerator,
+        environment: Environment<List<ILsaMolecule>, P>,
         node: Node<List<ILsaMolecule>>,
         timeDistribution: TimeDistribution<List<ILsaMolecule>>,
         parameter: Any?,
@@ -191,12 +198,10 @@ class SAPEREIncarnation<P : Position<out P>> : Incarnation<List<ILsaMolecule>, P
     }
 
     override fun createConcentration(descriptor: Any?): List<ILsaMolecule> = when (descriptor) {
-        null -> createConcentration()
+        null -> emptyList()
         is Collection<*> -> descriptor.map { it as? ILsaMolecule ?: createMolecule(it.toString()) }
         else -> listOf(createMolecule(descriptor.toString()))
     }
-
-    override fun createConcentration(): List<ILsaMolecule> = emptyList()
 
     private companion object {
         private const val CONDITION_GROUP = "condition"

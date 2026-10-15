@@ -23,7 +23,7 @@ import it.unibo.alchemist.boundary.ui.impl.PointerSpeedImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.WormholeSwing;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.core.Status;
+import it.unibo.alchemist.core.SimulationState;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
@@ -33,6 +33,7 @@ import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.environments.Environment2DWithObstacles;
 import it.unibo.alchemist.model.times.DoubleTime;
+import kotlin.Unit;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
@@ -274,9 +275,15 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 status = ViewStatus.DELETING_NODES;
                 final Simulation<T, P> sim = currentEnv.getSimulation();
                 for (final Node<T> n : selectedNodes) {
-                    sim.schedule(() -> currentEnv.removeNode(n));
+                    sim.schedule(() -> {
+                        currentEnv.removeNode(n);
+                        return Unit.INSTANCE;
+                    });
                 }
-                sim.schedule(() -> update(currentEnv, sim.getTime()));
+                sim.schedule(() -> {
+                    update(currentEnv, sim.getTime());
+                    return Unit.INSTANCE;
+                });
                 resetStatus();
             }
         });
@@ -284,7 +291,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         bindKey(KeyEvent.VK_L, () -> setDrawLinks(!paintLinks));
         bindKey(KeyEvent.VK_P, () -> Optional.of(currentEnv.getSimulation())
                 .ifPresent(sim -> {
-                    if (sim.getStatus() == Status.RUNNING) {
+                    if (sim.getState() == SimulationState.RUNNING) {
                         sim.pause();
                     } else {
                         sim.play();
@@ -856,6 +863,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             + LangUtils.stackTraceToString(exp);
                         JOptionPane.showMessageDialog(Generic2DDisplay.this, message, title, JOptionPane.ERROR_MESSAGE);
                     }
+                    return Unit.INSTANCE;
                 });
                 selectedNodes.clear();
                 resetStatus();
@@ -939,6 +947,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                                 engine.schedule(() -> {
                                     currentEnv.moveNodeTo(n, finalPos);
                                     update(currentEnv, engine.getTime());
+                                    return Unit.INSTANCE;
                                 });
                             }
                         } else {

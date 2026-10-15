@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.actions
 
-import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -41,7 +40,7 @@ class LsaActionsTest {
         val source = LsaNode(environment)
         val destination = LsaNode(environment)
         val neighbors: List<ILsaNode> = listOf(LsaNode(environment), LsaNode(environment))
-        val reaction = incarnation.createReaction(
+        val reaction = incarnation.createNodeReaction(
             randomGenerator,
             environment,
             source,

@@ -51,6 +51,6 @@ class TestReactionRemoval : FreeSpec({
             environment.removeNode(node)
         }
         engine.run()
-        engine.error.isEmpty shouldBe true
+        engine.error.isNone() shouldBe true
     }
 })

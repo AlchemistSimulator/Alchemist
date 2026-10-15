@@ -88,7 +88,7 @@ interface DeploymentContext<T, P : Position<P>> {
      * Convenience utility to create and register a reaction on the current node.
      *
      * A time distribution is obtained through [withTimeDistribution], using [timeDistribution] as parameter.
-     * The reaction is then created via [Incarnation.createReaction], using [program] as an incarnation-specific
+     * The reaction is then created via [Incarnation.createNodeReaction], using [program] as an incarnation-specific
      * descriptor (or `null` to delegate the choice to the incarnation), and finally registered on the node.
      *
      * The optional [block] can be used to attach actions and conditions through [ActionableContext].
@@ -159,7 +159,7 @@ interface DeploymentContext<T, P : Position<P>> {
             timeDistribution: TimeDistribution<T>
         )
         private fun <T, P : Position<P>> makeReaction(descriptor: String?): NodeReaction<T> =
-            incarnation.createReaction(
+            incarnation.createNodeReaction(
                 randomGenerator,
                 environment,
                 node,

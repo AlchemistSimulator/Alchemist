@@ -74,7 +74,7 @@ constructor(
         time: Time,
         step: Long,
     ): Map<Node<T>, Double> {
-        fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
+        fun Node<T>.extractData() = environment.incarnation.readConcentration(this, molecule, property.orEmpty())
         return environment.nodes.current.associateWith { it.extractData() }.toMap()
     }
 }

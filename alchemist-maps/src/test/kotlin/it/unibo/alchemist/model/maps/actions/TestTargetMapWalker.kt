@@ -119,8 +119,8 @@ internal class TestTargetMapWalker {
     }
 
     companion object {
-        private val INCARNATION: Incarnation<Any, GeoPosition?> =
-            SupportedIncarnations.get<Any, GeoPosition?>("protelis").orElseThrow()
+        private val INCARNATION: Incarnation<Any, GeoPosition> =
+            SupportedIncarnations.get<Any, GeoPosition>("protelis").orElseThrow()
         private const val TESTMAP = "maps/cesena.pbf"
         private val TRACK = SimpleMolecule("track")
         private val INTERACTING = SimpleMolecule("interacting")

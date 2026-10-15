@@ -43,7 +43,7 @@ class TestAfterTime :
                     },
                 )
                 simulation.runInCurrentThread()
-                simulation.error.ifPresent { throw it }
+                simulation.error.onSome { throw it }
             }
         },
     )

@@ -88,7 +88,7 @@ class TestChemotaxis {
         envNode4.set(biomolA, CONCENTRATION2);
         envNode2.set(biomolA, CONCENTRATION1);
         envNode3.set(biomolA, CONCENTRATION1);
-        final NodeReaction<Double> r = incarnation.createReaction(
+        final NodeReaction<Double> r = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
@@ -120,7 +120,7 @@ class TestChemotaxis {
         envNode4.set(biomolA, CONCENTRATION2);
         envNode2.set(biomolA, CONCENTRATION1);
         envNode3.set(biomolA, CONCENTRATION1);
-        final NodeReaction<Double> r = incarnation.createReaction(
+        final NodeReaction<Double> r = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
@@ -149,7 +149,7 @@ class TestChemotaxis {
         environment.addNode(envNode3, p3);
         environment.addNode(envNode4, p4);
         environment.addNode(cellNode1, p5);
-        final NodeReaction<Double> r = incarnation.createReaction(
+        final NodeReaction<Double> r = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
@@ -170,7 +170,7 @@ class TestChemotaxis {
     void testChemotacticPolarization4() {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(0.5, 0.5);
         environment.addNode(cellNode1, p1);
-        final NodeReaction<Double> r = incarnation.createReaction(
+        final NodeReaction<Double> r = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
         r.execute();
@@ -199,10 +199,10 @@ class TestChemotaxis {
         envNode2.set(b, CONCENTRATION3);
         environment.addNode(envNode1, p2);
         environment.addNode(envNode2, p3);
-        final NodeReaction<Double> r1 = incarnation.createReaction(
+        final NodeReaction<Double> r1 = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
-        final NodeReaction<Double> r2 = incarnation.createReaction(
+        final NodeReaction<Double> r2 = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, "[] --> [ChemotacticPolarization(B, up)]"
         );
         r1.execute();
@@ -236,10 +236,10 @@ class TestChemotaxis {
         envNode4.set(biomolA, CONCENTRATION2);
         envNode2.set(biomolA, CONCENTRATION1);
         envNode3.set(biomolA, CONCENTRATION1);
-        final NodeReaction<Double> r1 = incarnation.createReaction(
+        final NodeReaction<Double> r1 = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
-        final NodeReaction<Double> r2 = incarnation.createReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
+        final NodeReaction<Double> r2 = incarnation.createNodeReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();
         r2.execute();
         assertEquals(new Euclidean2DPosition(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)),
@@ -266,10 +266,10 @@ class TestChemotaxis {
         envNode4.set(biomolA, CONCENTRATION2);
         envNode2.set(biomolA, CONCENTRATION1);
         envNode3.set(biomolA, CONCENTRATION1);
-        final NodeReaction<Double> r1 = incarnation.createReaction(
+        final NodeReaction<Double> r1 = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
-        final NodeReaction<Double> r2 = incarnation.createReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
+        final NodeReaction<Double> r2 = incarnation.createNodeReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();
         r2.execute();
         assertEquals(1,
@@ -302,10 +302,10 @@ class TestChemotaxis {
         envNode2.set(biomolA, CONCENTRATION2);
         envNode3.set(biomolA, CONCENTRATION2);
         envNode1.set(biomolA, CONCENTRATION2);
-        final NodeReaction<Double> r1 = incarnation.createReaction(
+        final NodeReaction<Double> r1 = incarnation.createNodeReaction(
                 rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION
         );
-        final NodeReaction<Double> r2 = incarnation.createReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
+        final NodeReaction<Double> r2 = incarnation.createNodeReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();
         r2.execute();
         r2.execute();

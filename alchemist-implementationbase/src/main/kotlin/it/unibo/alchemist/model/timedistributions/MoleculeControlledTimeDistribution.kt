@@ -180,7 +180,7 @@ class MoleculeControlledTimeDistribution<T> private constructor(
         ): Double {
             val currentValue =
                 if (property != null) {
-                    incarnation.getProperty(node, molecule, property)
+                    incarnation.readConcentration(node, molecule, property)
                 } else {
                     when (val value = node[molecule].getOrElse { 0.0 }) {
                         is Number -> value.toDouble()

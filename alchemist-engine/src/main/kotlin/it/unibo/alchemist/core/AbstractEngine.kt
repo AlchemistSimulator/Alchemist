@@ -9,13 +9,15 @@
 
 package it.unibo.alchemist.core
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.some
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import java.util.Collections
-import java.util.Optional
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
@@ -26,7 +28,6 @@ import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import java.util.function.BooleanSupplier
-import org.jooq.lambda.fi.lang.CheckedRunnable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -38,15 +39,28 @@ import org.slf4j.LoggerFactory
  * @param P the position type
  * @property environment the simulation environment
  */
-abstract class AbstractEngine<T, P : Position<out P>>(private val environment: Environment<T, P>) : Simulation<T, P> {
+abstract class AbstractEngine<T, P : Position<out P>>(final override val environment: Environment<T, P>) :
+    Simulation<T, P> {
 
     private val statusLock: Lock = ReentrantLock()
 
-    /** Lock for synchronizing access to the simulation status. */
-    @Volatile private var status: Status = Status.INIT
+    /** The current simulation status. */
+    @Volatile
+    final override var state: SimulationState = SimulationState.INIT
+        protected set
 
-    /** Tracks errors that occurred during simulation execution. */
-    private var error: Optional<Throwable> = Optional.empty()
+    /** The error that made the simulation fail, if any. */
+    final override var error: Option<Throwable> = None
+        protected set
+
+    /** The registered output monitors, as a read-only view. */
+    final override val outputMonitors: List<OutputMonitor<T, P>> get() = Collections.unmodifiableList(monitors)
+
+    /** The current step (thread-safe). */
+    final override val step: Long get() = currentStep
+
+    /** The current simulation time (thread-safe). */
+    final override val time: Time get() = currentTime
 
     /** Current simulation time. */
     protected var currentTime: Time = Time.ZERO
@@ -65,10 +79,10 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
     private var simulationThread: Thread? = null
 
     /** Locks associated with each simulation status. */
-    protected val statusLocks: Map<Status, SynchBox> = Status.entries.associateWith { SynchBox() }
+    protected val statusLocks: Map<SimulationState, SynchBox> = SimulationState.entries.associateWith { SynchBox() }
 
     /** Queue of scheduled simulation commands. */
-    protected val commands: BlockingQueue<CheckedRunnable> = LinkedBlockingQueue()
+    protected val commands: BlockingQueue<() -> Unit> = LinkedBlockingQueue()
 
     /** List of registered output monitors for simulation events. */
     protected val monitors: MutableList<OutputMonitor<T, P>> = CopyOnWriteArrayList()
@@ -88,87 +102,61 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
     }
 
     /**
-     * @param op the OutputMonitor to remove
+     * @param monitor the OutputMonitor to remove
      */
-    override fun removeOutputMonitor(op: OutputMonitor<T, P>) {
-        monitors.remove(op)
-    }
-
-    /** @return the list of registered output monitors. */
-    override fun getOutputMonitors(): List<OutputMonitor<T, P>> = Collections.unmodifiableList(monitors)
-
-    /** @return the simulation environment. */
-    override fun getEnvironment(): Environment<T, P> = environment
-
-    /** @return the last error encountered, if any. */
-    override fun getError(): Optional<Throwable> = error
-
-    protected fun setError(error: Optional<Throwable>) {
-        this.error = error
+    override fun removeOutputMonitor(monitor: OutputMonitor<T, P>) {
+        monitors.remove(monitor)
     }
 
     /** Records a failure while preserving an existing primary failure. */
     protected fun recordError(failure: Throwable) {
-        error.ifPresentOrElse({ it.addSuppressed(failure) }, { error = Optional.of(failure) })
+        error.onSome { it.addSuppressed(failure) }.onNone { error = failure.some() }
     }
-
-    /** @return the current simulation status. */
-    override fun getStatus(): Status = status
-
-    protected fun setStatus(status: Status) {
-        this.status = status
-    }
-
-    /** @return the current step (thread-safe). */
-    @Synchronized override fun getStep(): Long = currentStep
-
-    /** @return the current simulation time (thread-safe). */
-    @Synchronized override fun getTime(): Time = currentTime
 
     /**
      * Moves the simulation forward until the given step is reached.
      *
-     * @param step the target step to execute up to.
+     * @param steps the target step to execute up to.
      * @return a [CompletableFuture] that completes once the step is reached.
      */
-    override fun goToStep(step: Long): CompletableFuture<Unit> = pauseWhen { getStep() >= step }
+    override fun goToStep(steps: Long): CompletableFuture<Unit> = pauseWhen { step >= steps }
 
     /**
      * Moves the simulation forward until the given time is reached.
      *
-     * @param t the target simulation time.
+     * @param time the target simulation time.
      * @return a [CompletableFuture] that completes once the time is reached.
      */
-    override fun goToTime(t: Time): CompletableFuture<Unit> = pauseWhen { time >= t }
+    override fun goToTime(time: Time): CompletableFuture<Unit> = pauseWhen { this.time >= time }
 
     /** Pauses the simulation. */
-    override fun pause(): CompletableFuture<Unit> = newStatus(Status.PAUSED)
+    override fun pause(): CompletableFuture<Unit> = newStatus(SimulationState.PAUSED)
 
     /** Resumes the simulation. */
-    override fun play(): CompletableFuture<Unit> = newStatus(Status.RUNNING)
+    override fun play(): CompletableFuture<Unit> = newStatus(SimulationState.RUNNING)
 
     /** Terminates the simulation. */
-    override fun terminate(): CompletableFuture<Unit> = newStatus(Status.TERMINATED)
+    override fun terminate(): CompletableFuture<Unit> = newStatus(SimulationState.TERMINATED)
 
     /**
      * Waits for the simulation to reach a given status.
      *
-     * @param next the [Status] the simulation should reach before returning
+     * @param state the [SimulationState] the simulation should reach before returning
      * @param timeout the maximum time to wait
-     * @param tu the [TimeUnit] defining the timeout
+     * @param timeunit the [TimeUnit] defining the timeout
      * @return the current simulation status
      */
-    override fun waitFor(next: Status, timeout: Long, tu: TimeUnit): Status =
-        lockForStatus(next).waitFor(next, timeout, tu)
+    override fun waitFor(state: SimulationState, timeout: Long, timeunit: TimeUnit): SimulationState =
+        lockForStatus(state).waitFor(state, timeout, timeunit)
 
     /**
      * Schedules a task for execution.
      *
-     * @param runnable the task to execute
+     * @param action the task to execute
      */
-    override fun schedule(runnable: CheckedRunnable) {
-        check(status != Status.TERMINATED) { "This simulation is terminated and cannot be resumed." }
-        commands.add(runnable)
+    override fun schedule(action: () -> Unit) {
+        check(state != SimulationState.TERMINATED) { "This simulation is terminated and cannot be resumed." }
+        commands.add(action)
     }
 
     /**
@@ -204,12 +192,12 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
      * @param next the new status to set
      * @return a future that completes when the status is updated
      */
-    protected open fun newStatus(next: Status): CompletableFuture<Unit> {
+    protected open fun newStatus(next: SimulationState): CompletableFuture<Unit> {
         val future = CompletableFuture<Unit>()
         schedule {
             doOnStatus {
-                if (next.isReachableFrom(status)) {
-                    status = next
+                if (next.isReachableFrom(state)) {
+                    state = next
                     lockForStatus(next).releaseAll()
                 }
                 future.complete(null)
@@ -218,27 +206,28 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
         return future
     }
 
-    protected fun processCommandsWhileIn(status: Status) {
-        while (this.status == status) {
+    protected fun processCommandsWhileIn(status: SimulationState) {
+        while (this.state == status) {
             processCommand(commands.take())
         }
     }
 
-    protected open fun processCommand(command: CheckedRunnable) {
-        command.run()
+    protected open fun processCommand(command: () -> Unit) {
+        command()
     }
 
     /**
      * Retrieves the synchronization lock for a given status.
      *
-     * @param futureStatus the status to obtain a lock for
+     * @param futureSimulationState the status to obtain a lock for
      * @return the corresponding synchronization lock
      * @throws IllegalStateException if the requested status lock does not exist
      */
-    private fun lockForStatus(futureStatus: Status): SynchBox = checkNotNull(statusLocks[futureStatus]) {
-        "Inconsistent state: the Alchemist engine tried to synchronize on a non-existing lock. " +
-            "Searching for status: $futureStatus, available locks: $statusLocks"
-    }
+    private fun lockForStatus(futureSimulationState: SimulationState): SynchBox =
+        checkNotNull(statusLocks[futureSimulationState]) {
+            "Inconsistent state: the Alchemist engine tried to synchronize on a non-existing lock. " +
+                "Searching for status: $futureSimulationState, available locks: $statusLocks"
+        }
 
     /**
      * Pauses the simulation when the given condition is met.
@@ -252,16 +241,11 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
             @Volatile
             private var hasTriggered = false
 
-            override fun initialized(initializedEnvironment: Environment<T, P>) {
+            override fun initialized(environment: Environment<T, P>) {
                 checkConditionAndPause()
             }
 
-            override fun stepDone(
-                targetEnvironment: Environment<T, P>,
-                reaction: Reaction<T>?,
-                time: Time,
-                step: Long,
-            ) {
+            override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
                 checkConditionAndPause()
             }
 
@@ -291,29 +275,29 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
 
                 initialize()
 
-                status = Status.READY
+                state = SimulationState.READY
                 logger.trace("Thread {} started running.", Thread.currentThread().id)
                 monitors.forEach { it.initialized(environment) }
-                processCommandsWhileIn(Status.READY)
-                while (status != Status.TERMINATED && time < Time.INFINITY) {
+                processCommandsWhileIn(SimulationState.READY)
+                while (state != SimulationState.TERMINATED && time < Time.INFINITY) {
                     while (commands.isNotEmpty()) {
                         processCommand(commands.poll())
                     }
-                    if (status == Status.RUNNING) {
+                    if (state == SimulationState.RUNNING) {
                         doStep()
                     }
-                    processCommandsWhileIn(Status.PAUSED)
+                    processCommandsWhileIn(SimulationState.PAUSED)
                 }
             } catch (e: Throwable) {
-                error = Optional.of(e)
+                error = e.some()
                 LoggerFactory.getLogger(this::class.java).error("The simulation engine crashed.", e)
             } finally {
-                status = Status.TERMINATED
+                state = SimulationState.TERMINATED
                 commands.clear()
                 try {
                     monitors.forEach { it.finished(environment, time, step) }
                 } catch (e: Throwable) {
-                    error.ifPresentOrElse({ it.addSuppressed(e) }, { error = Optional.of(e) })
+                    recordError(e)
                 }
                 afterRun()
             }
@@ -356,9 +340,9 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
          * @param tu the time unit for the timeout
          * @return the current status after waiting
          */
-        fun waitFor(next: Status, timeout: Long, tu: TimeUnit): Status = doOnStatus {
+        fun waitFor(next: SimulationState, timeout: Long, tu: TimeUnit): SimulationState = doOnStatus {
             var notTimedOut = true
-            while (notTimedOut && next != status && next.isReachableFrom(status)) {
+            while (notTimedOut && next != state && next.isReachableFrom(state)) {
                 try {
                     queueLength.incrementAndGet()
                     notTimedOut = statusReached.await(timeout, tu)
@@ -368,7 +352,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(private val environment: E
                 }
             }
             if (queueLength.get() == 0) allReleased.signal()
-            status
+            state
         }
 
         /** Releases all locks. */

@@ -56,7 +56,7 @@ class TestMoleculeSwapWithinNeighborhood {
 
     @Test
     fun `it should be possible to send molecules to a neighbor`() {
-        val reaction = INCARNATION.createReaction(RANDOM, environment, nodesToAdd.first, TIME, DIRECT_REACTION)
+        val reaction = INCARNATION.createNodeReaction(RANDOM, environment, nodesToAdd.first, TIME, DIRECT_REACTION)
         assertEquals(2, reaction.conditions.size)
         assertEquals(1, reaction.neighborConditions.size)
         assertEquals(2, reaction.actions.size)
@@ -66,7 +66,7 @@ class TestMoleculeSwapWithinNeighborhood {
 
     @Test
     fun `it should be possible to pick molecules from a neighbor`() {
-        val reaction = INCARNATION.createReaction(RANDOM, environment, nodesToAdd.second, TIME, INVERSE_REACTION)
+        val reaction = INCARNATION.createNodeReaction(RANDOM, environment, nodesToAdd.second, TIME, INVERSE_REACTION)
         assertEquals(1, reaction.conditions.size)
         assertEquals(1, reaction.neighborConditions.size)
         assertEquals(2, reaction.actions.size)

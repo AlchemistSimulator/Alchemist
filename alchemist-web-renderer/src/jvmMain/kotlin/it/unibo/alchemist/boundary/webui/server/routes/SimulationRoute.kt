@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -24,7 +24,7 @@ import it.unibo.alchemist.boundary.webui.server.surrogates.utility.toStatusSurro
 import it.unibo.alchemist.boundary.webui.server.utility.Response
 import it.unibo.alchemist.boundary.webui.server.utility.Response.Companion.respond
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.core.SimulationState
 
 /**
  * Logic of the Routes in the /simulation path.
@@ -39,7 +39,7 @@ object SimulationRoute {
      */
     fun Route.simulationStatus() {
         get(SIMULATION_STATUS_PATH) {
-            store.state.simulation?.status?.toStatusSurrogate()?.let { status ->
+            store.state.simulation?.state?.toStatusSurrogate()?.let { status ->
                 respond(Response(OK, status))
             } ?: respond(Response(InternalServerError, "Simulation not loaded."))
         }
@@ -54,7 +54,7 @@ object SimulationRoute {
      */
     fun Route.simulationActionPlay() {
         post(SIMULATION_PLAY_PATH) {
-            respondAction(Pair(Status.RUNNING, "The Simulation is already running.")) { simulation ->
+            respondAction(Pair(SimulationState.RUNNING, "The Simulation is already running.")) { simulation ->
                 simulation.play()
             }
         }
@@ -69,7 +69,7 @@ object SimulationRoute {
      */
     fun Route.simulationActionPause() {
         post(SIMULATION_PAUSE_PATH) {
-            respondAction(Pair(Status.PAUSED, "The Simulation is already paused.")) { simulation ->
+            respondAction(Pair(SimulationState.PAUSED, "The Simulation is already paused.")) { simulation ->
                 simulation.pause()
             }
         }
@@ -77,19 +77,19 @@ object SimulationRoute {
 
     /**
      * Private function that checks the simulation Status, executes the requested action if possible and responds.
-     * @param additionalCheck a [Pair] representing an additional Status check, first is an invalid [Status] and second
-     * is the error message.
+     * @param additionalCheck a [Pair] representing an additional Status check,
+     * first is an invalid [SimulationState] and second is the error message.
      * @param action the action to execute on the simulation.
      */
     private suspend fun RoutingContext.respondAction(
-        additionalCheck: Pair<Status, String>,
+        additionalCheck: Pair<SimulationState, String>,
         action: (Simulation<Any, Nothing>) -> Unit,
     ) {
         store.state.simulation?.let { simulation ->
             respond(
-                when (simulation.status) {
-                    Status.INIT -> Response(Conflict, "The Simulation is being initialized.")
-                    Status.TERMINATED -> Response(Conflict, "The Simulation is terminated.")
+                when (simulation.state) {
+                    SimulationState.INIT -> Response(Conflict, "The Simulation is being initialized.")
+                    SimulationState.TERMINATED -> Response(Conflict, "The Simulation is terminated.")
                     additionalCheck.first -> Response(Conflict, additionalCheck.second)
                     else -> {
                         action(simulation)

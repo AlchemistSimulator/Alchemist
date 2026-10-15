@@ -53,7 +53,7 @@ private fun chemicalReactionFixture(): ChemicalReactionFixture {
     val reactionsByNode = listOf(0.0 to 0.0, 0.5 to 0.0).map { (x, y) ->
         val node = incarnation.createNode(randomGenerator, environment, null)
         val reactions = reactionConfigurations.associateWith { configuration ->
-            incarnation.createReaction(
+            incarnation.createNodeReaction(
                 randomGenerator,
                 environment,
                 node,

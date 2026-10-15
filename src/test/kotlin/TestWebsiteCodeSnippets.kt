@@ -52,7 +52,7 @@ class TestWebsiteCodeSnippets {
                     environment.addTerminator(StepCount(100))
                     val errorContainer = simulation.runInCurrentThread().error
                     assertTrue(
-                        errorContainer.isEmpty,
+                        errorContainer.isNone(),
                         "Simulation $snippetName encountered errors: $errorContainer",
                     )
                 }

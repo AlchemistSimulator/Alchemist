@@ -21,9 +21,9 @@ class LazinessTest : FunSpec({
 
     context("DerivedObservable laziness") {
 
-        test("should not compute fresh value if registered lazily") {
+        test("should not compute fresh value if registered lazily without distinct emissions") {
             var computations = 0
-            val derived = object : AbstractObservable<Int>() {
+            val derived = object : AbstractObservable<Int>(emitOnDistinct = false) {
                 override fun computeFresh(): Int {
                     computations++
                     return 26
@@ -52,7 +52,7 @@ class LazinessTest : FunSpec({
     }
 
     context("Map laziness") {
-        test("map should not apply transform if registered lazily") {
+        test("map should apply transform once if registered lazily, to compare the first update against it") {
             val source = observe(1)
             var transforms = 0
             val mapped = source.map {
@@ -60,7 +60,7 @@ class LazinessTest : FunSpec({
                 it * 2
             }
             mapped.onChange(this, false) { }
-            transforms shouldBe 0
+            transforms shouldBe 1
         }
 
         test("map should apply transform if registered eagerly") {
@@ -85,7 +85,7 @@ class LazinessTest : FunSpec({
     }
 
     context("Merge laziness") {
-        test("mergeWith should not merge if registered lazily") {
+        test("mergeWith should merge once if registered lazily, to compare the first update against it") {
             val a = observe(1)
             val b = observe(2)
             var merges = 0
@@ -94,7 +94,7 @@ class LazinessTest : FunSpec({
                 x + y
             }
             merged.onChange(this, false) { }
-            merges shouldBe 0
+            merges shouldBe 1
         }
 
         test("mergeWith should receive updates from both sources if registered lazily") {
@@ -112,7 +112,7 @@ class LazinessTest : FunSpec({
 
     context("Extension methods laziness") {
 
-        test("combineLatest (collection) should not aggregate if registered lazily") {
+        test("combineLatest (collection) should aggregate once if registered lazily") {
             val set = ObservableMutableSet(1, 2)
             var aggregations = 0
             val combined = set.combineLatest(
@@ -123,7 +123,7 @@ class LazinessTest : FunSpec({
                 },
             )
             combined.onChange(this, false) { }
-            aggregations shouldBe 0
+            aggregations shouldBe 1
         }
 
         test("combineLatest (collection) should receive updates if registered lazily") {
@@ -141,7 +141,7 @@ class LazinessTest : FunSpec({
             lastSeen shouldBe 40 // 20 + 20 (both map to same inner)
         }
 
-        test("combineLatest (list) should not collect if registered lazily") {
+        test("combineLatest (list) should collect once if registered lazily") {
             val list = listOf(observe(1), observe(2))
             var collections = 0
             val combined = list.combineLatest {
@@ -149,7 +149,7 @@ class LazinessTest : FunSpec({
                 it.sum()
             }
             combined.onChange(this, false) { }
-            collections shouldBe 0
+            collections shouldBe 1
         }
 
         test("switchMap should not transform if registered lazily") {

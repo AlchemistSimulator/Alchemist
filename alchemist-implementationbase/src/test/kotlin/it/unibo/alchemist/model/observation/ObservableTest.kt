@@ -61,6 +61,17 @@ class ObservableTest {
     }
 
     @Test
+    fun `a mapped observable registered without invokeOnRegistration emits only when the mapped value changes`() {
+        val counter = observe(0)
+        val parities = mutableListOf<Int>()
+        counter.map { it % 2 }.onChange(this, false) { parities += it }
+        counter.update { 2 }
+        assertEquals(emptyList(), parities)
+        counter.update { 3 }
+        assertEquals(listOf(1), parities)
+    }
+
+    @Test
     fun `a mapped observable emits only when the mapped value changes`() {
         val observable = observe(0)
         val parityObservable = observable.map { it % 2 == 0 }

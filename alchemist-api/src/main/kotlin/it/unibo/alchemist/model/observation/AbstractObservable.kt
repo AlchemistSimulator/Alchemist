@@ -22,7 +22,9 @@ import java.util.Collections
  * keeping a minimal set of active subscriptions with the underlying observables.
  * Moreover, observation of the sources is enabled if only there are observers registered with this derived observable.
  *
- * @param emitOnDistinct whether to emit when the new derived value is different from the current one.
+ * @param emitOnDistinct whether to emit only when the new derived value is different from the current one.
+ * If so, the first registration computes the current value even when not delivering it, so that the first emission
+ * can be compared against it; otherwise, a registration that does not deliver the current value computes nothing.
  * @param T The type of data being observed.
  */
 abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true) : Observable<T> {
@@ -58,12 +60,18 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
         callbacks[registrant] = callbacks[registrant].orEmpty() + callback
         if (wasEmpty) {
             isListening = true
-            if (invokeOnRegistration) {
+            if (invokeOnRegistration || emitOnDistinct) {
+                /*
+                 * Distinct observables cache the initial value even when not delivering it,
+                 * so that the first emission is compared against it.
+                 */
                 val initial = computeFresh()
                 cached = initial.some()
                 // Monitor before notifying, so that source changes made by the callback itself are not missed.
                 startMonitoring(true)
-                callback(initial)
+                if (invokeOnRegistration) {
+                    callback(initial)
+                }
             } else {
                 startMonitoring(true)
             }

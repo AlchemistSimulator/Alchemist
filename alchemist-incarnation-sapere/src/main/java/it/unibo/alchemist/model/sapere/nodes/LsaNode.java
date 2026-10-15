@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.sapere.nodes;
 
 import arrow.core.Option;
-import arrow.core.Some;
+import arrow.core.OptionKt;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
@@ -114,7 +114,10 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
         if (!(molecule instanceof final ILsaMolecule lsaTemplate)) {
             throw new IllegalArgumentException(molecule + INCOMPATIBLE_MOLECULE);
         }
-        return observeCandidates(lsaTemplate).map(candidates -> new Some<>(matchesOf(lsaTemplate, candidates)));
+        return observeCandidates(lsaTemplate).map(candidates -> {
+            final List<ILsaMolecule> matches = matchesOf(lsaTemplate, candidates);
+            return matches.isEmpty() ? OptionKt.none() : OptionKt.some(matches);
+        });
     }
 
     @Override

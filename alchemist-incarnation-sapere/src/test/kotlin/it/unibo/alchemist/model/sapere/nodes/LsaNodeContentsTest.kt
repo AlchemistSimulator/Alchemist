@@ -9,6 +9,9 @@
 
 package it.unibo.alchemist.model.sapere.nodes
 
+import arrow.core.Option
+import arrow.core.none
+import arrow.core.some
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
@@ -37,6 +40,17 @@ class LsaNodeContentsTest {
             listOf(mapOf(molecule to 1.0), mapOf(molecule to 2.0), mapOf(molecule to 1.0), emptyMap()),
             received,
         )
+    }
+
+    @Test
+    fun `the concentration of an LSA is present only if the node contains a matching LSA`() {
+        val received = mutableListOf<Option<List<ILsaMolecule>>>()
+        node.concentrationOf(molecule).onChange(this, invokeOnRegistration = true) { received += it }
+        assertEquals(none(), node[molecule])
+        node.addLsa(molecule)
+        assertEquals(listOf<ILsaMolecule>(molecule).some(), node[molecule])
+        node.removeOneMatchedLsa(molecule)
+        assertEquals(listOf(none(), listOf<ILsaMolecule>(molecule).some(), none()), received)
     }
 
     @Test

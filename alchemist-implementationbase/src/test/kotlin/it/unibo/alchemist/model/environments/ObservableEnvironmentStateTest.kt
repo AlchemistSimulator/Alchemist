@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.environments
 
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
@@ -69,6 +71,21 @@ class ObservableEnvironmentStateTest {
         listOf(removed, neverAdded).forEach { node ->
             assertFailsWith<IllegalArgumentException> { environment.getNodeByID(node.id) }
         }
+    }
+
+    @Test
+    fun `moving a node to its current position recomputes no neighborhood`() {
+        val rule = ConnectWithinDistance<Any, Euclidean2DPosition>(1.0)
+        var computations = 0
+        environment.linkingRule = object : LinkingRule<Any, Euclidean2DPosition> by rule {
+            override fun computeNeighborhood(center: Node<Any>, environment: Environment<Any, Euclidean2DPosition>) =
+                rule.computeNeighborhood(center, environment).also { computations++ }
+        }
+        val node = nodeAt(0.0)
+        nodeAt(0.5)
+        computations = 0
+        environment.moveNodeTo(node, Euclidean2DPosition(0.0, 0.0))
+        assertEquals(0, computations)
     }
 
     @Test

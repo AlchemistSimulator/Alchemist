@@ -123,9 +123,16 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
         override fun computeFresh(): Neighborhood<T> = counted(center)
 
         override fun startMonitoring() = Tracker(center, this).let { tracker ->
-            departed -= center
+            val returning = departed.remove(center)
             trackers[center] = tracker
             tracker.refresh()
+            /*
+             * A node observed again, e.g., by a replacing model reusing this one, is a candidate again: nothing else
+             * notifies the trackers that could count it among their closest.
+             */
+            if (returning) {
+                trackers.values.filter { it !== tracker && it.covers(center) }.forEach { it.refresh() }
+            }
         }
 
         override fun stopMonitoring() {
@@ -144,6 +151,10 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
         private var radius: Double? = null
 
         private var trigger: Disposable? = null
+
+        // Whether other is within the area where the closest nodes of this node are searched.
+        fun covers(other: Node<T>): Boolean =
+            radius.let { it == null || environment.distanceBetween(node, other) <= it }
 
         fun refresh() {
             val updated = closestOf(node)

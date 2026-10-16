@@ -265,8 +265,6 @@ internal abstract class LoadingSystem(private val originalContext: Context, priv
                 val composedLinkingRule =
                     when (val linkingRule = environment.networkModel) {
                         is NoLinks -> newLinkingRule
-                        is CombinedNetworkModel ->
-                            CombinedNetworkModel(linkingRule.subRules + listOf(newLinkingRule))
                         else -> CombinedNetworkModel(listOf(linkingRule, newLinkingRule))
                     }
                 environment.networkModel = composedLinkingRule

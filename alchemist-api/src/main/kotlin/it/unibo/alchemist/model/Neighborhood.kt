@@ -64,7 +64,8 @@ interface Neighborhood<T> {
 
                 override fun toString() = asString
 
-                override fun equals(other: Any?): Boolean = other is Neighborhood<*> &&
+                override fun equals(other: Any?): Boolean = this === other ||
+                    other is Neighborhood<*> &&
                     other.center == center &&
                     other.neighbors == neighbors
 

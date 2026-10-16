@@ -108,7 +108,6 @@ fun interface EnvironmentContext<T, P : Position<P>> {
      *
      * The current network model is updated as follows:
      * - if the environment currently uses [NoLinks], it is replaced with [model];
-     * - if the environment currently uses [CombinedNetworkModel], [model] is appended to its sub-rules;
      * - otherwise, the existing rule and [model] are combined into a new [CombinedNetworkModel].
      *
      * @param model the network model to set or append, bound to the environment.
@@ -116,9 +115,7 @@ fun interface EnvironmentContext<T, P : Position<P>> {
     context(environment: Environment<T, P>)
     fun networkModel(model: NetworkModel<T>) = when (val currentRule = environment.networkModel) {
         is NoLinks<T> -> environment.networkModel = model
-        is CombinedNetworkModel<T> ->
-            environment.networkModel = CombinedNetworkModel(currentRule.subRules + model)
-        else -> environment.networkModel = CombinedNetworkModel(listOf(environment.networkModel, model))
+        else -> environment.networkModel = CombinedNetworkModel(listOf(currentRule, model))
     }
 
     /**

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.networks
 
+import arrow.core.getOrElse
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
@@ -60,8 +61,7 @@ constructor(
 
     private val targetNeighborCount = max(desiredNeighbors, 0)
 
-    final override fun neighborhoodOf(center: Node<T>): Observable<Neighborhood<T>> =
-        super.neighborhoodOf(center).map { neighborhood -> neighborhood.also { converge(center, it.neighbors.size) } }
+    final override fun neighborhoodOf(center: Node<T>): Observable<Neighborhood<T>> = ConvergingNeighborhood(center)
 
     /**
      * Acts as a filter: whether [neighbor], a node within the range of [center], must not be linked to it.
@@ -92,9 +92,9 @@ constructor(
 
     // Links depend on the positions and ranges of both nodes, and on what the removal condition observes.
     final override fun observeInput(node: Node<T>): Observable<LinkState<P>> = environment.positionOf(node)
-        .mergeWith(ranges[node.id]) { position, _ -> position }
-        .mergeWith(observeRemovalInputs(node)) { position, removalInput ->
-            LinkState(position, rangeOf(node), removalInput)
+        .mergeWith(ranges[node.id]) { position, range -> position to range.getOrElse { radius } }
+        .mergeWith(observeRemovalInputs(node)) { (position, range), removalInput ->
+            LinkState(position, range, removalInput)
         }
 
     /**
@@ -105,9 +105,10 @@ constructor(
     protected open fun observeRemovalInputs(node: Node<T>): Observable<*> = observe(Unit)
 
     /*
-     * Steps the range of the center until its neighbor count is within tolerance or the range hits its bounds, then
-     * publishes it: changing a range updates the neighborhoods depending on it, which may adjust further ranges, so
-     * the adjustments triggered by one another are capped, to bound mutually oscillating ranges.
+     * Steps the range of the center until its neighbor count is within tolerance or the range hits its bounds,
+     * then publishes it:
+     * changing a range updates the neighborhoods depending on it, which may adjust further ranges,
+     * so the adjustments triggered by one another are capped, to bound mutually oscillating ranges.
      */
     private fun converge(center: Node<T>, neighborCount: Int) {
         if (cascadingAdjustments < MAX_CASCADING_ADJUSTMENTS && !withinTolerance(neighborCount)) {
@@ -145,6 +146,41 @@ constructor(
 
     private fun withinTolerance(neighborCount: Int): Boolean =
         neighborCount in max(1, targetNeighborCount - tolerance)..targetNeighborCount + tolerance
+
+    /*
+     * The neighborhood of center, whose range converges after each change of the neighborhood has been delivered.
+     * Reading the current neighborhood changes nothing.
+     * While observed, the range is adjusted by an observer kept after every other one,
+     * so that the newer neighborhoods caused by an adjustment reach the observers after the one that triggered it,
+     * rather than being overwritten by it.
+     */
+    private inner class ConvergingNeighborhood(private val center: Node<T>) : Observable<Neighborhood<T>> {
+        override val current: Neighborhood<T> get() = base.current
+
+        override val observers: List<Any> get() = base.observers - this
+
+        override val observingCallbacks: Map<Any, List<(Neighborhood<T>) -> Unit>>
+            get() = base.observingCallbacks - this
+
+        private val base = super@AdaptiveRange.neighborhoodOf(center)
+
+        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Neighborhood<T>) -> Unit) {
+            val firstObserver = observers.isEmpty()
+            // The converger is registered again after the new observer, to stay the last one notified.
+            base.stopWatching(this)
+            base.onChange(registrant, invokeOnRegistration, callback)
+            base.onChange(this, invokeOnRegistration = firstObserver) { converge(center, it.neighbors.size) }
+        }
+
+        override fun stopWatching(registrant: Any) {
+            base.stopWatching(registrant)
+            if (observers.isEmpty()) {
+                base.stopWatching(this)
+            }
+        }
+
+        override fun toString(): String = "ConvergingNeighborhood($current)[from: $base]"
+    }
 
     /**
      * The state of a node that its links depend on: its [position], its current [range], and the [removalInput] that

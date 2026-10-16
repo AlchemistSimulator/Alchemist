@@ -112,6 +112,27 @@ class ObservableTest {
     }
 
     @Test
+    fun `an observable publishing while it starts monitoring delivers only the newer value to its first observer`() {
+        val observable = object : AbstractObservable<Int>() {
+            var value = 1
+
+            override fun computeFresh(): Int = value
+
+            override fun startMonitoring() {
+                value = 2
+                updateAndNotify(value)
+            }
+
+            override fun stopMonitoring() = Unit
+        }
+        val seen = mutableListOf<Int>()
+        observable.subscribe { seen += it }
+        // an observable that publishes 2 while starting to monitor must deliver only [2] to its first observer.
+        // (it used to deliver 2, then 1)
+        assertEquals(listOf(2), seen)
+    }
+
+    @Test
     fun `an EventObservable notifies all observers on every emission`() {
         val event = EventObservable()
         var calls = -1

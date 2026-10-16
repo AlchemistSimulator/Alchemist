@@ -67,9 +67,19 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
                  */
                 val initial = computeFresh()
                 cached = initial.some()
+                /*
+                 * Starting to monitor may itself publish a value:
+                 * subscribing to the sources can make them, or this observable, emit.
+                 * Such an emission is notified to every registered callback, including the one just added,
+                 * and is newer than initial, which was computed before monitoring started.
+                 * Delivering initial afterwards would overwrite it with an outdated value.
+                 * The emission count is therefore recorded before starting to monitor and compared right after:
+                 * if it changed, the callback already received a newer value, and initial is not delivered.
+                 */
+                val emissionsBeforeMonitoring = emissions
                 // Monitor before notifying, so that source changes made by the callback itself are not missed.
                 startMonitoring(true)
-                if (invokeOnRegistration) {
+                if (invokeOnRegistration && emissions == emissionsBeforeMonitoring) {
                     callback(initial)
                 }
             } else {

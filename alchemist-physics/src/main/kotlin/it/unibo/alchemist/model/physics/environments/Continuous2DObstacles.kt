@@ -35,6 +35,7 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
     private var rtree: RTree<RectObstacle2D<Euclidean2DPosition>, Rectangle> = RTree.create()
 
     override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) {
+        checkNoNodes("add")
         rtree = rtree.add(obstacle, toGeometry(obstacle))
         includeObject(obstacle.minX, obstacle.maxX, obstacle.minY, obstacle.maxY)
     }
@@ -126,6 +127,7 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
     }
 
     override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>): Boolean {
+        checkNoNodes("remove")
         val initialSize = rtree.size()
         rtree = rtree.delete(obstacle, toGeometry(obstacle))
         return rtree.size() == initialSize - 1
@@ -133,6 +135,11 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
 
     override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) =
         super<AbstractLimitedContinuous2D>.moveNodeTo(node, position)
+
+    // Obstacles are fixed once nodes exist: the links and the positions computed for them assume so.
+    private fun checkNoNodes(operation: String) = check(nodeCount.current == 0) {
+        "Cannot $operation obstacles in an environment holding nodes: obstacles must be set before deploying nodes"
+    }
 
     private fun toGeometry(o: RectObstacle2D<Euclidean2DPosition>): Rectangle =
         Geometries.rectangle(o.minX, o.minY, o.maxX, o.maxY)

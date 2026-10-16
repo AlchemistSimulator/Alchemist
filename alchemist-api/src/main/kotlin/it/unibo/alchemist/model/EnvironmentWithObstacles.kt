@@ -24,12 +24,13 @@ interface EnvironmentWithObstacles<W, T, P> :
           P : Position<P>,
           P : Vector<P> {
     /**
-     * A list of all the obstacles in this environment.
+     * A list of all the obstacles in this environment, fixed once the environment holds nodes.
      */
     val obstacles: List<W>
 
     /**
      * Adds an obstacle to this environment.
+     * Obstacles are part of the environment setup: adding one fails once the environment holds nodes.
      *
      * @param obstacle
      *              the obstacle to add
@@ -38,6 +39,7 @@ interface EnvironmentWithObstacles<W, T, P> :
 
     /**
      * Removes an obstacle from this environment.
+     * Obstacles are part of the environment setup: removing one fails once the environment holds nodes.
      *
      * @param obstacle
      *              the obstacle to remove

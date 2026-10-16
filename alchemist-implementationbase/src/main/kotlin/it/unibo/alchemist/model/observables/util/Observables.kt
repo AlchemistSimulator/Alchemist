@@ -48,11 +48,9 @@ object Observables {
                 ?.let { _ -> collector(this@combineLatest.map { it.current }).some() }
                 ?: none<O>()
 
-            override fun startMonitoring() = startMonitoring(false)
-
-            override fun startMonitoring(lazy: Boolean) {
+            override fun startMonitoring() {
                 this@combineLatest.forEach { observable ->
-                    observable.onChange(this, !lazy) { updateAndNotify(computeFresh()) }
+                    observable.onChange(this, invokeOnRegistration = false) { updateAndNotify(computeFresh()) }
                 }
             }
 
@@ -86,17 +84,13 @@ object Observables {
 
             override fun computeFresh(): R = transform(this@switchMap.current).also { lastSelected = it }.current
 
-            override fun startMonitoring() = startMonitoring(false)
-
-            override fun startMonitoring(lazy: Boolean) {
-                this@switchMap.onChange(this, !lazy, ::switchInner)
-                if (lazy) {
-                    // Follow the inner observable whose value is cached, if any, rather than selecting a new one.
-                    follow(
-                        lastSelected?.takeIf { cached.isSome() } ?: transform(this@switchMap.current),
-                        emitCurrent = false,
-                    )
-                }
+            override fun startMonitoring() {
+                this@switchMap.onChange(this, invokeOnRegistration = false, ::switchInner)
+                // Follow the inner observable whose value is cached, if any, rather than selecting a new one.
+                follow(
+                    lastSelected?.takeIf { cached.isSome() } ?: transform(this@switchMap.current),
+                    emitCurrent = false,
+                )
             }
 
             override fun stopMonitoring() {
@@ -144,9 +138,7 @@ object Observables {
             return aggregator(values)
         }
 
-        override fun startMonitoring() = startMonitoring(false)
-
-        override fun startMonitoring(lazy: Boolean) {
+        override fun startMonitoring() {
             val callback: (C) -> Unit = { current ->
                 reconcile(
                     owner = this,
@@ -157,19 +149,17 @@ object Observables {
                     postCleanup = { updateAndNotify(computeFresh()) },
                 )
             }
-            this@combineLatestCollection.onChange(this, !lazy, callback)
-            if (lazy) {
-                // Monitor the observables whose values are cached, if any, rather than creating new ones.
-                val retained = lastCreated.takeIf { cached.isSome() }.orEmpty()
-                reconcile(
-                    owner = this,
-                    sources = sources,
-                    current = this@combineLatestCollection.current,
-                    transformer = { key -> retained[key] ?: transformer(key) },
-                    doOnChange = { updateAndNotify(computeFresh()) },
-                    invokeOnRegistration = false,
-                )
-            }
+            this@combineLatestCollection.onChange(this, invokeOnRegistration = false, callback)
+            // Monitor the observables whose values are cached, if any, rather than creating new ones.
+            val retained = lastCreated.takeIf { cached.isSome() }.orEmpty()
+            reconcile(
+                owner = this,
+                sources = sources,
+                current = this@combineLatestCollection.current,
+                transformer = { key -> retained[key] ?: transformer(key) },
+                doOnChange = { updateAndNotify(computeFresh()) },
+                invokeOnRegistration = false,
+            )
             lastCreated = emptyMap()
         }
 
@@ -212,9 +202,7 @@ object Observables {
             }
         }
 
-        override fun startMonitoring() = startMonitoring(false)
-
-        override fun startMonitoring(lazy: Boolean) {
+        override fun startMonitoring() {
             val callback: (C) -> Unit = { current ->
                 reconcile(
                     owner = this,
@@ -229,19 +217,17 @@ object Observables {
                     },
                 )
             }
-            this@flatMapCollection.onChange(this, !lazy, callback)
-            if (lazy) {
-                // Monitor the observable whose value is cached, if any, rather than creating a new one.
-                val retained = lastCreated.takeIf { cached.isSome() }.orEmpty()
-                reconcile(
-                    owner = this,
-                    sources = sources,
-                    current = this@flatMapCollection.current,
-                    transformer = { key -> retained[key] ?: transformer(key) },
-                    doOnChange = { updateAndNotify(it.some()) },
-                    invokeOnRegistration = false,
-                )
-            }
+            this@flatMapCollection.onChange(this, invokeOnRegistration = false, callback)
+            // Monitor the observable whose value is cached, if any, rather than creating a new one.
+            val retained = lastCreated.takeIf { cached.isSome() }.orEmpty()
+            reconcile(
+                owner = this,
+                sources = sources,
+                current = this@flatMapCollection.current,
+                transformer = { key -> retained[key] ?: transformer(key) },
+                doOnChange = { updateAndNotify(it.some()) },
+                invokeOnRegistration = false,
+            )
             lastCreated = emptyMap()
         }
 

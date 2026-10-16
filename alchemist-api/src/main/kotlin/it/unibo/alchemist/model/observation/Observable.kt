@@ -97,10 +97,8 @@ interface Observable<T> : Disposable {
 
         override fun computeFresh(): S = transform(this@Observable.current)
 
-        override fun startMonitoring() = startMonitoring(false)
-
-        override fun startMonitoring(lazy: Boolean) {
-            this@Observable.onChange(this, !lazy) {
+        override fun startMonitoring() {
+            this@Observable.onChange(this, invokeOnRegistration = false) {
                 updateAndNotify(transform(it))
             }
         }
@@ -124,15 +122,13 @@ interface Observable<T> : Disposable {
 
         override fun computeFresh(): R = merge(this@Observable.current, other.current)
 
-        override fun startMonitoring() = startMonitoring(false)
-
-        override fun startMonitoring(lazy: Boolean) {
+        override fun startMonitoring() {
             val handleUpdate: (Any?) -> Unit = {
                 updateAndNotify(merge(this@Observable.current, other.current))
             }
 
             listOf(this@Observable, other).forEach { obs ->
-                obs.onChange(this, !lazy, handleUpdate)
+                obs.onChange(this, invokeOnRegistration = false, handleUpdate)
             }
         }
 

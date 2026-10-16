@@ -78,12 +78,12 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
                  */
                 val emissionsBeforeMonitoring = emissions
                 // Monitor before notifying, so that source changes made by the callback itself are not missed.
-                startMonitoring(true)
+                startMonitoring()
                 if (invokeOnRegistration && emissions == emissionsBeforeMonitoring) {
                     callback(initial)
                 }
             } else {
-                startMonitoring(true)
+                startMonitoring()
             }
         } else if (invokeOnRegistration) {
             callback(current)
@@ -109,22 +109,11 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
     protected abstract fun computeFresh(): T
 
     /**
-     * Initiates monitoring for changes or updates in the implementing class.
-     * This method should enable necessary mechanisms to observe and react to changes
-     * based on the specific implementation of the derived class.
+     * Starts monitoring the sources of this observable, publishing their changes through [updateAndNotify].
+     * It is called when the first observer registers, after the current value has been computed if needed:
+     * implementations must subscribe to their sources without being notified of their current values.
      */
     protected abstract fun startMonitoring()
-
-    /**
-     * Initiates monitoring for changes or updates in the implementing class.
-     * This method should enable necessary mechanisms to observe and react to changes
-     * based on the specific implementation of the derived class.
-     *
-     * @param lazy whether the monitoring should be started lazily (avoiding immediate callbacks)
-     */
-    protected open fun startMonitoring(lazy: Boolean) {
-        startMonitoring()
-    }
 
     /**
      * Stops monitoring for changes or updates in the implementing class.

@@ -139,5 +139,18 @@ class ObservableSetTest : FunSpec({
             val s2 = ObservableMutableSet(2, 3, 4)
             (s1 union s2).current shouldContainExactlyInAnyOrder setOf(1, 2, 3, 4)
         }
+
+        test("disposing a union releases the subscriptions made through its size") {
+            val s1 = ObservableMutableSet(1)
+            val s2 = ObservableMutableSet(2)
+            val union = s1 union s2
+            val sizes = mutableListOf<Int>()
+            union.size.onChange(this, invokeOnRegistration = false) { sizes += it }
+            union.dispose()
+            s1.add(3)
+            sizes shouldBe emptyList()
+            s1.observers shouldBe emptyList()
+            s2.observers shouldBe emptyList()
+        }
     }
 })

@@ -119,6 +119,14 @@ object ObservableSets {
         override fun containsItem(item: T): Observable<Boolean> =
             this@union.containsItem(item).mergeWith(other.containsItem(item)) { a, b -> a || b }
 
+        override fun dispose() {
+            // The size subscribes to the backing observable directly, so it is released before it.
+            size.dispose()
+            backing.dispose()
+            observers = emptyList()
+            observingCallbacks.clear()
+        }
+
         override fun toString(): String = "UnionObservableSet($current)[from: ${this@union}, other: $other]"
     }
 

@@ -13,6 +13,11 @@ package it.unibo.alchemist.model.observation
  * Represents an observable object that emits updates to registered observers when its value changes.
  * Subscription changes take effect on later emissions.
  *
+ * Observers are notified as soon as the value changes, while other observables depending on the same change may not
+ * have been updated yet.
+ * A callback must therefore not rely on state it does not observe:
+ * a result depending on several observables must observe all of them, so that it is recomputed once each is updated.
+ *
  * @param T The type of the value being observed.
  */
 interface Observable<T> : Disposable {

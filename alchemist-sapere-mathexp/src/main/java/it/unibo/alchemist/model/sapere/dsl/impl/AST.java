@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 /**
  */
 public final class AST implements ITree {
-    private static final long serialVersionUID = 5276224537064582492L;
     private static final Logger L = LoggerFactory.getLogger(AST.class);
 
     private final HashString fs;

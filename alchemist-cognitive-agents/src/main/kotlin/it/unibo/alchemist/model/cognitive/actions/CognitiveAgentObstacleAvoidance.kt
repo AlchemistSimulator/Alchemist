@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,9 +9,8 @@
 
 package it.unibo.alchemist.model.cognitive.actions
 
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.reactions.SteeringBehavior
 import it.unibo.alchemist.model.environments.Environment2DWithObstacles
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
@@ -29,16 +28,23 @@ import kotlin.reflect.jvm.jvmName
  * @property proximityRange the distance at which an obstacle is perceived by the node
  */
 class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Euclidean2DPosition>, T>(
-    private val environment: Environment2DWithObstacles<W, T>,
-    override val reaction: SteeringBehavior<T>,
+    override val environment: Environment2DWithObstacles<W, T>,
+    reaction: SteeringBehavior<T>,
     pedestrian: PedestrianProperty<T>,
     private val proximityRange: Double,
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
-        check(reaction is SteeringBehavior<T>) {
-            "steering behavior needed but found ${this.reaction::class.run { simpleName ?: jvmName } }"
+    private val steeringBehavior: SteeringBehavior<T> = reaction
+
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
+        check(newReaction is SteeringBehavior<T>) {
+            "steering behavior needed but found ${newReaction::class.run { simpleName ?: jvmName } }"
         }
-        return CognitiveAgentObstacleAvoidance(environment, reaction, node.pedestrianProperty, proximityRange)
+        return CognitiveAgentObstacleAvoidance(
+            environment,
+            newReaction,
+            newReaction.host.pedestrianProperty,
+            proximityRange,
+        )
     }
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->
@@ -57,9 +63,9 @@ class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Eu
     }
 
     /**
-     * Computes the target of the node, delegating to [reaction].steerStrategy.computeTarget.
+     * Computes the target of the node, delegating to the steering strategy of the owning [SteeringBehavior].
      */
-    private fun target(): Euclidean2DPosition = with(reaction) {
+    private fun target(): Euclidean2DPosition = with(steeringBehavior) {
         steerStrategy.computeTarget(steerActions().filterNot { it is CognitiveAgentObstacleAvoidance<*, *> })
     }
 }

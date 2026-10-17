@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * This strategy computes a route along streets allowed for a selected
@@ -29,8 +29,6 @@ import java.io.Serial;
 public final class OnStreets<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     implements RoutingStrategy<T, GeoPosition> {
 
-    @Serial
-    private static final long serialVersionUID = 9041363003794088201L;
     private final MapEnvironment<T, O, S> environment;
     private final O options;
 
@@ -45,8 +43,9 @@ public final class OnStreets<T, O extends RoutingServiceOptions<O>, S extends Ro
         this.options = options;
     }
 
+    @Nonnull
     @Override
-    public Route<GeoPosition> computeRoute(final GeoPosition currentPos, final GeoPosition finalPos) {
+    public Route<GeoPosition> computeRoute(@Nonnull final GeoPosition currentPos, @Nonnull final GeoPosition finalPos) {
         return environment.computeRoute(currentPos, finalPos, options);
     }
 

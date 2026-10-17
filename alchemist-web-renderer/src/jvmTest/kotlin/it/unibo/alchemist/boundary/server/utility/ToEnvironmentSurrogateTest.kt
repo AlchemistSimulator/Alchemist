@@ -31,8 +31,8 @@ class ToEnvironmentSurrogateTest<T, P> :
                         toSuitablePositionSurrogate(environment.dimensions),
                     )
                 environment.dimensions shouldBe environmentSurrogate.dimensions
-                environment.nodes.size shouldBe environmentSurrogate.nodes.size
-                environment.nodes.forEach { node ->
+                environment.nodes.current.size shouldBe environmentSurrogate.nodes.size
+                environment.nodes.current.forEach { node ->
                     val surrogateNode = environmentSurrogate.nodes.find { surrogateNode -> node.id == surrogateNode.id }
                     if (surrogateNode != null) {
                         checkToNodeSurrogate(environment, node, surrogateNode)

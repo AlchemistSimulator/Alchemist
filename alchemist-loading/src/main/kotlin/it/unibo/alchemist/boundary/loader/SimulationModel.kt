@@ -40,24 +40,22 @@ import it.unibo.alchemist.boundary.variables.Constant
 import it.unibo.alchemist.boundary.variables.JSR223Variable
 import it.unibo.alchemist.boundary.variables.LinearVariable
 import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Condition
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.PositionBasedFilter
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.CombinedNetworkModel
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
@@ -69,7 +67,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>?, Actionable<T>, Any?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, Reaction<T>, Any?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -261,15 +259,15 @@ internal object SimulationModel {
             )
         }
 
-    internal fun <P : Position<P>, T> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
-        val linkingRules =
+    internal fun <P : Position<P>, T> visitLinkingRule(localContext: Context, root: Any?): NetworkModel<T> {
+        val networkModels =
             visitRecursively(localContext, root, JavaType) { element ->
-                visitBuilding<LinkingRule<T, P>>(localContext, element)
+                visitBuilding<NetworkModel<T>>(localContext, element)
             }
         return when {
-            linkingRules.isEmpty() -> NoLinks()
-            linkingRules.size == 1 -> linkingRules.first()
-            else -> CombinedLinkingRule(linkingRules)
+            networkModels.isEmpty() -> NoLinks()
+            networkModels.size == 1 -> networkModels.first()
+            else -> CombinedNetworkModel(networkModels)
         }
     }
 
@@ -438,7 +436,9 @@ internal object SimulationModel {
                     "molecule $moleculeElement$type is not a scalar value." +
                         "This might be caused by a missing quotation of a String."
                 }
-                val molecule = incarnation.createMolecule(moleculeElement?.toString())
+                val molecule = incarnation.createMolecule(
+                    requireNotNull(moleculeElement) { "Missing molecule in content $contentDescriptor" }.toString(),
+                )
                 logger.debug("Molecule: {}", molecule)
                 val concentrationKey = AlchemistYamlSyntax.Deployment.Contents.concentration
                 val concentrationMaker: () -> T = {
@@ -449,23 +449,23 @@ internal object SimulationModel {
         }
     }
 
-    internal fun <T, P : Position<P>> visitProperty(
+    internal fun <T, P : Position<P>> visitCapabilities(
         context: Context,
         root: Map<*, *>,
-    ): List<Pair<List<PositionBasedFilter<P>>, NodeProperty<T>>> {
-        logger.debug("Visiting properties: {}", root)
-        val capabilitiesKey = AlchemistYamlSyntax.Deployment.properties
+    ): List<Pair<List<PositionBasedFilter<P>>, Capability<T>>> {
+        logger.debug("Visiting capabilities: {}", root)
+        val capabilitiesKey = AlchemistYamlSyntax.Deployment.capabilities
         val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
-        return visitRecursively(context, allCapabilities, AlchemistYamlSyntax.Deployment.Property) { element ->
+        return visitRecursively(context, allCapabilities, AlchemistYamlSyntax.Deployment.Capability) { element ->
             (element as? Map<*, *>)?.let {
                 val filters = visitFilter<P>(context, element)
-                val nodeProperty =
-                    visitBuilding<NodeProperty<T>>(context, element)?.getOrThrow() ?: cantBuildWith<NodeProperty<T>>(
+                val capability =
+                    visitBuilding<Capability<T>>(context, element)?.getOrThrow() ?: cantBuildWith<Capability<T>>(
                         root,
                         JavaType,
                     )
-                logger.debug("Property: {}", nodeProperty)
-                Result.success(Pair(filters, nodeProperty))
+                logger.debug("Capability: {}", capability)
+                Result.success(Pair(filters, capability))
             }
         }
     }
@@ -631,7 +631,10 @@ internal object SimulationModel {
                 visitBuilding<Layer<T, P>>(
                     context,
                     origin,
-                )?.map { incarnation.createMolecule(origin[LayerSyntax.molecule]?.toString()) to it }
+                )?.map { layer ->
+                    val molecule = requireNotNull(origin[LayerSyntax.molecule]) { "Missing molecule in layer $origin" }
+                    incarnation.createMolecule(molecule.toString()) to layer
+                }
             }
         }
 
@@ -675,7 +678,7 @@ internal object SimulationModel {
         node: Node<T>?,
         context: Context,
         program: Map<*, *>,
-    ): Result<Pair<List<PositionBasedFilter<P>>, Actionable<T>>>? =
+    ): Result<Pair<List<PositionBasedFilter<P>>, Reaction<T>>>? =
         if (ProgramSyntax.validateDescriptor(program) || GlobalProgramSyntax.validateDescriptor(program)) {
             /*
              * Time distribution
@@ -691,11 +694,18 @@ internal object SimulationModel {
                 )
             context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
             /*
-             * Actionable
+             * Reaction
              */
-            val actionable: Actionable<T> =
-                visitActionable(simulationRNG, incarnation, environment, node, timeDistribution, context, program)
-            context.factory.registerSingleton(Actionable::class.java, actionable)
+            val reaction: Reaction<T> = visitReaction(
+                simulationRNG,
+                incarnation,
+                environment,
+                node,
+                timeDistribution,
+                context,
+                program,
+            )?.getOrThrow() ?: cantBuildWith<Reaction<T>>(program)
+            context.factory.registerSingleton(Reaction::class.java, reaction)
 
             /*
              * Support function implementing the lookup strategy for conditions and actions
@@ -707,7 +717,7 @@ internal object SimulationModel {
             ): Result<R>? {
                 fun <R> create(withParameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> =
                     runCatching {
-                        makeWith(simulationRNG, environment, node, actionable, withParameter)
+                        makeWith(simulationRNG, environment, node, reaction, withParameter)
                     }
                 return when (parameter) {
                     is String -> create(parameter, incarnationFactory)
@@ -744,7 +754,7 @@ internal object SimulationModel {
                     visitIncarnationBuildable(it, incarnation::createCondition, ::visitBuilding)
                 }
             if (conditions.isNotEmpty()) {
-                actionable.conditions = actionable.conditions + conditions
+                reaction.conditions = reaction.conditions + conditions
             }
             val actions =
                 visitRecursively<Action<T>>(
@@ -755,16 +765,16 @@ internal object SimulationModel {
                     visitIncarnationBuildable(it, incarnation::createAction, ::visitBuilding)
                 }
             if (actions.isNotEmpty()) {
-                actionable.actions = actionable.actions + actions
+                reaction.actions = reaction.actions + actions
             }
-            context.factory.deregisterSingleton(actionable)
+            context.factory.deregisterSingleton(reaction)
             context.factory.deregisterSingleton(timeDistribution)
-            Result.success(Pair(filters, actionable))
+            Result.success(Pair(filters, reaction))
         } else {
             null
         }
 
-    private fun <P : Position<P>, T> visitActionable(
+    private fun <P : Position<P>, T> visitReaction(
         simulationRNG: RandomGenerator,
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
@@ -772,15 +782,18 @@ internal object SimulationModel {
         timeDistribution: TimeDistribution<T>,
         context: Context,
         root: Map<*, *>,
-    ) = when {
+    ): Result<Reaction<T>>? = when {
         root.containsKey(ProgramSyntax.program) ->
-            incarnation.createReaction(simulationRNG, environment, node, timeDistribution, root[ProgramSyntax.program])
-        node != null ->
-            // This is a node-local reaction
-            visitBuilding<Reaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<Reaction<T>>(root)
-        else ->
-            // A reaction with no node is a GlobalReaction
-            visitBuilding<GlobalReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<GlobalReaction<T>>(root)
+            Result.success(
+                incarnation.createNodeReaction(
+                    simulationRNG,
+                    environment,
+                    requireNotNull(node) { "The program of a reaction requires a node, found in $root" },
+                    timeDistribution,
+                    root[ProgramSyntax.program],
+                ),
+            )
+        else -> visitBuilding<Reaction<T>>(context, root)?.map { it }
     }
 
     fun visitSeeds(context: Context, root: Any?): Seeds = when (root) {

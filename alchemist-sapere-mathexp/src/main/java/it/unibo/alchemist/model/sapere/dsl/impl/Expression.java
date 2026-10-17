@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,6 +8,16 @@
  */
 package it.unibo.alchemist.model.sapere.dsl.impl;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITree;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.parser.Exp;
+import it.unibo.alchemist.model.sapere.dsl.parser.ParseException;
+import org.danilopianini.lang.HashString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -15,23 +25,10 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import it.unibo.alchemist.model.sapere.dsl.parser.ParseException;
-import org.danilopianini.lang.HashString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.sapere.dsl.IExpression;
-import it.unibo.alchemist.model.sapere.dsl.ITree;
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-import it.unibo.alchemist.model.sapere.dsl.parser.Exp;
-
 /**
  */
 @SuppressFBWarnings
 public final class Expression implements IExpression {
-
-    private static final long serialVersionUID = 3443642011985784643L;
 
     private static final HashString
         EQUALS = new HashString("="),
@@ -53,7 +50,7 @@ public final class Expression implements IExpression {
             return constant.getRootNodeData().equals(comparator.getRightChildren().getValue(matches));
         }
         if (comparator.getRootNodeData().equals(NOT_EQUALS)) {
-            return !(constant.getRootNodeData().equals(comparator.getRightChildren().getValue(matches)));
+            return !constant.getRootNodeData().equals(comparator.getRightChildren().getValue(matches));
         }
         L.warn("invalid comparation between comparator and constant (only = or != are admitted)");
         return false;
@@ -157,48 +154,44 @@ public final class Expression implements IExpression {
     private static boolean matchesNodes(final ITreeNode<?> root, final ITreeNode<?> expr) {
         switch (root.getType()) {
         case VAR:
-            switch (expr.getType()) {
-            case COMPARATOR:
-            case LISTCOMPARATOR:
-                printErrorStaticMatches(expr.getType());
-                return false;
-            default:
-                return true;
-            }
+            return switch (expr.getType()) {
+                case COMPARATOR, LISTCOMPARATOR -> {
+                    printErrorStaticMatches(expr.getType());
+                    yield false;
+                }
+                default -> true;
+            };
             /*
              * It should never match a listComparator or a comparator, since
              * those can't be in the LSA Spaces
              */
         case LIST:
-            switch (expr.getType()) {
-            case VAR:
-                return true;
-            case LIST:
-                return listVsList(root, expr);
-            default:
-                printErrorStaticMatches(expr.getType());
-                return false;
-            }
+            return switch (expr.getType()) {
+                case VAR -> true;
+                case LIST -> listVsList(root, expr);
+                default -> {
+                    printErrorStaticMatches(expr.getType());
+                    yield false;
+                }
+            };
         case NUM:
-            switch (expr.getType()) {
-            case NUM:
-                return expr.getData().equals(root.getData());
-            case VAR:
-                return true;
-            default:
-                printErrorStaticMatches(expr.getType());
-                return false;
-            }
+            return switch (expr.getType()) {
+                case NUM -> expr.getData().equals(root.getData());
+                case VAR -> true;
+                default -> {
+                    printErrorStaticMatches(expr.getType());
+                    yield false;
+                }
+            };
         case CONST:
-            switch (expr.getType()) {
-            case VAR:
-                return true;
-            case CONST:
-                return root.getData().equals(expr.getData());
-            default:
-                printErrorStaticMatches(expr.getType());
-                return false;
-            }
+            return switch (expr.getType()) {
+                case VAR -> true;
+                case CONST -> root.getData().equals(expr.getData());
+                default -> {
+                    printErrorStaticMatches(expr.getType());
+                    yield false;
+                }
+            };
         default:
             printErrorStaticMatches(root.getType());
         }
@@ -230,7 +223,7 @@ public final class Expression implements IExpression {
             return num.getRootNodeData().equals(val);
         }
         if (d.equals(NOT_EQUALS)) {
-            return !(num.getRootNodeData().equals(val));
+            return !num.getRootNodeData().equals(val);
         }
         if (d.equals(SMALLER_EQUALS)) {
             return (Double) num.getRootNodeData() <= val;
@@ -238,7 +231,7 @@ public final class Expression implements IExpression {
         if (d.equals(GREATER_EQUALS)) {
             return (Double) num.getRootNodeData() >= val;
         } else {
-            L.error("You must have built something which should not exist: " + comp);
+            L.error("You must have built something which should not exist: {}", comp);
         }
         return false;
     }
@@ -283,11 +276,11 @@ public final class Expression implements IExpression {
     }
 
     private static void printErrorStaticMatches(final Type t) {
-        L.error(t + "s not allowed in the static version of matches.");
+        L.error("{}s not allowed in the static version of matches.", t);
     }
 
     private static void printWarnMessage(final IExpression root, final IExpression expr) {
-        L.warn("This should never happen. Check what you did: you tried to match " + root + " and " + expr);
+        L.warn("This should never happen. Check what you did: you tried to match {} and {}", root, expr);
     }
 
     /**
@@ -381,55 +374,40 @@ public final class Expression implements IExpression {
     public boolean matches(final IExpression expr, final Map<HashString, ITreeNode<?>> matches) {
         switch (getRootNodeType()) {
         case VAR:
-            switch (expr.getRootNodeType()) {
-            case COMPARATOR:
-            case LISTCOMPARATOR:
-                printWarnMessage(this, expr);
-                return false;
-            default:
-                return true;
-            }
+            return switch (expr.getRootNodeType()) {
+                case COMPARATOR, LISTCOMPARATOR -> {
+                    printWarnMessage(this, expr);
+                    yield false;
+                }
+                default -> true;
+            };
             /*
              * It should never match a listComparator or a comparator, since
              * those can't be in the LSA Spaces
              */
         case LIST:
-            switch (expr.getRootNodeType()) {
-            case VAR:
-                return true;
-            case LIST:
-                return listVsList(rootNode, expr.getRootNode());
-            case LISTCOMPARATOR:
-                return listComparatorVsList(expr, getRootNode());
-            case OPERATOR:
-                return operatorVsList(expr, this);
-            default:
-                return false;
-            }
+            return switch (expr.getRootNodeType()) {
+                case VAR -> true;
+                case LIST -> listVsList(rootNode, expr.getRootNode());
+                case LISTCOMPARATOR -> listComparatorVsList(expr, getRootNode());
+                case OPERATOR -> operatorVsList(expr, this);
+                default -> false;
+            };
         case NUM:
-            switch (expr.getRootNodeType()) {
-            case OPERATOR:
-                return numVsOperator(this, expr, matches);
-            case NUM:
-                return expr.getRootNodeData().equals(getRootNodeData());
-            case VAR:
-                return true;
-            case COMPARATOR:
-                return numVsComparator(this, expr, matches);
-            default:
-                return false;
-            }
+            return switch (expr.getRootNodeType()) {
+                case OPERATOR -> numVsOperator(this, expr, matches);
+                case NUM -> expr.getRootNodeData().equals(getRootNodeData());
+                case VAR -> true;
+                case COMPARATOR -> numVsComparator(this, expr, matches);
+                default -> false;
+            };
         case CONST:
-            switch (expr.getRootNodeType()) {
-            case VAR:
-                return true;
-            case CONST:
-                return getRootNodeData().equals(expr.getRootNodeData());
-            case COMPARATOR:
-                return comparatorVsConst(expr, this, matches);
-            default:
-                return false;
-            }
+            return switch (expr.getRootNodeType()) {
+                case VAR -> true;
+                case CONST -> getRootNodeData().equals(expr.getRootNodeData());
+                case COMPARATOR -> comparatorVsConst(expr, this, matches);
+                default -> false;
+            };
         case OPERATOR:
             switch (expr.getRootNodeType()) {
             case VAR:
@@ -479,7 +457,7 @@ public final class Expression implements IExpression {
             }
 
         default:
-            L.error("Unable to compare " + this + " to " + expr);
+            L.error("Unable to compare {} to {}", this, expr);
         }
         return false;
     }
@@ -503,11 +481,9 @@ public final class Expression implements IExpression {
             return target != Type.CONST;
         case COMPARATOR:
             switch (target) {
-            case OPERATOR:
+            case OPERATOR, NUM:
                 return getRightChildren().getType() == Type.NUM || getRightChildren().getType() == Type.VAR || getRightChildren().getType() == Type.OPERATOR;
-            case NUM:
-                return getRightChildren().getType() == Type.NUM || getRightChildren().getType() == Type.VAR || getRightChildren().getType() == Type.OPERATOR;
-            case COMPARATOR:
+                case COMPARATOR:
                 if (getRightChildren().getType() == Type.NUM || getRightChildren().getType() == Type.OPERATOR) {
                     if (expr.getRightChildren().getType() == Type.NUM || expr.getRightChildren().getType() == Type.OPERATOR) {
                         return true;
@@ -520,19 +496,15 @@ public final class Expression implements IExpression {
             case CONST:
                 return getRightChildren().getType() == Type.CONST || getRightChildren().getType() == Type.VAR;
             default:
-                L.error("ERROR with comparator: " + this + " -- " + expr);
+                L.error("ERROR with comparator: {} -- {}", this, expr);
             }
         case LISTCOMPARATOR:
-            switch (target) {
-            case LIST:
-                return true;
-            case LISTCOMPARATOR:
-                return true;
-            default:
-                return false;
-            }
+            return switch (target) {
+                case LIST, LISTCOMPARATOR -> true;
+                default -> false;
+            };
         default:
-            L.error("ERROR, unable to compare " + this + " to " + expr);
+            L.error("ERROR, unable to compare {} to {}", this, expr);
             return false;
         }
     }

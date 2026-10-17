@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.cognitive
 
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.cognitive.properties.SocialProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.test.loadYamlSimulation
@@ -48,7 +49,7 @@ class TestPedestriansLoading<T, P, A> where P : Position<P>, P : Vector<P>, A : 
     fun `Groups of pedestrians loading`() {
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
             onceInitialized = { environment ->
-                environment.nodes.forEach { node ->
+                environment.nodes.current.forEach { node ->
                     assertNotNull(
                         node.asPropertyOrNull<T, SocialProperty<T>>(),
                         "Each pedestrian should have a social property",

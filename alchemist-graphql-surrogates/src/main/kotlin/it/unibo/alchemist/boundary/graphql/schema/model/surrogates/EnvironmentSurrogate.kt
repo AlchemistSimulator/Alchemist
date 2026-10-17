@@ -37,18 +37,18 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * Subsequent updates should be made whenever the [Environment.addLayer] is called.
      */
     private val moleculeToLayer: Map<Molecule, Layer<T, P>?> =
-        origin.nodes
-            .map { it.contents.keys }
+        origin.nodes.current
+            .map { it.contents.current.keys }
             .flatten()
             .distinct()
-            .associateWith { origin.getLayer(it) }
+            .associateWith { origin.layerFor(it) }
 
     /**
      * The nodes inside this environment.
      * @return the nodes in this environment.
      */
     @GraphQLDescription("The nodes in this environment")
-    fun nodes() = origin.nodes.map { NodeSurrogate(it) }
+    fun nodes() = origin.nodes.current.map { NodeSurrogate(it) }
 
     /**
      * The layers inside this environment.
@@ -66,13 +66,14 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @param id the id of the node
      */
     @GraphQLDescription("The node with the given id")
-    fun nodeById(id: Int): NodeSurrogate<T> = origin.getNodeByID(id).toGraphQLNodeSurrogate()
+    fun nodeById(id: Int): NodeSurrogate<T> = origin.nodeWithId(id).toGraphQLNodeSurrogate()
 
     /**
      * Returns a [NodeToPosMap] representing all nodes associated with their position.
      */
     @GraphQLDescription("A list of entries NodeId-Position")
-    fun nodeToPos(): NodeToPosMap = origin.nodes.associate { it.id to origin.getPosition(it) }.toNodeToPosMap()
+    fun nodeToPos(): NodeToPosMap =
+        origin.nodes.current.associate { it.id to origin.currentPositionOf(it) }.toNodeToPosMap()
 
     /**
      * Returns the neighborhood of the node with the given id.
@@ -82,7 +83,7 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      */
     @GraphQLDescription("The neighborhood of the node with the given id")
     fun getNeighborhood(nodeId: Int): NeighborhoodSurrogate<T> =
-        origin.getNeighborhood(origin.getNodeByID(nodeId)).toGraphQLNeighborhoodSurrogate()
+        origin.neighborhoodOf(origin.nodeWithId(nodeId)).current.toGraphQLNeighborhoodSurrogate()
 
     /**
      * Clone the node associated with the given id to the specified position.
@@ -92,8 +93,8 @@ data class EnvironmentSurrogate<T, P : Position<out P>>(
      * @return true if the node has been cloned, false otherwise
      */
     @GraphQLDescription("Clone the node associated with the given id to the specified position")
-    suspend fun cloneNode(nodeId: Int, position: PositionInput, time: Double): NodeSurrogate<T>? {
-        val newNode = origin.getNodeByID(nodeId).cloneNode(DoubleTime(time))
+    suspend fun cloneNode(nodeId: Int, position: PositionInput): NodeSurrogate<T>? {
+        val newNode = origin.nodeWithId(nodeId).cloneNode()
         val mutex = Semaphore(1, 1)
         var isAdded = false
         origin.simulation.schedule {

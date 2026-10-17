@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,18 +8,22 @@
  */
 package it.unibo.alchemist.model.nodes
 
+import arrow.core.Option
 import com.google.common.collect.MapMaker
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
-import java.util.Collections
-import java.util.Spliterator
+import it.unibo.alchemist.model.observables.ObservableMutableList
+import it.unibo.alchemist.model.observables.ObservableMutableMap
+import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.function.Consumer
 import javax.annotation.Nonnull
 
 /**
@@ -28,93 +32,110 @@ import javax.annotation.Nonnull
  *
  * @param <T> concentration type
 </T> */
-open class GenericNode<T>
-@JvmOverloads
-constructor(
+open class GenericNode<T> @JvmOverloads constructor(
     /**
      * The environment in which the node is places.
      */
     val environment: Environment<T, *>,
     final override val id: Int = idFromEnv(environment),
-    final override val reactions: MutableList<Reaction<T>> = ArrayList(),
     /**
      * The node's molecules.
      */
-    val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
-    final override val properties: MutableList<NodeProperty<T>> = ArrayList(),
+    molecules: MutableMap<Molecule, T> = LinkedHashMap(),
+    properties: MutableList<Capability<T>> = ArrayList(),
 ) : Node<T> {
+    override val currentMoleculeCount: Int get() = moleculeCount.current
 
-    final override fun addReaction(reactionToAdd: Reaction<T>) {
-        reactions.add(reactionToAdd)
+    override val contents: ObservableMutableMap<Molecule, T> = ObservableMutableMap(molecules)
+
+    override val moleculeCount: Observable<Int> = contents.map { it.size }
+
+    final override val properties: List<Capability<T>>
+        field: MutableList<Capability<T>> = properties
+
+    // Out of order: reactions is initialized from it.
+    private val observableReactions = ObservableMutableList<Reaction<T>>()
+
+    final override val reactions: ObservableList<Reaction<T>> = observableReactions
+
+    final override fun addProperty(capability: Capability<T>) {
+        check(this !in environment) {
+            "Properties are part of the node setup: $capability cannot be added to node $id, already in $environment"
+        }
+        check(properties.none { it::class == capability::class }) {
+            "Node with id ${this.id} already contains a property of type ${capability::class}, " +
+                "this may lead to an inconsistent state"
+        }
+        properties.add(capability)
     }
 
-    override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
+    final override fun addReaction(reaction: Reaction<T>) {
+        require(reaction.host === this) { "$reaction is hosted by ${reaction.host}, not by $this" }
+        if (reaction !in observableReactions.current) {
+            observableReactions.add(reaction)
+            ifRegisteredInEnvironment { it.reactionAdded(reaction) }
+        }
+    }
+
+    override fun cloneNode(): Node<T> = GenericNode(environment).also {
         this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
-        this.contents.forEach(it::setConcentration)
-        this.reactions.forEach { reaction -> it.addReaction(reaction.cloneOnNewNode(it, currentTime)) }
+        this.contents.current.forEach(it::set)
+        this.reactions.current.filterIsInstance<NodeReaction<T>>().forEach { reaction ->
+            it.addReaction(reaction.cloneOnNewNode(it))
+        }
     }
 
     final override fun compareTo(@Nonnull other: Node<T>): Int = id.compareTo(other.id)
 
-    override fun contains(molecule: Molecule): Boolean = molecules.containsKey(molecule)
+    override fun contains(molecule: Molecule): Boolean = containsMolecule(molecule).current
 
-    /**
-     * @return an empty concentration
-     */
-    protected open fun createT(): T = environment.incarnation.createConcentration()
+    override fun dispose() {
+        observableReactions.current.forEach(Disposable::dispose)
+        observableReactions.clear()
+        contents.dispose()
+        moleculeCount.dispose()
+    }
 
     final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
 
-    /**
-     * Performs an [action] for every reaction.
-     */
-    final override fun forEach(action: Consumer<in Reaction<T>>) = reactions.forEach(action)
-
-    override fun getConcentration(molecule: Molecule): T = molecules[molecule] ?: createT()
-
-    override val contents: Map<Molecule, T> = Collections.unmodifiableMap(molecules)
-
-    override val moleculeCount: Int get() = molecules.size
+    override fun get(molecule: Molecule): Option<T> = concentrationOf(molecule).current
 
     final override fun hashCode(): Int = id // TODO: better hashing
 
-    final override fun iterator(): Iterator<Reaction<T>> = reactions.iterator()
+    override fun concentrationOf(molecule: Molecule): Observable<Option<T>> = contents[molecule]
 
-    final override fun removeConcentration(moleculeToRemove: Molecule) {
-        if (molecules.remove(moleculeToRemove) == null) {
+    override fun containsMolecule(molecule: Molecule): Observable<Boolean> = contents.map {
+        it.contains(molecule)
+    }
+
+    override fun removeAllConcentrationOf(moleculeToRemove: Molecule) {
+        // The concentration may be null: the presence of the molecule is checked on the keys.
+        if (moleculeToRemove !in contents.current) {
             throw NoSuchElementException("$moleculeToRemove was not present in node $id")
         }
+        contents.remove(moleculeToRemove)
     }
 
-    final override fun removeReaction(reactionToRemove: Reaction<T>) {
-        reactions.remove(reactionToRemove)
-    }
-
-    override fun setConcentration(molecule: Molecule, concentration: T) {
-        molecules[molecule] = concentration
-    }
-
-    final override fun addProperty(nodeProperty: NodeProperty<T>) {
-        if (properties.none { it::class == nodeProperty::class }) {
-            properties.add(nodeProperty)
-        } else {
-            error(
-                "Node with id ${this.id} already contains a property of type ${nodeProperty::class}, " +
-                    "this may lead to an inconsistent state",
-            )
+    final override fun removeReaction(reaction: Reaction<T>) {
+        if (observableReactions.remove(reaction)) {
+            ifRegisteredInEnvironment { it.reactionRemoved(reaction) }
+            reaction.dispose()
         }
     }
 
-    /**
-     * Returns the [reactions] [Spliterator].
-     */
-    final override fun spliterator(): Spliterator<Reaction<T>> = reactions.spliterator()
+    override operator fun set(molecule: Molecule, concentration: T) {
+        contents[molecule] = concentration
+    }
 
-    override fun toString(): String = "Node$id{ properties: $properties, molecules: $molecules }"
+    override fun toString(): String = "Node$id{ properties: $properties, molecules: ${contents.current}}"
+
+    private fun ifRegisteredInEnvironment(action: (it.unibo.alchemist.core.Simulation<T, *>) -> Unit) {
+        if (this in environment) {
+            environment.simulationOrNull?.let(action)
+        }
+    }
 
     private companion object {
-        private const val serialVersionUID = 2496775909028222278L
-
         private val IDGENERATOR = MapMaker().weakKeys().makeMap<Environment<*, *>, AtomicInteger>()
 
         private val MUTEX = Semaphore(1)

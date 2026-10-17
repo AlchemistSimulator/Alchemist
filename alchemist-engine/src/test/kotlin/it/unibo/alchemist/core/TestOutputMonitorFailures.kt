@@ -10,7 +10,7 @@
 package it.unibo.alchemist.core
 
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.optional.shouldBePresent
+import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time
@@ -49,7 +49,7 @@ class TestOutputMonitorFailures :
             with(environment.simulation) {
                 play()
                 run()
-                error.shouldBePresent()
+                error.isSome() shouldBe true
             }
         }
     }

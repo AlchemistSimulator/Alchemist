@@ -13,13 +13,10 @@ import org.danilopianini.lang.HashString;
 
 import java.util.Map;
 
-
 /**
  * @param <T> concentration type
  */
 public abstract class ATreeNode<T> implements ITreeNode<T> {
-
-    private static final long serialVersionUID = -3565369437007735315L;
 
     private final T data;
     private HashString fsCache;

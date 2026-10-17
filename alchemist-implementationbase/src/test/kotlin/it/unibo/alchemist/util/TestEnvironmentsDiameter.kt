@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,14 +11,9 @@ package it.unibo.alchemist.util
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.util.Environments.allSubNetworks
-import it.unibo.alchemist.util.Environments.allSubNetworksByNode
-import it.unibo.alchemist.util.Environments.isNetworkSegmented
-import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.math.hypot
 import kotlin.math.sqrt
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import org.junit.jupiter.api.Test
 
 object TestEnvironmentsDiameter {

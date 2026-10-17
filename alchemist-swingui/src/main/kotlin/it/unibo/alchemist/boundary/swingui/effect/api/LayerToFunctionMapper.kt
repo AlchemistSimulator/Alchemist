@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position2D
 import java.awt.Graphics2D
-import java.io.Serializable
 import java.util.function.Function
 import java.util.stream.Stream
 
@@ -25,7 +24,7 @@ import java.util.stream.Stream
  * Defines an object capable of mapping a Layer<T, P> to a Function<* in P, * out Number>.
  */
 @Deprecated("The entire Swing UI is deprecated and is set to be replaced with a modern UI")
-interface LayerToFunctionMapper : Serializable {
+interface LayerToFunctionMapper {
     /**
      * Prepare the mapping (if necessary).
      */

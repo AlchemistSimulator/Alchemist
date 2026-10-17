@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
 
 /**
@@ -25,7 +26,7 @@ import it.unibo.alchemist.model.times.DoubleTime
  * then they will be used as identifiers for properties to be obtained through [the incarnation][Incarnation]
  *
  * @param propagationDelayMolecule The propagation delay molecule. If the string is parsable as [Double],
- * then it will get used as a constant delay. Otherwise, the String will be used within [Incarnation.getProperty]
+ * then it will get used as a constant delay. Otherwise, the String will be used within [Incarnation.readConcentration]
  *
  */
 class SimpleNetworkArrivals<T> private constructor(
@@ -47,6 +48,57 @@ class SimpleNetworkArrivals<T> private constructor(
     private val accessPointIdentificator: Molecule? = null,
     startTime: Time = Time.ZERO,
 ) : AbstractDistribution<T>(startTime) {
+
+    /** Computes the effective bandwidth considering access point load balancing. */
+    val bandwidth: Double
+        get() = (
+            constantBandwidth ?: propertyOf(bandwidthMolecule, bandwidthProperty)
+            ).let { bw ->
+            accessPointIdentificator?.let { id ->
+                if (node.isAccessPoint || myNeighborhood.isEmpty()) {
+                    bw / myNeighborhood.size.coerceAtLeast(1)
+                } else {
+                    val accesspoints = myNeighborhood.filter { it.isAccessPoint }
+                    when (accesspoints.size) {
+                        0 -> bw
+                        1 -> bw / accesspoints.first().neighborhood.size
+                        else -> error(
+                            "node ${node.id} is connected to multiple access points: $accesspoints",
+                        )
+                    }
+                }
+            } ?: bw
+        }
+
+    /** Expected number of arrivals per time unit for the current network state. */
+    val expectedRate: Double get() = 1 / meanDelay
+
+    /** The transmission time of a packet in the current network state. */
+    override val meanDelay: Double get() = propagationDelay + packetSize / bandwidth
+
+    /** Gets the neighbors of a node as a collection. */
+    val Node<T>.neighborhood: Collection<Node<T>>
+        get() = environment.neighborhoodOf(this).current.neighbors
+
+    /**
+     * Computes the packet size from constants or properties.
+     * Defaults to 1.0 if not specified or invalid.
+     */
+    val packetSize: Double
+        get() = constantPacketSize
+            ?: propertyOf(packetSizeMolecule, packetSizeProperty).takeIf { it.isFinite() && it >= 0 }
+            ?: 1.0
+
+    /** Computes the propagation delay from constants or properties. */
+    val propagationDelay: Double
+        get() = constantPropagationDelay
+            ?: propertyOf(propagationDelayMolecule, propagationDelayProperty)
+
+    private val Node<T>.isAccessPoint
+        get() = accessPointIdentificator?.let { this.contains(it) } ?: false
+
+    private val myNeighborhood
+        get() = node.neighborhood
 
     @JvmOverloads
     constructor(
@@ -133,89 +185,33 @@ class SimpleNetworkArrivals<T> private constructor(
         accessPointIdentificator = accessPointIdentificator.isMeaningful,
     )
 
-    private var time: Time = startTime
+    override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = SimpleNetworkArrivals(
+        incarnation = incarnation,
+        environment = environment,
+        node = node,
+        constantPropagationDelay = constantPropagationDelay,
+        propagationDelayMolecule = propagationDelayMolecule,
+        propagationDelayProperty = propagationDelayProperty,
+        constantPacketSize = constantPacketSize,
+        packetSizeMolecule = packetSizeMolecule,
+        packetSizeProperty = packetSizeProperty,
+        constantBandwidth = constantBandwidth,
+        bandwidthMolecule = bandwidthMolecule,
+        bandwidthProperty = bandwidthProperty,
+        accessPointIdentificator = accessPointIdentificator,
+        startTime = startTime,
+    )
 
-    private val myNeighborhood
-        get() = node.neighborhood
+    override fun sample(): Time = DoubleTime(meanDelay)
 
-    private val Node<T>.isAccessPoint
-        get() = accessPointIdentificator?.let { this.contains(it) } ?: false
-
-    /** Gets the neighbors of a node as a collection. */
-    val Node<T>.neighborhood: Collection<Node<T>>
-        get() = environment.getNeighborhood(this).neighbors
-
-    /** Computes the effective bandwidth considering access point load balancing. */
-    val bandwidth: Double
-        get() = (
-            constantBandwidth ?: incarnation.getProperty(node, bandwidthMolecule, bandwidthProperty)
-            ).let { bw ->
-            accessPointIdentificator?.let { id ->
-                if (node.isAccessPoint || myNeighborhood.isEmpty()) {
-                    bw / myNeighborhood.size.coerceAtLeast(1)
-                } else {
-                    val accesspoints = myNeighborhood.filter { it.isAccessPoint }
-                    when (accesspoints.size) {
-                        0 -> bw
-                        1 -> bw / accesspoints.first().neighborhood.size
-                        else -> error(
-                            "node ${node.id} is connected to multiple access points: $accesspoints",
-                        )
-                    }
-                }
-            } ?: bw
-        }
-
-    /**
-     * Computes the packet size from constants or properties.
-     * Defaults to 1.0 if not specified or invalid.
-     */
-    val packetSize: Double
-        get() = constantPacketSize
-            ?: incarnation.getProperty(node, packetSizeMolecule, packetSizeProperty).takeIf { it.isFinite() && it >= 0 }
-            ?: 1.0
-
-    /** Computes the propagation delay from constants or properties. */
-    val propagationDelay: Double
-        get() = constantPropagationDelay
-            ?: incarnation.getProperty(node, propagationDelayMolecule, propagationDelayProperty)
-
-    override fun updateStatus(currentTime: Time, executed: Boolean, rate: Double, environment: Environment<T, *>) {
-        /*
-         * To be revised once we have a better infrastructure of events and time distributions
-         */
-        if (rate == 0.0) {
-            time = Time.INFINITY
-        } else if (time.isInfinite) {
-            time = currentTime + propagationDelay + packetSize / bandwidth
-        }
-        setNextOccurrence(time)
-    }
-
-    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time): SimpleNetworkArrivals<T> =
-        SimpleNetworkArrivals(
-            incarnation = incarnation,
-            environment = environment,
-            node = destination,
-            constantPropagationDelay = constantPropagationDelay,
-            propagationDelayMolecule = propagationDelayMolecule,
-            propagationDelayProperty = propagationDelayProperty,
-            constantPacketSize = constantPacketSize,
-            packetSizeMolecule = packetSizeMolecule,
-            packetSizeProperty = packetSizeProperty,
-            constantBandwidth = constantBandwidth,
-            bandwidthMolecule = bandwidthMolecule,
-            bandwidthProperty = bandwidthProperty,
-            accessPointIdentificator = accessPointIdentificator,
-            startTime = currentTime,
-        )
-
-    override fun getRate(): Double = 1 / (propagationDelay + packetSize / bandwidth)
+    private fun propertyOf(molecule: Molecule?, property: String?): Double = incarnation.readConcentration(
+        node,
+        checkNotNull(molecule) { "Neither a constant nor a molecule were provided for a network parameter" },
+        checkNotNull(property) { "Neither a constant nor a property were provided for a network parameter" },
+    )
 
     private companion object {
         private val Molecule?.isMeaningful: Molecule?
-            get() = this?.takeUnless { name.isNullOrBlank() }
-
-        private operator fun Time.plus(other: Double) = DoubleTime(toDouble() + other)
+            get() = this?.takeUnless { name.isBlank() }
     }
 }

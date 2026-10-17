@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.graphql.schema.operations.mutations
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.server.operations.Mutation
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.core.SimulationState
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 
@@ -24,21 +24,21 @@ class SimulationControl<T, P : Position<out P>>(private val environment: Environ
      * Play the simulation.
      */
     @GraphQLDescription("Play the simulation")
-    fun play(): String = executeAction(Simulation<T, P>::play, Status.RUNNING)
+    fun play(): String = executeAction(Simulation<T, P>::play, SimulationState.RUNNING)
 
     /**
      * Pause the simulation.
      */
     @GraphQLDescription("Pause the simulation")
-    fun pause(): String = executeAction(Simulation<T, P>::pause, Status.PAUSED)
+    fun pause(): String = executeAction(Simulation<T, P>::pause, SimulationState.PAUSED)
 
     /**
      * Terminate the simulation.
      */
     @GraphQLDescription("Terminate the simulation")
-    fun terminate(): String = executeAction(Simulation<T, P>::terminate, Status.TERMINATED)
+    fun terminate(): String = executeAction(Simulation<T, P>::terminate, SimulationState.TERMINATED)
 
-    private fun executeAction(action: Simulation<T, P>.() -> Unit, status: Status) =
+    private fun executeAction(action: Simulation<T, P>.() -> Unit, status: SimulationState) =
         runCatching { this.environment.simulation.apply { action() } }
             .fold(
                 onSuccess = { status.toString() },

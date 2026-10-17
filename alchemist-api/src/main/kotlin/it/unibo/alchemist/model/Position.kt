@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -7,8 +7,6 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model
-
-import java.io.Serializable
 
 /**
  * An interface to represent a generic coordinates system.
@@ -18,7 +16,7 @@ import java.io.Serializable
  *            progressively refine the {@link Position} by inheritance, allowing
  *            for specifying incrementally fine grained model elements.
  */
-interface Position<P : Position<P>> : Serializable {
+interface Position<P : Position<P>> {
     /**
      * Given a range, produces N coordinates, representing the N opposite
      * vertices of the hypercube having the current coordinate as center and
@@ -49,7 +47,7 @@ interface Position<P : Position<P>> : Serializable {
      *            could be the X-axis and 1 the Y-axis
      * @return the coordinate value
      */
-    fun getCoordinate(dimension: Int): Double
+    operator fun get(dimension: Int): Double
 
     /**
      * @return the number of dimensions of this {@link Position}.

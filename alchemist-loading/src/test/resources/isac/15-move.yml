@@ -37,7 +37,7 @@ _send: &grad
 
 _move: &move
   time-distribution: 0.5
-  type: Event
+  type: GenericReaction
   actions:
     - type: BrownianMove
       parameters: [0.1]

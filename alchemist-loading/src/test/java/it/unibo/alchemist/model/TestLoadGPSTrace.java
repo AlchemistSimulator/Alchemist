@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,7 +13,6 @@ import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.maps.positions.LatLongPosition;
-import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
@@ -74,9 +73,9 @@ class TestLoadGPSTrace {
         assertNotNull(res, "Missing test resource testgps.yml");
         final Simulation<T, GeoPosition> simulation = LoadAlchemist.from(res).getDefault();
         final Environment<T, GeoPosition> environment = simulation.getEnvironment();
-        assertTrue(environment.getNodeCount() > 0);
-        environment.getNodes().forEach(node -> {
-            final var reactions = node.getReactions();
+        assertTrue(environment.getNodeCount().getCurrent() > 0);
+        environment.getNodes().getCurrent().forEach(node -> {
+            final var reactions = node.getReactions().getCurrent();
             assertFalse(reactions.isEmpty());
             reactions.forEach(reaction -> {
                 assertTrue(reaction.getConditions().isEmpty());
@@ -91,10 +90,10 @@ class TestLoadGPSTrace {
                 @Nonnull final Time time,
                 final long step
             ) {
-                for (final Node<T> node : environment.getNodes()) {
+                for (final Node<T> node : environment.getNodes().getCurrent()) {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
-                    final GeoPosition realArrive = Objects.requireNonNull(environment.getPosition(node));
+                    final GeoPosition realArrive = Objects.requireNonNull(environment.currentPositionOf(node));
                     assertEquals(
                             0.0,
                             idealArrive.distanceTo(realArrive),
@@ -107,8 +106,8 @@ class TestLoadGPSTrace {
 
             @Override
             public void initialized(@Nonnull final Environment<T, GeoPosition> environment) {
-                for (final Node<T> node : environment.getNodes()) {
-                    final GeoPosition position = environment.getPosition(node);
+                for (final Node<T> node : environment.getNodes().getCurrent()) {
+                    final GeoPosition position = environment.currentPositionOf(node);
                     /*
                      * We don't know the actual type of position, we use LatLongPosition here, so we need to make sure
                      * that types match, or the map won't return what we expect
@@ -119,16 +118,17 @@ class TestLoadGPSTrace {
 
             @Override
             public void stepDone(
-                @Nonnull final Environment<T, GeoPosition> environment, final Actionable<T> r,
+                @Nonnull final Environment<T, GeoPosition> environment, final Reaction<T> r,
                 @Nonnull final Time time,
                 final long step
             ) { }
         });
         simulation.play();
         simulation.run();
-        simulation.getError().ifPresent(Unchecked.consumer(e -> {
-            throw e;
-        }));
+        final Throwable error = simulation.getError().getOrNull();
+        if (error != null) {
+            throw new AssertionError(error);
+        }
     }
 
 }

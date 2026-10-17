@@ -10,7 +10,6 @@ package it.unibo.alchemist.model.routes
 
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Route
-import java.io.Serial
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSuperclassOf
 
@@ -64,9 +63,6 @@ open class PolygonalChain<P : Position<*>>(override val points: List<P>) : Route
     override fun iterator() = points.iterator()
 
     private companion object {
-        @Serial
-        private const val serialVersionUID = 1L
-
         @Suppress("UNCHECKED_CAST")
         private fun <U : Position<U>> Position<*>.typedDistanceTo(other: Position<*>): Double {
             val thisClass = this::class

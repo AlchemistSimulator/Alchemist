@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,10 +9,8 @@
 
 package it.unibo.alchemist.model.cognitive.actions
 
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.NavigationAction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.NodeReaction
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
@@ -35,11 +33,10 @@ private typealias AbstractNavigationAction2D<T, L, R, N, E> =
  * @param reaction the reaction executing this action
  * @param pedestrian the owner pedestrian property
  * @param wallRepulsionFactor factor used to push nodes away from passage walls
- * @property DEFAULT_WALL_REPULSION_FACTOR default value for the wall repulsion factor
  */
 open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
     final override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     /**
      * When crossing [Euclidean2DPassage]s, the node is pushed away from the wall of
@@ -100,15 +97,15 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
 
     override fun nextPosition(): Euclidean2DPosition {
         update()
-        return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
+        return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition()
     }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {
         val clone =
             CognitiveAgentNavigationAction2D<T, L, R>(
                 environment,
-                reaction,
-                node.pedestrianProperty,
+                newReaction,
+                newReaction.host.pedestrianProperty,
                 wallRepulsionFactor,
             )
         clone.strategy = this.strategy

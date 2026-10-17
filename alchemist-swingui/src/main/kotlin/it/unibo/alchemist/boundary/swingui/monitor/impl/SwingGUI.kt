@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,9 +13,9 @@ package it.unibo.alchemist.boundary.swingui.monitor.impl
 import it.unibo.alchemist.boundary.swingui.api.GraphicalOutputMonitor
 import it.unibo.alchemist.boundary.swingui.effect.impl.EffectSerializationFactory
 import it.unibo.alchemist.boundary.swingui.tape.impl.JEffectsTab
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position2D
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.maps.MapEnvironment
 import java.awt.BorderLayout
@@ -141,7 +141,7 @@ class SwingGUI<T, P : Position2D<P>> private constructor(
         }
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         if (headAttached) {
             timeStepMonitor.stepDone(environment, reaction, time, step)
             main.stepDone(environment, reaction, time, step)

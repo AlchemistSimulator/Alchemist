@@ -16,7 +16,6 @@ import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Position
-import java.io.Serializable
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -128,7 +127,7 @@ interface SimulationContext<T, P : Position<P>> {
      * @param variable the variable definition.
      * @return a property delegate providing the resolved variable value.
      */
-    fun <V : Serializable> variable(variable: Variable<out V>): VariableDelegateFactory<V>
+    fun <V : Any> variable(variable: Variable<out V>): VariableDelegateFactory<V>
 
     /**
      * Creates a concentration value using the current [Incarnation].

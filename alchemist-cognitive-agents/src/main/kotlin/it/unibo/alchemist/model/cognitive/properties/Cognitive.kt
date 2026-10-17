@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,14 +14,12 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.cognitive.CognitiveModel
-import it.unibo.alchemist.model.cognitive.CognitiveProperty
-import it.unibo.alchemist.model.cognitive.HumanProperty
 import it.unibo.alchemist.model.cognitive.impact.ImpactModel
 import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.physics.PhysicsEnvironment
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 
 /**
  * The node's [CognitiveModel].
@@ -32,7 +30,7 @@ constructor(
     private val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
     override val danger: Molecule? = null,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     CognitiveProperty<T>
     where P : Position<P>,
           P : Vector<P>,
@@ -45,7 +43,8 @@ constructor(
         ) {
             when (danger) {
                 null -> 0.0
-                else -> environment.getLayer(danger)?.getValue(environment.getPosition(node)) as? Double ?: 0.0
+                else -> environment.layerFor(danger)?.currentValueAt(environment.currentPositionOf(node)) as? Double
+                    ?: 0.0
             }
         }
     }

@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -56,8 +55,6 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     /**
      */
     protected static final Logger L = LoggerFactory.getLogger(AbstractDrawLayers.class);
-    @Serial
-    private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "Draw only layer containing a molecule")
     private boolean layerFilter;
     @ExportForGUI(nameToExport = "Molecule")
@@ -72,10 +69,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
     private Color colorCache = Color.BLUE;
     @Nullable
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Molecule molecule;
     @Nullable
-    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Object molStringCached;
 
     /**
@@ -97,8 +92,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
         colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
         graphics2D.setColor(colorCache);
         final List<Layer<T, P>> toDraw = new ArrayList<>();
-        if (layerFilter && molecule != null && environment.getLayer(molecule) != null) {
-            toDraw.add(environment.getLayer(molecule));
+        if (layerFilter && molecule != null && environment.layerFor(molecule) != null) {
+            toDraw.add(environment.layerFor(molecule));
         } else {
             toDraw.addAll(environment.getLayers().values());
         }

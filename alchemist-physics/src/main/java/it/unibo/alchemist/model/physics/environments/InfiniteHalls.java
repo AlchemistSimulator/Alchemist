@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,15 +12,13 @@ package it.unibo.alchemist.model.physics.environments;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * @param <T> concentration type
  */
 public final class InfiniteHalls<T> extends AbstractLimitedContinuous2D<T> {
 
-    @Serial
-    private static final long serialVersionUID = -7481116157809902856L;
     private static final double DEFAULT_SIZE = 10;
     private static final double[] BORDERS = {0.89, 0.39, 0.51, 0.09, 0.81};
     private static final int EXI = 0;
@@ -148,10 +146,11 @@ public final class InfiniteHalls<T> extends AbstractLimitedContinuous2D<T> {
         return allowed(coord[0], coord[1]);
     }
 
+    @Nonnull
     @Override
     protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         if (allowed(nx, ny)) {
-            return makePosition(nx - ox, ny - oy);
+            return makePosition(nx, ny);
         }
         final int snx = (int) (ox / s);
         final int sny = (int) (oy / s);
@@ -175,7 +174,7 @@ public final class InfiniteHalls<T> extends AbstractLimitedContinuous2D<T> {
             } else if (y > s) {
                 nym = sny * s + s;
             }
-        } else if (oxm >= si && oxm <= sf && oym <= si && oxm <= sf) {
+        } else if (oxm >= si && oxm <= sf && oym >= si && oym <= sf) {
             // Main room
             if (x < si) {
                 nxm = snx * s + si;

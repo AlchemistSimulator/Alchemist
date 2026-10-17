@@ -7,7 +7,7 @@ environment:
 deployments:
   - type: Rectangle
     parameters: [100, -30.0, -30.0, 60.0, 60.0]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: PhysicalPedestrian2D
       - type: CircularArea

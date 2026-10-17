@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -20,11 +20,13 @@ import it.unibo.alchemist.model.biochemistry.conditions.NeighborhoodPresent
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
 import it.unibo.alchemist.model.biochemistry.startSimulationWithoutParameters
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.biochemistry.util.Nodes.getOrZeroConcentration
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
 import org.junit.jupiter.api.BeforeEach
@@ -46,7 +48,6 @@ private val JUNCTION =
     )
 private val RANDOM = MersenneTwister()
 private val TIME = ExponentialTime<Double>(1.0, RANDOM)
-private val LINKING_RULE = ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
 private val POSITION = Euclidean2DPosition(0.0, 0.0)
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
 private var centralNode: Node<Double> by Delegates.notNull()
@@ -56,17 +57,17 @@ class TestNeighborhoodReactionsPropensities {
     @BeforeEach
     fun setUp() {
         environment = BioRect2DEnvironment(INCARNATION)
-        environment.linkingRule = LINKING_RULE
+        with(environment) { networkModel = connectWithinDistance(5.0) }
         centralNode = INCARNATION.createNode(RANDOM, environment, null)
-        centralNode.setConcentration(BIOMOLECULE, 100.0)
+        centralNode[BIOMOLECULE] = 100.0
         environment.addNode(centralNode, POSITION)
         neighbors =
             (1..10)
                 .map { Pair(it * 10.0, INCARNATION.createNode(RANDOM, environment, null)) }
-                .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
+                .onEach { it.second.set(BIOMOLECULE, it.first) }
                 .map { it.second }
                 .onEach { environment.addNode(it, POSITION) }
-        assertEquals(neighbors.toList(), environment.getNeighborhood(centralNode).neighbors.toList())
+        assertEquals(neighbors.toList(), environment.neighborhoodOf(centralNode).current.neighbors.toList())
     }
 
     @Test
@@ -90,17 +91,31 @@ class TestNeighborhoodReactionsPropensities {
     fun `the propensity of a reaction reading molecules from neighbors should be neighbor-sensitive`() {
         testSimulation(BIOMOLECULE_IN_NEIGHBOR_REACTION)
     }
+
+    @Test
+    fun `neighbor mass-action quantities must be integer counts`() {
+        assertFailsWith<IllegalArgumentException> {
+            BiomolPresentInNeighbor(
+                environment,
+                BiochemicalNodeReaction(centralNode, TIME, environment, RANDOM),
+                BIOMOLECULE,
+                1.5,
+            )
+        }
+    }
 }
 
 private fun testSimulation(reactionText: String) {
-    val reaction = INCARNATION.createReaction(RANDOM, environment, centralNode, TIME, reactionText)
+    val reaction = INCARNATION.createNodeReaction(RANDOM, environment, centralNode, TIME, reactionText)
     centralNode.addReaction(reaction)
     environment.startSimulationWithoutParameters(
         stepDone = {
             val checks =
                 reaction.conditions
                     .filterIsInstance<AbstractNeighborCondition<Double>>()
-                    .flatMap { it.validNeighbors.map { (node, value) -> Container(it, node, value) } }
+                    .flatMap { condition ->
+                        condition.getValidNeighbors().map { (node, value) -> Container(condition, node, value) }
+                    }
             for (it in checks) {
                 assertEquals(it.expectedPropensity, it.propensity)
             }
@@ -129,18 +144,21 @@ private val Node<Double>.neighborhoodPresentPropensity: Double
 private val Node<Double>.junctionPresentPropensity: Double
     get() =
         checkCellNodeAndGetPropensity {
-            centralNode
-                .asProperty<Double, CellProperty<Euclidean2DPosition>>()
-                .junctions
-                .getOrDefault(JUNCTION, emptyMap())
-                .getOrDefault(it, 0)
-                .toDouble()
+            (
+                centralNode
+                    .asProperty<Double, CellProperty<Euclidean2DPosition>>()
+                    .junctions
+                    .current[JUNCTION]
+                    ?.current
+                    ?.get(it)
+                    ?: 0
+                ).toDouble()
         }
 
 private val Node<Double>.biomoleculeInNeighborPropensity: Double
     get() =
         checkCellNodeAndGetPropensity {
-            binomialCoefficientDouble(it.getConcentration(BIOMOLECULE).toInt(), BIOMOLECULE_NEEDED)
+            binomialCoefficientDouble(it.getOrZeroConcentration(BIOMOLECULE).toInt(), BIOMOLECULE_NEEDED)
         }
 
 private fun Node<Double>.checkCellNodeAndGetPropensity(propensityFunction: (Node<Double>) -> Double) =

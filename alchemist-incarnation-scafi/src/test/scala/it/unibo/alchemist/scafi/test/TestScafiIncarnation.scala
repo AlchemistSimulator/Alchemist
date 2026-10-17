@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -8,10 +9,12 @@
 
 package it.unibo.alchemist.scafi.test
 
+import it.unibo.alchemist.model.{NodeReaction, TimeDistribution}
 import it.unibo.alchemist.model.incarnations.ScafiIncarnation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.reactions.GenericReaction
 import org.apache.commons.math3.random.MersenneTwister
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
@@ -25,16 +28,16 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers:
   test("build"):
     val rng = new MersenneTwister(0)
     val env = new Continuous2DEnvironment[Any](INC)
-    val node = INC.createNode(rng, env, null)
+    val node: GenericNode[Any] = INC.createNode(rng, env, null)
     assertNotNull(node)
 
-    val standard = INC.createTimeDistribution(rng, env, node, "3")
+    val standard: TimeDistribution[Any] = INC.createTimeDistribution(rng, env, node, "3")
     assertNotNull(standard)
-    standard.getRate shouldEqual 3d
 
-    val generic = INC.createReaction(rng, env, node, standard, null)
+    val generic: NodeReaction[Any] = INC.createNodeReaction(rng, env, node, standard, null)
     assertNotNull(generic)
-    assertTrue(generic.isInstanceOf[Event[?]])
+    assertTrue(generic.isInstanceOf[GenericReaction[?]])
+    generic.asInstanceOf[GenericReaction[Any]].getMeanDelay shouldEqual 1d / 3
 
   /** Verifies that the incarnation can properly init new concentrations. */
   test("Create concentration"):

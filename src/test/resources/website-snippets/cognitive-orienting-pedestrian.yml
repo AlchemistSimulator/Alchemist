@@ -15,7 +15,7 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [2, 2]
-    properties:
+    capabilities:
       - type: Human
         parameters: ["adult", "male"]
       - type: Perceptive2D

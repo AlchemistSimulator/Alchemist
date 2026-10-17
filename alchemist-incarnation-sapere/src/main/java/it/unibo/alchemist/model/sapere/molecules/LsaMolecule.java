@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.sapere.molecules;
 
-import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
@@ -23,7 +22,6 @@ import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,8 +78,6 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
      */
     public static final HashString SYN_T = new HashString("#T");
 
-    @Serial
-    private static final long serialVersionUID = -2727376723102146271L;
     private static final String OPEN_SYMBOL = "<";
     private static final String CLOSE_SYMBOL = ">";
     private static final String SEPARATOR = ", ";
@@ -192,23 +188,6 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     @Override
     public int compareTo(final ILsaMolecule o) {
         return args.size() - o.argsNumber();
-    }
-
-    @Override
-    public boolean dependsOn(final Dependency m) {
-        if (m instanceof final ILsaMolecule mol) {
-            if (mol.argsNumber() != argsNumber()) {
-                return false;
-            }
-            for (int i = 0; i < argsNumber(); i++) {
-                if (!args.get(i).mayMatch(mol.getArg(i))) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.geometry.Euclidean2DShape
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 
 /**
  * The [node] occupies a rectangular width x height area.
@@ -33,7 +33,7 @@ class RectangularArea<T>(
      * The rectangle height.
      */
     val height: Double,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
     override val shape: Euclidean2DShape = environment.shapeFactory.rectangle(width, height)
 

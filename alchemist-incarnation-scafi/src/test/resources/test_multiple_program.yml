@@ -6,7 +6,7 @@ incarnation: scafi
 
 _programA: &programA
   - time-distribution: 0.5 # DiracComb: the parameter (rate) tells how many events should happen per time out
-    type: Event
+    type: GenericReaction
     actions:
       - type: RunScafiProgram
         parameters: [it.unibo.alchemist.scafi.test.ProgramMultiB]
@@ -14,7 +14,7 @@ _programA: &programA
 
 _programB: &programB
   - time-distribution: 0.5 # DiracComb: the parameter (rate) tells how many events should happen per time out
-    type: Event
+    type: GenericReaction
     actions:
       - type: RunScafiProgram
         parameters: [it.unibo.alchemist.scafi.test.ProgramMultiA]

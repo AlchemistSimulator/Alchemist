@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Dimension2D;
-import java.io.Serial;
 import java.util.function.Function;
 
 /**
@@ -43,8 +42,6 @@ import java.util.function.Function;
 @Deprecated
 public abstract class AbstractDrawLayersGradient extends AbstractDrawLayersValues {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private static final int MIN_SAMPLES = 10;
     private static final int MAX_SAMPLES = 400;
     @ExportForGUI(nameToExport = "Samples for each side")

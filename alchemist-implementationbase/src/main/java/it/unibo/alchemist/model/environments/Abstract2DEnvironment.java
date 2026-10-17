@@ -17,7 +17,6 @@ import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.NaN;
@@ -31,30 +30,16 @@ import static java.lang.Double.POSITIVE_INFINITY;
  */
 public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends AbstractEnvironment<T, P> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    private double minX = POSITIVE_INFINITY;
     private double maxX = NEGATIVE_INFINITY;
-    private double minY = POSITIVE_INFINITY;
     private double maxY = NEGATIVE_INFINITY;
+    private double minX = POSITIVE_INFINITY;
+    private double minY = POSITIVE_INFINITY;
 
     /**
      * @param incarnation the incarnation to be used.
      */
     protected Abstract2DEnvironment(final Incarnation<T, P> incarnation) {
         super(incarnation, new FlexibleQuadTree<>());
-    }
-
-    /**
-     * Subclasses can override this method if they will to modify the actual
-     * position a node gets inserted in (e.g. to restrict the areas in which a node
-     * can be)
-     */
-    @Nonnull
-    @Override
-    protected P computeActualInsertionPosition(@Nonnull final Node<T> node, @Nonnull final P originalPosition) {
-        return originalPosition;
     }
 
     @Override
@@ -72,6 +57,27 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
     @Override
     public final double[] getSize() {
         return new double[] {Math.max(0, maxX - minX), Math.max(0, maxY - minY)};
+    }
+
+    /**
+     * Subclasses may override this method if they want to change the way a node
+     * moves towards some absolute position.
+     */
+    @Override
+    public void moveNodeTo(@Nonnull final Node<T> node, @Nonnull final P position) {
+        includeObject(position);
+        setPosition(node, position);
+    }
+
+    /**
+     * Subclasses can override this method if they will to modify the actual
+     * position a node gets inserted in (e.g. to restrict the areas in which a node
+     * can be)
+     */
+    @Nonnull
+    @Override
+    protected P computeActualInsertionPosition(@Nonnull final Node<T> node, @Nonnull final P originalPosition) {
+        return originalPosition;
     }
 
     /**
@@ -113,18 +119,6 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
         final double x = pos.getX();
         final double y = pos.getY();
         includeObject(x, x, y, y);
-    }
-
-    /**
-     * Subclasses may override this method if they want to change the way a node
-     * moves towards some absolute position.
-     */
-    @Override
-    public void moveNodeToPosition(@Nonnull final Node<T> node, @Nonnull final P newPosition) {
-        includeObject(newPosition);
-        setPosition(node, newPosition);
-        updateNeighborhood(node, false);
-        ifEngineAvailable(sim -> sim.nodeMoved(node));
     }
 
     /**

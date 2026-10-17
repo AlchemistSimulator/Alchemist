@@ -24,20 +24,20 @@ import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.layers.StepLayer
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.maps.actions.reproduceGPSTrace
 import it.unibo.alchemist.model.maps.deployments.FromGPSTrace
 import it.unibo.alchemist.model.maps.environments.oSMEnvironment
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positionfilters.Rectangle
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.reactions.event
+import it.unibo.alchemist.model.reactions.genericReaction
 import it.unibo.alchemist.model.terminators.AfterTime
 import it.unibo.alchemist.model.terminators.StableForSteps
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.timedistributions.exponentialTime
 import it.unibo.alchemist.model.timedistributions.weibullTime
 import it.unibo.alchemist.model.times.DoubleTime
-import it.unibo.alchemist.test.globalTestReaction
+import it.unibo.alchemist.test.environmentTestReaction
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
 
@@ -56,7 +56,7 @@ class TestDSLLoading {
                 val sourceStart = mSize / 10.0
                 val sourceSize = size / 5.0
                 terminator(AfterTime(DoubleTime(1.0)))
-                networkModel(ConnectWithinDistance(0.5))
+                networkModel(connectWithinDistance(0.5))
                 deployments {
                     deploy(makePerturbedGridForTesting()) {
                         if (position in Rectangle(sourceStart, sourceStart, sourceSize, sourceSize)) {
@@ -86,7 +86,7 @@ class TestDSLLoading {
         }
         simulation2D(ProtelisIncarnation()) {
             environment {
-                globalProgram(DiracComb(1.0), globalTestReaction(DiracComb(1.0)))
+                globalProgram(DiracComb(1.0), environmentTestReaction((DiracComb(1.0))))
             }
         }
         simulation2D(ProtelisIncarnation()) {
@@ -127,7 +127,7 @@ class TestDSLLoading {
                     )
                     deploy(gps) {
                         withTimeDistribution(15) {
-                            program(event()) {
+                            program(genericReaction()) {
                                 ActionableContext.action(
                                     reproduceGPSTrace(
                                         "gpsTrace",
@@ -143,7 +143,7 @@ class TestDSLLoading {
         }
         simulation2D(SAPEREIncarnation()) {
             environment {
-                networkModel(ConnectWithinDistance(0.5))
+                networkModel(connectWithinDistance(0.5))
                 deployments {
                     deploy(makePerturbedGridForTesting()) {
                         if (position in Rectangle<Euclidean2DPosition>(-0.5, -0.5, 1.0, 1.0)) {
@@ -167,7 +167,7 @@ class TestDSLLoading {
                             JaktaTimeDistribution(
                                 sense = weibullTime(1.0, 1.0),
                                 deliberate = DiracComb(0.1),
-                                act = exponentialTime<Any>(1.0),
+                                act = exponentialTime(1.0),
                             ),
                         ) {
                             program("1 + 1")
@@ -178,7 +178,7 @@ class TestDSLLoading {
         }
         simulation2D(SAPEREIncarnation<Euclidean2DPosition>()) {
             environment {
-                networkModel(ConnectWithinDistance(0.5))
+                networkModel(connectWithinDistance(0.5))
                 deployments {
                     val token = "token"
                     deploy(makePerturbedGridForTesting()) {
@@ -198,7 +198,7 @@ class TestDSLLoading {
         }
         simulation2D(SAPEREIncarnation()) {
             environment {
-                networkModel(ConnectWithinDistance(0.5))
+                networkModel(connectWithinDistance(0.5))
                 deployments {
                     val hello = "hello"
                     deploy(makePerturbedGridForTesting()) {
@@ -240,7 +240,7 @@ class TestDSLLoading {
         }
         simulation2D(SAPEREIncarnation()) {
             environment {
-                networkModel(ConnectWithinDistance(5.0))
+                networkModel(connectWithinDistance(5.0))
                 deployments {
                     deploy(point(0.0, 0.0))
                     deploy(point(0.0, 1.0))
@@ -251,7 +251,7 @@ class TestDSLLoading {
             simulationSeed(10L)
             scenarioSeed(20L)
             environment {
-                networkModel(ConnectWithinDistance(0.5))
+                networkModel(connectWithinDistance(0.5))
                 deployments {
                     deploy(
                         circle(
@@ -266,7 +266,7 @@ class TestDSLLoading {
         }
         simulation2D(SAPEREIncarnation()) {
             environment {
-                networkModel(ConnectWithinDistance(0.5))
+                networkModel(connectWithinDistance(0.5))
                 deployments {
                     val grid = grid(
                         -5.0,
@@ -284,7 +284,7 @@ class TestDSLLoading {
         }
         simulation2D(SAPEREIncarnation()) {
             environment {
-                networkModel(ConnectWithinDistance(0.5))
+                networkModel(connectWithinDistance(0.5))
                 deployments {
                     val hello = "hello"
                     deploy(makePerturbedGridForTesting()) {

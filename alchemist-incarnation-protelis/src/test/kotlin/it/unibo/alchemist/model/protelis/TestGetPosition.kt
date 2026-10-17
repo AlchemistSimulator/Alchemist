@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,23 +8,23 @@
  */
 package it.unibo.alchemist.model.protelis
 
+import arrow.core.None
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.protelis.actions.RunProtelisProgram
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
-import java.util.Optional
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -38,7 +38,7 @@ class TestGetPosition {
         ProtelisIncarnation<Euclidean2DPosition>()
             .createNode(randomGenerator, environment, null)
     private val reaction =
-        Event(
+        GenericReaction(
             node,
             ExponentialTime(1.0, randomGenerator),
         )
@@ -53,7 +53,7 @@ class TestGetPosition {
 
     @BeforeEach
     fun setUp() {
-        environment.linkingRule = NoLinks()
+        environment.networkModel = NoLinks()
         reaction.actions = listOf(action)
         node.addReaction(reaction)
         environment.addNode(node, environment.makePosition(1, 1))
@@ -70,20 +70,20 @@ class TestGetPosition {
 
                 override fun stepDone(
                     environment: Environment<Any, Euclidean2DPosition>,
-                    reaction: Actionable<Any>?,
+                    reaction: Reaction<Any>?,
                     time: Time,
                     step: Long,
                 ) {
                     if (step > 0) {
                         Assertions.assertEquals(
                             DatatypeFactory.createTuple(1.0, 1.0),
-                            node.getConcentration(action.asMolecule()),
+                            node[action.asMolecule()].getOrNull(),
                         )
                     }
                 }
             },
         )
         sim.runInCurrentThread()
-        Assertions.assertEquals(Optional.empty<Any>(), sim.error)
+        Assertions.assertEquals(None, sim.error)
     }
 }

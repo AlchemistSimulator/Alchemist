@@ -11,8 +11,6 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.model.layers.BidimensionalGaussianLayer;
 
-import java.io.Serial;
-
 /**
  * Draw a gradient in the background of the gui for
  * {@link  BidimensionalGaussianLayer}s
@@ -22,9 +20,6 @@ import java.io.Serial;
  */
 @Deprecated
 public class DrawBidimensionalGaussianLayersGradient extends AbstractDrawLayersGradient {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     /**
      * Builds a new {@link DrawBidimensionalGaussianLayersGradient}.

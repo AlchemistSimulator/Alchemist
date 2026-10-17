@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -45,7 +45,7 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
                     .stream()
                     .filter { l -> l is BidimensionalGaussianLayer }
                     .map { l -> l as BidimensionalGaussianLayer }
-                    .map { l -> l.getValue(environment.makePosition(l.centerX, l.centerY)) }
+                    .map { l -> l.currentValueAt(environment.makePosition(l.centerX, l.centerY)) }
                     .max { d1, d2 -> java.lang.Double.compare(d1, d2) }
                     .orElse(MINIMUM_LAYER_VALUE)
             effect.minLayerValue = MINIMUM_LAYER_VALUE.toString()
@@ -60,7 +60,7 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
     override fun <T, P : Position2D<P>> map(layers: Stream<Layer<T, P>>): Stream<Function<in P, out Number>> = layers
         .filter { l -> l is BidimensionalGaussianLayer }
         .map { l -> l as BidimensionalGaussianLayer }
-        .map { l -> Function { p: P -> l.getValue(p) } }
+        .map { l -> Function { p: P -> l.currentValueAt(p) } }
 
     /**
      * Utilities for [BidimensionalGaussianLayersMapper]s.

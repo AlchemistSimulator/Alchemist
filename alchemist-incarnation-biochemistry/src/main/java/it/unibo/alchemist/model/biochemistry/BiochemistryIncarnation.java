@@ -10,17 +10,18 @@
 package it.unibo.alchemist.model.biochemistry;
 
 import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;
 import it.unibo.alchemist.model.biochemistry.properties.CircularCell;
 import it.unibo.alchemist.model.biochemistry.reactions.BiochemicalReactionBuilder;
+import it.unibo.alchemist.model.biochemistry.util.Nodes;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
@@ -37,8 +38,8 @@ import static java.util.Objects.requireNonNull;
 public final class BiochemistryIncarnation implements Incarnation<Double, Euclidean2DPosition> {
 
     @Override
-    public double getProperty(final Node<Double> node, final Molecule molecule, final String property) {
-        return node.getConcentration(molecule);
+    public double readConcentration(final Node<Double> node, final Molecule molecule, final String property) {
+        return Nodes.getOrZeroConcentration(node, molecule);
     }
 
     @Override
@@ -89,18 +90,34 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     public Reaction<Double> createReaction(
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
+        @Nullable final Object parameter
+    ) {
+        throw new UnsupportedOperationException("Biochemistry does not support environment-level reactions");
+    }
+
+    @Override
+    public NodeReaction<Double> createNodeReaction(
+        final RandomGenerator randomGenerator,
+        final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
         final TimeDistribution<Double> timeDistribution,
         final @Nullable Object parameter
-        ) {
-        return new BiochemicalReactionBuilder<>(this, node, environment)
-            .randomGenerator(randomGenerator)
-            .timeDistribution(timeDistribution)
-            .program(
-                requireNonNull(parameter, "Biochemical reactions require String a parameter to get built")
-                    .toString()
-            )
-            .build();
+    ) {
+        if (timeDistribution instanceof final ExponentialTime<Double> exponentialDistribution) {
+            return new BiochemicalReactionBuilder<>(this, node, environment)
+                .randomGenerator(randomGenerator)
+                .timeDistribution(exponentialDistribution)
+                .program(
+                    requireNonNull(parameter, "Biochemical reactions require String a parameter to get built")
+                        .toString()
+                )
+                .build();
+        }
+        throw new IllegalArgumentException(
+            "Invalid time distribution: " + timeDistribution
+                + "(" + timeDistribution.getClass().getSimpleName() + "). Required: "
+                + ExponentialTime.class.getSimpleName()
+        );
     }
 
     @Override
@@ -108,7 +125,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final Actionable<Double> actionable,
+        final Reaction<Double> reaction,
         final @Nullable Object additionalParameters
     ) {
         return null;
@@ -119,7 +136,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final RandomGenerator randomGenerator,
         final Environment<Double, Euclidean2DPosition> environment,
         final Node<Double> node,
-        final Actionable<Double> actionable,
+        final Reaction<Double> reaction,
         final @Nullable Object additionalParameters
     ) {
         return null;
@@ -131,11 +148,6 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
             return 1d;
         }
         return Double.parseDouble(descriptor.toString());
-    }
-
-    @Override
-    public Double createConcentration() {
-        return 0d;
     }
 
     @Override

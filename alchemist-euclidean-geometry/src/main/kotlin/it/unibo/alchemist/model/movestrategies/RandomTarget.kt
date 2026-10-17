@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.movestrategies
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.environments.Environment2DWithObstacles
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
@@ -44,7 +44,7 @@ class RandomTarget<T>(
         distanceDistribution: RealDistribution,
     ) : this(
         environment,
-        { environment.getPosition(node) },
+        { environment.currentPositionOf(node) },
         { x, y -> environment.makePosition(x, y) },
         directionRng,
         distanceDistribution,
@@ -56,11 +56,11 @@ class RandomTarget<T>(
         val delta = makePosition(distance * cos(this), distance * sin(this))
         val desired = current + delta
         when (environment) {
-            is Environment2DWithObstacles<*, T> -> environment.next(current, desired)
+            is Environment2DWithObstacles<*, T> -> environment.farthestValidPositionFromTo(current, desired)
             else -> desired
         }
     }
 
-    override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?): RandomTarget<T> =
+    override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): RandomTarget<T> =
         RandomTarget(environment, getCurrentPosition, makePosition, directionRng, distanceDistribution)
 }

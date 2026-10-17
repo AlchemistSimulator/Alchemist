@@ -27,10 +27,10 @@ class TestAISSimulationLoading :
                 LoadAlchemist
                     .from(ResourceLoader.getResource(AIS_SIMULATION))
                     .getDefault<Nothing, GeoPosition>()
-            simulation.environment.nodeCount shouldBeGreaterThan 0
+            simulation.environment.nodeCount.current shouldBeGreaterThan 0
             simulation.play()
             simulation.run()
-            simulation.error.ifPresent { throw it }
+            simulation.error.onSome { throw it }
         }
     })
 

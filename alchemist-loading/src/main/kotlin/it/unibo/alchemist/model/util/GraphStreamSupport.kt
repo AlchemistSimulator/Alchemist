@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,9 +12,9 @@ package it.unibo.alchemist.model.util
 import arrow.core.Either
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.LinkingRule
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.linkingrules.OffsetGraphStreamLinkingRule
+import it.unibo.alchemist.model.networks.OffsetGraphStreamNetworkModel
 import it.unibo.alchemist.util.ClassPathScanner
 import it.unimi.dsi.util.SplitMix64Random
 import java.util.stream.Collectors
@@ -32,9 +32,9 @@ import org.graphstream.graph.implementations.SingleGraph
 import org.graphstream.ui.layout.springbox.implementations.SpringBox
 
 /**
- * Support class for GraphStream, composed of a [linkingRule] and a [deployment].
+ * Support class for GraphStream, composed of a [networkModel] and a [deployment].
  */
-class GraphStreamSupport<T, P : Position<out P>>(val linkingRule: LinkingRule<T, P>, val deployment: Deployment<P>) {
+class GraphStreamSupport<T, P : Position<out P>>(val networkModel: NetworkModel<T>, val deployment: Deployment<P>) {
     /**
      * Contains methods to generate a [GraphStreamSupport].
      */
@@ -163,7 +163,9 @@ class GraphStreamSupport<T, P : Position<out P>>(val linkingRule: LinkingRule<T,
             val shift = ebeAdd(barycenter, offsets)
 
             fun DoubleArray.zoomAndPan(): DoubleArray = ebeAdd(shift, ebeMultiply(zooms, ebeSubtract(this, barycenter)))
-            return GraphStreamSupport(OffsetGraphStreamLinkingRule<T, P>(environment.nodeCount, graph)) {
+            return GraphStreamSupport(
+                OffsetGraphStreamNetworkModel<T, P>(environment, environment.nodeCount.current, graph),
+            ) {
                 originalCoordinates.stream().map {
                     val shifted = it.zoomAndPan()
                     if (is3D) {

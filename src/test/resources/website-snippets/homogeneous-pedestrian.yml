@@ -6,7 +6,7 @@ environment:
 deployments:
   - type: Circle
     parameters: [100, 0, 0, 20]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: Perceptive2D
       - type: CircularArea

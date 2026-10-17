@@ -72,8 +72,6 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
     override fun size(): Int = points.size
 
     private companion object {
-        private const val serialVersionUID = 0L
-
         private fun GHPoint3D.asPosition() = LatLongPosition(lat, lon)
     }
 }

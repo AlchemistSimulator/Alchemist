@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.cognitive.properties.Pedestrian
 import it.unibo.alchemist.model.cognitive.properties.Perceptive2D
 import it.unibo.alchemist.model.cognitive.properties.Social
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.physics.FieldOfView2D
 import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
@@ -48,7 +48,7 @@ class TestSensory<T> : StringSpec({
                 SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
             )
         val rand = MersenneTwister(1)
-        environment.linkingRule = NoLinks()
+        environment.networkModel = NoLinks()
         val observed = createHomogeneousPedestrian(rand, environment)
         val origin = Euclidean2DPosition(5.0, 5.0)
         environment.addNode(observed, origin)
@@ -59,7 +59,7 @@ class TestSensory<T> : StringSpec({
                 environment.setHeading(this, origin - it)
             }
         }
-        environment.nodes.minusElement(observed).forEach {
+        environment.nodes.current.minusElement(observed).forEach {
             with(FieldOfView2D(environment, it, radius, Math.PI / 2)) {
                 influentialNodes().size shouldBe 1
                 influentialNodes().first() shouldBe observed

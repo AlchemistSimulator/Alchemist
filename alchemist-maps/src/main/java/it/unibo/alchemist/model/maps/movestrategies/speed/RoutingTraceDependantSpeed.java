@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,12 +11,12 @@ package it.unibo.alchemist.model.maps.movestrategies.speed;
 
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 import it.unibo.alchemist.model.maps.MapEnvironment;
 
-import java.io.Serial;
+import javax.annotation.Nonnull;
 
 /**
  * This {@link AbstractTraceDependantSpeed} strategy computes the remaining distance by
@@ -29,8 +29,6 @@ import java.io.Serial;
 public final class RoutingTraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends AbstractTraceDependantSpeed<T, O, S> {
 
-    @Serial
-    private static final long serialVersionUID = -2195494825891818353L;
     private final O options;
 
     /**
@@ -46,7 +44,7 @@ public final class RoutingTraceDependantSpeed<T, O extends RoutingServiceOptions
     public RoutingTraceDependantSpeed(
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
-            final Reaction<T> reaction,
+            final NodeReaction<T> reaction,
             final O options
     ) {
         super(environment, node, reaction);
@@ -62,8 +60,12 @@ public final class RoutingTraceDependantSpeed<T, O extends RoutingServiceOptions
         return environment.computeRoute(currentNode, targetPosition, options).length();
     }
 
+    @Nonnull
     @Override
-    public RoutingTraceDependantSpeed<T, O, S> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+    public RoutingTraceDependantSpeed<T, O, S> cloneIfNeeded(
+        @Nonnull final Node<T> destination,
+        @Nonnull final NodeReaction<T> reaction
+    ) {
         return new RoutingTraceDependantSpeed<>(getEnvironment(), destination, reaction, options);
     }
 }

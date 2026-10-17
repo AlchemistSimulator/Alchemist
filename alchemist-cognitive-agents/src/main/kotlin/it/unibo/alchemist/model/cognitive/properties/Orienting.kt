@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.cognitive.properties
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexShape
 import it.unibo.alchemist.model.geometry.Transformation
@@ -20,7 +19,7 @@ import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph
 import it.unibo.alchemist.model.geometry.navigationgraph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 import it.unibo.alchemist.util.Iterables.shuffled
 import it.unibo.alchemist.util.Lists.takeFraction
 import org.apache.commons.math3.random.RandomGenerator
@@ -49,7 +48,7 @@ constructor(
      * them).
      */
     private val minArea: Double = 10.0,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     OrientingProperty<T, P, A, L, N, DefaultEdge>
     where P : Position<P>,
           P : Vector<P>,

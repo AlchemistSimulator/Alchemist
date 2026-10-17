@@ -4,12 +4,12 @@ environment:
 deployments:
   - type: FromGPSTrace
     parameters: ["trace/ok/5min.nmea.txt", "AlignToSimulationTime"]
-    properties:
+    capabilities:
       - type: AISVessel
         parameters: ["trace/ok/5min.nmea.txt", "AlignToSimulationTime"]
     programs:
       - time-distribution: 1
-        type: Event
+        type: GenericReaction
         actions:
           - type: ReproduceGPSTrace
             parameters: ["trace/ok/5min.nmea.txt", false, "AlignToSimulationTime"]

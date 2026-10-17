@@ -25,6 +25,11 @@ import java.util.Map;
 public interface SAPERETimeDistribution extends TimeDistribution<List<ILsaMolecule>> {
 
     /**
+     * @return the rate computed against the currently installed SAPERE match token
+     */
+    double getRate();
+
+    /**
      * @return true if the equation is actually a number
      */
     boolean isStatic();

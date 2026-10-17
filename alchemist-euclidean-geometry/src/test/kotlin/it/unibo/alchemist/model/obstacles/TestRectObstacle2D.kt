@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -82,9 +82,9 @@ class TestRectObstacle2D :
             val subject = RectObstacle2D<Euclidean2DPosition>(minX, minY, maxX - minY, maxY - minY)
             val topRight = Euclidean2DPosition(-5.257399999999999, 5.3073999999999995)
             val desired1 = Euclidean2DPosition(-5.844256289989133, 6.172836637106708)
-            subject.next(topRight, desired1) shouldBe desired1
+            subject.farthestValidVectorFromTo(topRight, desired1) shouldBe desired1
             val desired2 = Euclidean2DPosition(-5.844256289989133, 5.3073999999999995)
-            subject.next(topRight, desired2) shouldBe topRight
+            subject.farthestValidVectorFromTo(topRight, desired2) shouldBe topRight
         }
     }) {
     companion object {
@@ -96,7 +96,7 @@ class TestRectObstacle2D :
          * to the expected (nextx, nexty).
          */
         fun nextShouldBe(startx: Double, starty: Double, endx: Double, endy: Double, nextx: Double, nexty: Double) {
-            val next = obstacle.next(coords(startx, starty), coords(endx, endy))
+            val next = obstacle.farthestValidVectorFromTo(coords(startx, starty), coords(endx, endy))
             fuzzyEquals(next.x, nextx) shouldBe true
             fuzzyEquals(next.y, nexty) shouldBe true
         }

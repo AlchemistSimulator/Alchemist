@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.model.protelis.properties
 
+import arrow.core.getOrElse
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
 import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.model.protelis.AlchemistNetworkManager
@@ -33,7 +33,7 @@ constructor(
     val environment: Environment<Any, P>,
     override val node: Node<Any>,
     networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf(),
-) : NodeProperty<Any>,
+) : Capability<Any>,
     ExecutionEnvironment,
     DeviceUID {
     private val incarnation: ProtelisIncarnation<*> =
@@ -113,7 +113,7 @@ constructor(
     /**
      * Finds all the [RunProtelisProgram]s installed on this node.
      */
-    fun allProtelisPrograms(): List<RunProtelisProgram<*>> = node.reactions
+    fun allProtelisPrograms(): List<RunProtelisProgram<*>> = node.reactions.current
         .asSequence()
         .flatMap { it.actions }
         .filterIsInstance<RunProtelisProgram<*>>()
@@ -125,12 +125,10 @@ constructor(
      * Returns the value associated with [id].
      */
     override fun get(id: String): Any = incarnation.createMolecule(id).let { molecule ->
-        when {
-            node.contains(molecule) -> node.getConcentration(molecule)
-            else ->
-                checkNotNull(environment.getLayer(molecule)?.getValue(environment.getPosition(node))) {
-                    "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
-                }
+        node[molecule].getOrElse {
+            checkNotNull(environment.layerFor(molecule)?.currentValueAt(environment.currentPositionOf(node))) {
+                "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
+            }
         }
     }
 
@@ -156,7 +154,7 @@ constructor(
      * Stores a [value] associated with [key].
      */
     override fun put(key: String, value: Any): Boolean {
-        node.setConcentration(incarnation.createMolecule(key), value)
+        node[incarnation.createMolecule(key)] = value
         return true
     }
 
@@ -164,7 +162,7 @@ constructor(
      * Stores a [value] associated with [key].
      */
     fun putField(key: String, value: Field<*>): Boolean {
-        node.setConcentration(incarnation.createMolecule(key), value)
+        node[incarnation.createMolecule(key)] = value
         return true
     }
 
@@ -173,14 +171,14 @@ constructor(
      */
     override fun remove(id: String): Any {
         val value = get(id)
-        node.removeConcentration(incarnation.createMolecule(id))
+        node.removeAllConcentrationOf(incarnation.createMolecule(id))
         return value
     }
 
     /**
      * Return all stored variables names.
      */
-    override fun keySet(): Set<String> = node.contents.keys
+    override fun keySet(): Set<String> = node.contents.current.keys
         .mapNotNull { it.name }
         .toSet()
 
@@ -203,7 +201,7 @@ constructor(
     private fun validateCommunicationConfiguration() {
         val hasProtelisPrograms = allProtelisPrograms().isNotEmpty()
         if (hasProtelisPrograms) {
-            val hasSendAction = node.reactions
+            val hasSendAction = node.reactions.current
                 .asSequence()
                 .flatMap { it.actions }
                 .any { it is SendToNeighbor }

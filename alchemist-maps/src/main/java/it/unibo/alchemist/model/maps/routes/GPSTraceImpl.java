@@ -18,16 +18,12 @@ import it.unibo.alchemist.model.routes.PolygonalChain;
 import it.unibo.alchemist.utils.Maps;
 import org.apache.commons.math3.util.Pair;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
  * Implementation of a {@link GPSTrace}.
  */
 public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     /**
      * @param trace

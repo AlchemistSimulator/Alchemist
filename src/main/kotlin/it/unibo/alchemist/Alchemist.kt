@@ -93,8 +93,8 @@ object Alchemist {
                     fullName = "override",
                     description =
                     """
-                        Valid yaml files used to override simulation config,
-                        files are applied sequentially.
+                        YAML strings merged into the simulation configuration,
+                        applied in order.
                     """.trimIndent(),
                 ).multiple()
 

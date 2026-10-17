@@ -40,13 +40,13 @@ internal object AlchemistYamlSyntax : SyntaxElement {
     object Deployment : SyntaxElement {
         val contents by OwnName
         val nodes by OwnName
-        val properties by OwnName
+        val capabilities by OwnName
         val programs by OwnName
         override val validDescriptors =
             setOf(
                 validDescriptor {
                     mandatory(JavaType.type)
-                    optional(JavaType.parameters, contents, properties, nodes, programs)
+                    optional(JavaType.parameters, capabilities, contents, nodes, programs)
                     forbidden(Filter.FILTER)
                 },
             )
@@ -67,7 +67,7 @@ internal object AlchemistYamlSyntax : SyntaxElement {
                 )
         }
 
-        object Property : SyntaxElement {
+        object Capability : SyntaxElement {
             override val validDescriptors =
                 setOf(
                     validDescriptor {

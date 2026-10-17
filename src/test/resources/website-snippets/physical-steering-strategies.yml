@@ -9,7 +9,7 @@ environment:
 deployments:
   - type: Point
     parameters: [2, 2]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: PhysicalPedestrian2D
       - type: Perceptive2D

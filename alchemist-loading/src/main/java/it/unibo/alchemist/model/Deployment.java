@@ -32,14 +32,14 @@ public interface Deployment<P extends Position<? extends P>> extends Iterable<P>
     }
 
     /**
-     * Optional {@link LinkingRule} associated to the deployment.
+     * Optional {@link NetworkModel} associated to the deployment.
      *
-     * @param <T> concentration type of the {@link LinkingRule}
-     * @return null if the deployment has no associated {@link LinkingRule},
-     *     and an instance of the {@link LinkingRule} otherwise
+     * @param <T> concentration type of the {@link NetworkModel}
+     * @return null if the deployment has no associated {@link NetworkModel},
+     *     and an instance of the {@link NetworkModel} otherwise
      */
     @Nullable
-    default <T> LinkingRule<T, P> getAssociatedLinkingRule() {
+    default <T> NetworkModel<T> getAssociatedLinkingRule() {
         return null;
     }
 }

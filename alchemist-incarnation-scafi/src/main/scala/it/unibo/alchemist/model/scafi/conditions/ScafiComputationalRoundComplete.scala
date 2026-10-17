@@ -8,35 +8,27 @@
  */
 package it.unibo.alchemist.model.scafi.conditions
 
-import it.unibo.alchemist.model.conditions.AbstractCondition
+import it.unibo.alchemist.model.conditions.AbstractLocalCondition
 import it.unibo.alchemist.model.incarnations.ScafiIncarnationUtils
 import it.unibo.alchemist.model.scafi.actions.RunScafiProgram
-import it.unibo.alchemist.model.scafi.properties.ScafiDevice
-import it.unibo.alchemist.model.{Condition, Context, Node, Reaction}
+import it.unibo.alchemist.model.{Condition, NodeReaction}
 
-final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[?, ?])
-    extends AbstractCondition(device.getNode):
-  declareDependencyOn(this.program.asMolecule)
+final class ScafiComputationalRoundComplete[T](reaction: NodeReaction[T], val program: RunScafiProgram[?, ?])
+    extends AbstractLocalCondition[T](reaction):
+  setValidity(program.observeComputationalCycleComplete.map(valid => java.lang.Boolean.valueOf(valid)))
 
-  override def cloneCondition(node: Node[T], reaction: Reaction[T]): Condition[T] =
+  override protected def cloneOnNodeReaction(newReaction: NodeReaction[T]): Condition[T] =
+    val node = newReaction.getHost
     ScafiIncarnationUtils.runInScafiDeviceContext[T, Condition[T]](
       node,
       getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName,
       device =>
         val possibleRefs: Iterable[RunScafiProgram[?, ?]] = ScafiIncarnationUtils.allScafiProgramsFor(device.getNode)
-        if possibleRefs.size == 1 then new ScafiComputationalRoundComplete(device, possibleRefs.head)
+        if possibleRefs.size == 1 then new ScafiComputationalRoundComplete(newReaction, possibleRefs.head)
         else
           throw new IllegalStateException(
             "There must be one and one only unconfigured " + classOf[Nothing].getSimpleName
           )
     )
 
-  override def getContext = Context.LOCAL
-
-  override def getPropensityContribution: Double = if isValid then 1 else 0
-
-  override def isValid = program.isComputationalCycleComplete
-
-  override def getNode = super.getNode
-
-  override def toString = program.asMolecule.getName + " completed round"
+  override def toString: String = program.asMolecule.getName + " completed round"

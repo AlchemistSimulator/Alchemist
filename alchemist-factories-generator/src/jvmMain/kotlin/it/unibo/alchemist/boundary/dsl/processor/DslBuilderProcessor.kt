@@ -28,8 +28,8 @@ import it.unibo.alchemist.boundary.dsl.processor.extensions.nameOrTypeName
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
 import java.io.PrintWriter
@@ -77,6 +77,7 @@ class DslBuilderProcessor(private val codeGenerator: CodeGenerator) : SymbolProc
             resolver.getClassDeclarationByName<Incarnation<*, *>>(),
             resolver.getClassDeclarationByName<Node<*>>(),
             resolver.getClassDeclarationByName<RandomGenerator>(),
+            resolver.getClassDeclarationByName<NodeReaction<*>>(),
             resolver.getClassDeclarationByName<Reaction<*>>(),
             resolver.getClassDeclarationByName<Simulation<*, *>>(),
             resolver.getClassDeclarationByName<TimeDistribution<*>>(),

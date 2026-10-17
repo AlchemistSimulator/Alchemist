@@ -1,12 +1,12 @@
 +++
 chapter = true
 pre = ""
-title = "Experiment-specific extensions"
+title = "Extending Alchemist"
 weight = 5
-summary = "One-time changes or additions to the simulator behavior"
+summary = "Custom changes or additions to the simulator behavior"
 +++
 
-### One-time changes or additions to the simulator behavior
+### Custom changes or additions to the simulator behavior
 
 ## Contents
 

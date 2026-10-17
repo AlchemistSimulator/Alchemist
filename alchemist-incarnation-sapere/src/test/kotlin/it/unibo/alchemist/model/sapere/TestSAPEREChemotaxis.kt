@@ -16,6 +16,9 @@ import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.sapere.actions.SAPEREChemotaxis
 import it.unibo.alchemist.model.sapere.nodes.LsaNode
+import it.unibo.alchemist.model.sapere.reactions.SAPERENodeReaction
+import it.unibo.alchemist.model.sapere.timedistributions.SAPEREExponentialTime
+import org.apache.commons.math3.random.MersenneTwister
 
 class TestSAPEREChemotaxis :
     StringSpec(
@@ -24,11 +27,14 @@ class TestSAPEREChemotaxis :
                 val incarnation = SAPEREIncarnation<Euclidean2DPosition>()
                 val environment = Continuous2DEnvironment<List<ILsaMolecule>>(incarnation)
                 val node = LsaNode(environment)
+                val randomGenerator = MersenneTwister()
+                val reaction =
+                    SAPERENodeReaction(environment, node, randomGenerator, SAPEREExponentialTime("1", randomGenerator))
                 val response = incarnation.createMolecule("response")
                 val gradient = incarnation.createMolecule("gradient, Dest")
                 val invalidPosition = -1
                 val exception = shouldThrow<IllegalArgumentException> {
-                    SAPEREChemotaxis(environment, node, response, gradient, invalidPosition)
+                    SAPEREChemotaxis(environment, reaction, response, gradient, invalidPosition)
                 }
                 exception.message shouldContain "idPosition"
                 exception.message shouldContain invalidPosition.toString()

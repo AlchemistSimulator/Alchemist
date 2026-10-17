@@ -12,7 +12,7 @@ package it.unibo.alchemist.util
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Environments.allSubNetworksByNode
@@ -37,7 +37,7 @@ infix fun Environment<Any, Euclidean2DPosition>.addNodeAt(coordinates: Pair<Doub
  */
 fun environmentWithNodesAt(vararg positions: Pair<Double, Double>) =
     Continuous2DEnvironment(ProtelisIncarnation()).apply {
-        linkingRule = ConnectWithinDistance(5.0)
+        networkModel = connectWithinDistance(5.0)
         positions.forEach { addNodeAt(it) }
     }
 
@@ -54,8 +54,8 @@ fun <T> Environment<T, *>.mustBeSegmented() {
  */
 fun <T> Environment<T, *>.mustHaveCoherentSubnetworks() {
     val networks = allSubNetworksByNodeWithHopDistance()
-    assertEquals(nodes.size, networks.size)
-    assertEquals(nodes.sorted(), networks.values.flatMap { it.nodes }.distinct().sorted())
+    assertEquals(nodes.current.size, networks.size)
+    assertEquals(nodes.current.sorted(), networks.values.flatMap { it.nodes }.distinct().sorted())
     networks.forEach { (pivot, network) ->
         network.nodes.forEach { connectedNode ->
             assertContains(networks[connectedNode]?.nodes.orEmpty(), pivot)

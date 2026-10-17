@@ -28,7 +28,7 @@ class KotlinDslProviderTest {
         val script = """
             simulation2D(SAPEREIncarnation()) {
                 environment {
-                    networkModel(ConnectWithinDistance(5.0))
+                    networkModel(connectWithinDistance(5.0))
                     deployments {
                         deploy(point(0.0, 0.0))
                         deploy(point(0.0, 1.0))
@@ -57,7 +57,7 @@ class KotlinDslProviderTest {
             Arguments.of("dsl/kts/12-layers.alchemist.kts", "dsl/yml/12-layers.yml"),
             Arguments.of("dsl/kts/14-exporters.alchemist.kts", "dsl/yml/14-exporters.yml"),
             Arguments.of("dsl/kts/15-variables.alchemist.kts", "dsl/yml/15-variables.yml"),
-            Arguments.of("dsl/kts/18-properties.alchemist.kts", "dsl/yml/18-properties.yml"),
+            Arguments.of("dsl/kts/18-capabilities.alchemist.kts", "dsl/yml/18-capabilities.yml"),
             Arguments.of("dsl/kts/19-performance.alchemist.kts", "dsl/yml/19-performance.yml"),
         )
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -59,7 +59,7 @@ private class TestPosition(
 ) : Position<Nothing> {
     override fun boundingBox(range: Double): List<Nothing> = error("Not implemented in tests")
 
-    override fun getCoordinate(dimension: Int): Double = coordinates[dimension]
+    override fun get(dimension: Int): Double = coordinates[dimension]
 
     override fun plus(other: DoubleArray): Nothing = error("Not implemented in tests")
 

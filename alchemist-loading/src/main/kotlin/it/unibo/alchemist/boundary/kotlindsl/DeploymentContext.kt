@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.boundary.kotlindsl
 
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -24,7 +24,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * A [DeploymentContext] is typically entered once per deployed position, and provides:
  * - the target [position] being deployed;
  * - utilities to create and attach reactions (optionally configuring actions/conditions);
- * - utilities to initialize node contents and attach [NodeProperty] instances.
+ * - utilities to initialize node contents and attach [Capability] instances.
  *
  * Most operations rely on Kotlin context receivers, so the relevant [Incarnation], [Environment],
  * [RandomGenerator], and [Node] instances are expected to be available in the surrounding scope.
@@ -88,7 +88,7 @@ interface DeploymentContext<T, P : Position<P>> {
      * Convenience utility to create and register a reaction on the current node.
      *
      * A time distribution is obtained through [withTimeDistribution], using [timeDistribution] as parameter.
-     * The reaction is then created via [Incarnation.createReaction], using [program] as an incarnation-specific
+     * The reaction is then created via [Incarnation.createNodeReaction], using [program] as an incarnation-specific
      * descriptor (or `null` to delegate the choice to the incarnation), and finally registered on the node.
      *
      * The optional [block] can be used to attach actions and conditions through [ActionableContext].
@@ -107,7 +107,7 @@ interface DeploymentContext<T, P : Position<P>> {
     fun program(
         program: String? = null,
         timeDistribution: Any? = null,
-        block: context(Reaction<T>) ActionableContext.() -> Unit = { },
+        block: context(NodeReaction<T>) ActionableContext.() -> Unit = { },
     ) = withTimeDistribution(timeDistribution) {
         program(program, block)
     }
@@ -126,13 +126,13 @@ interface DeploymentContext<T, P : Position<P>> {
     }
 
     /**
-     * Attaches a [NodeProperty] to the current node.
+     * Attaches [capability] to the current node.
      *
-     * @param property the property instance to add to the node.
+     * @param capability the capability to add to the node.
      */
     context(node: Node<T>)
-    fun nodeProperty(property: NodeProperty<T>) {
-        node.addProperty(property)
+    fun capability(capability: Capability<T>) {
+        node.addProperty(capability)
     }
 
     private companion object {
@@ -158,12 +158,13 @@ interface DeploymentContext<T, P : Position<P>> {
             node: Node<T>,
             timeDistribution: TimeDistribution<T>
         )
-        private fun <T, P : Position<P>> makeReaction(descriptor: String?): Reaction<T> = incarnation.createReaction(
-            randomGenerator,
-            environment,
-            node,
-            timeDistribution,
-            null,
-        )
+        private fun <T, P : Position<P>> makeReaction(descriptor: String?): NodeReaction<T> =
+            incarnation.createNodeReaction(
+                randomGenerator,
+                environment,
+                node,
+                timeDistribution,
+                null,
+            )
     }
 }

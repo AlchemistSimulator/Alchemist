@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,9 +15,9 @@ import it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogat
 import it.unibo.alchemist.boundary.webui.server.state.ServerStore.store
 import it.unibo.alchemist.boundary.webui.server.state.actions.SetEnvironmentSurrogate
 import it.unibo.alchemist.boundary.webui.server.surrogates.utility.toEnvironmentSurrogate
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 
 /**
@@ -42,7 +42,7 @@ class EnvironmentMonitor<T, P, TS, PS>(
      * @param time the current time.
      * @param step the current step.
      */
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val newEnvironmentSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
             environment.toEnvironmentSurrogate(toConcentrationSurrogate, toPositionSurrogate)
         store.dispatch(SetEnvironmentSurrogate(newEnvironmentSurrogate))

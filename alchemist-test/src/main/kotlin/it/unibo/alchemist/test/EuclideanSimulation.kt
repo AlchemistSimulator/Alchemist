@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,10 +12,10 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.terminators.StepCount
@@ -33,14 +33,16 @@ import org.kaikikm.threadresloader.ResourceLoader
  */
 fun <T, P> Simulation<T, P>.startSimulation(
     onceInitialized: (EuclideanEnvironment<T, P>) -> Unit = { },
-    atEachStep: (EuclideanEnvironment<T, P>, Actionable<T>?, Time, Long) -> Unit = { _, _, _, _ -> },
+    atEachStep: (EuclideanEnvironment<T, P>, Reaction<T>?, Time, Long) -> Unit = { _, _, _, _ -> },
     whenFinished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
     steps: Long = 10000,
 ) where P : Position<P>, P : Vector<P> = apply {
     environment.addTerminator(StepCount(steps))
     check(environment is EuclideanEnvironment<*, *>)
 
-    fun checkForErrors() = error.ifPresent { throw it }
+    fun checkForErrors() {
+        error.onSome { throw it }
+    }
     addOutputMonitor(
         object : OutputMonitor<T, P> {
             override fun initialized(environment: Environment<T, P>) {
@@ -48,14 +50,14 @@ fun <T, P> Simulation<T, P>.startSimulation(
                 onceInitialized(environment as EuclideanEnvironment<T, P>)
             }
 
-            override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, t: Time, s: Long) {
+            override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
                 checkForErrors()
-                atEachStep(environment as EuclideanEnvironment<T, P>, reaction, t, s)
+                atEachStep(environment as EuclideanEnvironment<T, P>, reaction, time, step)
             }
 
-            override fun finished(environment: Environment<T, P>, t: Time, s: Long) {
+            override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
                 checkForErrors()
-                whenFinished(environment as EuclideanEnvironment<T, P>, t, s)
+                whenFinished(environment as EuclideanEnvironment<T, P>, time, step)
             }
         },
     )

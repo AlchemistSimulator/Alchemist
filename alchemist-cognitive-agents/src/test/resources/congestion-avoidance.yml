@@ -20,7 +20,7 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [70, 50]
-    properties:
+    capabilities:
       - type: CircularArea
       - type: Orienting2D
         parameters: [1.0]
@@ -30,14 +30,14 @@ deployments:
       - *behavior
   - type: Grid
     parameters: [27, 52, 56, 58, 0.5, 0.5, 0.3, 0.3]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: Perceptive2D
       - type: CircularArea
       - type: Social
   - type: Grid
     parameters: [30, 40, 50, 45, 0.5, 0.5, 0.3, 0.3]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: Perceptive2D
       - type: CircularArea

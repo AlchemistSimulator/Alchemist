@@ -10,12 +10,11 @@ package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position
-import java.io.Serializable
 
 /**
  * An entity which is able to produce an Alchemist [Simulation], resolving user defined variable values.
  */
-interface Loader : Serializable {
+interface Loader {
     /**
      * Allows to access the currently defined constants, namely variables defined in the simulation file whose value is
      * constant and does not depend on the value of any free variable (directly or indirectly).

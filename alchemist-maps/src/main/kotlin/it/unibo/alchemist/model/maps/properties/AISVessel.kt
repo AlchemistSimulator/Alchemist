@@ -16,11 +16,10 @@ import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISShipType
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISTrace
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISTraceLoader
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.maps.MapEnvironment
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
-import java.io.Serial
+import it.unibo.alchemist.model.properties.AbstractCapability
 import java.util.Objects
 import java.util.concurrent.TimeUnit
 import kotlin.time.Instant
@@ -37,7 +36,7 @@ class AISVessel<T>(
     private val path: String,
     private val normalizer: String = "AlignToSimulationTime",
     private vararg val normalizerArgs: Any?,
-) : AbstractNodeProperty<T>(node) {
+) : AbstractCapability<T>(node) {
     private val trace: AISTrace by lazy { traceFor(environment, path, normalizer, *normalizerArgs) }
 
     /**
@@ -162,7 +161,7 @@ class AISVessel<T>(
     val vendorId: String?
         get() = currentPayload.vendorId
 
-    override fun cloneOnNewNode(node: Node<T>): NodeProperty<T> = AISVessel(
+    override fun cloneOnNewNode(node: Node<T>): Capability<T> = AISVessel(
         environment,
         node,
         path,
@@ -187,9 +186,6 @@ class AISVessel<T>(
     }
 
     private companion object {
-        @Serial
-        private const val serialVersionUID = 1L
-
         private val TRACE_LOADER_CACHE: LoadingCache<TraceRef, AISTraceLoader> = Caffeine
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)

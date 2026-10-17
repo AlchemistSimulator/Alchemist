@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.deployments
 
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.LinkingRule
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.util.GraphStreamSupport
 import org.apache.commons.math3.random.RandomGenerator
@@ -58,10 +58,10 @@ class GraphStreamDeployment<P>(
     )
 
     /**
-     * The [LinkingRule] associated with this [GraphStreamDeployment],
+     * The [NetworkModel] associated with this [GraphStreamDeployment],
      * or null if the deployment has been created without static linking.
      */
     @Suppress("UNCHECKED_CAST")
-    override fun <T> getAssociatedLinkingRule(): LinkingRule<T, P>? =
-        if (createLinks) graphStreamSupport.linkingRule as? LinkingRule<T, P> else null
+    override fun <T> getAssociatedLinkingRule(): NetworkModel<T>? =
+        if (createLinks) graphStreamSupport.networkModel as? NetworkModel<T> else null
 }

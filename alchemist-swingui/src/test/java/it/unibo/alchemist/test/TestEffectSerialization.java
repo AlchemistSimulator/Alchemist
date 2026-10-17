@@ -13,7 +13,6 @@ import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.swingui.effect.impl.EffectFactory;
 import it.unibo.alchemist.boundary.swingui.effect.impl.EffectSerializationFactory;
 import it.unibo.alchemist.util.ClassPathScanner;
-import org.danilopianini.io.FileUtilities;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -57,20 +56,6 @@ class TestEffectSerialization {
     void testGsonEffectSerialization() throws IOException, ClassNotFoundException {
         EffectSerializationFactory.effectToFile(FILE, E);
         EffectSerializationFactory.effectsFromFile(FILE);
-    }
-
-    /**
-     * Make sure that effects can be (de) serialized.
-     *
-     * @throws IOException
-     *             in case of errors
-     * @throws ClassNotFoundException
-     *             if some very serious bug happens
-     */
-    @Test
-    void testDefaultEffectSerialization() throws IOException, ClassNotFoundException {
-        FileUtilities.objectToFile(E, FILEPATH, false);
-        FileUtilities.fileToObject(FILEPATH);
     }
 
     @Test

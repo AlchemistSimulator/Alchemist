@@ -2,12 +2,12 @@ incarnation: protelis
 
 environment:
   type: EnvironmentWithDynamics
-  parameteres: [planimetry.png]
+  parameters: [planimetry.png]
 
 deployments:
   - type: Point
-    parameters: [0, 0]
-    properties:
+    parameters: [50, 50]
+    capabilities:
       - type: Pedestrian
       - type: PhysicalPedestrian2D
       - type: CircularArea

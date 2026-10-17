@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,10 +11,9 @@ package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
 import it.unibo.alchemist.model.layers.BidimensionalGaussianLayer
@@ -33,18 +32,18 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
 abstract class AbstractLayerAction(
-    protected val environment: Euclidean2DEnvironment<Number>,
-    reaction: Reaction<Number>,
+    override val environment: Euclidean2DEnvironment<Number>,
+    reaction: NodeReaction<Number>,
     pedestrian: PedestrianProperty<Number>,
     protected val targetMolecule: Molecule,
 ) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
-    abstract override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): AbstractLayerAction
+    abstract override fun cloneOnNodeReaction(newReaction: NodeReaction<Number>): AbstractLayerAction
 
     /**
      * @returns the layer containing [targetMolecule] or fails.
      */
     protected fun getLayerOrFail(): Layer<Number, Euclidean2DPosition> =
-        checkNotNull(environment.getLayer(targetMolecule)) { "no layer containing $targetMolecule" }
+        checkNotNull(environment.layerFor(targetMolecule)) { "no layer containing $targetMolecule" }
 
     /**
      * @returns the center of the layer or null if there's no center.
@@ -56,5 +55,5 @@ abstract class AbstractLayerAction(
      * @returns the concentration of the layer in the given [position].
      */
     protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
-        getValue(position).toDouble()
+        currentValueAt(position).toDouble()
 }

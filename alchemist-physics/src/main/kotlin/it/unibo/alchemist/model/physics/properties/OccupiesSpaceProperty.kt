@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.physics.properties
 
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.geometry.Shape
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.geometry.Vector
 /**
  * A node's ability to have a [Shape].
  */
-interface OccupiesSpaceProperty<T, S : Vector<S>, A : Transformation<S>> : NodeProperty<T> {
+interface OccupiesSpaceProperty<T, S : Vector<S>, A : Transformation<S>> : Capability<T> {
     /**
      * The node's shape.
      */

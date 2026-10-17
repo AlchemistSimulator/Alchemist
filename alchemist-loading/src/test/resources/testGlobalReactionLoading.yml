@@ -1,9 +1,0 @@
-incarnation: protelis
-
-environment:
-  type: Continuous2DEnvironment
-  global-programs:
-    - time-distribution:
-        type: DiracComb
-        parameters: [1.0]
-      type: GlobalTestReaction

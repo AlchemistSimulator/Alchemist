@@ -13,8 +13,6 @@ import it.unibo.alchemist.boundary.swingui.effect.isolines.api.IsolinesFactory;
 import it.unibo.alchemist.boundary.swingui.effect.isolines.impl.ConcreteIsolinesFactory;
 import it.unibo.alchemist.model.layers.BidimensionalGaussianLayer;
 
-import java.io.Serial;
-
 /**
  * Draw isolines for {@link BidimensionalGaussianLayer}s.
  * It ignores any other layer.
@@ -23,9 +21,6 @@ import java.io.Serial;
  */
 @Deprecated
 public class DrawBidimensionalGaussianLayersIsolines extends AbstractrDrawLayersIsolines {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     /**
      */

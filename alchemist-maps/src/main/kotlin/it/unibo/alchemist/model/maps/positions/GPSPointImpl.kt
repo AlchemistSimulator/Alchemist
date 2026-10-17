@@ -12,16 +12,13 @@ package it.unibo.alchemist.model.maps.positions
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.maps.GPSPoint
-import java.io.Serial
-import java.io.Serializable
 
 /**
  * Implementation of a GPS point with time information.
  */
 data class GPSPointImpl(private val delegate: LatLongPosition, private val time: Time) :
     GPSPoint,
-    GeoPosition by delegate,
-    Serializable {
+    GeoPosition by delegate {
 
     constructor(latitude: Double, longitude: Double, time: Time) : this(LatLongPosition(latitude, longitude), time)
 
@@ -34,9 +31,4 @@ data class GPSPointImpl(private val delegate: LatLongPosition, private val time:
     override fun subtractTime(t: Time): GPSPointImpl = GPSPointImpl(delegate, time.minus(t))
 
     override fun toString(): String = "[${delegate.latitude},${delegate.longitude}]@$time"
-
-    private companion object {
-        @Serial
-        private const val serialVersionUID = 2L
-    }
 }

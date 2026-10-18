@@ -1,3 +1,20 @@
+## [43.1.42](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.41...43.1.42) (2026-10-18)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.10.1-19.3.1 ([#5676](https://github.com/AlchemistSimulator/Alchemist/issues/5676)) ([e5bbfa9](https://github.com/AlchemistSimulator/Alchemist/commit/e5bbfa9abf2bca7d276cae46919d8b9905e2f656))
+* **deps:** update compose.multiplatform to v1.12.2 ([aee6315](https://github.com/AlchemistSimulator/Alchemist/commit/aee6315e3d0b8b53e889a2f5614696460de3a1a7))
+* **deps:** update dependency io.kotest:io.kotest.gradle.plugin to v6.2.6 ([1780d85](https://github.com/AlchemistSimulator/Alchemist/commit/1780d85708b83745b2242d03216c631042ac1aea))
+* **deps:** update node.js to 24.22 ([#5675](https://github.com/AlchemistSimulator/Alchemist/issues/5675)) ([f3693bb](https://github.com/AlchemistSimulator/Alchemist/commit/f3693bbafa7cd93a5ab0fce6cdaf314b0e0e7af3))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.49 ([#5669](https://github.com/AlchemistSimulator/Alchemist/issues/5669)) ([948b156](https://github.com/AlchemistSimulator/Alchemist/commit/948b15643928c3341d31a74ef7ecd19faf14aa05))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([cda88f8](https://github.com/AlchemistSimulator/Alchemist/commit/cda88f8cf4cfda78048d4976a4c66414fc7c7d0a))
+
 ## [43.1.41](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.40...43.1.41) (2026-10-13)
 
 ### Dependency updates

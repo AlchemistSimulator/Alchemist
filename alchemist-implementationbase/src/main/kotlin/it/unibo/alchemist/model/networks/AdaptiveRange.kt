@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -54,12 +55,12 @@ constructor(
     maxRange,
 ) {
 
-    // How many range adjustments are being propagated, each one triggered by the previous.
-    private var cascadingAdjustments = 0
-
     private val ranges = ObservableMutableMap<Int, Double>()
 
     private val targetNeighborCount = max(desiredNeighbors, 0)
+
+    // The neighbor counts within tolerance of the desired one.
+    private val tolerated = max(1, targetNeighborCount - tolerance)..targetNeighborCount + tolerance
 
     final override fun neighborhoodOf(center: Node<T>): Observable<Neighborhood<T>> = ConvergingNeighborhood(center)
 
@@ -105,38 +106,44 @@ constructor(
     protected open fun observeRemovalInputs(node: Node<T>): Observable<*> = observe(Unit)
 
     /*
-     * Steps the range of the center until its neighbor count is within tolerance or the range hits its bounds,
-     * then publishes it:
-     * changing a range updates the neighborhoods depending on it, which may adjust further ranges,
-     * so the adjustments triggered by one another are capped, to bound mutually oscillating ranges.
+     * Steps the range of the center, in the direction that brings its neighbor count towards the desired one, until
+     * the count is within tolerance or the range hits its bounds. A step overshooting the tolerance, from too few
+     * neighbors to too many or vice versa, ends the search: of the two ranges around it, the one whose neighbor count
+     * is closest to the desired one is kept, the larger one if both are equally close. The range is then published:
+     * changing it updates the neighborhoods depending on it, which may adjust further ranges.
      */
     private fun converge(center: Node<T>, neighborCount: Int) {
-        if (cascadingAdjustments < MAX_CASCADING_ADJUSTMENTS && !withinTolerance(neighborCount)) {
+        if (!withinTolerance(neighborCount)) {
             val initial = rangeOf(center)
             val candidates = environment.nodesAround(center, maxRange)
-            var range = initial
-            var count = neighborCount
-            while (!withinTolerance(count)) {
-                val next = when {
-                    count > targetNeighborCount + tolerance -> max(range - adjustment, minRange)
-                    else -> min(range + adjustment, maxRange)
+            val growing = neighborCount < tolerated.first
+
+            // One step of the convergence, from a range linking count neighbors.
+            tailrec fun stepFrom(range: Double, count: Int): Double {
+                val next = if (growing) min(range + adjustment, maxRange) else max(range - adjustment, minRange)
+                return when {
+                    withinTolerance(count) || next == range -> range
+                    else -> {
+                        val nextCount = candidates.count { linkedWithin(center, it, next) }
+                        val overshoot = if (growing) nextCount > tolerated.last else nextCount < tolerated.first
+                        val nextIsCloser = distanceFromTarget(nextCount) < distanceFromTarget(count) ||
+                            distanceFromTarget(nextCount) == distanceFromTarget(count) && next > range
+                        when {
+                            !overshoot -> stepFrom(next, nextCount)
+                            nextIsCloser -> next
+                            else -> range
+                        }
+                    }
                 }
-                if (next.compareTo(range) == 0) {
-                    break
-                }
-                range = next
-                count = candidates.count { linkedWithin(center, it, next) }
             }
-            if (range.compareTo(initial) != 0) {
-                cascadingAdjustments++
-                try {
-                    ranges[center.id] = range
-                } finally {
-                    cascadingAdjustments--
-                }
+            val converged = stepFrom(initial, neighborCount)
+            if (converged != initial) {
+                ranges[center.id] = converged
             }
         }
     }
+
+    private fun distanceFromTarget(neighborCount: Int): Int = abs(neighborCount - targetNeighborCount)
 
     private fun linkedWithin(center: Node<T>, neighbor: Node<T>, centerRange: Double): Boolean =
         environment.distanceBetween(center, neighbor) <= centerRange &&
@@ -144,8 +151,7 @@ constructor(
 
     private fun rangeOf(node: Node<T>): Double = ranges.current[node.id] ?: radius
 
-    private fun withinTolerance(neighborCount: Int): Boolean =
-        neighborCount in max(1, targetNeighborCount - tolerance)..targetNeighborCount + tolerance
+    private fun withinTolerance(neighborCount: Int): Boolean = neighborCount in tolerated
 
     /*
      * The neighborhood of center, whose range converges after each change of the neighborhood has been delivered.
@@ -173,9 +179,15 @@ constructor(
         }
 
         override fun stopWatching(registrant: Any) {
+            val wasObserved = observers.isNotEmpty()
             base.stopWatching(registrant)
-            if (observers.isEmpty()) {
+            if (wasObserved && observers.isEmpty()) {
                 base.stopWatching(this)
+                /*
+                 * Nodes no longer observed, e.g., removed ones, do not keep their range. Another observed neighborhood
+                 * of the same node, if any, observes the range being forgotten, and converges again.
+                 */
+                ranges.remove(center.id)
             }
         }
 
@@ -206,8 +218,5 @@ constructor(
          * Default minimum range.
          */
         const val DEFAULT_MINRANGE = 1.0
-
-        // At most this many range adjustments triggering one another are applied.
-        private const val MAX_CASCADING_ADJUSTMENTS = 1000
     }
 }

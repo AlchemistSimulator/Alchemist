@@ -13,14 +13,25 @@ import arrow.core.getOrElse
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
 import it.unibo.alchemist.model.observation.Observable
 
 /**
- * A network model that combines multiple [subRules], all bound to the same environment.
+ * A network model that combines multiple [subRules] all bound to the same environment.
  * If any mandates a link, such link is created (union of all links).
  */
 class CombinedNetworkModel<T>(subRules: List<NetworkModel<T>>) : NetworkModel<T> {
+
+    constructor(
+        subRule1: NetworkModel<T>,
+        subRule2: NetworkModel<T>,
+        vararg otherSubRules: NetworkModel<T>,
+    ) : this(listOf(subRule1, subRule2, *otherSubRules))
+
+    init {
+        require(subRules.size >= 2) { "At least two sub-rules must be provided" }
+    }
 
     /*
      * The union of links is associative and idempotent: nested combinations are flattened and duplicates dropped.
@@ -31,10 +42,14 @@ class CombinedNetworkModel<T>(subRules: List<NetworkModel<T>>) : NetworkModel<T>
         .filterNot { it is NoLinks<*> }
         .let { models -> models.firstOrNull { it is FullyConnected<*> }?.let(::listOf) ?: models }
 
-    override fun neighborhoodOf(center: Node<T>): Observable<Neighborhood<T>> =
-        subRules.map { it.neighborhoodOf(center) }.combineLatest { neighborhoods ->
-            Neighborhood(center, neighborhoods.flatMap { it.neighbors }.toSet())
-        }.map { combined -> combined.getOrElse { Neighborhood(center, emptySet()) } }
+    // A combination of a single model links as that model does, and one of no models links nothing.
+    override fun neighborhoodOf(center: Node<T>): Observable<Neighborhood<T>> = when (subRules.size) {
+        0 -> observe(Neighborhood(center, emptySet()))
+        1 -> subRules.single().neighborhoodOf(center)
+        else -> subRules.map { it.neighborhoodOf(center) }
+            .combineLatest { neighborhoods -> Neighborhood(center, neighborhoods.flatMap { it.neighbors }.toSet()) }
+            .map { combined -> combined.getOrElse { Neighborhood(center, emptySet()) } }
+    }
 
     override fun toString(): String = "${javaClass.simpleName}($subRules)"
 

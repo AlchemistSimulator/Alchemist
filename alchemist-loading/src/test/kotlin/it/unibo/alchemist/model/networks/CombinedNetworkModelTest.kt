@@ -24,7 +24,7 @@ class CombinedNetworkModelTest {
     @Test
     fun `a combination including a fully connected model links every node`() {
         environment.networkModel = with(environment) {
-            CombinedNetworkModel(listOf(connectWithinDistance(1.0), fullyConnected(), NoLinks()))
+            CombinedNetworkModel(connectWithinDistance(1.0), fullyConnected(), NoLinks())
         }
         val (first, second, third) = listOf(0, 10, 20).map { nodeAt(it) }
         assertEquals(setOf(second, third), neighborsOf(first))
@@ -33,8 +33,8 @@ class CombinedNetworkModelTest {
     @Test
     fun `a nested combination links the union of all its models`() {
         environment.networkModel = with(environment) {
-            val nested = CombinedNetworkModel(listOf(connectWithinDistance(1.0), connectWithinDistance(1.0)))
-            CombinedNetworkModel(listOf(nested, connectWithinDistance(3.0)))
+            val nested = CombinedNetworkModel(connectWithinDistance(1.0), connectWithinDistance(1.0))
+            CombinedNetworkModel(nested, connectWithinDistance(3.0))
         }
         val (first, second, third) = listOf(0, 1, 3).map { nodeAt(it) }
         assertEquals(setOf(second, third), neighborsOf(first))

@@ -16,6 +16,8 @@ import it.unibo.alchemist.model.observation.Observable;
 
 import javax.annotation.Nonnull;
 
+import java.util.Set;
+
 import static it.unibo.alchemist.model.observables.util.MutableObservables.observe;
 
 /**
@@ -29,7 +31,7 @@ public class NoLinks<T> implements NetworkModel<T> {
     @Nonnull
     @Override
     public final Observable<Neighborhood<T>> neighborhoodOf(@Nonnull final Node<T> center) {
-        return observe(Neighborhood.Companion.invoke(center, java.util.Set.of()));
+        return observe(Neighborhood.Companion.invoke(center, Set.of()));
     }
 
     @Override

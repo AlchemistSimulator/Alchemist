@@ -264,9 +264,9 @@ internal object SimulationModel {
             visitRecursively(localContext, root, JavaType) { element ->
                 visitBuilding<NetworkModel<T>>(localContext, element)
             }
-        return when {
-            networkModels.isEmpty() -> NoLinks()
-            networkModels.size == 1 -> networkModels.first()
+        return when (networkModels.size) {
+            0 -> NoLinks()
+            1 -> networkModels.single()
             else -> CombinedNetworkModel(networkModels)
         }
     }

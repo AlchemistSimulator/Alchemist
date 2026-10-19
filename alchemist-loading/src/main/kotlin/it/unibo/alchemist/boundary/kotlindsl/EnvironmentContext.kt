@@ -115,7 +115,7 @@ fun interface EnvironmentContext<T, P : Position<P>> {
     context(environment: Environment<T, P>)
     fun networkModel(model: NetworkModel<T>) = when (val currentRule = environment.networkModel) {
         is NoLinks<T> -> environment.networkModel = model
-        else -> environment.networkModel = CombinedNetworkModel(listOf(currentRule, model))
+        else -> environment.networkModel = CombinedNetworkModel(currentRule, model)
     }
 
     /**

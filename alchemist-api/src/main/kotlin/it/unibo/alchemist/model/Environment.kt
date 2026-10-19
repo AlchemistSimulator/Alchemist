@@ -132,6 +132,13 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     fun distanceBetween(n1: Node<T>, n2: Node<T>): Double
 
     /**
+     * The farthest position that [node] reaches moving straight from its current position towards [desired]:
+     * [desired] itself, unless the constraints of this environment, such as its bounds, its obstacles, or the bodies of
+     * the other nodes, stop [node] earlier. [moveNodeTo] moves nodes to this position.
+     */
+    fun farthestReachablePosition(node: Node<T>, desired: P): P = desired
+
+    /**
      * Get the [Layer] associate to the given [molecule]. If no Layer is associated
      * with the given molecule, return `null`.
      */
@@ -158,8 +165,9 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     /**
      * Moves [node] to [position]. If node movement is unsupported, it does nothing.
      *
-     * Every movement goes through this function, including relative movements in a [EuclideanEnvironment]:
-     * environments constraining movements (walls, obstacles, physics) override it.
+     * Every movement goes through this function, including relative movements in a [EuclideanEnvironment], and
+     * reaches the [farthestReachablePosition] towards [position]: environments constraining movements (walls,
+     * obstacles, physics) override [farthestReachablePosition].
      */
     fun moveNodeTo(node: Node<T>, position: P)
 

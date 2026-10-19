@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.physics.environments;
 
 import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
 import javax.annotation.Nonnull;
@@ -146,9 +147,21 @@ public final class InfiniteHalls<T> extends AbstractLimitedContinuous2D<T> {
         return allowed(coord[0], coord[1]);
     }
 
+    /**
+     * The farthest position reachable by the node towards the desired one, stopping at the walls of the halls.
+     */
     @Nonnull
     @Override
-    protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
+    public Euclidean2DPosition farthestReachablePosition(
+        @Nonnull final Node<T> node,
+        @Nonnull final Euclidean2DPosition desired
+    ) {
+        final Euclidean2DPosition current = currentPositionOf(node);
+        final Euclidean2DPosition reachable = super.farthestReachablePosition(node, desired);
+        return next(current.getX(), current.getY(), reachable.getX(), reachable.getY());
+    }
+
+    private Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         if (allowed(nx, ny)) {
             return makePosition(nx, ny);
         }

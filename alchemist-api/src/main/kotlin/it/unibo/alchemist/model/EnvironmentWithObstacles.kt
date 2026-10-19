@@ -59,28 +59,6 @@ interface EnvironmentWithObstacles<W, T, P> :
     fun shortestPathIntersectsObstacle(start: P, end: P): Boolean
 
     /**
-     * This method must calculate the ABSOLUTE next allowed position given the
-     * current position and the position in which the node wants to move. For
-     * example, if your node is in position [2,3], wants to move to [3,4] but
-     * the next allowed position (because, e.g., of physical obstacles) is
-     * [2.5,3.5], the result must be a Position containing coordinates
-     * [2.5,3.5].
-     *
-     * @param current
-     *              the current position
-     * @param desired
-     *              the desired position
-     * @return the next allowed position, where the node can actually move. This
-     * position MUST be considered as a vector whose start point is [current].
-     */
-    fun farthestValidPositionFromTo(current: P, desired: P): P
-
-    /**
-     * The farthest position reachable moving from this position towards [other], see [farthestValidPositionFromTo].
-     */
-    fun P.farthestValidPositionTowards(other: P): P = farthestValidPositionFromTo(this, other)
-
-    /**
      * Whether the segment connecting this position and [other] touches an obstacle,
      * see [shortestPathIntersectsObstacle].
      */

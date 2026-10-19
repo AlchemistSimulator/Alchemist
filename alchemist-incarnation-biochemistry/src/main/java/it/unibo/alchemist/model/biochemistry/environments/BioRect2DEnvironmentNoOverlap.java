@@ -95,21 +95,19 @@ public final class BioRect2DEnvironmentNoOverlap
         }
     }
 
+    /**
+     * Circular cells stop before overlapping other circular cells, within the limits of the environment.
+     */
+    @Nonnull
     @Override
-    public void moveNodeTo(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition position) {
-        final double[] cur = currentPositionOf(node).getCoordinates();
-        final double[] np = position.getCoordinates();
-        final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
-        if (node.asPropertyOrNull(CircularCellProperty.class) != null) {
-            final Euclidean2DPosition nextPos = findNearestFreePosition(
-                    node,
-                    new Euclidean2DPosition(cur[0], cur[1]),
-                    nextWithinLimts
-            );
-            super.moveNodeTo(node, nextPos);
-        } else {
-            super.moveNodeTo(node, nextWithinLimts);
-        }
+    public Euclidean2DPosition farthestReachablePosition(
+            @Nonnull final Node<Double> node,
+            @Nonnull final Euclidean2DPosition desired
+    ) {
+        final Euclidean2DPosition withinLimits = super.farthestReachablePosition(node, desired);
+        return node.asPropertyOrNull(CircularCellProperty.class) == null
+            ? withinLimits
+            : findNearestFreePosition(node, currentPositionOf(node), withinLimits);
     }
 
     /*

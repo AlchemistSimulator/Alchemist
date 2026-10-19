@@ -252,11 +252,6 @@ constructor(
                     override fun shortestPathIntersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition) =
                         false
 
-                    override fun farthestValidPositionFromTo(
-                        current: Euclidean2DPosition,
-                        desired: Euclidean2DPosition,
-                    ) = desired
-
                     override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
                         error("This Environment instance does not support obstacle removal")
 

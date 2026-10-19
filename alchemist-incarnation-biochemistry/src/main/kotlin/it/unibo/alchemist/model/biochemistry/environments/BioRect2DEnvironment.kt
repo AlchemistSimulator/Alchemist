@@ -55,8 +55,13 @@ open class BioRect2DEnvironment(
         Double.POSITIVE_INFINITY,
     )
 
-    final override fun next(curX: Double, curY: Double, newX: Double, newY: Double): Euclidean2DPosition =
-        Euclidean2DPosition(newX.coerceIn(minX, maxX), newY.coerceIn(minY, maxY))
+    /**
+     * The farthest position reachable by [node] towards [desired], clamped within the limits of this environment.
+     */
+    override fun farthestReachablePosition(node: Node<Double>, desired: Euclidean2DPosition): Euclidean2DPosition =
+        super.farthestReachablePosition(node, desired).let { (x, y) ->
+            Euclidean2DPosition(x.coerceIn(minX, maxX), y.coerceIn(minY, maxY))
+        }
 
     final override fun isAllowed(position: Euclidean2DPosition): Boolean =
         position.x > minX && position.x < maxX && position.y > minY && position.y < maxY

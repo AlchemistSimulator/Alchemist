@@ -15,7 +15,8 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A 2D continuous environment with spatial constraints.
- * Nodes cannot move to positions that are not allowed.
+ * Nodes cannot be added in positions that are not allowed, and subclasses stop them before reaching one through
+ * [farthestReachablePosition].
  *
  * @param T the concentration type
  * @param incarnation the incarnation used to build nodes and concentrations
@@ -23,25 +24,8 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 abstract class AbstractLimitedContinuous2D<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
     ContinuousPhysics2DEnvironment<T>(incarnation) {
 
-    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) {
-        val (curX, curY) = currentPositionOf(node).coordinates
-        val (newX, newY) = position.coordinates
-        super.moveNodeTo(node, next(curX, curY, newX, newY))
-    }
-
     override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =
         isAllowed(position) && super.nodeShouldBeAdded(node, position)
-
-    /**
-     * Computes the closest allowed position a node can move to.
-     *
-     * @param curX The current X coordinate
-     * @param curY The current Y coordinate
-     * @param newX The target X coordinate
-     * @param newY The target Y coordinate
-     * @return The next allowed position
-     */
-    protected abstract fun next(curX: Double, curY: Double, newX: Double, newY: Double): Euclidean2DPosition
 
     /**
      * Determines whether a position is allowed for a node.

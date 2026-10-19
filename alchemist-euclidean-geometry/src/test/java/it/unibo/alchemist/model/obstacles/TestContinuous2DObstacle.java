@@ -42,22 +42,21 @@ class TestContinuous2DObstacle {
         environment.setNetworkModel(new NoLinks<>());
         environment.addObstacle(R1021);
         environment.addObstacle(R0527);
+        final Node<Integer> mover = createIntNode(environment);
+        environment.addNode(mover, new Euclidean2DPosition(0, 0));
+        assertEquals(1, environment.getNodeCount().getCurrent());
         assertEquals(
             new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(1.0, 0.0)),
-            environment.farthestValidPositionFromTo(new Euclidean2DPosition(0, 0), new Euclidean2DPosition(1, 1))
+            environment.farthestReachablePosition(mover, new Euclidean2DPosition(1, 1))
         );
         assertEquals(
-            new Euclidean2DPosition(0, 0),
-            environment.farthestValidPositionFromTo(new Euclidean2DPosition(1, 1), new Euclidean2DPosition(0, 0)));
+            new Euclidean2DPosition(-1, -1),
+            environment.farthestReachablePosition(mover, new Euclidean2DPosition(-1, -1))
+        );
         assertEquals(
             new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(0.5, 0.0)),
-            environment.farthestValidPositionFromTo(
-                new Euclidean2DPosition(0, 0),
-                new Euclidean2DPosition(2, 1)
-            )
+            environment.farthestReachablePosition(mover, new Euclidean2DPosition(2, 1))
         );
-        environment.addNode(createIntNode(environment), new Euclidean2DPosition(0, 0));
-        assertEquals(1, environment.getNodeCount().getCurrent());
         environment.addNode(createIntNode(environment), new Euclidean2DPosition(1, 1));
         assertEquals(1, environment.getNodeCount().getCurrent());
         // CHECKSTYLE: MagicNumber OFF

@@ -70,12 +70,16 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
     override fun isAllowed(position: Euclidean2DPosition): Boolean =
         rtree.search(Geometries.point(position.x, position.y)).isEmpty.toBlocking().single()
 
-    override fun farthestValidPositionFromTo(
-        current: Euclidean2DPosition,
-        desired: Euclidean2DPosition,
-    ): Euclidean2DPosition = next(current.x, current.y, desired.x, desired.y)
+    /**
+     * The farthest position reachable by [node] towards [desired], stopping before the first obstacle on its path.
+     */
+    override fun farthestReachablePosition(node: Node<T>, desired: Euclidean2DPosition): Euclidean2DPosition {
+        val (curX, curY) = currentPositionOf(node)
+        val (newX, newY) = super<AbstractLimitedContinuous2D>.farthestReachablePosition(node, desired)
+        return farthestValidPosition(curX, curY, newX, newY)
+    }
 
-    override fun next(curX: Double, curY: Double, newX: Double, newY: Double): Euclidean2DPosition {
+    private fun farthestValidPosition(curX: Double, curY: Double, newX: Double, newY: Double): Euclidean2DPosition {
         val obstacles = query(curX, curY, newX, newY, TOLERANCE_MULTIPLIER).toMutableList()
         if (obstacles.isEmpty()) return Euclidean2DPosition(newX, newY)
 
@@ -132,9 +136,6 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
         rtree = rtree.delete(obstacle, toGeometry(obstacle))
         return rtree.size() == initialSize - 1
     }
-
-    override fun moveNodeTo(node: Node<T>, position: Euclidean2DPosition) =
-        super<AbstractLimitedContinuous2D>.moveNodeTo(node, position)
 
     // Obstacles are fixed once nodes exist: the links and the positions computed for them assume so.
     private fun checkNoNodes(operation: String) = check(nodeCount.current == 0) {

@@ -187,7 +187,7 @@ class BiochemicalReactionSchedulingTest {
             val randomGenerator = mockk<RandomGenerator>(relaxed = true)
             val (environment, node, molecule, _, reaction) = createFixture(randomGenerator)
             reaction.initializationComplete(Time.ZERO, environment)
-            assertFailsWith<IllegalArgumentException> { node.set(molecule, invalidQuantity) }
+            assertFailsWith<IllegalArgumentException> { node[molecule] = invalidQuantity }
         }
     }
 

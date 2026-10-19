@@ -20,7 +20,7 @@ _reactions: &behavior
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
-    properties:
+    capabilities:
       - type: Human
         parameters: [ "adult", "male" ]
       - type: CognitivePedestrian
@@ -30,7 +30,7 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [50, 0, 0, 20]
-    properties:
+    capabilities:
       - type: Human
         parameters: [ "adult", "female" ]
       - type: CognitivePedestrian

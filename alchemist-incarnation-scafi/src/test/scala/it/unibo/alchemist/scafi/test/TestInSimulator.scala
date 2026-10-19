@@ -37,22 +37,22 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers:
 
   test("Gradient"):
     val env = testNoVar[Any]("/test_gradient.yml")
-    env.getNodes
+    env.getNodes.getCurrent
       .iterator()
       .asScala
       .foreach: node =>
-        val contents = node.getContents.asScala
+        val contents = node.getContents.getCurrent.asScala
         contents(new SimpleMolecule("it.unibo.alchemist.scafi.test.ScafiGradientProgram"))
           .asInstanceOf[Double] should (be >= 0.0 and be <= 100.0)
 
   test("Environment"):
     val env = testNoVar[Any]("/test_env.yml")
-    env.getNodes
+    env.getNodes.getCurrent
       .iterator()
       .asScala
       .foreach: node =>
         import ScafiEnvProgram.*
-        val contents = node.getContents.asScala
+        val contents = node.getContents.getCurrent.asScala
         def getValue[T](name: String) = contents(new SimpleMolecule(name)).asInstanceOf[T]
         def inputMolecule = getValue[Int]("number")
         def outputMolecule = getValue[Int]("number2")
@@ -95,5 +95,5 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers:
     sim.getEnvironment.addTerminator(new StepCount[T, P](maxSteps))
     sim.play()
     sim.run()
-    if sim.getError.isPresent then throw new Exception(sim.getError.get().getMessage)
+    Option(sim.getError.getOrNull()).foreach(error => throw new Exception(error.getMessage, error))
     sim.getEnvironment

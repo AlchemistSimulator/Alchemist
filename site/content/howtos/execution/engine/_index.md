@@ -2,58 +2,25 @@
 pre = ""
 title = "Simulation Engine Configuration"
 weight = 5
-summary = "Available simulation engine configurations."
-tags = ["configuration", "engine", "batch", "parallel"]
+summary = "Alchemist's reactive simulation engine."
+tags = ["configuration", "engine", "reactive"]
 +++
 
 ## Engine Configuration
 
-The default Alchemist execution requires no special configuration,
-however different engine implementations are available.
+Alchemist ships a reactive simulation {{% api package="core" class="Engine" %}}.
+It is selected by default, so normal simulations require no engine configuration.
 
-In order to configure a different engine, simply add an EngineConfiguration object into
-the simulation configuration file as per the alchemist 
-[Arbitrary class loading system](https://alchemistsimulator.github.io/reference/yaml/index.html).
+[Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/) describes how reactions own their
+observable occurrence times and how initialization, firing, invalidation, and removal differ.
+The [simulation-engine explanation](/explanation/engine/) describes how the engine consumes those scheduling
+decisions.
 
-### Parallel Batch Engines
+Launcher parameter batches orchestrate independent simulations, each using its own reactive engine;
+see [parameter sweeping with simulation batches](/howtos/execution/batch/).
+Each engine executes the events of its simulation one at a time.
 
-Parallel batch engine is an implementaion of Alchemist's base engine 
-that speeds up the computations by processing event batches
-in parallel **at the price of determinism**.
+Third-party implementations of {{% api package="core" class="Simulation" %}} can still be selected through the
+[`engine`](/reference/yaml/#engine) section and the
+[arbitrary class loading system](/reference/yaml/#arbitrary-class-loading-system).
 
-All batch engine implementations require the following parameters:
-- outputReplayStrategy - determines how the output monitors get notified after the 
-batch has been processed. Available values:
-    - aggregate - only the state after the batch processing is sent to the monitors 
-    - replay - all the state changes get sent to the monitors ordered by scheduled time.
-
-#### Fixed Size Batch Engine
-
-Fixed size batch engine processes events in parallel in batches of fixed size.
-
-Sample configuration:
-```yaml
-engine-configuration:
-  type: FixedBatchEngineConfiguration
-  parameters:
-    outputReplayStrategy: aggregate
-    batchSize: 4
-```
-
-#### Epsilon Batch Engine
-
-Epsilon dynamic size batch engine processes events in parallel in batches 
-constructed using the epsilon sensitivity value.
-Events get added to the batch
-as long as the difference in scheduled time is lesser than the given epsilon value.
-
-Sample configuration:
-```yaml
-engine-configuration:
-  type: EpsilonBatchEngineConfiguration
-  parameters:
-    outputReplayStrategy: aggregate
-    epsilonValue: 0.01
-```
-
-0.01 is a reasonable baseline, experiment to find the best value for your case.

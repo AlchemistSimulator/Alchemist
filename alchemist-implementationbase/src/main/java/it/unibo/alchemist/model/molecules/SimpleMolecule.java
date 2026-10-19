@@ -14,7 +14,6 @@ import com.google.common.hash.Hashing;
 import it.unibo.alchemist.model.Molecule;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -22,9 +21,6 @@ import java.util.Objects;
  *         Simple implementation of Molecule.
  */
 public class SimpleMolecule implements Molecule {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     private int hash32;
     private final String n;

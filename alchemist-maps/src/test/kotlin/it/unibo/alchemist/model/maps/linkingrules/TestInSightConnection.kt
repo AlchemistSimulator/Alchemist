@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -29,16 +29,16 @@ class TestInSightConnection :
                         .from(ResourceLoader.getResource("simulations/connect-sight.yml"))
                         .getDefault<Nothing, GeoPosition>()
                         .environment as OSMEnvironment
-                environment.nodeCount shouldBe 102
-                val node0 = environment.getNodeByID(0)
-                val node1 = environment.getNodeByID(1)
-                val rule = environment.linkingRule
+                environment.nodeCount.current shouldBe 102
+                val node0 = environment.nodeWithId(0)
+                val node1 = environment.nodeWithId(1)
+                val rule = environment.networkModel
                 rule shouldBe instanceOf<ConnectIfInLineOfSigthOnMap<*>>()
                 val maxRange = (rule as ConnectIfInLineOfSigthOnMap<*>).maxRange
-                environment.getDistanceBetweenNodes(node0, node1) shouldBeLessThan maxRange
+                environment.distanceBetween(node0, node1) shouldBeLessThan maxRange
                 val route = environment.computeRoute(node0, node1)
                 route.length() shouldBeGreaterThan maxRange
-                environment.getNeighborhood(node0).contains(node1).shouldBeFalse()
+                environment.neighborhoodOf(node0).current.contains(node1).shouldBeFalse()
             }
         },
     )

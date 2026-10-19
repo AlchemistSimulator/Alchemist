@@ -13,12 +13,9 @@ import org.danilopianini.lang.HashString;
 
 import java.util.Map;
 
-
 /**
  */
 public class ConstTreeNode extends ATreeNode<HashString> {
-
-    private static final long serialVersionUID = 8358898580537639569L;
 
     /**
      * @param data

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -18,6 +18,7 @@ object Doubles {
     /**
      * Checks if two double values are fuzzy equal.
      */
+    @JvmStatic
     fun Double.fuzzyEquals(other: Double): Boolean = MathUtils.fuzzyEquals(this, other)
 
     /*
@@ -30,6 +31,7 @@ object Doubles {
      * @param range the range
      * @returns true if the value is (fuzzy) contained in the range
      */
+    @JvmStatic
     infix fun Double.fuzzyIn(range: ClosedRange<Double>): Boolean =
         (MathUtils.fuzzyEquals(this, range.start) || this >= range.start) &&
             (MathUtils.fuzzyEquals(this, range.endInclusive) || this <= range.endInclusive)

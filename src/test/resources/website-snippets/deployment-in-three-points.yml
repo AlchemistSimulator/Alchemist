@@ -1,6 +1,6 @@
 incarnation: sapere # The incarnation is always mandatory
 network-model:
-  type: ConnectWithinDistance # Loads a class with this name implementing LinkingRule
+  type: ConnectWithinDistance # Loads a class with this name implementing NetworkModel
   parameters: [2] # Connection radius (parameter of a ConnectWithinDistance's constructor)
 deployments:
   - type: Point # Loads a class with this name implementing Deployment

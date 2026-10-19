@@ -11,8 +11,6 @@ package it.unibo.alchemist.model.nodes;
 
 import it.unibo.alchemist.model.Environment;
 
-import java.io.Serial;
-
 /**
  * Generic node for testing purposes.
  *
@@ -20,20 +18,11 @@ import java.io.Serial;
  */
 public final class TestNode<T> extends GenericNode<T> {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     /**
      * @param environment the environment
      */
     public TestNode(final Environment<T, ?> environment) {
         super(environment);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected T createT() {
-        return (T) new Object();
     }
 
 }

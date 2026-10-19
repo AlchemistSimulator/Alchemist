@@ -15,15 +15,11 @@ import it.unibo.alchemist.model.biochemistry.EnvironmentNode;
 import it.unibo.alchemist.model.nodes.GenericNode;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 
 /**
  * A node with non-negative concentration.
  */
 public final class EnvironmentNodeImpl extends GenericNode<Double> implements EnvironmentNode {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     /**
      * Create a new environment node.
@@ -35,16 +31,16 @@ public final class EnvironmentNodeImpl extends GenericNode<Double> implements En
     }
 
     @Override
-    public void setConcentration(@Nonnull final Molecule molecule, @Nonnull final Double concentration) {
+    public void set(@Nonnull final Molecule molecule, @Nonnull final Double concentration) {
         if (concentration < 0) {
             throw new IllegalArgumentException(
                 "No negative concentrations allowed (" + molecule + " -> " + concentration + ")"
             );
         }
         if (concentration > 0) {
-            super.setConcentration(molecule, concentration);
+            super.set(molecule, concentration);
         } else {
-            removeConcentration(molecule);
+            removeAllConcentrationOf(molecule);
         }
     }
 }

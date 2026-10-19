@@ -8,11 +8,9 @@
  */
 package it.unibo.alchemist.model.sapere.dsl;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.danilopianini.lang.HashString;
-
 
 /**
  * 
@@ -23,7 +21,7 @@ import org.danilopianini.lang.HashString;
  * pre-order traversal.
  * 
  */
-public interface ITree extends Serializable {
+public interface ITree {
 
     /**
      * This method substitutes variables present in matches map with their

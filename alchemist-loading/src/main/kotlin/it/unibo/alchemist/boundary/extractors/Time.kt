@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.extractors
 
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 
 /**
@@ -23,7 +23,7 @@ constructor(precision: Int? = null) : AbstractDoubleExtractor(precision) {
 
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Actionable<T>?,
+        reaction: Reaction<T>?,
         time: Time,
         step: Long,
     ): Map<String, Double> = mapOf(NAME to time.toDouble())

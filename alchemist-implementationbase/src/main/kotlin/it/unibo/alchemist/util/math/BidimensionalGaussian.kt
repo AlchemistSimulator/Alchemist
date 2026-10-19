@@ -7,7 +7,6 @@
  */
 package it.unibo.alchemist.util.math
 
-import java.io.Serializable
 import org.apache.commons.math3.analysis.BivariateFunction
 import org.apache.commons.math3.util.FastMath.exp
 
@@ -20,8 +19,7 @@ class BidimensionalGaussian(
     private val y0: Double,
     private val sigmaX: Double,
     private val sigmaY: Double,
-) : BivariateFunction,
-    Serializable {
+) : BivariateFunction {
     override fun value(x: Double, y: Double): Double {
         val dx = x - x0
         val dy = y - y0
@@ -36,8 +34,4 @@ class BidimensionalGaussian(
      * @return The computed value of the integral.
      */
     fun integral() = 2 * Math.PI * amplitude * sigmaX * sigmaY
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }

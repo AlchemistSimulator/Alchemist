@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,12 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-
 /**
  */
 public class ListComparatorTreeNode extends ATreeNode<ListComparator> {
 
-    private static final long serialVersionUID = 8646190301867856844L;
     private static final Logger L = LoggerFactory.getLogger(ListComparatorTreeNode.class);
 
     /**
@@ -60,14 +58,11 @@ public class ListComparatorTreeNode extends ATreeNode<ListComparator> {
      */
     @Override
     public String toString() {
-        switch (getNumberOfChildren()) {
-        case 1:
-            return getLeftChild() + " " + getData();
-        case 2:
-            return getLeftChild() + " " + getData() + " " + getRightChild();
-        default:
-            return "ERROR: " + getData();
-        }
+        return switch (getNumberOfChildren()) {
+            case 1 -> getLeftChild() + " " + getData();
+            case 2 -> getLeftChild() + " " + getData() + " " + getRightChild();
+            default -> "ERROR: " + getData();
+        };
     }
 
 }

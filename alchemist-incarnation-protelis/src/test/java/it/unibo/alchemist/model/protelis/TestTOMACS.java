@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.util.Collection;
-import java.util.stream.StreamSupport;
 
 /**
  * Tests that the TOMACS setup could be successfully loaded (in particular,
@@ -35,9 +34,9 @@ class TestTOMACS {
     void testCustomRetainTimeLoading() {
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
         Assertions.assertTrue(
-            StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
+            loader.getDefault().getEnvironment().getNodes().getCurrent().stream()
                 .flatMap(n ->
-                    n.getReactions().stream()
+                    n.getReactions().getCurrent().stream()
                         .map(Reaction::getActions)
                         .flatMap(Collection::stream)
                         .filter(a -> a instanceof RunProtelisProgram)

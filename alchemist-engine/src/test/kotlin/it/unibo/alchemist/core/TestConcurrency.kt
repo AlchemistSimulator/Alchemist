@@ -11,12 +11,11 @@ package it.unibo.alchemist.core
 
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.reactions.GenericReaction
 import it.unibo.alchemist.model.terminators.StepCount
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -37,9 +36,9 @@ internal class TestConcurrency {
         val incarnation = BiochemistryIncarnation()
         val environment = Continuous2DEnvironment(incarnation)
         val node = GenericNode(environment)
-        environment.linkingRule = NoLinks()
+        environment.networkModel = NoLinks()
         val timeDistribution = DiracComb<Double>(1.0)
-        val reaction = Event(node, timeDistribution)
+        val reaction = GenericReaction(node, timeDistribution)
         node.addReaction(reaction)
         environment.addNode(node, environment.makePosition(0, 0))
         val inWaitCount = 100
@@ -49,22 +48,20 @@ internal class TestConcurrency {
         val container: ExecutorService = Executors.newFixedThreadPool(inWaitCount + 1)
         container.submit(simulation)
         Assertions.assertNotEquals(
-            Status.RUNNING,
-            simulation.waitFor(Status.RUNNING, 2, TimeUnit.SECONDS),
+            SimulationState.RUNNING,
+            simulation.waitFor(SimulationState.RUNNING, 2, TimeUnit.SECONDS),
         )
-        Assertions.assertEquals(Status.PAUSED, simulation.waitFor(Status.PAUSED, 1, TimeUnit.MINUTES))
+        Assertions.assertEquals(SimulationState.PAUSED, simulation.waitFor(SimulationState.PAUSED, 1, TimeUnit.MINUTES))
         /*
          * Launch a hundred waiting processes, make sure they are started, then make sure everyone got notified
          */
         val latch = CountDownLatch(inWaitCount)
-        val waitList: List<Future<Status?>> =
+        val waitList: List<Future<SimulationState?>> =
             generateSequence {
-                container.submit<Status?>(
-                    Callable {
-                        latch.countDown()
-                        simulation.waitFor(Status.RUNNING, 1, TimeUnit.MINUTES)
-                    },
-                )
+                container.submit<SimulationState?> {
+                    latch.countDown()
+                    simulation.waitFor(SimulationState.RUNNING, 1, TimeUnit.MINUTES)
+                }
             }.take(inWaitCount)
                 .toList()
         Assertions.assertTrue(latch.await(1, TimeUnit.MINUTES))
@@ -72,7 +69,7 @@ internal class TestConcurrency {
         Thread.sleep(1000)
         simulation.play()
         for (result in waitList) {
-            Assertions.assertEquals(Status.RUNNING, result.get())
+            Assertions.assertEquals(SimulationState.RUNNING, result.get())
         }
         /*
          * this test does only 10 steps, so, after reaching RUNNING status, the simulation stops almost
@@ -80,16 +77,16 @@ internal class TestConcurrency {
          * simulation executes the fake reaction you can see below, which simply does nothing.
          */
         Assertions.assertEquals(
-            Status.TERMINATED,
-            simulation.waitFor(Status.TERMINATED, 1, TimeUnit.MINUTES),
+            SimulationState.TERMINATED,
+            simulation.waitFor(SimulationState.TERMINATED, 1, TimeUnit.MINUTES),
         )
         /*
          * the method must return immediately with a message error because is not
          * possible to reach RUNNING or PAUSED status while in STOPPED
          */
         Assertions.assertEquals(
-            Status.TERMINATED,
-            simulation.waitFor(Status.RUNNING, 100, TimeUnit.MILLISECONDS),
+            SimulationState.TERMINATED,
+            simulation.waitFor(SimulationState.RUNNING, 100, TimeUnit.MILLISECONDS),
         )
     }
 }

@@ -28,7 +28,7 @@ _reactions: &behavior
 _deployment_males: &males
   type: Circle
   parameters: [ 50, 0, 0, 20 ]
-  properties:
+  capabilities:
     - type: Human
       parameters: ["adult", "male"]
     - type: CognitivePedestrian
@@ -41,7 +41,7 @@ _deployment_males: &males
 deployments:
   - *males
   - <<: *males
-    properties:
+    capabilities:
       - type: Human
         parameters: ["adult", "female"]
       - type: CognitivePedestrian

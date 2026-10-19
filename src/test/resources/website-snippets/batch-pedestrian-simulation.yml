@@ -14,7 +14,7 @@ variables:
 deployments:
   - type: Circle
     parameters: [*pedestrianNumber, 0, 0, *cicleRadius]
-    properties:
+    capabilities:
       - type: Human
         parameters: ["adult", "male"]
       - type: Perceptive2D

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.graphql.schema.model
 
 import it.unibo.alchemist.boundary.GraphQLTestEnvironments
 import it.unibo.alchemist.boundary.graphql.schema.model.surrogates.toGraphQLNodeSurrogate
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.sapere.nodes.LsaNode
@@ -33,7 +34,9 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
     @Timeout(value = 2, unit = TimeUnit.MINUTES)
     fun `GraphQL node contents access should not cause ConcurrentModificationException during simulation`() {
         GraphQLTestEnvironments.loadTests<T, P> { environment ->
-            val nodes = environment.nodes.filterIsInstance<LsaNode>()
+            // Widened to Node<*>, as LsaNode is a Node<List<ILsaMolecule>>, unrelated to the type parameter T.
+            val allNodes: List<Node<*>> = environment.nodes.current
+            val nodes = allNodes.filterIsInstance<LsaNode>()
             // Skip test if no SAPERE nodes are available
             check(nodes.isNotEmpty())
             val threadCount = 20
@@ -78,7 +81,7 @@ class LsaNodeGraphQLConcurrencyTest<T, P> where T : Any, P : Position<P>, P : Ve
                             try {
                                 val firstMolecule = randomNode.lsaSpace.firstOrNull()
                                 if (firstMolecule != null) {
-                                    randomNode.setConcentration(firstMolecule)
+                                    randomNode.addLsa(firstMolecule)
                                 }
                             } catch (e: Exception) {
                                 // Expected in some cases during concurrent access

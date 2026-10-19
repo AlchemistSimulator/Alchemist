@@ -24,7 +24,7 @@ _reactions: &behavior
 deployments:
   - type: Circle
     parameters: [100, 0, 0, 50]
-    properties:
+    capabilities:
       - type: Human
         parameters: ["adult", "female"]
       - type: Perceptive2D

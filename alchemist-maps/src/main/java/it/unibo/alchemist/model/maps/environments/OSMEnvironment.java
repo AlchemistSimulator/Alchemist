@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.maps.environments;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Node;
@@ -31,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.Serial;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
@@ -67,17 +65,13 @@ public final class OSMEnvironment<T>
      */
     public static final boolean DEFAULT_FORCE_STREETS = false;
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
-    @Serial
-    private static final long serialVersionUID = 1L;
     /**
      * Alchemist's temp dir.
      */
     private final boolean forceStreets;
     private final boolean onlyStreet;
-    @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "Re-loaded automatically")
-    @Nullable private transient GraphHopperRoutingService navigator;
-    @Nullable private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
-    private boolean benchmarking;
+    @Nullable private GraphHopperRoutingService navigator;
+    @Nullable private LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
     private final int approximation;
     private final String mapFile;
 
@@ -215,11 +209,7 @@ public final class OSMEnvironment<T>
         final GraphHopperOptions options
     ) {
         if (routecache == null) {
-            final Caffeine<Object, Object> builder = Caffeine.newBuilder();
-            if (benchmarking) {
-                builder.recordStats();
-            }
-            routecache = builder
+            routecache = Caffeine.newBuilder()
                 .expireAfterAccess(10, TimeUnit.SECONDS)
                 .build(key -> getNavigator().route(Objects.requireNonNull(key).start, key.end, key.options));
         }
@@ -237,29 +227,12 @@ public final class OSMEnvironment<T>
         final GeoPosition coord,
         final GraphHopperOptions options
     ) {
-        return computeRoute(getPosition(node), coord, options);
+        return computeRoute(currentPositionOf(node), coord, options);
     }
 
     @Override
     public Route<GeoPosition> computeRoute(final Node<T> node, final Node<T> node2) {
-        return computeRoute(node, getPosition(node2));
-    }
-
-    @Override
-    public void enableBenchmark() {
-        this.benchmarking = true;
-    }
-
-    @Override
-    public double getBenchmarkResult() {
-        if (benchmarking) {
-            if (routecache != null) {
-                return routecache.stats().hitRate();
-            }
-            return 0;
-        } else {
-            throw new IllegalStateException("You should call doBenchmark() before.");
-        }
+        return computeRoute(node, currentPositionOf(node2));
     }
 
     /**

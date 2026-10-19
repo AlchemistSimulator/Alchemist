@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.cognitive.NavigationStrategy2D
-import it.unibo.alchemist.model.cognitive.OrientingProperty
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.navigation.ReachDestination
+import it.unibo.alchemist.model.cognitive.properties.OrientingProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
@@ -39,7 +39,7 @@ import org.jgrapht.Graphs
  */
 class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     vararg destinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {

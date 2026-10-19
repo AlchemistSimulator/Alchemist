@@ -10,7 +10,6 @@
 package it.unibo.alchemist.boundary.variables
 
 import it.unibo.alchemist.boundary.DependentVariable
-import java.io.Serializable
 
 /**
  * A variable that retrieves its value from a system environment variable.
@@ -18,12 +17,10 @@ import java.io.Serializable
  * @param name the name of the environment variable
  * @param defaultValue the default value to return if the environment variable is not set
  */
-class SystemEnvVariable @JvmOverloads constructor(
-    private val name: String,
-    private val defaultValue: Serializable? = null,
-) : DependentVariable<Serializable> {
+class SystemEnvVariable @JvmOverloads constructor(private val name: String, private val defaultValue: Any? = null) :
+    DependentVariable<Any> {
 
-    override fun getWith(variables: MutableMap<String, Any>?): Serializable = when (val value = loadFromEnv(name)) {
+    override fun getWith(variables: MutableMap<String, Any>?): Any = when (val value = loadFromEnv(name)) {
         null -> defaultValue ?: error("Environment variable '$name' is not set and no default value is provided.")
         else -> converters.mapNotNull { it(value) }.firstOrNull() ?: value
     }
@@ -32,7 +29,7 @@ class SystemEnvVariable @JvmOverloads constructor(
      * Expose the function used to load the environment variable.
      */
     companion object {
-        private val converters: Sequence<(String) -> Serializable?> = sequenceOf(
+        private val converters: Sequence<(String) -> Any?> = sequenceOf(
             String::toBooleanStrictOrNull,
             String::toIntOrNull,
             String::toDoubleOrNull,

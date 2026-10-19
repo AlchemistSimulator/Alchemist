@@ -14,7 +14,6 @@ import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.Position;
 import org.apache.commons.io.FileUtils;
-import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
@@ -126,9 +125,10 @@ class TestInSimulator {
         final Simulation<T, P> simulation = LoadAlchemist.from(res).getWith(vars);
         simulation.play();
         simulation.run();
-        simulation.getError().ifPresent(Unchecked.consumer(e -> {
-            throw e;
-        }));
+        final Throwable error = simulation.getError().getOrNull();
+        if (error != null) {
+            throw new AssertionError(error);
+        }
     }
 
 }

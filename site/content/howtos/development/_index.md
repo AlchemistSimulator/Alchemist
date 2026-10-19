@@ -1,9 +1,9 @@
 +++
 chapter = true
 pre = ""
-title = "Development"
+title = "Developing Alchemist"
 weight = 6
-summary = "How to contribute to the project, hence achieving eternal glory"
+summary = "How to work on Alchemist itself and contribute to the project, hence achieving eternal glory"
 +++
 
 ### Guides for the project contributors

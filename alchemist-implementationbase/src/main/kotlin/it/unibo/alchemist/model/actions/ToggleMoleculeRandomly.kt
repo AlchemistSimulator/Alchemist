@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,37 +10,36 @@
 package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.NodeReaction
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Treats [molecule] as a probabilistic switch:
- * * if it is present, then with probability [odds] it's removed from [node];
- * * otherwise, with probability [odds] it is inserted in [node] with the provided [concentration].
+ * * if it is present, then with probability [odds] it's removed from [targetNode];
+ * * otherwise, with probability [odds] it is inserted in [targetNode] with the provided [concentration].
  *
  * @param T the concentration type
- * @param node the node containing the molecule to toggle
+ * @param reaction the reaction owning this action, whose node contains the molecule to toggle
  * @property randomGenerator random number generator to use
  * @param molecule the molecule to toggle
  * @param concentration the concentration to use for the "on" state
  * @property odds probability to toggle the molecule every time the action is triggered
  */
 open class ToggleMoleculeRandomly<T>(
-    node: Node<T>,
+    reaction: NodeReaction<T>,
     private val randomGenerator: RandomGenerator,
     molecule: Molecule,
     concentration: T,
     private val odds: Double,
-) : ToggleMolecule<T>(node, molecule, concentration) {
+) : ToggleMolecule<T>(reaction, molecule, concentration) {
     init {
         require(odds in 0.0..1.0) {
             "Probability of toggling should in [0, 1], provided: $odds"
         }
     }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        ToggleMoleculeRandomly(node, randomGenerator, molecule, concentration, odds)
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): ToggleMoleculeRandomly<T> =
+        ToggleMoleculeRandomly(newReaction, randomGenerator, molecule, concentration, odds)
 
     /**
      * Rolls the dice and toggles the molecule.

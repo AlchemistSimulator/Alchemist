@@ -34,8 +34,6 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     Continuous2DEnvironment<T>(incarnation),
     Physics2DEnvironment<T> {
     private companion object {
-        @JvmStatic private val serialVersionUID: Long = 1L
-
         private val adimensional =
             AdimensionalShape<Euclidean2DPosition, Euclidean2DTransformation>(Euclidean2DEnvironment.origin)
     }
@@ -46,7 +44,6 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0
 
-    @Transient
     private val shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape> =
         Caffeine.newBuilder().weakKeys().build { node ->
             node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional
@@ -55,7 +52,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> = when {
         shape.diameter + largestShapeDiameter <= 0 -> emptyList()
         else ->
-            getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
+            nodesAround(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
                 .filter { shape.intersects(getShape(it)) }
     }
 
@@ -66,7 +63,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
     }
 
     override fun getShape(node: Node<T>): Euclidean2DShape = shapefulNodes[node].transformed {
-        origin(getPosition(node))
+        origin(this@ContinuousPhysics2DEnvironment.currentPositionOf(node))
         rotate(getHeading(node))
     }
 
@@ -86,7 +83,7 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         nodeToHeading.remove(node)
         val occupiesSpaceProperty = node.asPropertyOrNull<T, AreaProperty<T>>()
         if (occupiesSpaceProperty != null && largestShapeDiameter <= occupiesSpaceProperty.shape.diameter) {
-            largestShapeDiameter = nodes
+            largestShapeDiameter = nodes.current
                 .asSequence()
                 .filter { getShape(it) != adimensional }
                 .map { getShape(it) }
@@ -94,17 +91,6 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
                 .maxOrNull() ?: 0.0
         }
     }
-
-    /**
-     * Moves the [node] to the [farthestPositionReachable] towards the desired [newPosition]. If the node is shapeless,
-     * it is simply moved to [newPosition].
-     */
-    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        if (getShape(node) != adimensional) {
-            super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
-        } else {
-            super.moveNodeToPosition(node, newPosition)
-        }
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
@@ -122,13 +108,28 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
     }
 
-    override fun farthestPositionReachable(
+    /**
+     * The farthest position reachable by [node] towards [desired], avoiding node overlapping. Other nodes, considered
+     * through circular hitboxes of radius equal to the one of their shape, stop the movement where the hitbox of [node]
+     * first touches theirs; nodes already colliding with [node] stop it at its current position. Shapeless nodes do not
+     * collide.
+     */
+    override fun farthestReachablePosition(node: Node<T>, desired: Euclidean2DPosition): Euclidean2DPosition =
+        super<Continuous2DEnvironment>.farthestReachablePosition(node, desired).let { reachable ->
+            getShape(node).takeIf { it != adimensional }?.let { firstCollision(node, it, reachable) } ?: reachable
+        }
+
+    /*
+     * The position where node, whose shape is the given one, first collides with another node moving towards
+     * reachable, or null if it collides with none.
+     */
+    private fun firstCollision(
         node: Node<T>,
-        desiredPosition: Euclidean2DPosition,
-        hitboxRadius: Double,
-    ): Euclidean2DPosition {
-        val currentPosition = getPosition(node)
-        val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)
+        shape: Euclidean2DShape,
+        reachable: Euclidean2DPosition,
+    ): Euclidean2DPosition? {
+        val currentPosition = currentPositionOf(node)
+        val desiredMovement = Segment2DImpl(currentPosition, reachable)
         val nodesOnPath =
             nodesOnPath(node, desiredMovement)
                 .map { getShape(it) }
@@ -139,14 +140,14 @@ open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclide
         /*
          * If we're already colliding with someone, just return the current position.
          */
-        if (nodesOnPath.any { currentPosition.distanceTo(it.centroid) < it.radius + getShape(node).radius }) {
-            return currentPosition
+        return when {
+            nodesOnPath.any { currentPosition.distanceTo(it.centroid) < it.radius + shape.radius } -> currentPosition
+            else ->
+                nodesOnPath
+                    .flatMap { other ->
+                        desiredMovement.intersectCircle(other.centroid, other.radius + shape.radius).asList
+                    }.minByOrNull { currentPosition.distanceTo(it) }
         }
-        return nodesOnPath
-            .flatMap { other ->
-                desiredMovement.intersectCircle(other.centroid, other.radius + hitboxRadius).asList
-            }.minByOrNull { currentPosition.distanceTo(it) }
-            ?: desiredPosition
     }
 
     /**

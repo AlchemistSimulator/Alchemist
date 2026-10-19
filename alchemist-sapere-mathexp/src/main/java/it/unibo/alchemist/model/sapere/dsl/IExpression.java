@@ -10,13 +10,11 @@ package it.unibo.alchemist.model.sapere.dsl;
 
 import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.danilopianini.lang.HashString;
 
-
-public interface IExpression extends Serializable, Cloneable {
+public interface IExpression extends Cloneable {
 
     /**
      * @param map

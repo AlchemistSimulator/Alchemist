@@ -55,7 +55,7 @@ public final class SupportedIncarnations {
      * @param s
      *            the name of the {@link Incarnation}
      * @param <T>
-     *            {@link it.unibo.alchemist.model.Concentration} type
+     *            concentration type
      * @param <P>
      *            {@link Position} type
      *

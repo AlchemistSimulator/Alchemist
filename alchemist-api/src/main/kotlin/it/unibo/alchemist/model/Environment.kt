@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,64 +10,21 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.core.Simulation
-import java.io.Serializable
-import org.danilopianini.util.ListSet
+import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.observation.ObservableList
+import it.unibo.alchemist.model.observation.ObservableSet
 
 /**
  * Interface for an environment.
  * Every environment must implement this specification.
- * [T] is the [Concentration] type, [P] is the [Position] type.
+ * [T] is the concentration type, [P] is the [Position] type.
  */
-interface Environment<T, P : Position<out P>> :
-    Serializable,
-    Iterable<Node<T>> {
-    /**
-     * Add a [Layer] to the [Environment].
-     */
-    fun addLayer(molecule: Molecule, layer: Layer<T, P>)
-
-    /**
-     * Add a [GlobalReaction] to the [Environment].
-     */
-    fun addGlobalReaction(reaction: GlobalReaction<T>)
-
-    /**
-     * Remove a [GlobalReaction] from the [Environment].
-     */
-    fun removeGlobalReaction(reaction: GlobalReaction<T>)
-
-    /**
-     * Get the [Environment]'s [GlobalReaction]s.
-     */
-    val globalReactions: ListSet<GlobalReaction<T>>
-
-    /**
-     * Adds a new [node] to this environment in a specific [position].
-     * The environment is responsible for calling the right method of the simulation to
-     * ensure that the reaction is properly scheduled.
-     * The function returns true if the node is added to the environment.
-     */
-    fun addNode(node: Node<T>, position: P): Boolean
-
-    /**
-     * Add a [terminator] indicating whether the simulation should be considered finished.
-     */
-    fun addTerminator(terminator: TerminationPredicate<T, P>)
-
-    /**
-     * Add a [terminator] indicating whether the simulation should be considered finished.
-     */
-    fun addTerminator(terminator: (Environment<T, P>) -> Boolean) = addTerminator(TerminationPredicate(terminator))
-
+@Suppress("TooManyFunctions")
+interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     /**
      * The number of dimensions of this environment.
      */
     val dimensions: Int
-
-    /**
-     * Measures the distance between two nodes  ([n1], [n2]) in the environment.
-     */
-    fun getDistanceBetweenNodes(n1: Node<T>, n2: Node<T>): Double
 
     /**
      * Return the [Incarnation] used to initialize the entities of this [Environment], if it has been set.
@@ -75,10 +32,9 @@ interface Environment<T, P : Position<out P>> :
     val incarnation: Incarnation<T, P>
 
     /**
-     * Get the [Layer] associate to the given [molecule]. If no Layer is associated
-     * with the given molecule, return `null`.
+     * Whether any of the terminators is satisfied.
      */
-    fun getLayer(molecule: Molecule): Layer<T, P>?
+    val isTerminated: Boolean
 
     /**
      * Return all the Layers in this [Environment].
@@ -86,49 +42,14 @@ interface Environment<T, P : Position<out P>> :
     val layers: Map<Molecule, Layer<T, P>>
 
     /**
-     * Returns the current [LinkingRule].
+     * Returns an [Observable] view of the number of [Node]s currently in the [Environment].
      */
-    var linkingRule: LinkingRule<T, P>
+    val nodeCount: Observable<Int>
 
     /**
-     * Given a [node], this method returns its neighborhood.
+     * An ordered [Observable] view of all the [Node]s that exist in current [Environment].
      */
-    fun getNeighborhood(node: Node<T>): Neighborhood<T>
-
-    /**
-     * Allows accessing a [Node] in this [Environment] known its [id].
-     * Depending on the implementation, this method may or may not be optimized
-     * (namely, id could run in constant or linear time with the number of nodes).
-     */
-    fun getNodeByID(id: Int): Node<T>
-
-    /**
-     * Returns all the [Node]s that exist in current [Environment].
-     */
-    val nodes: ListSet<Node<T>>
-
-    /**
-     * Returns the number of [Node]s currently in the [Environment].
-     */
-    val nodeCount: Int
-
-    /**
-     * Given a [node] this method returns a list of all the surrounding
-     * nodes within the given [range]. Note that this method (depending on the
-     * implementation) might be not optimized, and it's consequently **much**
-     * better to use [Environment.getNeighborhood] and filter the
-     * neighborhood if you are sure that all the nodes within the range are
-     * connected to the center.
-     */
-    fun getNodesWithinRange(node: Node<T>, range: Double): ListSet<Node<T>>
-
-    /**
-     * Given a [position] this method returns a list of all the
-     * surrounding nodes within the given [range].
-     * Note that this method
-     * (depending on the implementation) might be not optimized.
-     */
-    fun getNodesWithinRange(position: P, range: Double): ListSet<Node<T>>
+    val nodes: ObservableList<Node<T>>
 
     /**
      * This method allows to know which are the smallest coordinates represented.
@@ -136,16 +57,6 @@ interface Environment<T, P : Position<out P>> :
      * coordinates for each dimension.
      */
     val offset: DoubleArray
-
-    /**
-     * Calculates the position of a [node].
-     */
-    fun getPosition(node: Node<T>): P
-
-    /**
-     * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise.
-     */
-    var simulation: Simulation<T, P>
 
     /**
      * Return the current [Simulation], if present, or `null` otherwise.
@@ -168,9 +79,70 @@ interface Environment<T, P : Position<out P>> :
     val sizeInDistanceUnits: DoubleArray
 
     /**
-     * Return true if all the terminators are true.
+     * The current [NetworkModel], which must be bound to this environment.
+     * Assigning a new model publishes the neighborhood it provides for every node in the environment.
      */
-    val isTerminated: Boolean
+    var networkModel: NetworkModel<T>
+
+    /**
+     * Return the current [Simulation], if present, or throws an [IllegalStateException] otherwise.
+     */
+    var simulation: Simulation<T, P>
+
+    /**
+     * Associates [layer] with [molecule].
+     * Layers are part of the environment setup: association fails once the environment is attached to a simulation,
+     * and a molecule cannot be associated with more than one layer.
+     */
+    fun addLayer(molecule: Molecule, layer: Layer<T, P>)
+
+    /**
+     * Adds a new [node] to this environment in a specific [position].
+     * The environment is responsible for calling the right method of the simulation to
+     * ensure that the reaction is properly scheduled.
+     * The function returns true if the node is added to the environment.
+     */
+    fun addNode(node: Node<T>, position: P): Boolean
+
+    /**
+     * Add a [terminator] indicating whether the simulation should be considered finished.
+     * The simulation finishes as soon as any of the terminators is satisfied.
+     */
+    fun addTerminator(terminator: TerminationPredicate<T, P>)
+
+    /**
+     * Add a [terminator] indicating whether the simulation should be considered finished.
+     * The simulation finishes as soon as any of the terminators is satisfied.
+     */
+    fun addTerminator(terminator: (Environment<T, P>) -> Boolean) = addTerminator(TerminationPredicate(terminator))
+
+    /**
+     * Whether [node] is part of this environment.
+     */
+    operator fun contains(node: Node<T>): Boolean = nodes.current.any { it === node }
+
+    /**
+     * Retrieves [node]'s current position.
+     */
+    fun currentPositionOf(node: Node<T>): P = positionOf(node).current
+
+    /**
+     * Measures the distance between two nodes  ([n1], [n2]) in the environment.
+     */
+    fun distanceBetween(n1: Node<T>, n2: Node<T>): Double
+
+    /**
+     * The farthest position that [node] reaches moving straight from its current position towards [desired]:
+     * [desired] itself, unless the constraints of this environment, such as its bounds, its obstacles, or the bodies of
+     * the other nodes, stop [node] earlier. [moveNodeTo] moves nodes to this position.
+     */
+    fun farthestReachablePosition(node: Node<T>, desired: P): P = desired
+
+    /**
+     * Get the [Layer] associate to the given [molecule]. If no Layer is associated
+     * with the given molecule, return `null`.
+     */
+    fun layerFor(molecule: Molecule): Layer<T, P>?
 
     /**
      * Given the [coordinates] of the point,
@@ -191,14 +163,126 @@ interface Environment<T, P : Position<out P>> :
     fun makePosition(coordinates: List<Number>): P = makePosition(*coordinates.toTypedArray())
 
     /**
-     * This method moves a [node] in the environment to some [newPosition].
-     * If node movement is unsupported, it does nothing.
+     * Moves [node] to [position]. If node movement is unsupported, it does nothing.
+     *
+     * Every movement goes through this function, including relative movements in a [EuclideanEnvironment], and
+     * reaches the [farthestReachablePosition] towards [position]: environments constraining movements (walls,
+     * obstacles, physics) override [farthestReachablePosition].
      */
-    fun moveNodeToPosition(node: Node<T>, newPosition: P)
+    fun moveNodeTo(node: Node<T>, position: P)
+
+    /**
+     * Given a [node], this method returns an observable view of
+     * its neighborhood.
+     */
+    fun neighborhoodOf(node: Node<T>): Observable<Neighborhood<T>>
+
+    /**
+     * Given a [node] this method returns a list of all the surrounding
+     * nodes within the given [range]. Note that this method (depending on the
+     * implementation) might be not optimized, and it's consequently **much**
+     * better to use [Environment.neighborhoodOf] and filter the
+     * neighborhood if you are sure that all the nodes within the range are
+     * connected to the center.
+     */
+    fun nodesAround(node: Node<T>, range: Double): List<Node<T>>
+
+    /**
+     * Given a [position] this method returns a list of all the
+     * surrounding nodes within the given [range].
+     * Note that this method
+     * (depending on the implementation) might be not optimized.
+     */
+    fun nodesAround(position: P, range: Double): List<Node<T>>
+
+    /**
+     * Allows accessing a [Node] in this [Environment] known its [id].
+     * Depending on the implementation, this method may or may not be optimized
+     * (namely, id could run in constant or linear time with the number of nodes).
+     */
+    fun nodeWithId(id: Int): Node<T>
+
+    /**
+     * Observes the value of the [Layer] associated with [molecule] at the position of [node].
+     * The observable emits when [node] moves to a position where the value differs, and when the layer changes the
+     * value at the current position of [node]. Its value is `null` while no layer is associated with [molecule], and it
+     * emits when one is: observables created during setup follow layers associated later.
+     */
+    fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T?>
+
+    /**
+     * An [Observable] alternative to [nodesAround].
+     */
+    fun observeNodesAround(node: Node<T>, range: Double): ObservableSet<Node<T>>
+
+    /**
+     * An [Observable] alternative to [nodesAround].
+     */
+    fun observeNodesAround(position: P, range: Double): ObservableSet<Node<T>>
+
+    /**
+     * Observe the position of a [node].
+     */
+    fun positionOf(node: Node<T>): Observable<P>
 
     /**
      * Removes [node].
      * If node removal is unsupported, it does nothing.
      */
     fun removeNode(node: Node<T>)
+
+    /**
+     * A position with these coordinates, see [makePosition].
+     */
+    fun DoubleArray.toPosition(): P = makePosition(this)
+
+    /**
+     * The current position of this node, see [currentPositionOf].
+     */
+    val Node<T>.currentPosition: P get() = currentPositionOf(this)
+
+    /**
+     * The observable neighborhood of this node, see [neighborhoodOf].
+     */
+    val Node<T>.neighborhood: Observable<Neighborhood<T>> get() = neighborhoodOf(this)
+
+    /**
+     * The observable position of this node, see [positionOf].
+     */
+    val Node<T>.position: Observable<P> get() = positionOf(this)
+
+    /**
+     * The distance between this node and [other], see [distanceBetween].
+     */
+    fun Node<T>.distanceTo(other: Node<T>): Double = distanceBetween(this, other)
+
+    /**
+     * Moves this node to [position], see [moveNodeTo].
+     */
+    fun Node<T>.moveTo(position: P): Unit = moveNodeTo(this, position)
+
+    /**
+     * The nodes within [range] of this node, see [nodesAround].
+     */
+    fun Node<T>.nodesInRange(range: Double): List<Node<T>> = nodesAround(this, range)
+
+    /**
+     * Observes the nodes within [range] of this node, see [observeNodesAround].
+     */
+    fun Node<T>.observeNodesInRange(range: Double): ObservableSet<Node<T>> = observeNodesAround(this, range)
+
+    /**
+     * Removes this node, see [removeNode].
+     */
+    fun Node<T>.remove(): Unit = removeNode(this)
+
+    /**
+     * The nodes within [range] of this position, see [nodesAround].
+     */
+    fun P.nodesInRange(range: Double): List<Node<T>> = nodesAround(this, range)
+
+    /**
+     * Observes the nodes within [range] of this position, see [observeNodesAround].
+     */
+    fun P.observeNodesInRange(range: Double): ObservableSet<Node<T>> = observeNodesAround(this, range)
 }

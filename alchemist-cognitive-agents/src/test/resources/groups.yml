@@ -28,14 +28,14 @@ _homogeneous_properties: &homogeneous_properties
 deployments:
   - type: Circle
     parameters: [10, 100, 20, 10]
-    properties:
+    capabilities:
       <<: *homogeneous_properties
       social:
         type: Social
         parameters: [*group1]
   - type: Circle
     parameters: [5, 10, 10, 10]
-    properties:
+    capabilities:
       <<: *homogeneous_properties
       social:
         type: Social

@@ -16,12 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 
-
 /**
  */
 public final class ComparatorTreeNode extends ATreeNode<HashString> {
 
-    private static final long serialVersionUID = 8646190301867856844L;
     private static final Logger L = LoggerFactory.getLogger(ComparatorTreeNode.class);
 
     /**

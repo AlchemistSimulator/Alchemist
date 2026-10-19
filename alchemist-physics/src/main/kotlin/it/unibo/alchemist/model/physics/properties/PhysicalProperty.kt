@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.physics.properties
 
-import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Capability
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Transformation
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.physics.PhysicsEnvironment
  * A node's capability to experience physical forces.
  */
 interface PhysicalProperty<T, P, A, F> :
-    NodeProperty<T>
+    Capability<T>
     where P : Position<P>, P : Vector<P>,
           A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {

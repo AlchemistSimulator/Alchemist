@@ -22,6 +22,7 @@ import kotlinx.coroutines.runBlocking
 import org.danilopianini.gradle.mavencentral.portal.PublishPortalDeployment
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 
 plugins {
@@ -33,6 +34,8 @@ plugins {
     alias(libs.plugins.hugo)
 }
 
+val minJavaVersion: String by properties
+
 allprojects {
 
     with(rootProject.libs.plugins) {
@@ -43,7 +46,7 @@ allprojects {
     }
 
     multiJvm {
-        jvmVersionForCompilation.set(providers.gradleProperty("minJavaVersion").map(String::toInt))
+        jvmVersionForCompilation.set(minJavaVersion.toInt())
         maximumSupportedJvmVersion.set(latestJava)
         if (isInCI && (isWindows || isMac)) {
             /*
@@ -67,6 +70,9 @@ allprojects {
         }
         useJUnitPlatform()
         maxHeapSize = "1g"
+        "alchemist.engine".let { property ->
+            System.getProperty(property)?.let { systemProperty(property, it) }
+        }
     }
 
     tasks.withType<SpotBugsTask>().configureEach {
@@ -93,10 +99,21 @@ allprojects {
         enabled = false
     }
 
+    /*
+     * Work around:
+     * Task ':...:dokkaJavadoc' uses this output of task ':...:jar' without declaring an explicit or implicit dependency.
+     * This can lead to incorrect results being produced, depending on what order the tasks are executed.
+     */
+    tasks.withType<AbstractDokkaTask>().configureEach {
+        allprojects.forEach { otherProject ->
+            dependsOn(otherProject.tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name == "jar" })
+        }
+    }
+
     if (isInCI) {
         signing {
-            val signingKey = project.findProperty("signingKey")?.toString()
-            val signingPassword = project.findProperty("signingPassword")?.toString()
+            val signingKey: String? by project
+            val signingPassword: String? by project
             useInMemoryPgpKeys(signingKey, signingPassword)
         }
     }
@@ -134,7 +151,7 @@ allprojects {
  */
 evaluationDependsOnChildren()
 
-val dokkaGlobalClasspath = configurations.create("dokkaGlobalClasspath")
+val dokkaGlobalClasspath by configurations.creating
 dependencies {
     // Depend on subprojects whose presence is necessary to run
     listOf("api", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
@@ -153,7 +170,7 @@ dependencies {
     dokkaGlobalClasspath(alchemist("full"))
 }
 
-val checkMavenCentralPortalPluginClasspath = tasks.register("checkMavenCentralPortalPluginClasspath") {
+val checkMavenCentralPortalPluginClasspath by tasks.registering {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
     description = "Checks that the Maven Central Portal publishing plugin can upload to a local fake endpoint."
     val outputFile = layout.buildDirectory.file("reports/checkMavenCentralPortalPluginClasspath/result.txt")
@@ -246,16 +263,15 @@ fun Project.dokkaCopyTask(destination: String): Copy.() -> Unit = {
     into(File(websiteDir, "reference/$destination"))
 }
 
-val copyGlobalDokkaInTheWebsite = tasks.register<Copy>("copyGlobalDokkaInTheWebsite", dokkaCopyTask("kdoc"))
-val copyModuleDokkaInTheWebsite =
-    tasks.register<Copy>("copyModuleDokkaInTheWebsite", alchemist("full").dokkaCopyTask("kdoc-modules"))
+val copyGlobalDokkaInTheWebsite by tasks.registering(Copy::class, dokkaCopyTask("kdoc"))
+val copyModuleDokkaInTheWebsite by tasks.registering(Copy::class, alchemist("full").dokkaCopyTask("kdoc-modules"))
 
 tasks.hugoBuild.configure {
     outputDirectory = websiteDir
     finalizedBy(copyGlobalDokkaInTheWebsite, copyModuleDokkaInTheWebsite)
 }
 
-val performWebsiteStringReplacements = tasks.register("performWebsiteStringReplacements") {
+val performWebsiteStringReplacements by tasks.registering {
     dependsOn(copyGlobalDokkaInTheWebsite, copyModuleDokkaInTheWebsite)
     doLast {
         val index = File(websiteDir, "index.html")

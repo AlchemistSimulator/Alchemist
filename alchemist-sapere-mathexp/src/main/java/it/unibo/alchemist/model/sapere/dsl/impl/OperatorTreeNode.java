@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -8,20 +8,17 @@
  */
 package it.unibo.alchemist.model.sapere.dsl.impl;
 
-import java.util.Map;
-
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
-
+import java.util.Map;
 
 /**
  */
 public class OperatorTreeNode extends ATreeNode<Double> {
 
-    private static final long serialVersionUID = 4946572123219713415L;
     private static final Logger L = LoggerFactory.getLogger(OperatorTreeNode.class);
 
     private final Operator operator;
@@ -72,15 +69,12 @@ public class OperatorTreeNode extends ATreeNode<Double> {
         if (child.getType().equals(Type.LIST)) {
             final ListTreeNode son = (ListTreeNode) child;
             switch (operator) {
-            case PLUS:
+            case PLUS, MINUS:
                 return null;
-            case MINUS:
-                return null;
-            case MIN:
+                case MIN:
                 Double min = Double.POSITIVE_INFINITY;
                 for (final ITreeNode<?> el : son.getData()) {
-                    if (el instanceof NumTreeNode) {
-                        final NumTreeNode numel = (NumTreeNode) el;
+                    if (el instanceof final NumTreeNode numel) {
                         if (numel.getData() < min) {
                             min = numel.getData();
                         }
@@ -90,8 +84,7 @@ public class OperatorTreeNode extends ATreeNode<Double> {
             case MAX:
                 Double max = Double.NEGATIVE_INFINITY;
                 for (final ITreeNode<?> el : son.getData()) {
-                    if (el instanceof NumTreeNode) {
-                        final NumTreeNode numel = (NumTreeNode) el;
+                    if (el instanceof final NumTreeNode numel) {
                         if (numel.getData() > max) {
                             max = numel.getData();
                         }
@@ -116,37 +109,28 @@ public class OperatorTreeNode extends ATreeNode<Double> {
             } else {
                 final Double leftVal = computeVal(child, matches);
                 final Double rightVal = computeVal(getRightChild(), matches);
-                switch (operator) {
-                case PLUS:
-                    return leftVal + rightVal;
-                case MINUS:
-                    return leftVal - rightVal;
-                case TIMES:
-                    return leftVal * rightVal;
-                case DIV:
-                    return leftVal / rightVal;
-                case MIN:
-                    return Math.min(leftVal, rightVal);
-                case MAX:
-                    return Math.max(leftVal, rightVal);
-                default:
-                    return Double.NaN;
-                }
+                return switch (operator) {
+                    case PLUS -> leftVal + rightVal;
+                    case MINUS -> leftVal - rightVal;
+                    case TIMES -> leftVal * rightVal;
+                    case DIV -> leftVal / rightVal;
+                    case MIN -> Math.min(leftVal, rightVal);
+                    case MAX -> Math.max(leftVal, rightVal);
+                    default -> Double.NaN;
+                };
             }
         }
     }
 
     private static Double computeVal(final ITreeNode<?> child, final Map<HashString, ITreeNode<?>> matches) {
-        switch (child.getType()) {
-        case VAR:
-            return (Double) ((ITreeNode<?>) child.getValue(matches)).getData();
-        case NUM:
-        case OPERATOR:
-            return (Double) child.getValue(matches);
-        default:
-            L.error("ERROR: unexpected type " + child.getType());
-            return null;
-        }
+        return switch (child.getType()) {
+            case VAR -> (Double) ((ITreeNode<?>) child.getValue(matches)).getData();
+            case NUM, OPERATOR -> (Double) child.getValue(matches);
+            default -> {
+                L.error("ERROR: unexpected type {}", child.getType());
+                yield null;
+            }
+        };
     }
 
     /*
@@ -156,38 +140,21 @@ public class OperatorTreeNode extends ATreeNode<Double> {
      */
     @Override
     public String toString() {
-        switch (getNumberOfChildren()) {
-        case 0:
-            return operator.toString();
-        case 1:
-            switch (operator) {
-            case MAX:
-            case MIN:
-                return operator + "(" + getLeftChild() + ")";
-            case MOD:
-                return "|" + getLeftChild() + "|";
-            default:
-                return "error";
-            }
-        case 2:
-            switch (operator) {
-            case ADD:
-            case DEL:
-                return operator + " " + getLeftChild() + " from " + getRightChild();
-            case DIV:
-            case PLUS:
-            case TIMES:
-            case MINUS:
-                return getLeftChild().toString() + operator + getRightChild();
-            case MAX:
-            case MIN:
-                return operator + "(" + getLeftChild() + "," + getRightChild() + ")";
-            default:
-                return "error";
-            }
-        default:
-            return "error";
-        }
+        return switch (getNumberOfChildren()) {
+            case 0 -> operator.toString();
+            case 1 -> switch (operator) {
+                case MAX, MIN -> operator + "(" + getLeftChild() + ")";
+                case MOD -> "|" + getLeftChild() + "|";
+                default -> "error";
+            };
+            case 2 -> switch (operator) {
+                case ADD, DEL -> operator + " " + getLeftChild() + " from " + getRightChild();
+                case DIV, PLUS, TIMES, MINUS -> getLeftChild().toString() + operator + getRightChild();
+                case MAX, MIN -> operator + "(" + getLeftChild() + "," + getRightChild() + ")";
+                default -> "error";
+            };
+            default -> "error";
+        };
     }
 
 }

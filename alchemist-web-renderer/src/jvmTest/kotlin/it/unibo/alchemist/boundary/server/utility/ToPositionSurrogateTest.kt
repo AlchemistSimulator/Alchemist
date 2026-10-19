@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -30,7 +30,7 @@ class ToPositionSurrogateTest :
 
                     override val coordinates: DoubleArray get() = doubleArrayOf(1.001, 2.004, 5.67, 1.0, 2.0)
 
-                    override fun getCoordinate(dimension: Int): Double = coordinates[dimension]
+                    override fun get(dimension: Int): Double = coordinates[dimension]
 
                     override val dimensions: Int get() = 5
 

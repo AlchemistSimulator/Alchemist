@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,14 +10,13 @@
 package it.unibo.alchemist.model
 
 import it.unibo.alchemist.model.geometry.Vector
-import java.io.Serializable
 
 /**
  * A generic obstacle in a vector space.
  *
  * @param V the vector type for the space in which this obstacle is placed.
  */
-interface Obstacle<V : Vector<V>> : Serializable {
+interface Obstacle<V : Vector<V>> {
     /**
      * The id for this obstacle.
      */
@@ -36,7 +35,7 @@ interface Obstacle<V : Vector<V>> : Serializable {
      * @return the intersection point between the vector and the obstacle nearest
      * to the vector's starting point.
      */
-    fun next(start: V, end: V): V
+    fun farthestValidVectorFromTo(start: V, end: V): V
 
     /**
      * Given a vector (represented as a starting point and an end point), computes
@@ -51,4 +50,9 @@ interface Obstacle<V : Vector<V>> : Serializable {
      * nearest to the vector's starting point
      */
     fun nearestIntersection(start: V, end: V): V
+
+    /**
+     * The farthest point reachable moving from this point towards [other], see [farthestValidVectorFromTo].
+     */
+    fun V.farthestValidVectorTowards(other: V): V = farthestValidVectorFromTo(this, other)
 }

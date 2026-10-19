@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,8 +11,7 @@ package it.unibo.alchemist.model.movestrategies
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.environments.Environment2DWithObstacles
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import kotlin.math.PI
@@ -22,45 +21,23 @@ import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Selects a target based on a random direction extracted from [directionRng],
- * and a random distance extracted from [distanceDistribution].
- * [getCurrentPosition] should return the current position of the object to move.
+ * Selects a target for [node] based on a random direction extracted from [directionRng],
+ * and a random distance extracted from [distanceDistribution], stopping where [environment] stops [node].
  * [T] is the type of the concentration of the node.
  */
 class RandomTarget<T>(
     private val environment: Environment<T, Euclidean2DPosition>,
-    getCurrentPosition: () -> Euclidean2DPosition,
-    private val makePosition: (Double, Double) -> Euclidean2DPosition,
+    private val node: Node<T>,
     private val directionRng: RandomGenerator,
     private val distanceDistribution: RealDistribution,
-) : ChangeTargetOnCollision<T, Euclidean2DPosition>(getCurrentPosition) {
-    /**
-     * Handy constructor for Alchemist where the object to move is a [node] in the [environment].
-     */
-    constructor(
-        environment: Environment<T, Euclidean2DPosition>,
-        node: Node<T>,
-        directionRng: RandomGenerator,
-        distanceDistribution: RealDistribution,
-    ) : this(
-        environment,
-        { environment.getPosition(node) },
-        { x, y -> environment.makePosition(x, y) },
-        directionRng,
-        distanceDistribution,
-    )
+) : ChangeTargetOnCollision<T, Euclidean2DPosition>({ environment.currentPositionOf(node) }) {
 
     override fun chooseTarget() = with(directionRng.nextDouble(0.0, 2 * PI)) {
         val distance = distanceDistribution.sample()
-        val current = getCurrentPosition()
-        val delta = makePosition(distance * cos(this), distance * sin(this))
-        val desired = current + delta
-        when (environment) {
-            is Environment2DWithObstacles<*, T> -> environment.next(current, desired)
-            else -> desired
-        }
+        val delta = environment.makePosition(distance * cos(this), distance * sin(this))
+        environment.farthestReachablePosition(node, getCurrentPosition() + delta)
     }
 
-    override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?): RandomTarget<T> =
-        RandomTarget(environment, getCurrentPosition, makePosition, directionRng, distanceDistribution)
+    override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): RandomTarget<T> =
+        RandomTarget(environment, destination, directionRng, distanceDistribution)
 }

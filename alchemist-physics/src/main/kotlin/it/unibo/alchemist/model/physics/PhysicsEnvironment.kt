@@ -69,13 +69,4 @@ interface PhysicsEnvironment<T, P, A, F> :
      * @return the set of nodes colliding with the given shape
      */
     fun getNodesWithin(shape: Shape<P, A>): List<Node<T>>
-
-    /**
-     * Computes the farthest position reachable by a [node] towards a [desiredPosition], avoiding node overlapping.
-     * If no node is located in between, [desiredPosition] is returned. Otherwise, the first position where the node
-     * collides with someone else is returned. For collision purposes, hitboxes are used: each node is given a circular
-     * hitbox of radius equal to its shape's radius (shapeless nodes can't cause overlapping). The client can specify
-     * a different radius for the hitbox of the moving node.
-     */
-    fun farthestPositionReachable(node: Node<T>, desiredPosition: P, hitboxRadius: Double = getShape(node).radius): P
 }

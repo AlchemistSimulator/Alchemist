@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -27,7 +27,7 @@ data class SimulationSurrogate<T, P : Position<out P>>(@param:GraphQLIgnore over
      * The time of the simulation.
      */
     @GraphQLDescription("The status of the simulation")
-    fun status(): String = origin.status.toString()
+    fun status(): String = origin.state.toString()
 
     /**
      * The time of the simulation.

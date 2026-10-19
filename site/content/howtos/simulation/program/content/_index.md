@@ -10,7 +10,7 @@ Node contents are defined in terms of molecules and their corresponding concentr
 As such, they depend on the specific {{% api class="Incarnation" %}} in use.
 
 This is done by listing the contents under [`deployments.contents`](/reference/yaml/#deploymentcontents),
-specifying a {{% api class="Molecule" %}} name and its {{% api class="Concentration" %}}.
+specifying a {{% api class="Molecule" %}} name and its concentration.
 
 Unless the [type/parameter syntax](/reference/yaml/#arbitrary-class-loading-system) is used, the data gets processed 
 by the

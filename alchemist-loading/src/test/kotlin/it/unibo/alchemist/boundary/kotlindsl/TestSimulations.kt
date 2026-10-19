@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.kotlindsl
 
 import it.unibo.alchemist.model.incarnations.SAPEREIncarnation
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.networks.connectWithinDistance
 import org.junit.jupiter.api.Test
 
 class TestSimulations {
@@ -25,7 +25,7 @@ class TestSimulations {
     fun testLinkingRule() {
         val loader = simulation2D(SAPEREIncarnation()) {
             environment {
-                networkModel(ConnectWithinDistance(5.0))
+                networkModel(connectWithinDistance(5.0))
             }
         }
         loader.launch(loader.launcher)

@@ -149,7 +149,7 @@ through a
 
 | Mandatory keys | Optional keys                                                                                                                           |
 |----------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `incarnation`  | `deployments`, `environment`, `export`, `layers`, `launcher`, `network-model`, `remote-dependencies`, `seeds`, `terminate`, `variables` |
+| `incarnation`  | `deployments`, `engine`, `environment`, `export`, `layers`, `launcher`, `network-model`, `remote-dependencies`, `seeds`, `terminate`, `variables` |
 
 #### Examples
 
@@ -269,9 +269,9 @@ If left unspecified, nodes get created through
 * Creation of heterogeneous pedestrians
   {{<code path="alchemist-cognitive-agents/src/test/resources/heterogeneous-pedestrians.yml" >}}
 
-### `deployment.properties`
+### `deployment.capabilities`
 
-**Type**: Traversable of [`property`](#property)
+**Type**: Traversable of [`capability`](#capability)
 
 ### `deployment.programs`
 
@@ -283,7 +283,7 @@ If left unspecified, nodes get created through
 
 **Type**: SpecMap
 
-Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+Definition of the contents ({{% api class="Molecule" %}}s and their concentrations) of a group of nodes.
 
 **(Multi)Spec**
 
@@ -317,7 +317,7 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 
 **Type**: Traversable of [shapeFilter](#shapefilter)
 
-### `property`
+### `capability`
 
 **Type**: SpecMap
 
@@ -327,17 +327,30 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 |----------------|--------------------|
 | `type`         | `parameters`, `in` |
 
-### `property.type`
+### `capability.type`
 
 Same as [type](#type)
 
-### `property.parameters`
+### `capability.parameters`
 
 Same as [parameters](#parameters)
 
-### `property.in`
+### `capability.in`
 
 **Type**: Traversable of [shapeFilter](#shapefilter)
+
+---
+
+### `engine`
+
+**Type**: SpecMap
+
+Builds the {{% api package="core" class="Simulation" %}} executing the scenario
+using the [arbitrary class loading system](#arbitrary-class-loading-system);
+the environment is provided as a contextual parameter.
+If left unspecified, defaults to the reactive {{% api package="core" class="Engine" %}},
+which is the only engine shipped with Alchemist.
+See [the engine configuration guide](/howtos/execution/engine/).
 
 ---
 
@@ -350,6 +363,7 @@ using the same syntax of [arbitrary class loading system](#arbitrary-class-loadi
 
 If left unspecified, defaults to a bidimensional Euclidean manifold:
 {{% api package="model.environments" class="Continuous2DEnvironment" %}}.
+Reactions hosted by the environment are declared in [`global-programs`](#environmentglobal-programs).
 
 **Type**: SpecMap
 
@@ -366,6 +380,30 @@ If left unspecified, defaults to a bidimensional Euclidean manifold:
 
 ---
 
+### `environment.global-programs`
+
+**Type**: Traversable of SpecMap
+
+Reactions hosted by the environment rather than by a node.
+Each entry builds a {{% api class="Reaction" %}} whose host is the environment
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+[Reaction Scheduling and Ownership](/explanation/metamodel/reaction-scheduling/) describes how reaction hosts
+own their reactions.
+
+**(Multi)Spec**
+
+| Mandatory keys | Optional keys                                             |
+|----------------|-----------------------------------------------------------|
+| `type`         | `parameters`, `conditions`, `time-distribution`, `actions` |
+
+#### Examples
+
+* Replacement of the reaction updating the physics of an
+  {{% api package="model.cognitive.environments" class="EnvironmentWithDynamics" %}}
+  {{<code path="src/test/resources/website-snippets/customize-physics-update-rate3.yml" >}}
+
+---
+
 ### `export`
 
 **Type**: Traversable of [`exporter`](#exporter)
@@ -376,7 +414,7 @@ If left unspecified, defaults to a bidimensional Euclidean manifold:
 
 **Type**: SpecMap
 
-Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+Definition of the contents ({{% api class="Molecule" %}}s and their concentrations) of a group of nodes.
 
 **(Multi)Spec**
 
@@ -435,7 +473,7 @@ The created molecule is read from every node.
 **Type**: String
 
 Name of a property to be extracted from the selected {{% api class="Molecule" %}}.
-The Molecule and the String are passed down to {{% api class="Incarnation" method="getProperty" %}}.
+The Molecule and the String are passed down to {{% api class="Incarnation" method="readConcentration" %}}.
 The obtained value is added to the exports.
 
 ### `extractor.aggregators`
@@ -500,6 +538,8 @@ if the process requires multiple simulation "stages"
 
 Builds a {{% api class="Layer" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
+Each molecule can be associated with at most one layer,
+and layers are associated with the environment before the simulation starts.
 
 #### Examples
 
@@ -547,9 +587,9 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 **Type**: SpecMap
 
-Builds a {{% api class="LinkingRule" %}}
+Builds a {{% api class="NetworkModel" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
-If unspecified, defaults to {{% api package="model.linkingrules" class="NoLinks" %}},
+If unspecified, defaults to {{% api package="model.networks" class="NoLinks" %}},
 and no node will have any neighbor.
 
 #### Examples
@@ -562,7 +602,7 @@ and no node will have any neighbor.
 
 **Type**: SpecMap
 
-Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+Definition of the contents ({{% api class="Molecule" %}}s and their concentrations) of a group of nodes.
 
 **(Multi)Spec**
 

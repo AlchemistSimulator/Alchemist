@@ -50,7 +50,12 @@ class TestYAMLLoader {
     @Test
     void testAnyRealDistribution() {
         final Environment<?, ?> environment = testNoVar("synthetic/anyrealdistribution.yml").getEnvironment();
-        environment.forEach(n -> n.forEach(r -> assertInstanceOf(AnyRealDistribution.class, r.getTimeDistribution())));
+        environment.getNodes().getCurrent().forEach(n -> n.getReactions().getCurrent().forEach(r ->
+            assertInstanceOf(
+                AnyRealDistribution.class,
+                assertInstanceOf(TimeDistributedReaction.class, r).getTimeDistribution()
+            )
+        ));
     }
 
     /**
@@ -60,6 +65,7 @@ class TestYAMLLoader {
     void testCustomNodes() {
         testNoVar("synthetic/customnode.yml")
             .getEnvironment()
+            .getNodes().getCurrent()
             .forEach(n ->
                 assertInstanceOf(
                     TestNode.class,
@@ -100,11 +106,11 @@ class TestYAMLLoader {
         final Incarnation<?, ?> inc = SupportedIncarnations.get("sapere").orElseThrow(
                 () -> new IllegalStateException("No SAPERE incarnation available"));
         final Molecule a = inc.createMolecule("A");
-        assertNotNull(environment.getLayer(a));
-        assertInstanceOf(StepLayer.class, environment.getLayer(a));
+        assertNotNull(environment.layerFor(a));
+        assertInstanceOf(StepLayer.class, environment.layerFor(a));
         final Molecule b = inc.createMolecule("B");
-        assertNotNull(environment.getLayer(b));
-        assertInstanceOf(StepLayer.class, environment.getLayer(b));
+        assertNotNull(environment.layerFor(b));
+        assertInstanceOf(StepLayer.class, environment.layerFor(b));
     }
 
     /**
@@ -121,7 +127,7 @@ class TestYAMLLoader {
     @Test
     void testMultipleMolecules() {
         final Environment<?, ?> environment = testNoVar("synthetic/multiplemolecule.yml").getEnvironment();
-        environment.forEach(n -> assertEquals(4, n.getMoleculeCount()));
+        environment.getNodes().getCurrent().forEach(n -> assertEquals(4, n.getCurrentMoleculeCount()));
     }
 
     /**
@@ -147,7 +153,7 @@ class TestYAMLLoader {
     void testScalaVar() {
         final Environment<Object, ?> environment = testNoVar("synthetic/scalavar.yml").getEnvironment();
         assertNotNull(environment);
-        assertEquals(environment.makePosition(3, 10), environment.getPosition(environment.getNodeByID(0)));
+        assertEquals(environment.makePosition(3, 10), environment.currentPositionOf(environment.nodeWithId(0)));
     }
 
     /**
@@ -165,7 +171,7 @@ class TestYAMLLoader {
 
     @Test
     void testMaxAliases() {
-        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().getNodes().isEmpty());
+        assertFalse(testNoVar("yamlAliases/aliases.yml").getEnvironment().getNodes().getCurrent().isEmpty());
     }
 
     private static <T, P extends Position<P>> Simulation<T, P> testLoading(
@@ -177,7 +183,10 @@ class TestYAMLLoader {
         simulation.getEnvironment().addTerminator(new StepCount<>(1_000)); // Was working with 10_000
         simulation.play();
         simulation.run();
-        simulation.getError().ifPresent(e -> fail(e.getMessage()));
+        final Throwable error = simulation.getError().getOrNull();
+        if (error != null) {
+            fail(error.getMessage());
+        }
         return simulation;
     }
 

@@ -43,12 +43,12 @@ interface Vector<S : Vector<S>> {
      * The coordinate of this vector in the specified dimension relatively to the basis
      * its space is described with.
      *
-     * @param dim
+     * @param dimension
      *            the dimension. E.g., in a 2-dimensional implementation, 0 could be the
      *            X-axis and 1 the Y-axis
      * @return the coordinate value
      */
-    operator fun get(dim: Int): Double
+    operator fun get(dimension: Int): Double
 
     /**
      * Support for sum.

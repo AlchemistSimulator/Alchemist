@@ -13,12 +13,10 @@ import org.danilopianini.lang.HashString;
 
 import java.util.Map;
 
-
 /**
  */
 public final class NumTreeNode extends ATreeNode<Double> {
 
-    private static final long serialVersionUID = 6624916497764658902L;
     private String s;
 
     /**

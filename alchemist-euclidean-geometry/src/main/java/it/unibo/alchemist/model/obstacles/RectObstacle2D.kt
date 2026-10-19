@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -71,7 +71,7 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(private val backend: j
             .Double(min(x, x + w), min(y, y + h), abs(w), abs(h)),
     )
 
-    override fun next(start: V, end: V): V {
+    override fun farthestValidVectorFromTo(start: V, end: V): V {
         val (startx, starty) = start
         val (endx, endy) = end
         val onBorders = enforceBorders(startx, starty, endx, endy)
@@ -207,7 +207,6 @@ class RectObstacle2D<V : Vector2D<V>> private constructor(private val backend: j
     override fun toString(): String = "[$minX,$minY -> $maxX,$maxY]"
 
     private companion object {
-        private const val serialVersionUID = -3552947311155196461L
         private const val HALF_PI = Math.PI / 2
 
         /*

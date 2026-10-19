@@ -10,16 +10,16 @@
 package it.unibo.alchemist.boundary.kotlindsl
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Layer
-import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.linkingrules.CombinedLinkingRule
-import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.networks.CombinedNetworkModel
+import it.unibo.alchemist.model.networks.NoLinks
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * - deploying nodes through a [DeploymentsContext];
  * - registering global reactions;
  * - registering layers (molecule → [Layer] mappings);
- * - configuring the environment network model ([LinkingRule]);
+ * - configuring the environment network model ([NetworkModel]);
  * - registering termination predicates.
  *
  * Most operations rely on Kotlin context receivers: the relevant [Environment] (and, when applicable,
@@ -55,29 +55,29 @@ fun interface EnvironmentContext<T, P : Position<P>> {
     fun deployments(deploymentsConfiguration: context(RandomGenerator) DeploymentsContext<T, P>.() -> Unit)
 
     /**
-     * Registers a [GlobalReaction] in the current [Environment] and optionally configures it.
+     * Registers a [Reaction] in the current [Environment] and optionally configures it.
      *
-     * The [block], if provided, is executed with [globalReaction] as a context receiver and with
+     * The [block], if provided, is executed with [reaction] as a context receiver and with
      * [ActionableContext] as receiver, enabling the addition of actions and conditions.
      *
      * The [timeDistribution] parameter is currently not used by this function. The expectation is that
-     * the provided [globalReaction] is already configured with the intended scheduling strategy (if any),
+     * the provided [reaction] is already configured with the intended scheduling strategy (if any),
      * or that the distribution is otherwise bound externally.
      *
      * @param timeDistribution a time distribution associated with the global program; currently ignored.
-     * @param globalReaction the global reaction to register.
+     * @param reaction the environment-hosted reaction to register.
      * @param block an optional configuration block for actions and conditions.
      */
     context(environment: Environment<T, P>)
     fun globalProgram(
         timeDistribution: TimeDistribution<T>,
-        globalReaction: GlobalReaction<T>,
-        block: context(GlobalReaction<T>) ActionableContext.() -> Unit = {},
+        reaction: Reaction<T>,
+        block: context(Reaction<T>) ActionableContext.() -> Unit = {},
     ) {
-        context(globalReaction) {
+        context(reaction) {
             ActionableContext.block()
         }
-        environment.addGlobalReaction(globalReaction)
+        environment.addReaction(reaction)
     }
 
     /**
@@ -95,30 +95,27 @@ fun interface EnvironmentContext<T, P : Position<P>> {
     /**
      * Registers a [Layer] associated with a molecule identified by [molecule] in the current [Environment].
      *
-     * The molecule is created via [Incarnation.createMolecule]. The meaning of a `null` molecule name, if any,
-     * depends on the concrete incarnation.
+     * The molecule is created via [Incarnation.createMolecule].
      *
-     * @param molecule the molecule name, possibly `null` (incarnation-dependent semantics).
+     * @param molecule the molecule name.
      * @param layer the layer instance to register.
      */
     context(incarnation: Incarnation<T, P>, environment: Environment<T, P>)
-    fun layer(molecule: String? = null, layer: Layer<T, P>) = layer(incarnation.createMolecule(molecule), layer)
+    fun layer(molecule: String, layer: Layer<T, P>) = layer(incarnation.createMolecule(molecule), layer)
 
     /**
      * Configures (or extends) the environment network model by adding the provided [model].
      *
-     * The current linking rule is updated as follows:
+     * The current network model is updated as follows:
      * - if the environment currently uses [NoLinks], it is replaced with [model];
-     * - if the environment currently uses [CombinedLinkingRule], [model] is appended to its sub-rules;
-     * - otherwise, the existing rule and [model] are combined into a new [CombinedLinkingRule].
+     * - otherwise, the existing rule and [model] are combined into a new [CombinedNetworkModel].
      *
-     * @param model the linking rule to set or append.
+     * @param model the network model to set or append, bound to the environment.
      */
     context(environment: Environment<T, P>)
-    fun networkModel(model: LinkingRule<T, P>) = when (val currentRule = environment.linkingRule) {
-        is NoLinks<T, P> -> environment.linkingRule = model
-        is CombinedLinkingRule<T, P> -> environment.linkingRule = CombinedLinkingRule(currentRule.subRules + model)
-        else -> environment.linkingRule = CombinedLinkingRule(listOf(environment.linkingRule, model))
+    fun networkModel(model: NetworkModel<T>) = when (val currentRule = environment.networkModel) {
+        is NoLinks<T> -> environment.networkModel = model
+        else -> environment.networkModel = CombinedNetworkModel(currentRule, model)
     }
 
     /**

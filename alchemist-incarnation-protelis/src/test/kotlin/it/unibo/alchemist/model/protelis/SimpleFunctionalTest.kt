@@ -26,11 +26,11 @@ class SimpleFunctionalTest :
                             environment.addTerminator(StepCount(100))
                         }.runInCurrentThread()
                 val valuesOfLastNode =
-                    simulation.environment.nodes
+                    simulation.environment.nodes.current
                         .asSequence()
                         .find { it.id == 3 }
                         ?.contents
-                        ?.values
+                        ?.current?.values
                 requireNotNull(valuesOfLastNode)
                 valuesOfLastNode shouldContain 3.0
             }

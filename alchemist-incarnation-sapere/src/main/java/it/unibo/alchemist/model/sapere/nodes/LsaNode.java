@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,35 +9,47 @@
 
 package it.unibo.alchemist.model.sapere.nodes;
 
+import arrow.core.Option;
+import arrow.core.OptionKt;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
+import it.unibo.alchemist.model.observables.ObservableMutableList;
+import it.unibo.alchemist.model.observables.ObservableMutableMap;
+import it.unibo.alchemist.model.observation.MutableObservable;
+import it.unibo.alchemist.model.observation.Observable;
+import it.unibo.alchemist.model.observation.ObservableList;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
 import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
 import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Type;
 import it.unibo.alchemist.model.sapere.molecules.LsaMolecule;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+
+import static it.unibo.alchemist.model.observables.util.MutableObservables.observe;
 
 /**
  * This class realizes a node with LSA concentration.
  */
 public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode {
 
-    @Serial
-    private static final long serialVersionUID = -2167025208984968645L;
-    private static final ILsaMolecule ZEROMOL = new LsaMolecule("0");
+    private static final String INCOMPATIBLE_MOLECULE = " is not a compatible molecule type";
 
-    private final List<ILsaMolecule> instances = new ArrayList<>();
+    private final ObservableMutableList<ILsaMolecule> allInstances = new ObservableMutableList<>();
+    private final Observable<List<ILsaMolecule>> allCandidates = allInstances.map(Collections::unmodifiableList);
+    private final Map<String, List<ILsaMolecule>> instancesByName = new HashMap<>();
+    private final MutableObservable<Integer> moleculeCount = observe(0);
+    private final Map<String, MutableObservable<List<ILsaMolecule>>> observablesByName = new HashMap<>();
 
     /**
      * @param environment
@@ -48,85 +60,123 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public boolean contains(@Nonnull final Molecule molecule) {
-        if (molecule instanceof final ILsaMolecule toMatch) {
-            synchronized (instances) {
-                return instances.stream().anyMatch(mol -> mol.matches(toMatch));
+    public void addLsa(final ILsaMolecule instance) {
+        if (instance.isIstance()) {
+            synchronized (instancesByName) {
+                final String name = indexOf(instance);
+                final List<ILsaMolecule> list = instancesByName.computeIfAbsent(name, k -> new ArrayList<>());
+                list.add(instance);
+                allInstances.add(instance);
+                bucketChanged(instance, name, list);
+                // The count is updated last, so that its observers find the rest of the node already updated.
+                moleculeCount.update(c -> c + 1);
             }
+        } else {
+            throw new IllegalStateException("Tried to insert uninstanced " + instance + " into " + this);
         }
-        return false;
-    }
-
-    @Override
-    @Nullable
-    protected List<ILsaMolecule> createT() { // NOPMD: this must return null, not an empty collection.
-        return null; // NOPMD: this must return null, not an empty collection.
-    }
-
-    @Override
-    public int getMoleculeCount() {
-        synchronized (instances) {
-            return instances.size();
-        }
-    }
-
-    @Override
-    public List<ILsaMolecule> getConcentration(@Nonnull final Molecule m) {
-        if (!(m instanceof final ILsaMolecule mol)) {
-            throw new IllegalArgumentException(m + " is not a compatible molecule type");
-        }
-        final ArrayList<ILsaMolecule> listMol = new ArrayList<>();
-        synchronized (instances) {
-            for (final ILsaMolecule instance : instances) {
-                if (mol.matches(instance)) {
-                    listMol.add(instance);
-                }
-            }
-        }
-        return listMol;
-    }
-
-    @Override
-    @Nonnull
-    public Map<Molecule, List<ILsaMolecule>> getContents() {
-        // Create a defensive copy to avoid ConcurrentModificationException
-        final List<ILsaMolecule> instancesCopy;
-        synchronized (instances) {
-            instancesCopy = new ArrayList<>(instances);
-        }
-        final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(instancesCopy.size(), 1.0f);
-        for (final ILsaMolecule m : instancesCopy) {
-            final List<ILsaMolecule> l;
-            if (res.containsKey(m)) {
-                /*
-                 * Safe by construction.
-                 */
-                l = res.get(m);
-            } else {
-                l = new ArrayList<>(1);
-                l.add(ZEROMOL);
-                res.put(m, l);
-            }
-            final Double v = (Double) l.get(0).getArg(0).getRootNodeData() + 1;
-            final IExpression e = new Expression(new NumTreeNode(v));
-            l.set(0, new LsaMolecule(Collections.singletonList(e)));
-        }
-        return res;
     }
 
     @Override
     public List<ILsaMolecule> getLsaSpace() {
-        synchronized (instances) {
-            return Collections.unmodifiableList(new ArrayList<>(instances));
+        return allInstances.getCurrent();
+    }
+
+    @Override
+    @NotNull
+    public Observable<Integer> getMoleculeCount() {
+        return moleculeCount;
+    }
+
+    @Override
+    public List<ILsaMolecule> matching(final ILsaMolecule template) {
+        return matchesOf(template, observeCandidates(template).getCurrent());
+    }
+
+    @Override
+    @NotNull
+    public Observable<List<ILsaMolecule>> observeCandidates(@NotNull final ILsaMolecule template) {
+        if (!isIndexable(template)) {
+            return allCandidates;
+        }
+        final String name = indexOf(template);
+        synchronized (instancesByName) {
+            return observablesByName.computeIfAbsent(name, k ->
+                observe(
+                    new ArrayList<>(instancesByName.getOrDefault(name, Collections.emptyList()))
+                )
+            );
         }
     }
 
     @Override
-    public boolean removeConcentration(final ILsaMolecule matchedInstance) {
-        synchronized (instances) {
-            for (int i = 0; i < instances.size(); i++) {
-                if (matchedInstance.matches(instances.get(i))) {
-                    instances.remove(i);
+    @NotNull
+    public Observable<Option<List<ILsaMolecule>>> concentrationOf(@NotNull final Molecule molecule) {
+        if (!(molecule instanceof final ILsaMolecule lsaTemplate)) {
+            throw new IllegalArgumentException(molecule + INCOMPATIBLE_MOLECULE);
+        }
+        return observeCandidates(lsaTemplate).map(candidates -> {
+            final List<ILsaMolecule> matches = matchesOf(lsaTemplate, candidates);
+            return matches.isEmpty() ? OptionKt.none() : OptionKt.some(matches);
+        });
+    }
+
+    @Override
+    @NotNull
+    public Observable<Boolean> containsMolecule(@NotNull final Molecule molecule) {
+        if (molecule instanceof final ILsaMolecule toMatch) {
+            return observeCandidates(toMatch).map(molecules ->
+                molecules.stream().anyMatch(mol -> mol.matches(toMatch))
+            );
+        }
+        return observe(false);
+    }
+
+    @Override
+    public ObservableList<ILsaMolecule> observeLsaSpace() {
+        return allInstances;
+    }
+
+    /**
+     * Removes every copy of [moleculeToRemove] from this node.
+     *
+     * @param moleculeToRemove the LSA to remove
+     * @throws java.util.NoSuchElementException if the node contains no copy of it
+     */
+    @Override
+    public void removeAllConcentrationOf(@Nonnull final Molecule moleculeToRemove) {
+        if (!(moleculeToRemove instanceof final ILsaMolecule lsa)) {
+            throw new IllegalArgumentException(moleculeToRemove + INCOMPATIBLE_MOLECULE);
+        }
+        synchronized (instancesByName) {
+            // The copies are all stored in the bucket of the LSA, as they share its first argument.
+            final String name = lsa.argsNumber() == 0 ? null : indexOf(lsa);
+            final List<ILsaMolecule> bucket = instancesByName.getOrDefault(name, new ArrayList<>());
+            final int copies = bucket.size();
+            if (!bucket.removeIf(lsa::equals)) {
+                throw new NoSuchElementException(lsa + " was not present in node " + getId());
+            }
+            final int removed = copies - bucket.size();
+            allInstances.removeAll(lsa::equals);
+            bucketChanged(lsa, name, bucket);
+            moleculeCount.update(c -> c - removed);
+        }
+    }
+
+    @Override
+    public boolean removeOneMatchedLsa(final ILsaMolecule matchedInstance) {
+        synchronized (instancesByName) {
+            // The argument may be a template: remove the stored instance it matched.
+            final List<ILsaMolecule> candidates = isIndexable(matchedInstance)
+                ? instancesByName.getOrDefault(indexOf(matchedInstance), Collections.emptyList())
+                : allInstances.getCurrent();
+            for (final ILsaMolecule candidate : candidates) {
+                if (matchedInstance.matches(candidate)) {
+                    final String name = indexOf(candidate);
+                    final List<ILsaMolecule> bucket = instancesByName.get(name);
+                    bucket.remove(candidate);
+                    allInstances.remove(candidate);
+                    bucketChanged(candidate, name, bucket);
+                    moleculeCount.update(c -> c - 1);
                     return true;
                 }
             }
@@ -135,29 +185,64 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public void setConcentration(final ILsaMolecule inst) {
-        if (inst.isIstance()) {
-            synchronized (instances) {
-                instances.add(inst);
-            }
-        } else {
-            throw new IllegalStateException("Tried to insert uninstanced " + inst + " into " + this);
-        }
-    }
-
-    @Override
-    public void setConcentration(@Nonnull final Molecule molecule, final List<ILsaMolecule> c) {
+    public void set(@Nonnull final Molecule molecule, final List<ILsaMolecule> c) {
         if (molecule instanceof final ILsaMolecule il) {
-            setConcentration(il);
+            addLsa(il);
         } else {
-            throw new IllegalArgumentException(molecule + " is not a compatible molecule type");
+            throw new IllegalArgumentException(molecule + INCOMPATIBLE_MOLECULE);
         }
     }
 
     @Override
     @Nonnull
     public String toString() {
-        return getId() + " contains: " + instances.toString();
+        return getId() + " contains: " + allInstances.getCurrent();
     }
 
+    private void bucketChanged(final ILsaMolecule instance, final String name, final List<ILsaMolecule> bucket) {
+        updateCount(instance, bucket);
+        final var observable = observablesByName.get(name);
+        if (observable != null) {
+            observable.update(it -> new ArrayList<>(bucket));
+        }
+    }
+
+    /*
+     * The contents map each distinct instance to a single LSA holding how many copies of it the node contains.
+     * They are updated along with every mutation, so that their observers are notified, by counting the copies in
+     * the bucket of the instance: the count of a mutated instance is always the actual one.
+     */
+    private void updateCount(final ILsaMolecule instance, final List<ILsaMolecule> bucket) {
+        final long count = bucket.stream().filter(instance::equals).count();
+        final ObservableMutableMap<Molecule, List<ILsaMolecule>> contents = getContents();
+        if (count > 0) {
+            final IExpression countExpression = new Expression(new NumTreeNode((double) count));
+            contents.put(instance, List.of(new LsaMolecule(Collections.singletonList(countExpression))));
+        } else {
+            contents.remove(instance);
+        }
+    }
+
+    private static String indexOf(final ILsaMolecule molecule) {
+        return molecule.getArg(0).toString();
+    }
+
+    /*
+     * Instances are indexed by their first argument. A template can only match the instances sharing its first argument
+     * when that argument is a constant or a number; a variable or an expression may match any first argument.
+     */
+    private static boolean isIndexable(final ILsaMolecule template) {
+        final Type type = template.getArg(0).getRootNodeType();
+        return type == Type.CONST || type == Type.NUM;
+    }
+
+    private static List<ILsaMolecule> matchesOf(final ILsaMolecule template, final List<ILsaMolecule> candidates) {
+        final List<ILsaMolecule> matches = new ArrayList<>();
+        for (final ILsaMolecule candidate : candidates) {
+            if (template.matches(candidate)) {
+                matches.add(candidate);
+            }
+        }
+        return matches;
+    }
 }

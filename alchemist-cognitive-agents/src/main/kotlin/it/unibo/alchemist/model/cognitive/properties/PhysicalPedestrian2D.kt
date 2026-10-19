@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,8 +12,6 @@ package it.unibo.alchemist.model.cognitive.properties
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.cognitive.CognitiveProperty
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Euclidean2DShape
 import it.unibo.alchemist.model.geometry.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
@@ -24,7 +22,7 @@ import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.physics.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.commons.math3.random.RandomGenerator
@@ -39,7 +37,7 @@ class PhysicalPedestrian2D<T>(
      */
     val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
-) : AbstractNodeProperty<T>(node),
+) : AbstractCapability<T>(node),
     PhysicalPedestrian2D<T> {
     private val pedestrian by lazy { node.asProperty<T, PedestrianProperty<T>>() }
 
@@ -70,7 +68,7 @@ class PhysicalPedestrian2D<T>(
         environment
             .shapeFactory
             .circle(nodeShape.radius + comfortRay)
-            .transformed { origin(environment.getPosition(node)) }
+            .transformed { origin(environment.currentPositionOf(node)) }
 
     override val rectangleOfInfluence: Euclidean2DShape get() =
         environment
@@ -84,7 +82,7 @@ class PhysicalPedestrian2D<T>(
     private val fallenAgentPerceptionArea
         get() = environment.shapeFactory.circle(FALLEN_AGENT_PERCEPTION_RADIUS).transformed { origin(node.position) }
 
-    private val Node<T>.position get() = environment.getPosition(this)
+    private val Node<T>.position get() = environment.currentPositionOf(this)
 
     override fun checkAndPossiblyFall() {
         if (!isFallen && shouldFall(repulsionForces())) {
@@ -101,7 +99,7 @@ class PhysicalPedestrian2D<T>(
     }
 
     override fun repulse(other: Node<T>): Euclidean2DPosition {
-        val myShape = nodeShape.transformed { origin(environment.getPosition(node)) }
+        val myShape = nodeShape.transformed { origin(environment.currentPositionOf(node)) }
         val otherShape = environment.getShape(other)
         return (myShape.centroid - otherShape.centroid).let {
             val desiredDistance = myShape.radius + comfortRay + otherShape.radius
@@ -141,7 +139,7 @@ class PhysicalPedestrian2D<T>(
     }
 
     private fun avoidanceDistanceWeight(other: Node<T>): Double {
-        val weight = environment.getDistanceBetweenNodes(node, other) - rectangleOfInfluenceDimensions.first / 2.0
+        val weight = environment.distanceBetween(node, other) - rectangleOfInfluenceDimensions.first / 2.0
         return weight * weight
     }
 

@@ -1,0 +1,4 @@
+incarnation: protelis
+
+engine:
+  type: BatchEngine

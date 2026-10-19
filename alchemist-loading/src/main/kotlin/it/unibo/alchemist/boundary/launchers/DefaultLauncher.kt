@@ -15,7 +15,6 @@ import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.util.BugReporting
-import java.io.Serializable
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -85,7 +84,7 @@ constructor(
                         runCatching { loader.getWith<Any?, Nothing>(instance).configured() }
                             .mapCatching { simulation ->
                                 simulation.run()
-                                simulation.error.ifPresent { throw it }
+                                simulation.error.onSome { throw it }
                                 logger.info("Simulation with {} completed successfully", instance)
                             }.onFailure {
                                 logger.error("Failure for simulation with $instance", it)
@@ -125,7 +124,7 @@ constructor(
         @JvmStatic
         protected fun Map<String, Variable<*>>.cartesianProductOf(
             variables: Collection<String>,
-        ): List<Map<String, Serializable?>> {
+        ): List<Map<String, Any?>> {
             require(keys.containsAll(variables)) {
                 "Variables ${variables - keys} are not defined. Valid values are: $this"
             }

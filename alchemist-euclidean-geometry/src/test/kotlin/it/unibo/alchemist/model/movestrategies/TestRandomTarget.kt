@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.movestrategies
 
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.math.abs
 import kotlin.test.assertEquals
@@ -104,15 +105,19 @@ class TestRandomTarget {
     @BeforeEach
     fun setUp() {
         currentPosition = Euclidean2DPosition(0.0, 0.0)
+        val environment = Continuous2DEnvironment(
+            SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow(),
+        )
+        val node = GenericNode(environment)
+        environment.addNode(node, currentPosition)
         distanceDistribution = DummyDistribution()
         directionGenerator = DummyRandomGenerator()
         directionGenerator.value = 0.5
         distanceDistribution.value = 1.0
         randomTarget =
             RandomTarget(
-                Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()),
-                { currentPosition },
-                ::Euclidean2DPosition,
+                environment,
+                node,
                 directionGenerator,
                 distanceDistribution,
             )

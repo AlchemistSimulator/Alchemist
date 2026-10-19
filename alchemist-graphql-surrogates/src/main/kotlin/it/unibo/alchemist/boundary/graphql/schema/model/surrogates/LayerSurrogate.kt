@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -40,7 +40,7 @@ data class LayerSurrogate<T, P : Position<out P>>(
      */
     @GraphQLDescription("Returns the value of the layer at the given position")
     fun getValue(p: PositionInput): String {
-        val content = origin.getValue(posMapping(p.coordinates))
+        val content = origin.currentValueAt(posMapping(p.coordinates))
         return encodeConcentrationContentToString(content)
     }
 }

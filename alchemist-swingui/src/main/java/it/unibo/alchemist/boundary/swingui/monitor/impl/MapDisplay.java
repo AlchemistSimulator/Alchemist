@@ -12,7 +12,6 @@ package it.unibo.alchemist.boundary.swingui.monitor.impl;
 import it.unibo.alchemist.boundary.ui.impl.LinearZoomManager;
 import it.unibo.alchemist.boundary.util.InitMapsForge;
 import it.unibo.alchemist.boundary.wormhole.impl.MapWormhole;
-import it.unibo.alchemist.model.Concentration;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Time;
@@ -40,7 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Graphical 2D display of environments that uses a map.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> the concentration type
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated

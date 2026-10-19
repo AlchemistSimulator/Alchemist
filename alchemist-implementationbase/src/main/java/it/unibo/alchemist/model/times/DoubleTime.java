@@ -13,7 +13,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Time;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 
 /**
  *         This class is meant to provide a reasonably fast time implementation.
@@ -25,8 +24,6 @@ import java.io.Serial;
  */
 public final class DoubleTime implements Time {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private final double t;
 
     /**

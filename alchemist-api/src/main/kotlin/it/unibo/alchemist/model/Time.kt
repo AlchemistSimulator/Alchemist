@@ -8,16 +8,13 @@
  */
 package it.unibo.alchemist.model
 
-import java.io.Serializable
 import kotlin.Double.Companion.NEGATIVE_INFINITY as MINUS_INFINITY
 import kotlin.Double.Companion.POSITIVE_INFINITY
 
 /**
  * Interface for time representation.
  */
-interface Time :
-    Comparable<Time>,
-    Serializable {
+interface Time : Comparable<Time> {
     /**
      * Verifies if the [Time] is set at infinite, namely if the event will
      * never happen.

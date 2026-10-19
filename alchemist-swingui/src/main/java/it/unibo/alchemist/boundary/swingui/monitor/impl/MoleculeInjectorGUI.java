@@ -76,7 +76,7 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
     }
 
     private final transient CollectionWithCurrentElement<Incarnation<T, ?>> incarnation = makeIncarnation();
-    private final Set<Node<T>> affectedNodes = new HashSet<>();
+    private final transient Set<Node<T>> affectedNodes = new HashSet<>();
     private final List<JLabel> nodesLabels;
     private final JTextArea concentration;
     private final JTextArea molecule;
@@ -170,7 +170,7 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
             final Incarnation<T, ?> currentInc = incarnation.getCurrent();
             for (final Node<T> n : affectedNodes) {
                 try {
-                    n.setConcentration(currentInc.createMolecule(mol), currentInc.createConcentration(conc));
+                    n.set(currentInc.createMolecule(mol), currentInc.createConcentration(conc));
                     // CHECKSTYLE: IllegalCatch OFF
                 } catch (Exception | AbstractMethodError e) { // NOPMD
                     L.error("Unable to set new concentration: ", e);

@@ -29,7 +29,7 @@ _reactions: &behavior
         parameters: [50]
 
 _homogeous_pedestrian: &homogeneous_pedestrian
-  properties:
+  capabilities:
     - type: Pedestrian
     - type: Social
     - type: Perceptive2D

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.biochemistry;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.NodeReaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.biochemistry.actions.AddJunctionInCell;
 import it.unibo.alchemist.model.biochemistry.actions.AddJunctionInNeighbor;
@@ -99,7 +99,7 @@ class TestIncarnation {
             final int nNeighAct,
             final int nEnvCond,
             final int nEnvAct) { // TODO custom conditions and actions
-        final Reaction<Double> r = INCARNATION.createReaction(rand, environment, node, time, param);
+        final NodeReaction<Double> r = INCARNATION.createNodeReaction(rand, environment, node, time, param);
         assertNotNull(r);
         assertEquals(nCond, r.getConditions().size());
         assertEquals(nAct, r.getActions().size());
@@ -121,7 +121,7 @@ class TestIncarnation {
 
     private void testNoR(final String param) { // used for cases like [A] + [B in neighbor] --> [junction A-C]
         try {
-            INCARNATION.createReaction(rand, environment, node, time, param);
+            INCARNATION.createNodeReaction(rand, environment, node, time, param);
             fail();
         } catch (final BiochemistryParseException e) {
             assertFalse(e.getMessage().isEmpty());

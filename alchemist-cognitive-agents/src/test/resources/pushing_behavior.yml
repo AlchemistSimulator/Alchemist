@@ -6,7 +6,7 @@ environment:
 deployments:
   - type: Point
     parameters: [0.0, 0.0]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: PhysicalPedestrian2D
       - type: CircularArea
@@ -18,7 +18,7 @@ deployments:
 
   - type: Circle
     parameters: [30, 10.0, 0.0, 5]
-    properties:
+    capabilities:
       - type: Pedestrian
       - type: PhysicalPedestrian2D
       - type: CircularArea

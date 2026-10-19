@@ -8,11 +8,11 @@ summary = "Agents with realistic human behavior."
 We recommend to read our [explanation of the cognitive agents](/explanation/cognitive)
 to better understand the contents of this how-to.
 
-Different kinds of pedestrians are obtainable by attaching
-{{% api class=NodeProperty %}}s
+Different kinds of pedestrians are obtainable by attaching capabilities
+({{% api class=Capability %}})
 to nodes (e.g {{%api package=model.nodes class=GenericNode %}}).
 Common properties concern abilities such as perceiving other nodes
-({{% api package=model.cognitive class=PerceptiveProperty %}})
+({{% api package=model.cognitive.properties class=PerceptiveProperty %}})
 and occuping space in an environment 
 ({{% api package=model.physics.properties class=OccupiesSpaceProperty %}}).
 
@@ -40,7 +40,7 @@ property, along with the age.
 
 ## Cognitive Pedestrian
 Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities given by a
-{{% api package=model.cognitive class=CognitiveProperty %}}.
+{{% api package=model.cognitive.properties class=CognitiveProperty %}}.
 They have an emotional state and are able to influence and be influenced by others with the same capabilities.
 As an example, cognitive pedestrians can perceive fear via social contagion 
 (e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).
@@ -64,7 +64,7 @@ Be also aware that orienting pedestrians can only be placed in an
 {{% api package="model.environments" class="EnvironmentWithGraph" %}}
 which is a type of environment providing a navigation graph.
 In order to give a node orienting capabilities enhance a node with an
-{{% api package=model.cognitive class=OrientingProperty %}}.
+{{% api package=model.cognitive.properties class=OrientingProperty %}}.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-orienting-pedestrian.yml" >}}
 

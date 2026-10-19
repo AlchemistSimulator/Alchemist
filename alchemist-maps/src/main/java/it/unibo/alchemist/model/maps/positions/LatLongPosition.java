@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.GeoPosition;
 import org.danilopianini.util.Hashes;
 
 import javax.annotation.Nonnull;
-import java.io.Serial;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
@@ -50,9 +49,6 @@ public final class LatLongPosition implements GeoPosition {
     private static final double MAX_LON = Math.toRadians(180d); // PI
     private static final double MIN_LAT = Math.toRadians(-90d); // -PI/2
     private static final double MIN_LON = Math.toRadians(-180d); // -PI
-
-    @Serial
-    private static final long serialVersionUID = -8972065367390749356L;
 
     private final DistanceFormula df;
     private int hash;
@@ -205,7 +201,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double getCoordinate(final int dimension) {
+    public double get(final int dimension) {
         if (dimension == 0) {
             return getLatitude();
         }

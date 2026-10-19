@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.cognitive.reactions
 
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.steering.DistanceWeighted
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 

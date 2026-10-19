@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -24,12 +24,13 @@ interface EnvironmentWithObstacles<W, T, P> :
           P : Position<P>,
           P : Vector<P> {
     /**
-     * A list of all the obstacles in this environment.
+     * A list of all the obstacles in this environment, fixed once the environment holds nodes.
      */
     val obstacles: List<W>
 
     /**
      * Adds an obstacle to this environment.
+     * Obstacles are part of the environment setup: adding one fails once the environment holds nodes.
      *
      * @param obstacle
      *              the obstacle to add
@@ -38,6 +39,7 @@ interface EnvironmentWithObstacles<W, T, P> :
 
     /**
      * Removes an obstacle from this environment.
+     * Obstacles are part of the environment setup: removing one fails once the environment holds nodes.
      *
      * @param obstacle
      *              the obstacle to remove
@@ -54,22 +56,18 @@ interface EnvironmentWithObstacles<W, T, P> :
      *              end position
      * @return true if the line connecting start and end touches an obstacle
      */
-    fun intersectsObstacle(start: P, end: P): Boolean
+    fun shortestPathIntersectsObstacle(start: P, end: P): Boolean
 
     /**
-     * This method must calculate the ABSOLUTE next allowed position given the
-     * current position and the position in which the node wants to move. For
-     * example, if your node is in position [2,3], wants to move to [3,4] but
-     * the next allowed position (because, e.g., of physical obstacles) is
-     * [2.5,3.5], the result must be a Position containing coordinates
-     * [2.5,3.5].
-     *
-     * @param current
-     *              the current position
-     * @param desired
-     *              the desired position
-     * @return the next allowed position, where the node can actually move. This
-     * position MUST be considered as a vector whose start point is [current].
+     * Whether the segment connecting this position and [other] touches an obstacle,
+     * see [shortestPathIntersectsObstacle].
      */
-    fun next(current: P, desired: P): P
+    fun P.shortestPathToIntersectsObstacle(other: P): Boolean = shortestPathIntersectsObstacle(this, other)
+
+    /**
+     * Removes this obstacle from the environment, see [removeObstacle].
+     *
+     * @return true if the obstacle has actually been removed
+     */
+    fun W.remove(): Boolean = removeObstacle(this)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -14,8 +14,9 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.biochemistry.CircularCellProperty
 import it.unibo.alchemist.model.biochemistry.CircularDeformableCellProperty
 import it.unibo.alchemist.model.biochemistry.molecules.Junction
+import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.model.properties.AbstractCapability
 
 /**
  * Base implementation of a [CircularCellProperty].
@@ -27,8 +28,9 @@ constructor(
     override val node: Node<Double>,
     override val maximumDiameter: Double,
     override val rigidity: Double,
-    override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : AbstractNodeProperty<Double>(node),
+    override val junctions: ObservableMutableMap<Junction, ObservableMutableMap<Node<Double>, Int>> =
+        ObservableMutableMap(),
+) : AbstractCapability<Double>(node),
     CircularDeformableCellProperty,
     CircularCellProperty by CircularCell(
         environment,

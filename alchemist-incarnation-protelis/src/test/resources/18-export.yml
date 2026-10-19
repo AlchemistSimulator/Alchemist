@@ -9,7 +9,7 @@ _program-pools:
     - program: send
   move: &move
     - time-distribution: { type: ExponentialTime, parameters: [1] }
-      type: Event
+      type: GenericReaction
       actions: { type: MoveToTarget, parameters: [destination, 1] }
 deployments: { type: Circle, parameters: [50, 0, 0, 5], programs: [*gradient, *move] }
 terminate: { type: AfterTime, parameters: [20] }

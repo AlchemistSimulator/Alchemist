@@ -10,8 +10,7 @@
 package it.unibo.alchemist.model.protelis
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.optional.bePresent
-import io.kotest.matchers.shouldNot
+import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
 import it.unibo.alchemist.test.AlchemistTesting.terminatingAfterSteps
@@ -27,7 +26,7 @@ class TestCasesThatShouldJustRun :
                         .getDefault<Any, Nothing>()
                         .terminatingAfterSteps(100)
                         .runInCurrentThread()
-                        .error shouldNot bePresent()
+                        .error.isNone() shouldBe true
                 }
             }
         },

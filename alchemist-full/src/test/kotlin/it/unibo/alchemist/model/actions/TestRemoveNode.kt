@@ -18,8 +18,6 @@ class TestRemoveNode<T, P : Position<P>> : StringSpec({
     "Nodes can be removed in a continous 2D space" {
         val simulation = loadAlchemist<T, P>("remove.yml")
         val simulationRun = simulation.runInCurrentThread()
-        require(simulationRun.error.isEmpty) {
-            throw simulationRun.error.get()
-        }
+        simulationRun.error.onSome { throw it }
     }
 })

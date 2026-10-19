@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,14 +13,10 @@ import com.github.davidmoten.rtree.Entry
 import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry.Geometries
 import com.github.davidmoten.rtree.geometry.Rectangle
-import com.github.davidmoten.rtree.internal.EntryDefault
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.io.Serial
 
 /**
  * A 2D continuous environment that supports rectangular obstacles and prevents nodes from moving through them.
@@ -34,14 +30,12 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
 
     private companion object {
         private const val TOLERANCE_MULTIPLIER = 0.01
-
-        @Serial
-        private const val serialVersionUID = 69931743897405107L
     }
 
     private var rtree: RTree<RectObstacle2D<Euclidean2DPosition>, Rectangle> = RTree.create()
 
     override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) {
+        checkNoNodes("add")
         rtree = rtree.add(obstacle, toGeometry(obstacle))
         includeObject(obstacle.minX, obstacle.maxX, obstacle.minY, obstacle.maxY)
     }
@@ -64,7 +58,7 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
 
     override fun hasMobileObstacles(): Boolean = false
 
-    override fun intersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition): Boolean {
+    override fun shortestPathIntersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition): Boolean {
         val (sx, sy) = start
         val (ex, ey) = end
         return query(sx, sy, ex, ey, 0.0).any { obstacle ->
@@ -76,10 +70,16 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
     override fun isAllowed(position: Euclidean2DPosition): Boolean =
         rtree.search(Geometries.point(position.x, position.y)).isEmpty.toBlocking().single()
 
-    override fun next(current: Euclidean2DPosition, desired: Euclidean2DPosition): Euclidean2DPosition =
-        next(current.x, current.y, desired.x, desired.y)
+    /**
+     * The farthest position reachable by [node] towards [desired], stopping before the first obstacle on its path.
+     */
+    override fun farthestReachablePosition(node: Node<T>, desired: Euclidean2DPosition): Euclidean2DPosition {
+        val (curX, curY) = currentPositionOf(node)
+        val (newX, newY) = super<AbstractLimitedContinuous2D>.farthestReachablePosition(node, desired)
+        return farthestValidPosition(curX, curY, newX, newY)
+    }
 
-    override fun next(curX: Double, curY: Double, newX: Double, newY: Double): Euclidean2DPosition {
+    private fun farthestValidPosition(curX: Double, curY: Double, newX: Double, newY: Double): Euclidean2DPosition {
         val obstacles = query(curX, curY, newX, newY, TOLERANCE_MULTIPLIER).toMutableList()
         if (obstacles.isEmpty()) return Euclidean2DPosition(newX, newY)
 
@@ -91,7 +91,10 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
             fyCache = fy
             obstacles.iterator().run {
                 while (hasNext()) {
-                    val shortest = next().next(Euclidean2DPosition(curX, curY), Euclidean2DPosition(fx, fy))
+                    val shortest = next().farthestValidVectorFromTo(
+                        Euclidean2DPosition(curX, curY),
+                        Euclidean2DPosition(fx, fy),
+                    )
                     val (sfx, sfy) = shortest
                     if (sfx != fx || sfy != fy) {
                         fx = sfx
@@ -128,31 +131,15 @@ open class Continuous2DObstacles<T>(incarnation: Incarnation<T, Euclidean2DPosit
     }
 
     override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>): Boolean {
+        checkNoNodes("remove")
         val initialSize = rtree.size()
         rtree = rtree.delete(obstacle, toGeometry(obstacle))
         return rtree.size() == initialSize - 1
     }
 
-    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        super<AbstractLimitedContinuous2D>.moveNodeToPosition(node, newPosition)
-
-    @Serial
-    private fun writeObject(o: ObjectOutputStream) {
-        o.defaultWriteObject()
-        o.writeObject(obstacles)
-    }
-
-    @Serial
-    private fun readObject(o: ObjectInputStream) {
-        o.defaultReadObject()
-        rtree = RTree.create()
-        @Suppress("UNCHECKED_CAST")
-        val obstacles = o.readObject() as List<RectObstacle2D<Euclidean2DPosition>>
-        rtree = RTree.create<RectObstacle2D<Euclidean2DPosition>, Rectangle>().add(
-            obstacles.parallelStream()
-                .map { EntryDefault(it, toGeometry(it)) }
-                .toList(),
-        )
+    // Obstacles are fixed once nodes exist: the links and the positions computed for them assume so.
+    private fun checkNoNodes(operation: String) = check(nodeCount.current == 0) {
+        "Cannot $operation obstacles in an environment holding nodes: obstacles must be set before deploying nodes"
     }
 
     private fun toGeometry(o: RectObstacle2D<Euclidean2DPosition>): Rectangle =

@@ -9,25 +9,11 @@
 
 package it.unibo.alchemist.boundary.graphql.schema.util
 
-import it.unibo.alchemist.model.Concentration
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 
 /**
- * Utility function that converts a [Concentration] content of type [T] to a Json String.
- * If the serialization fails (i.e. the content does not provide a [serializer]), the string
- * representation of the content is returned.
- *
- * @param concentration The concentration containing the content to convert.
- * @return The Json String representation of the concentration content or its string representation.
- */
-fun <T : Any> encodeConcentrationContentToString(concentration: Concentration<T>): String {
-    val content: T = concentration.content
-    return encodeConcentrationContentToString(content)
-}
-
-/**
- * Utility function that converts a [Concentration] content of type [T] to a Json String.
+ * Utility function that converts a concentration content of type [T] to a Json String.
  * If the serialization fails (i.e. the content does not provide a [serializer]), the string
  * representation of the content is returned.
  *

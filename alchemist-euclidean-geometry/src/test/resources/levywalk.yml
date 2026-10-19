@@ -6,12 +6,12 @@ environment:
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 200]
-    properties:
+    capabilities:
       - type: CircularArea
         parameters: [1]
     programs:
       - time-distribution: 1
-        type: ChemicalReaction
+        type: GenericReaction
         actions:
           - type: LevyWalk
             parameters: [1.4]

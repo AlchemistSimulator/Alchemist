@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.maps;
 
-import it.unibo.alchemist.model.BenchmarkableEnvironment;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Route;
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.RoutingServiceOptions;
  * @param <S> {@link RoutingService} type
  */
 public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
-        extends BenchmarkableEnvironment<T, GeoPosition> {
+    extends Environment<T, GeoPosition> {
 
     /**
      * This method relies on the map data and computes a route towards some

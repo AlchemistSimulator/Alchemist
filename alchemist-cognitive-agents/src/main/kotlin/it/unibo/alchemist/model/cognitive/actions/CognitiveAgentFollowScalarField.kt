@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,21 +10,18 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.EnvironmentWithObstacles
-import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitive.PedestrianProperty
+import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector2D
-import it.unibo.alchemist.model.physics.PhysicsEnvironment
 
 /**
  * Moves the node where the given scalar field is higher.
  */
 class CognitiveAgentFollowScalarField<T, P, A>(
     environment: Environment<T, P>,
-    reaction: Reaction<T>,
+    reaction: NodeReaction<T>,
     pedestrian: PedestrianProperty<T>,
     /**
      * The position of either maximum or minimum value of the scalar field, can be null if such a position doesn't
@@ -47,35 +44,18 @@ class CognitiveAgentFollowScalarField<T, P, A>(
      * Otherwise, it doesn't move at all.
      */
     override fun nextPosition(): P = currentPosition.let { currentPosition ->
-        val centerProjectedPositions =
-            center?.let {
-                val direction = (center - currentPosition).coerceAtMost(maxWalk)
-                listOf(currentPosition + direction, currentPosition - direction)
-            }
+        val centerProjectedPositions = center?.let {
+            val direction = (center - currentPosition).coerceAtMost(maxWalk)
+            listOf(currentPosition + direction, currentPosition - direction)
+        }
         (currentPosition.surrounding(maxWalk) + centerProjectedPositions.orEmpty())
             .asSequence()
-            .enforceObstacles(currentPosition)
-            .enforceOthers()
-                /*
-                 * Next relative position.
-                 */
+            .map { environment.farthestReachablePosition(targetNode, it) }
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
-        CognitiveAgentFollowScalarField(environment, reaction, node.pedestrianProperty, center, valueIn)
-
-    private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> = when (environment) {
-        is EnvironmentWithObstacles<*, T, P> ->
-            map { (environment as EnvironmentWithObstacles<*, T, P>).next(currentPosition, it) }
-        else -> this
-    }
-
-    private fun Sequence<P>.enforceOthers(): Sequence<P> = when (environment) {
-        is PhysicsEnvironment<T, P, *, *> ->
-            map { (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(node, it) }
-        else -> this
-    }
+    override fun cloneOnNodeReaction(newReaction: NodeReaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
+        CognitiveAgentFollowScalarField(environment, newReaction, newReaction.host.pedestrianProperty, center, valueIn)
 
     private fun Sequence<P>.maxOr(position: P): P = maxByOrNull { valueIn(it) }
         ?.takeIf { valueIn(it) > valueIn(position) }

@@ -9,13 +9,6 @@
 
 import Libs.alchemist
 
-/*
- * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
- *
- * This file is part of Alchemist) and is distributed under the terms of the
- * GNU General Public License) with a linking exception)
- * as described in the file LICENSE in the Alchemist distribution"s top directory.
- */
 plugins {
     `java-library`
     scala
@@ -44,6 +37,23 @@ dependencies {
     testImplementation(libs.bundles.scalatest)
 }
 
+/*
+ * Scala sources are formatted by Scalafmt through Spotless, with the version and rules of the root .scalafmt.conf.
+ */
+val scalafmtConfiguration = rootProject.file(".scalafmt.conf")
+val scalafmtVersion = scalafmtConfiguration.readLines()
+    .map { it.trim() }
+    .single { it.startsWith("version") }
+    .substringAfter("=")
+    .trim()
+
+spotless {
+    scala {
+        target("src/**/*.scala")
+        scalafmt(scalafmtVersion).configFile(scalafmtConfiguration)
+    }
+}
+
 publishing.publications {
     withType<MavenPublication> {
         pom {
@@ -61,14 +71,6 @@ publishing.publications {
                 }
             }
         }
-    }
-}
-
-spotless {
-    scala {
-        val scalafmtConfig = rootProject.file(".scalafmt.conf")
-        val scalafmtVersion = scalafmtConfig.readLines().first { it.startsWith("version") }.substringAfter("=").trim()
-        scalafmt(scalafmtVersion).configFile(scalafmtConfig)
     }
 }
 

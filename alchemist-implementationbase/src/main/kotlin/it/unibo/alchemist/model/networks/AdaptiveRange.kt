@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -107,52 +106,69 @@ constructor(
     protected open fun observeRemovalInputs(node: Node<T>): Observable<*> = observe(Unit)
 
     /*
-     * Steps the range of the center, in the direction that brings its neighbor count towards the desired one, until
-     * the count is within tolerance or the range hits its bounds. A step overshooting the tolerance, from too few
-     * neighbors to too many or vice versa, ends the search: of the two ranges around it, the one whose neighbor count
-     * is closest to the desired one is kept, the larger one if both are equally close. The range is then published:
-     * changing it updates the neighborhoods depending on it, which may adjust further ranges.
+     * Steps the range of the center, in the direction that brings its neighbor count towards the tolerated ones,
+     * until the count is tolerated, it overshoots the tolerance, from too few neighbors to too many or vice versa,
+     * or the range hits its bounds. Of the last two ranges, the one whose neighbor count is closest to the tolerated
+     * ones is kept, the larger one if both are equally close. The range is published only if it changed: changing it
+     * updates the neighborhoods depending on it, which may adjust further ranges.
      */
-    private fun converge(center: Node<T>, neighborCount: Int) {
-        if (!withinTolerance(neighborCount)) {
-            val initial = rangeOf(center)
-            val candidates = environment.nodesAround(center, maxRange)
-            val growing = neighborCount < tolerated.first
+    private fun converge(center: Node<T>, currentNeighborCount: Int) {
+        if (currentNeighborCount !in tolerated) {
+            val growing = currentNeighborCount < tolerated.first
 
-            // One step of the convergence, from a range linking count neighbors.
-            tailrec fun stepFrom(range: Double, count: Int): Double {
-                val next = if (growing) min(range + adjustment, maxRange) else max(range - adjustment, minRange)
-                return when {
-                    withinTolerance(count) || next == range -> range
-                    else -> {
-                        val nextCount = candidates.count { linkedWithin(center, it, next) }
-                        val overshoot = if (growing) nextCount > tolerated.last else nextCount < tolerated.first
-                        val nextIsCloser = distanceFromTarget(nextCount) < distanceFromTarget(count) ||
-                            distanceFromTarget(nextCount) == distanceFromTarget(count) && next > range
-                        when {
-                            !overshoot -> stepFrom(next, nextCount)
-                            nextIsCloser -> next
-                            else -> range
-                        }
+            // Whether the count still requires moving the range in the same direction.
+            fun Int.needsAdjustment() = if (growing) this < tolerated.first else this > tolerated.last
+            val initialRange = center.currentRange
+            /*
+             * The candidate neighbors with their distance, queried lazily. Shrinking ranges query once, at their
+             * largest step; growing ranges query again whenever a step exceeds the queried range, doubling it up to
+             * the maximum range, so that the queries cost at most a constant factor more than querying the final range.
+             */
+            var queriedRange = initialRange
+            var candidates: List<Pair<Node<T>, Double>>? = null
+            fun neighborsWithin(range: Double): Int {
+                val known = candidates?.takeIf { range <= queriedRange }
+                    ?: run {
+                        queriedRange = if (growing) max(range, min(queriedRange * 2, maxRange)) else range
+                        environment.nodesAround(center, queriedRange)
+                            .map { it to environment.distanceBetween(center, it) }
+                            .also { candidates = it }
                     }
+                return known.count { (node, distance) ->
+                    distance <= range && !conditionForRemoval(environment, center, node, range, node.currentRange)
                 }
             }
-            val converged = stepFrom(initial, neighborCount)
-            if (converged != initial) {
+            var lastRange = initialRange
+            var lastNeighborCount = currentNeighborCount
+            var nextRange = initialRange
+            var nextNeighborCount = currentNeighborCount
+            while (nextNeighborCount.needsAdjustment() && if (growing) nextRange < maxRange else nextRange > minRange) {
+                lastRange = nextRange
+                lastNeighborCount = nextNeighborCount
+                nextRange = (nextRange + if (growing) adjustment else -adjustment).coerceIn(minRange, maxRange)
+                nextNeighborCount = neighborsWithin(nextRange)
+            }
+            val lastDistance = lastNeighborCount.distanceFromTolerated()
+            val nextDistance = nextNeighborCount.distanceFromTolerated()
+            val converged = when {
+                lastDistance == nextDistance -> max(lastRange, nextRange)
+                lastDistance < nextDistance -> lastRange
+                else -> nextRange
+            }
+            if (converged != initialRange) {
                 ranges[center.id] = converged
             }
         }
     }
 
-    private fun distanceFromTarget(neighborCount: Int): Int = abs(neighborCount - targetNeighborCount)
+    // How far the count is from the tolerated neighbor counts.
+    private fun Int.distanceFromTolerated(): Int = when {
+        this < tolerated.first -> tolerated.first - this
+        this > tolerated.last -> this - tolerated.last
+        else -> 0
+    }
 
-    private fun linkedWithin(center: Node<T>, neighbor: Node<T>, centerRange: Double): Boolean =
-        environment.distanceBetween(center, neighbor) <= centerRange &&
-            !conditionForRemoval(environment, center, neighbor, centerRange, rangeOf(neighbor))
-
-    private fun rangeOf(node: Node<T>): Double = ranges.current[node.id] ?: radius
-
-    private fun withinTolerance(neighborCount: Int): Boolean = neighborCount in tolerated
+    private val Node<T>.currentRange: Double get() = ranges.current[id] ?: radius
 
     /*
      * The neighborhood of center, whose range converges once each change of the neighborhood has been delivered to its
@@ -167,7 +183,8 @@ constructor(
         override fun startObservingSources() {
             observeSource(base) { neighborhood ->
                 updateAndNotify(neighborhood)
-                converge(center, neighborhood.neighbors.size)
+                // Delivering it may have adjusted ranges already: the latest neighborhood is the one to converge on.
+                converge(center, base.current.neighbors.size)
             }
             converge(center, base.current.neighbors.size)
         }

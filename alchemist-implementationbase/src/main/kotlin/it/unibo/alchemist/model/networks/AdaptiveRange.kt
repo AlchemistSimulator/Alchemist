@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
 import kotlin.math.max
@@ -50,7 +51,7 @@ constructor(
     private val adjustment: Double = DEFAULT_ADJUSTMENT,
 ) : ObservingRangeBasedNetworkModel<T, P, AdaptiveRange.LinkState<P>>(
     environment,
-    // The candidates are the nodes within the maximum range, which no range ever exceeds.
+    // No range ever exceeds the maximum one.
     maxRange,
 ) {
 
@@ -94,6 +95,10 @@ constructor(
         neighborInput: LinkState<P>,
     ): Boolean = centerInput.position.distanceTo(neighborInput.position) <= centerInput.range &&
         !conditionForRemoval(environment, center, neighbor, centerInput.range, neighborInput.range)
+
+    // Links require neighbors within the range of the center: the query follows it, rather than the maximum range.
+    final override fun observeCandidates(center: Node<T>): Observable<out Set<Node<T>>> =
+        center.range.switchMap { environment.observeNodesAround(center, it) }
 
     // Links depend on the positions and ranges of both nodes, and on what the removal condition observes.
     final override fun observeInput(node: Node<T>): Observable<LinkState<P>> = environment.positionOf(node)

@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.sapere.reactions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
@@ -188,16 +189,51 @@ class SAPERENodeReactionSchedulingTest {
         verify(exactly = 6) { randomGenerator.nextDouble() }
         environment.removeNode(neighbor)
         verify(exactly = 7) { randomGenerator.nextDouble() }
+    }
+
+    /*
+     * Replacing a removed closest node may change the neighborhood more than once within the removal; the engine
+     * reschedules the affected reactions once the whole removal is complete.
+     */
+    @Test
+    fun `replacing the closest neighbor of a gradient resamples it once`() {
+        var samples = 0
+        val randomGenerator = mockk<RandomGenerator>(relaxed = true)
+        every { randomGenerator.nextDouble() } answers {
+            samples++
+            0.5
+        }
+        val environment = Continuous2DEnvironment(SAPEREIncarnation<Euclidean2DPosition>())
         with(environment) { networkModel = closestN(1) }
+        val node = LsaNode(environment)
         val closest = LsaNode(environment)
         val replacement = LsaNode(environment)
-        assertTrue(environment.addNode(closest, Euclidean2DPosition(0.5, 0.0)))
-        verify(exactly = 8) { randomGenerator.nextDouble() }
-        assertTrue(environment.addNode(replacement, Euclidean2DPosition(0.75, 0.0)))
-        verify(exactly = 8) { randomGenerator.nextDouble() }
-        environment.removeNode(closest)
-        assertTrue(environment.neighborhoodOf(node).current.neighbors.contains(replacement))
-        verify(exactly = 9) { randomGenerator.nextDouble() }
+        listOf(node to 0.0, closest to 0.5, replacement to 0.75).forEach { (it, x) ->
+            assertTrue(environment.addNode(it, Euclidean2DPosition(x, 0.0)))
+        }
+        node.addReaction(
+            SAPEREGradient(
+                environment,
+                node,
+                LsaMolecule("source, Value"),
+                LsaMolecule("gradient, Distance, #O"),
+                1,
+                "#D",
+                null,
+                100.0,
+                SAPEREExponentialTime("2", randomGenerator),
+            ),
+        )
+        val engine = Engine(environment)
+        var samplesBeforeRemoval = -1
+        engine.schedule { samplesBeforeRemoval = samples }
+        engine.schedule { environment.removeNode(closest) }
+        engine.terminate()
+        // The commands run before any step: no reaction fires.
+        engine.run()
+        engine.error.onSome { throw it }
+        assertEquals(listOf(replacement), environment.neighborhoodOf(node).current.neighbors.toList())
+        assertEquals(1, samples - samplesBeforeRemoval)
     }
 
     @Test

@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
-import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import kotlin.math.abs
 import kotlin.math.max

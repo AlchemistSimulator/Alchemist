@@ -91,7 +91,7 @@ class ReactiveScalingTest {
     @Test
     fun `a local concentration change reschedules the same reactions whatever the population`() {
         val change: EuclideanEnvironment<Any, Euclidean2DPosition>.(Node<Any>) -> List<Int> = { middle ->
-            rescheduledBy(middle) { middle.set(MOLECULE, 1.0) }
+            rescheduledBy(middle) { middle[MOLECULE] = 1.0 }
         }
         val small = onLine(SMALL, change)
         assertEquals(listOf(-1, 1), small)

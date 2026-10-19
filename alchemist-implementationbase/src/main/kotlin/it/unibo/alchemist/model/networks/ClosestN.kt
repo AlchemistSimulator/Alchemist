@@ -45,12 +45,6 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
     // For each node, the tracked nodes counting it among their closest ones.
     private val counting = HashMap<Node<T>, MutableSet<Node<T>>>()
 
-    /*
-     * The nodes whose neighborhoods stopped being observed, as the environment does when removing them: they are no
-     * longer candidates, even while still part of the environment, until observed again.
-     */
-    private val departed = HashSet<Node<T>>()
-
     private val trackers = LinkedHashMap<Node<T>, Tracker>()
 
     init {
@@ -90,7 +84,7 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
             .take(nodeCount)
     }
 
-    private fun isCandidate(node: Node<T>): Boolean = node !in departed && nodeIsEnabled(node)
+    private fun isCandidate(node: Node<T>): Boolean = nodeIsEnabled(node)
 
     private fun counted(node: Node<T>): Neighborhood<T> = Neighborhood(
         node,
@@ -123,16 +117,8 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
         override fun computeFresh(): Neighborhood<T> = counted(center)
 
         override fun startMonitoring() = Tracker(center, this).let { tracker ->
-            val returning = departed.remove(center)
             trackers[center] = tracker
             tracker.refresh()
-            /*
-             * A node observed again, e.g., by a replacing model reusing this one, is a candidate again: nothing else
-             * notifies the trackers that could count it among their closest.
-             */
-            if (returning) {
-                trackers.values.filter { it !== tracker && it.covers(center) }.forEach { it.refresh() }
-            }
         }
 
         override fun stopMonitoring() {
@@ -152,10 +138,6 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
 
         private var trigger: Disposable? = null
 
-        // Whether other is within the area where the closest nodes of this node are searched.
-        fun covers(other: Node<T>): Boolean =
-            radius.let { it == null || environment.distanceBetween(node, other) <= it }
-
         fun refresh() {
             val updated = closestOf(node)
             // The trigger must cover every node closer than the farthest of the closest ones.
@@ -173,19 +155,30 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
             }
             val previous = closest
             closest = updated
-            val changed = (previous - updated.toSet()).onEach { counting[it]?.remove(node) } +
+            val changed = (previous - updated.toSet()).onEach { stopCounting(it) } +
                 (updated - previous.toSet()).onEach { counting.getOrPut(it) { LinkedHashSet() }.add(node) }
             neighborhood.publish()
             changed.forEach(::publish)
         }
 
+        /*
+         * The nodes this one counted among its closest are no longer linked to it. The nodes counting this one among
+         * their closest replace it once it leaves the environment, as their triggers cover it.
+         */
         fun release() {
             trigger?.dispose()
-            departed += node
-            closest.forEach { counting[it]?.remove(node) }
-            // The nodes counting this one among their closest replace it before anybody else publishes.
-            counting[node].orEmpty().toList().forEach { trackers[it]?.refresh() }
+            closest.forEach { stopCounting(it) }
             closest.forEach(::publish)
+        }
+
+        // This node no longer counts closest among its closest ones; empty entries are dropped, not to retain nodes.
+        private fun stopCounting(closest: Node<T>) {
+            counting[closest]?.let { counters ->
+                counters -= node
+                if (counters.isEmpty()) {
+                    counting -= closest
+                }
+            }
         }
 
         /*

@@ -26,6 +26,13 @@ class ObservableRangeQueryTest {
         Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow())
 
     @Test
+    fun `nodes exactly at the queried range along an axis are within it`() {
+        val center = nodeAt(-2.5, 0)
+        val atRange = nodeAt(1.5, 0)
+        assertEquals(listOf(atRange), environment.nodesAround(center, 4.0))
+    }
+
+    @Test
     fun `a node leaving a range for a far position is removed from it`() {
         val center = nodeAt(0, 0)
         val member = nodeAt(0.5, 0)

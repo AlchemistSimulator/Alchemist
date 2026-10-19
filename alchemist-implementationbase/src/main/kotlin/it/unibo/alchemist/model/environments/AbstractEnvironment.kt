@@ -33,6 +33,7 @@ import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableSet
 import java.util.TreeMap
 import java.util.function.Consumer
+import kotlin.math.nextUp
 import org.danilopianini.util.SpatialIndex
 
 /**
@@ -373,8 +374,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private fun queryNodesInRange(center: P, range: Double): List<Node<T>> {
         require(range > 0) { "Range query must be positive (provided: $range)" }
+        // The spatial index excludes the borders of the box: it is enlarged so that nodes exactly at range are found.
         return spatialIndex
-            .query(*center.boundingBox(range).map { it.coordinates }.toTypedArray())
+            .query(*center.boundingBox(range.nextUp()).map { it.coordinates }.toTypedArray())
             .filter { it.currentPosition.distanceTo(center) <= range }
             .distinct()
     }

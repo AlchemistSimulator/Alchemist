@@ -72,7 +72,6 @@ public final class OSMEnvironment<T>
     private final boolean onlyStreet;
     @Nullable private GraphHopperRoutingService navigator;
     @Nullable private LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
-    private boolean benchmarking;
     private final int approximation;
     private final String mapFile;
 
@@ -210,11 +209,7 @@ public final class OSMEnvironment<T>
         final GraphHopperOptions options
     ) {
         if (routecache == null) {
-            final Caffeine<Object, Object> builder = Caffeine.newBuilder();
-            if (benchmarking) {
-                builder.recordStats();
-            }
-            routecache = builder
+            routecache = Caffeine.newBuilder()
                 .expireAfterAccess(10, TimeUnit.SECONDS)
                 .build(key -> getNavigator().route(Objects.requireNonNull(key).start, key.end, key.options));
         }

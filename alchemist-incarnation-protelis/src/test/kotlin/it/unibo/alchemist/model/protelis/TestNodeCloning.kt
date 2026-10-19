@@ -65,7 +65,7 @@ internal class TestNodeCloning<P : Position<P>> {
                     if (step == ENABLE_STEP) {
                         simulation.schedule { environment.nodeWithId(3)[ENABLEDMOL] = true }
                     }
-                    if (step > ENABLE_CHECKS ) {
+                    if (step > ENABLE_CHECKS) {
                         expectations.forEach { (node, expected) ->
                             assertEquals(expected, node[DATAMOL].getOrNull())
                         }

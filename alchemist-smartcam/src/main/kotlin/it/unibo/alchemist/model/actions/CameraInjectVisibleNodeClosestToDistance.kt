@@ -54,7 +54,7 @@ class CameraInjectVisibleNodeClosestToDistance(
                 )
                 nodes.map { it.position }
                     .reduce { n1, n2 -> minOf(n1, n2, compareBy { it.distanceTo(myPosition) }) }
-                    .also { targetNode.set(targetMolecule, it) }
+                    .also { targetNode[targetMolecule] = it }
             }
         }
     }

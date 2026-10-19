@@ -9,14 +9,13 @@
 
 package it.unibo.alchemist.model.networks
 
-import arrow.core.getOrElse
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.observables.AbstractObservable
-import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
 import kotlin.math.max
 import kotlin.math.min
@@ -55,7 +54,12 @@ constructor(
     maxRange,
 ) {
 
-    private val ranges = ObservableMutableMap<Int, Double>()
+    /*
+     * The range of each node by id, kept as long as the node exists, whether or not its neighborhood is observed.
+     * The ranges of the nodes no longer in the environment are dropped when a new range would make them twice as many
+     * as the nodes in it, so that dropping them costs a constant amortized time per range.
+     */
+    private val ranges = mutableMapOf<Int, MutableObservable<Double>>()
 
     private val targetNeighborCount = max(desiredNeighbors, 0)
 
@@ -93,7 +97,7 @@ constructor(
 
     // Links depend on the positions and ranges of both nodes, and on what the removal condition observes.
     final override fun observeInput(node: Node<T>): Observable<LinkState<P>> = environment.positionOf(node)
-        .mergeWith(ranges[node.id]) { position, range -> position to range.getOrElse { radius } }
+        .mergeWith(node.range) { position, range -> position to range }
         .mergeWith(observeRemovalInputs(node)) { (position, range), removalInput ->
             LinkState(position, range, removalInput)
         }
@@ -156,7 +160,7 @@ constructor(
                 else -> nextRange
             }
             if (converged != initialRange) {
-                ranges[center.id] = converged
+                center.range.current = converged
             }
         }
     }
@@ -168,7 +172,17 @@ constructor(
         else -> 0
     }
 
-    private val Node<T>.currentRange: Double get() = ranges.current[id] ?: radius
+    private val Node<T>.currentRange: Double get() = range.current
+
+    private val Node<T>.range: MutableObservable<Double> get() = ranges.getOrPut(id) {
+        // if there are twice more nodes in tracking than there are in the environment, cleanup the mess
+        val currentNodes = environment.nodes.current
+        if (ranges.size >= 2 * currentNodes.size) {
+            val present = currentNodes.mapTo(HashSet(currentNodes.size)) { it.id }
+            ranges.keys.retainAll(present)
+        }
+        observe(radius)
+    }
 
     /*
      * The neighborhood of center, whose range converges once each change of the neighborhood has been delivered to its
@@ -187,14 +201,6 @@ constructor(
                 converge(center, base.current.neighbors.size)
             }
             converge(center, base.current.neighbors.size)
-        }
-
-        override fun stopObservingSources() {
-            /*
-             * Nodes no longer observed, e.g., removed ones, do not keep their range. Another observed neighborhood
-             * of the same node, if any, observes the range being forgotten, and converges again.
-             */
-            ranges.remove(center.id)
         }
 
         override fun toString(): String = "ConvergingNeighborhood($current)[from: $base]"

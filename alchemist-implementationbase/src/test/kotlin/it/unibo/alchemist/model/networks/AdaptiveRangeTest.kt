@@ -47,6 +47,14 @@ class AdaptiveRangeTest {
     }
 
     @Test
+    fun `ranges survive their neighborhoods being no longer observed`() {
+        val first = nodeAt(0, 0)
+        val second = nodeAt(3, 0)
+        listOf(first, second).map { model.neighborhoodOf(it).onChange { } }.forEach { it.dispose() }
+        assertEquals(listOf(second), model.neighborhoodOf(first).current.neighbors.toList())
+    }
+
+    @Test
     fun `static nodes out of the initial range adapt their ranges until they are linked`() {
         environment.networkModel = model
         val first = nodeAt(0, 0)

@@ -33,11 +33,8 @@ internal class TestNodeCloning<P : Position<P>> {
     /** Tests that gradient values are consistent and stable. */
     @Test
     fun test() {
-        val simulation =
-            LoadAlchemist
-                .from(
-                    ResourceLoader.getResource("gradient.yml"),
-                ).getWith<Any, P>(emptyMap<String, Nothing>())
+        val simulation = LoadAlchemist.from(ResourceLoader.getResource("gradient.yml"))
+            .getWith<Any, P>(emptyMap<String, Nothing>())
         val environment = simulation.environment
         simulation.schedule {
             environment.nodeWithId(0).apply {
@@ -49,8 +46,8 @@ internal class TestNodeCloning<P : Position<P>> {
             environment.makeNode(-33.585994720458987, -1.3899999856948853, true, true)
             environment.makeNode(-26.3700008392334, -9.899999618530274, false, false)
         }
-        val nid: (Int) -> Node<Any> = { environment.nodeWithId(it) }
-        val distance: (Int, Int) -> Double = { a, b -> environment.distanceBetween(nid(a), nid(b)) }
+        val nodeWithId: (Int) -> Node<Any> = { environment.nodeWithId(it) }
+        val distance: (Int, Int) -> Double = { a, b -> environment.distanceBetween(nodeWithId(a), nodeWithId(b)) }
         simulation.addOutputMonitor(
             object : OutputMonitor<Any, P> {
                 override fun stepDone(
@@ -59,21 +56,16 @@ internal class TestNodeCloning<P : Position<P>> {
                     time: Time,
                     step: Long,
                 ) {
-                    val expectations =
-                        mapOf(
-                            nid(2) to 0.0,
-                            nid(1) to distance(2, 1),
-                            nid(0) to distance(2, 1) + distance(1, 0),
-                            nid(3) to distance(2, 1) + distance(1, 0) + distance(0, 3),
-                        )
-                    if (step ==
-                        ENABLE_STEP
-                    ) {
-                        simulation.schedule { environment.nodeWithId(3).set(ENABLEDMOL, true) }
+                    val expectations = mapOf(
+                        nodeWithId(2) to 0.0,
+                        nodeWithId(1) to distance(2, 1),
+                        nodeWithId(0) to distance(2, 1) + distance(1, 0),
+                        nodeWithId(3) to distance(2, 1) + distance(1, 0) + distance(0, 3),
+                    )
+                    if (step == ENABLE_STEP) {
+                        simulation.schedule { environment.nodeWithId(3)[ENABLEDMOL] = true }
                     }
-                    if (step >
-                        ENABLE_CHECKS
-                    ) {
+                    if (step > ENABLE_CHECKS ) {
                         expectations.forEach { (node, expected) ->
                             assertEquals(expected, node[DATAMOL].getOrNull())
                         }

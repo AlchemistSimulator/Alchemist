@@ -98,7 +98,7 @@ ksp = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp
 kotlinx-atomicfu-runtime = { module = "org.jetbrains.kotlin:kotlinx-atomicfu-runtime", version.ref = "kotlin" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections" }
 kotlinx-collections-immutable-jvm = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm", version.ref = "kotlinx-collections" }
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }

@@ -197,8 +197,8 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     /**
      * Observes the value of the [Layer] associated with [molecule] at the position of [node].
      * The observable emits when [node] moves to a position where the value differs, and when the layer changes the
-     * value at the current position of [node]. Its value is `null` while no layer is associated with [molecule]; the
-     * layer is resolved when the value is computed, so observables created during setup see layers associated later.
+     * value at the current position of [node]. Its value is `null` while no layer is associated with [molecule], and it
+     * emits when one is: observables created during setup follow layers associated later.
      */
     fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T?>
 

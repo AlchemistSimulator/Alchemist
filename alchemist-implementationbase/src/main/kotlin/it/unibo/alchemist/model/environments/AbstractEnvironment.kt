@@ -67,8 +67,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      */
     override val sizeInDistanceUnits: DoubleArray get() = size
 
-    final override var layers: Map<Molecule, Layer<T, P>> = LinkedHashMap()
-        private set
+    final override val layers: Map<Molecule, Layer<T, P>> get() = layerAssociations.current
 
     /*
      * Replacing the model stops following the neighborhoods it published,
@@ -112,6 +111,9 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
 
     private val environmentReactions = ObservableMutableList<Reaction<T>>()
 
+    // The layers by molecule, observable so that observers of a layer value follow layers associated later.
+    private val layerAssociations = ObservableMutableMap<Molecule, Layer<T, P>>()
+
     /*
      * The authoritative model state is the ordered node list, the position of every node, and the neighborhood of
      * every node. The network model observes the state it depends on and publishes every change of a neighborhood,
@@ -142,7 +144,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             "Cannot associate a layer with $molecule: layers must be added before the environment joins a simulation."
         }
         check(molecule !in layers.keys) { "A layer for $molecule was already associated to this environment." }
-        layers += molecule to layer
+        layerAssociations[molecule] = layer
     }
 
     override fun addNode(node: Node<T>, position: P): Boolean = when {
@@ -220,13 +222,15 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }.center
 
     /*
-     * The layer is looked up whenever the position changes or the value is recomputed,
-     * not when the observable is built:
+     * The association of the layer is observed too:
      * conditions may be created during setup before their layer is associated.
      */
     override fun observeLayerValue(molecule: Molecule, node: Node<T>): Observable<T?> =
-        node.position.switchMap { position ->
-            layerFor(molecule)?.valueAt(position)?.map { it } ?: observe(null)
+        layerAssociations[molecule].switchMap { association ->
+            association.fold(
+                ifEmpty = { observe(null) },
+                ifSome = { layer -> node.position.switchMap { position -> layer.valueAt(position).map { it } } },
+            )
         }
 
     override fun observeNodesAround(node: Node<T>, range: Double): ObservableSet<Node<T>> {

@@ -30,6 +30,17 @@ class ObservableLayerTest {
         Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow())
 
     @Test
+    fun `an observed layer value follows a layer associated afterwards`() {
+        val environment = environment()
+        val node = GenericNode(environment)
+        environment.addNode(node, environment.makePosition(1, 1))
+        val received = mutableListOf<Any?>()
+        environment.observeLayerValue(LAYER, node).onChange { received += it }
+        environment.addLayer(LAYER, StepLayer(0.0, 0.0, HIGH, LOW))
+        assertEquals(listOf<Any?>(null, HIGH), received)
+    }
+
+    @Test
     fun `a time-invariant layer value follows the observed node across a spatial gradient`() {
         val environment = environment()
         environment.addLayer(LAYER, StepLayer(0.0, 0.0, HIGH, LOW))

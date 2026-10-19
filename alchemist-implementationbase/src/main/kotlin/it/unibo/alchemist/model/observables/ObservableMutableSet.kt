@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.observables
 
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableSet
 
@@ -19,12 +20,10 @@ import it.unibo.alchemist.model.observation.ObservableSet
  *
  * @param T The type of elements maintained by this set.
  */
-class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSet<T> {
+class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) :
+    AbstractObservable<Set<T>>(emitOnDistinct = false),
+    ObservableSet<T> {
     override val current: Set<T> get() = backing.current.keys
-
-    override val observers: List<Any> get() = observingCallbacks.keys.toList()
-
-    override val observingCallbacks: MutableMap<Any, List<(Set<T>) -> Unit>> = mutableMapOf()
 
     // Out of order: size is initialized from it.
     private val backing = ObservableMutableMap<T, Boolean>(initial.associateWith { true })
@@ -53,15 +52,12 @@ class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSe
 
     override fun containsItem(item: T): Observable<Boolean> = backing[item].map { opt -> opt.isSome() }
 
+    override fun computeFresh(): Set<T> = backing.current.keys
+
     override fun dispose() {
+        super.dispose()
         backing.dispose()
         size.dispose()
-        observingCallbacks.clear()
-    }
-
-    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<T>) -> Unit) {
-        observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        backing.onChange(this to registrant, invokeOnRegistration) { callback(it.keys) }
     }
 
     /**
@@ -74,9 +70,8 @@ class ObservableMutableSet<T>(initial: Iterable<T> = emptyList()) : ObservableSe
      */
     fun remove(item: T): Boolean = backing.remove(item) != null
 
-    override fun stopWatching(registrant: Any) {
-        backing.stopWatching(this to registrant)
-        observingCallbacks.remove(registrant)
+    override fun startObservingSources() {
+        observeSource(backing) { updateAndNotify(it.keys) }
     }
 
     /**

@@ -14,10 +14,10 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observables.util.Observables.combineLatestCollection
-import it.unibo.alchemist.model.observation.AbstractObservable
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import kotlin.math.PI
@@ -116,12 +116,12 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
 
         override fun computeFresh(): Neighborhood<T> = counted(center)
 
-        override fun startMonitoring() = Tracker(center, this).let { tracker ->
+        override fun startObservingSources() = Tracker(center, this).let { tracker ->
             trackers[center] = tracker
             tracker.refresh()
         }
 
-        override fun stopMonitoring() {
+        override fun stopObservingSources() {
             trackers.remove(center)?.release()
         }
     }
@@ -151,7 +151,7 @@ open class ClosestN<T, P : Position<P>> @JvmOverloads constructor(
             if (rearm) {
                 trigger?.dispose()
                 radius = required
-                trigger = observeInputs(required).subscribe(invokeOnSubscription = false) { refresh() }
+                trigger = observeInputs(required).onChange(notifyOnRegistration = false) { refresh() }
             }
             val previous = closest
             closest = updated

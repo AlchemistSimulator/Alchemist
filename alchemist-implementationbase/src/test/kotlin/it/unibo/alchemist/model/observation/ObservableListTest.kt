@@ -48,7 +48,7 @@ class ObservableListTest : FunSpec({
         test("add should notify observers") {
             val list = ObservableMutableList<Int>()
             val seen = mutableListOf<List<Int>>()
-            list.onChange(this) { seen.add(it) }
+            list.onChange { seen.add(it) }
             list.add(1)
             list.add(2)
             list.add(1) // duplicates allowed
@@ -62,7 +62,7 @@ class ObservableListTest : FunSpec({
         test("add at index should insert and notify") {
             val list = ObservableMutableList(1, 3)
             val seen = mutableListOf<List<Int>>()
-            list.onChange(this) { seen.add(it) }
+            list.onChange { seen.add(it) }
             list.add(1, 2)
             seen.size shouldBe 2
             list.current shouldContainExactly listOf(1, 2, 3)
@@ -71,7 +71,7 @@ class ObservableListTest : FunSpec({
         test("addAll should append collection and notify") {
             val list = ObservableMutableList(1)
             val seen = mutableListOf<List<Int>>()
-            list.onChange(this) { seen.add(it) }
+            list.onChange { seen.add(it) }
             list.addAll(listOf(2, 3))
             seen.size shouldBe 2
             list.current shouldContainExactly listOf(1, 2, 3)
@@ -80,7 +80,7 @@ class ObservableListTest : FunSpec({
         test("list size should be observable") {
             val list = ObservableMutableList(1, 2, 3)
             var nextExpected = 3
-            list.size.onChange(this, false) { it shouldBe nextExpected }
+            list.size.onChange(false) { it shouldBe nextExpected }
             repeat(3) {
                 nextExpected++
                 list.add(it + 100)
@@ -90,7 +90,7 @@ class ObservableListTest : FunSpec({
         test("remove should notify observers only when element is present") {
             val list = ObservableMutableList("a", "b", "c")
             val seen = mutableListOf<List<String>>()
-            list.onChange(this) { seen.add(it) }
+            list.onChange { seen.add(it) }
             seen.size shouldBe 1
             seen[0] shouldContainExactly listOf("a", "b", "c")
             list.remove("b")
@@ -102,7 +102,7 @@ class ObservableListTest : FunSpec({
         test("removeAt should remove by index and notify") {
             val list = ObservableMutableList("a", "b", "c")
             val seen = mutableListOf<List<String>>()
-            list.onChange(this) { seen.add(it) }
+            list.onChange { seen.add(it) }
             list.removeAt(1)
             seen.size shouldBe 2
             seen[1] shouldContainExactly listOf("a", "c")
@@ -111,7 +111,7 @@ class ObservableListTest : FunSpec({
         test("set should replace element and notify") {
             val list = ObservableMutableList("a", "b", "c")
             val seen = mutableListOf<List<String>>()
-            list.onChange(this) { seen.add(it) }
+            list.onChange { seen.add(it) }
             list[1] = "z"
             list[1] = "z"
             seen.size shouldBe 2
@@ -127,7 +127,7 @@ class ObservableListTest : FunSpec({
         test("clear should empty the list and notify") {
             val list = ObservableMutableList(1, 2, 3)
             val seen = mutableListOf<List<Int>>()
-            list.onChange(this) { seen.add(it) }
+            list.onChange { seen.add(it) }
             list.clear()
             seen.last() shouldContainExactly emptyList()
             list.current shouldContainExactly emptyList()
@@ -147,7 +147,7 @@ class ObservableListTest : FunSpec({
                 aggregator = { it.sum() },
             )
             var currentSum = 0
-            combined.onChange(this) { currentSum = it }
+            combined.onChange { currentSum = it }
             currentSum shouldBe 3
             list.add("c")
             currentSum shouldBe 6
@@ -165,7 +165,7 @@ class ObservableListTest : FunSpec({
             )
             val flattened = list.flatMap { sources[it] ?: observe("") }
             var currentVal = ""
-            flattened.onChange(this) { currentVal = it.map { v -> v }.getOrNull() ?: "NONE" }
+            flattened.onChange { currentVal = it.map { v -> v }.getOrNull() ?: "NONE" }
             currentVal shouldBe "A"
             list.add(0, "b")
             currentVal shouldBe "B"
@@ -179,7 +179,7 @@ class ObservableListTest : FunSpec({
             val sources = listOf(observe(10), observe(20), observe(30))
             val list: ObservableMutableList<Observable<Int>> = sources.toObservableList()
             var changeCounter = 0
-            list.flattenMerge().onChange(this) { changeCounter++ }
+            list.flattenMerge().onChange { changeCounter++ }
             val baseline = changeCounter
             sources[0].update { it + 100 }
             changeCounter shouldBe baseline + 1

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.observation
 
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.ObservableMutableSet
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
@@ -27,11 +28,11 @@ class LazinessTest {
                 return 26
             }
 
-            override fun startMonitoring() = Unit
+            override fun startObservingSources() = Unit
 
-            override fun stopMonitoring() = Unit
+            override fun stopObservingSources() = Unit
         }
-        derived.onChange(this, true) { }
+        derived.onChange(true) { }
         assertEquals(1, computations)
     }
 
@@ -44,11 +45,11 @@ class LazinessTest {
                 return 26
             }
 
-            override fun startMonitoring() = Unit
+            override fun startObservingSources() = Unit
 
-            override fun stopMonitoring() = Unit
+            override fun stopObservingSources() = Unit
         }
-        derived.onChange(this, false) { }
+        derived.onChange(false) { }
         assertEquals(0, computations)
     }
 
@@ -60,7 +61,7 @@ class LazinessTest {
             collections++
             it.sum()
         }
-        combined.onChange(this, false) { }
+        combined.onChange(false) { }
         assertEquals(1, collections)
     }
 
@@ -75,7 +76,7 @@ class LazinessTest {
                 it.sum()
             },
         )
-        combined.onChange(this, false) { }
+        combined.onChange(false) { }
         assertEquals(1, aggregations)
     }
 
@@ -88,7 +89,7 @@ class LazinessTest {
             aggregator = { it.sum() },
         )
         var lastSeen: Int? = null
-        combined.onChange(this, false) { lastSeen = it }
+        combined.onChange(false) { lastSeen = it }
         inner.update { 20 }
         assertEquals(20, lastSeen)
         set.add("b")
@@ -103,7 +104,7 @@ class LazinessTest {
             transforms++
             it * 2
         }
-        mapped.onChange(this, true) { }
+        mapped.onChange(true) { }
         assertEquals(1, transforms)
     }
 
@@ -115,7 +116,7 @@ class LazinessTest {
             transforms++
             it * 2
         }
-        mapped.onChange(this, false) { }
+        mapped.onChange(false) { }
         assertEquals(1, transforms)
     }
 
@@ -124,7 +125,7 @@ class LazinessTest {
         val source = observe(1)
         val mapped = source.map { it * 2 }
         var lastSeen: Int? = null
-        mapped.onChange(this, false) { lastSeen = it }
+        mapped.onChange(false) { lastSeen = it }
         source.update { 2 }
         assertEquals(4, lastSeen)
     }
@@ -138,7 +139,7 @@ class LazinessTest {
             merges++
             x + y
         }
-        merged.onChange(this, false) { }
+        merged.onChange(false) { }
         assertEquals(1, merges)
     }
 
@@ -148,7 +149,7 @@ class LazinessTest {
         val b = observe(2)
         val merged = a.mergeWith(b) { x, y -> x + y }
         var lastSeen: Int? = null
-        merged.onChange(this, false) { lastSeen = it }
+        merged.onChange(false) { lastSeen = it }
         a.update { 3 }
         assertEquals(5, lastSeen)
         b.update { 4 }
@@ -161,13 +162,13 @@ class LazinessTest {
         val first = observe("a")
         val second = observe("b")
         val switched = source.switchMap { if (it == 1) first else second }
-        switched.onChange(this, false) { }
-        assertEquals(1, first.observers.size)
+        val subscription = switched.onChange(false) { }
+        assertEquals(1, first.observerCount)
         source.update { 2 }
-        assertEquals(0, first.observers.size)
-        assertEquals(1, second.observers.size)
-        switched.stopWatching(this)
-        assertEquals(0, second.observers.size)
+        assertEquals(0, first.observerCount)
+        assertEquals(1, second.observerCount)
+        subscription.dispose()
+        assertEquals(0, second.observerCount)
     }
 
     @Test
@@ -175,7 +176,7 @@ class LazinessTest {
         val source = observe(1)
         val switched = source.switchMap { observe(it * 10) }
         var lastSeen: Int? = null
-        switched.onChange(this, false) { lastSeen = it }
+        switched.onChange(false) { lastSeen = it }
         source.update { 2 }
         assertEquals(20, lastSeen)
     }
@@ -185,7 +186,7 @@ class LazinessTest {
         val source = observe(10)
         val switched = source.switchMap { observe(it / 10) }
         var emissions = 0
-        switched.onChange(this, false) { emissions++ }
+        switched.onChange(false) { emissions++ }
         source.update { 11 }
         assertEquals(0, emissions)
         source.update { 20 }
@@ -200,7 +201,7 @@ class LazinessTest {
             transforms++
             observe(it)
         }
-        switched.onChange(this, false) { }
+        switched.onChange(false) { }
         assertEquals(1, transforms)
     }
 }

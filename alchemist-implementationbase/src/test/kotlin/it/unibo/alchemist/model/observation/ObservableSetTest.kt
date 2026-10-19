@@ -55,7 +55,7 @@ class ObservableSetTest : FunSpec({
         test("add should notify observers only on real changes") {
             val set = ObservableMutableSet<Int>()
             val seen = mutableListOf<Set<Int>>()
-            set.onChange(this) { seen.add(it) }
+            set.onChange { seen.add(it) }
             set.add(1)
             set.add(2)
             set.add(2) // duplicate, should not change
@@ -67,7 +67,7 @@ class ObservableSetTest : FunSpec({
         test("set size should be observable") {
             val set = ObservableMutableSet(1, 2, 3)
             var nextExpected = 3
-            set.size.onChange(this) { it shouldBe nextExpected }
+            set.size.onChange { it shouldBe nextExpected }
             repeat(3) {
                 nextExpected++
                 set.add(it + 100)
@@ -77,7 +77,7 @@ class ObservableSetTest : FunSpec({
         test("remove should notify observers only when element is present") {
             val set = ObservableMutableSet("a", "b", "c")
             val seen = mutableListOf<Set<String>>()
-            set.onChange(this) { seen.add(it) }
+            set.onChange { seen.add(it) }
             seen.size shouldBe 1
             seen[0] shouldContainExactlyInAnyOrder listOf("a", "b", "c")
             set.remove("b")
@@ -91,7 +91,7 @@ class ObservableSetTest : FunSpec({
             val set = ObservableMutableSet<String>()
             val membership = set.containsItem("foo")
             val seen = mutableListOf<Boolean>()
-            membership.onChange(this) { seen.add(it) }
+            membership.onChange { seen.add(it) }
             set.add("foo")
             set.add("foo")
             seen.size shouldBe 2
@@ -114,7 +114,7 @@ class ObservableSetTest : FunSpec({
             val sources = listOf(observe(10), observe(20), observe(30))
             val set: ObservableSet<Observable<Int>> = sources.toObservableSet()
             var changeCounter = 0
-            set.flattenMerge().onChange(this) { changeCounter++ }
+            set.flattenMerge().onChange { changeCounter++ }
             val baseline = changeCounter
             sources[0].update { it + 100 }
             changeCounter shouldBe baseline + 1
@@ -145,12 +145,12 @@ class ObservableSetTest : FunSpec({
             val s2 = ObservableMutableSet(2)
             val union = s1 union s2
             val sizes = mutableListOf<Int>()
-            union.size.onChange(this, invokeOnRegistration = false) { sizes += it }
+            union.size.onChange(notifyOnRegistration = false) { sizes += it }
             union.dispose()
             s1.add(3)
             sizes shouldBe emptyList()
-            s1.observers shouldBe emptyList()
-            s2.observers shouldBe emptyList()
+            s1.observerCount shouldBe 0
+            s2.observerCount shouldBe 0
         }
     }
 })

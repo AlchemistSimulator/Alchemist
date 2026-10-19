@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.observables
 
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.Observable.Companion.notifyCurrentObservers
 
 /**
  * An implementation of [Observable] that emits updates to its observers when triggered manually
@@ -21,28 +21,12 @@ import it.unibo.alchemist.model.observation.Observable.Companion.notifyCurrentOb
  * This class allows multiple observers to register for notifications, and provides the ability
  * to manually emit updates to those observers.
  */
-class EventObservable : Observable<Unit> {
-
-    override val observingCallbacks: MutableMap<Any, List<(Unit) -> Unit>> = linkedMapOf()
-
-    override val current: Unit = Unit
-
-    override val observers: List<Any> get() = observingCallbacks.keys.toList()
-
+class EventObservable : AbstractObservable<Unit>(emitOnDistinct = false) {
     /**
      * Triggers the emission of a notification from this observable notifying
      * all of its observers.
      */
-    fun emit() {
-        notifyCurrentObservers(Unit)
-    }
+    fun emit() = updateAndNotify(Unit)
 
-    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Unit) -> Unit) {
-        observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        if (invokeOnRegistration) callback(current)
-    }
-
-    override fun stopWatching(registrant: Any) {
-        observingCallbacks.remove(registrant)
-    }
+    override fun computeFresh() = Unit
 }

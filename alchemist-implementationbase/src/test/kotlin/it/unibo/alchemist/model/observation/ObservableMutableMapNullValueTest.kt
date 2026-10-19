@@ -21,8 +21,8 @@ class ObservableMutableMapNullValueTest {
     private val keyUpdates = mutableListOf<Option<Int?>>()
 
     init {
-        map.subscribe(invokeOnSubscription = false) { mapUpdates += it }
-        map["a"].subscribe(invokeOnSubscription = false) { keyUpdates += it }
+        map.onChange(notifyOnRegistration = false) { mapUpdates += it }
+        map["a"].onChange(notifyOnRegistration = false) { keyUpdates += it }
     }
 
     private fun assertNullValueInserted() {

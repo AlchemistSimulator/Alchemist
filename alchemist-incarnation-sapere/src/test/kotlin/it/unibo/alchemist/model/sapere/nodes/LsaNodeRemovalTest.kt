@@ -26,7 +26,7 @@ class LsaNodeRemovalTest {
         val kept = LsaMolecule("grad, 2")
         listOf(removed, kept, LsaMolecule("grad, 1")).forEach(node::addLsa)
         val spaces = mutableListOf<List<ILsaMolecule>>()
-        node.observeLsaSpace().subscribe(invokeOnSubscription = false) { spaces += it }
+        node.observeLsaSpace().onChange(notifyOnRegistration = false) { spaces += it }
         node.removeAllConcentrationOf(LsaMolecule("grad, 1"))
         assertEquals(listOf<List<ILsaMolecule>>(listOf(kept)), spaces)
         assertEquals(1, node.currentMoleculeCount)

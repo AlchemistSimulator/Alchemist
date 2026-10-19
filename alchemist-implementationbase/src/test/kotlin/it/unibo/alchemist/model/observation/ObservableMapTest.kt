@@ -24,7 +24,7 @@ class ObservableMapTest : FunSpec({
         test("put should insert and update values and notify map observers only on real changes") {
             val map = ObservableMutableMap<String, Int>()
             val seen = mutableListOf<Map<String, Int>>()
-            map.onChange(this) { seen.add(it) }
+            map.onChange { seen.add(it) }
             seen.size shouldBe 1
             seen[0].isEmpty() shouldBe true
             map.put("a", 1)
@@ -48,7 +48,7 @@ class ObservableMapTest : FunSpec({
         test("remove should notify observers only when key exists") {
             val map = ObservableMutableMap<String, Int>()
             val seen = mutableListOf<Map<String, Int>>()
-            map.onChange(this) { seen.add(it) }
+            map.onChange { seen.add(it) }
             map["a"] = 1
             map["b"] = 2
             seen[1] shouldContainExactly mapOf("a" to 1)
@@ -63,7 +63,7 @@ class ObservableMapTest : FunSpec({
             val map = ObservableMutableMap<String, Int>()
             val obs: Observable<Option<Int>> = map["k"]
             val seen = mutableListOf<Option<Int>>()
-            obs.onChange(this) { seen.add(it) }
+            obs.onChange { seen.add(it) }
             seen[0] shouldBe none()
             map["k"] = 42
             map["k"] = 100

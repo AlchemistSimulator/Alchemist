@@ -32,6 +32,7 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -164,10 +165,10 @@ class BiochemicalReactionSchedulingTest {
         ).forEach { remove ->
             val (randomGenerator, environment, node, level, _, reaction) = layerFixture()
             reaction.initializationComplete(Time.ZERO, environment)
-            assertTrue(level.observers.isNotEmpty())
+            assertTrue(level.isObserved)
             val occurrence = reaction.nextOccurrence.current
             remove(node, reaction, environment)
-            assertTrue(level.observers.isEmpty())
+            assertFalse(level.isObserved)
             level.current = 4.0
             assertEquals(occurrence, reaction.nextOccurrence.current)
             verify(exactly = 1) { randomGenerator.nextDouble() }

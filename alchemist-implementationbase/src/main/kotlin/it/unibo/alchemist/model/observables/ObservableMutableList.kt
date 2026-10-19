@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.observables
 
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.Observable.Companion.notifyCurrentObservers
 import it.unibo.alchemist.model.observation.ObservableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -25,16 +25,14 @@ import kotlinx.collections.immutable.toPersistentList
  * @param T The type of elements maintained by this list.
  * @param initial The elements this list initially contains.
  */
-class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = emptyList()) : ObservableList<T> {
+class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = emptyList()) :
+    AbstractObservable<List<T>>(emitOnDistinct = false),
+    ObservableList<T> {
 
     // Out of order: sizeObservable is initialized from it.
     private var backing: PersistentList<T> = initial.toPersistentList()
 
     override val current: List<T> get() = backing
-
-    override val observers: List<Any> get() = observingCallbacks.keys.toList()
-
-    override val observingCallbacks: MutableMap<Any, List<(List<T>) -> Unit>> = linkedMapOf()
 
     override val size: Observable<Int>
         field = observe(backing.size)
@@ -88,15 +86,12 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
         }
     }
 
+    override fun computeFresh(): List<T> = backing
+
     override fun dispose() {
-        observingCallbacks.clear()
+        super.dispose()
         size.dispose()
         backing = persistentListOf()
-    }
-
-    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (List<T>) -> Unit) {
-        observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        if (invokeOnRegistration) callback(backing)
     }
 
     /**
@@ -162,14 +157,9 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
         return old
     }
 
-    override fun stopWatching(registrant: Any) {
-        observingCallbacks.remove(registrant)
-    }
-
     private fun notifyObservers() {
         size.update { backing.size }
-        val snapshot = backing
-        notifyCurrentObservers(snapshot) { backing === snapshot }
+        updateAndNotify(backing)
     }
 
     /**

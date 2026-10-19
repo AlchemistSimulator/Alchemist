@@ -24,7 +24,7 @@ class NullableDerivedObservableTest {
     @Test
     fun `a derived observable does not repeat null emissions`() {
         val emissions = mutableListOf<String?>()
-        derived.subscribe { emissions += it }
+        derived.onChange { emissions += it }
         source.current = 1
         source.current = 2
         assertEquals(listOf<String?>(null), emissions)
@@ -32,7 +32,7 @@ class NullableDerivedObservableTest {
 
     @Test
     fun `a listening derived observable reads a cached null without recomputing it`() {
-        derived.subscribe { }
+        derived.onChange { }
         val computationsAfterSubscription = computations
         assertNull(derived.current)
         assertEquals(computationsAfterSubscription, computations)

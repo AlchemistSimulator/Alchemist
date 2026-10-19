@@ -23,7 +23,7 @@ class SwitchMapTest {
     @Test
     fun `subscribing selects the inner observable once and follows it`() {
         val emissions = mutableListOf<Int>()
-        switched.subscribe { emissions += it }
+        switched.onChange { emissions += it }
         assertEquals(listOf(0), emissions)
         assertEquals(1, selected.size)
         selected.single().current = 42
@@ -33,7 +33,7 @@ class SwitchMapTest {
     @Test
     fun `a source change switches to a newly selected inner observable`() {
         val emissions = mutableListOf<Int>()
-        switched.subscribe { emissions += it }
+        switched.onChange { emissions += it }
         source.current = 1
         assertEquals(listOf(0, 1), emissions)
         selected.first().current = 42

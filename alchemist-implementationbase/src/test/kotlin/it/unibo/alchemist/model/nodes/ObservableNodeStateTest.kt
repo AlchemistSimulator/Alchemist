@@ -67,5 +67,5 @@ class ObservableNodeStateTest {
         assertEquals(listOf(0, 1, 2, 1), counts)
     }
 
-    private fun <T> Observable<T>.record(): List<T> = mutableListOf<T>().also { values -> subscribe { values += it } }
+    private fun <T> Observable<T>.record(): List<T> = mutableListOf<T>().also { values -> onChange { values += it } }
 }

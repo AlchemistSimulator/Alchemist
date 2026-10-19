@@ -13,6 +13,7 @@ import arrow.core.Option
 import arrow.core.getOrElse
 import arrow.core.none
 import arrow.core.some
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.EventObservable
 import it.unibo.alchemist.model.observables.ObservableMutableSet
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
@@ -23,7 +24,6 @@ import it.unibo.alchemist.model.observables.util.ObservableSets.flattenMerge
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
 import it.unibo.alchemist.model.observables.util.Observables.currentOrNull
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -31,25 +31,52 @@ import kotlin.test.assertTrue
 
 class ObservableTest {
     @Test
+    fun `a combined observable released while registering with a joining element keeps no registration`() {
+        var elementObservers = 0
+        // An element publishing a newer value while it starts observing its sources, as network models do.
+        val element = object : AbstractObservable<Int>() {
+            var value = 1
+
+            override fun computeFresh(): Int = value
+
+            override fun startObservingSources() {
+                elementObservers++
+                value = 2
+                updateAndNotify(value)
+            }
+
+            override fun stopObservingSources() {
+                elementObservers--
+            }
+        }
+        val set = ObservableMutableSet<String>()
+        val combined = set.combineLatest(transformer = { element }, aggregator = { values -> values.sum() })
+        lateinit var subscription: Disposable
+        subscription = combined.onChange(notifyOnRegistration = false) { subscription.dispose() }
+        // The element publishes while the combination registers with it, releasing the only observer.
+        set.add("a")
+        assertFalse(combined.isObserved)
+        assertEquals(0, elementObservers)
+    }
+
+    @Test
     fun `a disposed EventObservable has no observers and notifies nobody`() {
         val event = EventObservable()
         var calls = -2
-        val registrant1 = "R1"
-        val registrant2 = "R2"
-        event.onChange(registrant1) { calls++ }
-        event.onChange(registrant2) { calls++ }
+        event.onChange { calls++ }
+        event.onChange { calls++ }
         event.emit()
         event.dispose()
         event.emit()
         assertEquals(2, calls)
-        assertTrue(event.observers.isEmpty())
+        assertFalse(event.isObserved)
     }
 
     @Test
     fun `a disposed observable does not notify its observers`() {
         val observable = observe(10)
         var changesCount = -1
-        observable.onChange(this) { changesCount++ }
+        observable.onChange { changesCount++ }
         repeat(10) {
             observable.update { curr -> curr + 10 }
         }
@@ -61,22 +88,11 @@ class ObservableTest {
     }
 
     @Test
-    fun `a mapped observable registered without invokeOnRegistration emits only when the mapped value changes`() {
-        val counter = observe(0)
-        val parities = mutableListOf<Int>()
-        counter.map { it % 2 }.onChange(this, false) { parities += it }
-        counter.update { 2 }
-        assertEquals(emptyList(), parities)
-        counter.update { 3 }
-        assertEquals(listOf(1), parities)
-    }
-
-    @Test
     fun `a mapped observable emits only when the mapped value changes`() {
         val observable = observe(0)
         val parityObservable = observable.map { it % 2 == 0 }
         var emissions = -1
-        parityObservable.onChange(this) { emissions++ }
+        parityObservable.onChange { emissions++ }
         // Sequence that keeps parity constant: 0 -> 2 -> 4 -> 6
         repeat(3) {
             observable.update { curr -> curr + 2 }
@@ -85,12 +101,23 @@ class ObservableTest {
     }
 
     @Test
+    fun `a mapped observable registered without notifyOnRegistration emits only when the mapped value changes`() {
+        val counter = observe(0)
+        val parities = mutableListOf<Int>()
+        counter.map { it % 2 }.onChange(false) { parities += it }
+        counter.update { 2 }
+        assertEquals(emptyList(), parities)
+        counter.update { 3 }
+        assertEquals(listOf(1), parities)
+    }
+
+    @Test
     fun `a merged observable emits only when the merged value changes`() {
         val a = observe(0)
         val b = observe(0)
         val c = a.mergeWith(b) { first, second -> (first + second) % 2 }
         var emissions = -1
-        c.onChange(this) { emissions++ }
+        c.onChange { emissions++ }
         repeat(5) { _ ->
             a.update { it + 2 }
             b.update { it + 2 }
@@ -105,68 +132,44 @@ class ObservableTest {
         val elements = ObservableMutableSet(obsA, obsB)
         val merged = elements.flattenMerge()
         var counter = 0
-        merged.onChange(this, invokeOnRegistration = false) { counter++ }
+        merged.onChange(notifyOnRegistration = false) { counter++ }
         obsA.update { it + 11 }
         elements.add(observe(29))
         assertEquals(2, counter)
     }
 
     @Test
-    fun `an observable publishing while it starts monitoring delivers only the newer value to its first observer`() {
-        val observable = object : AbstractObservable<Int>() {
-            var value = 1
-
-            override fun computeFresh(): Int = value
-
-            override fun startMonitoring() {
-                value = 2
-                updateAndNotify(value)
-            }
-
-            override fun stopMonitoring() = Unit
-        }
-        val seen = mutableListOf<Int>()
-        observable.subscribe { seen += it }
-        // an observable that publishes 2 while starting to monitor must deliver only [2] to its first observer.
-        // (it used to deliver 2, then 1)
-        assertEquals(listOf(2), seen)
-    }
-
-    @Test
     fun `an EventObservable notifies all observers on every emission`() {
         val event = EventObservable()
         var calls = -1
-        event.onChange(this) { calls++ }
+        event.onChange { calls++ }
         repeat(5) { event.emit() }
         assertEquals(5, calls)
     }
 
     @Test
-    fun `an EventObservable stops notifying a registrant that stopped watching`() {
+    fun `an EventObservable stops notifying a released observer`() {
         val event = EventObservable()
-        val registrant = "R"
         var calls = -1
-        event.onChange(registrant) { calls++ }
+        val subscription = event.onChange { calls++ }
         event.emit()
-        event.stopWatching(registrant)
+        subscription.dispose()
         event.emit()
         assertEquals(1, calls)
-        assertFalse(registrant in event.observers)
+        assertFalse(event.isObserved)
     }
 
     @Test
-    fun `an EventObservable supports multiple registrants`() {
+    fun `an EventObservable supports multiple observers`() {
         val event = EventObservable()
         var aCalls = -1
         var bCalls = -1
-        val registrantA = "A"
-        val registrantB = "B"
-        event.onChange(registrantA) { aCalls++ }
-        event.onChange(registrantB) { bCalls++ }
+        event.onChange { aCalls++ }
+        event.onChange { bCalls++ }
         repeat(3) { event.emit() }
         assertEquals(3, aCalls)
         assertEquals(3, bCalls)
-        assertEquals(2, event.observers.size)
+        assertEquals(2, event.observerCount)
     }
 
     @Test
@@ -174,7 +177,7 @@ class ObservableTest {
         val observable = observe(10)
         val strObservable = observable.map { it.toString() }
         var changesCounts = -1
-        strObservable.onChange(this) { changesCounts++ }
+        strObservable.onChange { changesCounts++ }
         repeat(10) { observable.update { curr -> curr + 10 } }
         assertEquals(10, changesCounts)
         assertEquals("${10 * 11}", strObservable.current)
@@ -186,7 +189,7 @@ class ObservableTest {
         val b = observe(0)
         val c = a.mergeWith(b) { first, second -> first + second }
         var current = 0
-        c.onChange(this) { current = it }
+        c.onChange { current = it }
         a.update { it + 10 }
         assertEquals(10, current)
         b.update { it + 10 }
@@ -194,14 +197,44 @@ class ObservableTest {
     }
 
     @Test
-    fun `an observable can be stopped watching`() {
+    fun `an observable may emit an event when assigned an equal value`() {
+        val observable = observe(initial = 0, emitOnDistinct = false)
+        var emissions = 0
+        observable.onChange(notifyOnRegistration = false) { emissions++ }
+        observable.current = 0
+        assertEquals(1, emissions)
+    }
+
+    @Test
+    fun `an observable publishing while observing its sources delivers only the newer value to its first observer`() {
+        val observable = object : AbstractObservable<Int>() {
+            var value = 1
+
+            override fun computeFresh(): Int = value
+
+            override fun startObservingSources() {
+                value = 2
+                updateAndNotify(value)
+            }
+
+            override fun stopObservingSources() = Unit
+        }
+        val seen = mutableListOf<Int>()
+        observable.onChange { seen += it }
+        // An observable publishing 2 while starting to observe its sources delivers only [2] to its first observer.
+        // (it used to deliver 2, then 1)
+        assertEquals(listOf(2), seen)
+    }
+
+    @Test
+    fun `an observer can be released`() {
         val observable = observe(10)
         var changesCount = -1
-        observable.onChange(this) { changesCount++ }
+        val subscription = observable.onChange { changesCount++ }
         repeat(10) {
             observable.update { curr -> curr + 10 }
         }
-        observable.stopWatching(this)
+        subscription.dispose()
         repeat(10) {
             observable.update { curr -> curr + 10 }
         }
@@ -209,19 +242,10 @@ class ObservableTest {
     }
 
     @Test
-    fun `an observable may emit an event when assigned an equal value`() {
-        val observable = observe(initial = 0, emitOnDistinct = false)
-        var emissions = 0
-        observable.subscribe(invokeOnSubscription = false) { emissions++ }
-        observable.current = 0
-        assertEquals(1, emissions)
-    }
-
-    @Test
     fun `changes of a value can be observed`() {
         val observable = observe(10)
         var changesCount = -1 // The first subscription always calls the observing callbacks.
-        observable.onChange(this) { changesCount++ }
+        observable.onChange { changesCount++ }
         repeat(10) {
             observable.update { curr -> curr + 10 }
         }
@@ -237,7 +261,7 @@ class ObservableTest {
                 (values[0] + values[1]) % 2
             }
         var emissions = -1
-        collected.onChange(this) { emissions++ }
+        collected.onChange { emissions++ }
         repeat(5) { _ ->
             a.update { it + 2 }
             b.update { it + 4 }
@@ -254,7 +278,7 @@ class ObservableTest {
                 "${values[0]}-${values[1]}"
             }
         val emissions = mutableListOf<String>()
-        collected.onChange(this) { emissions.add(it.getOrElse { "" }) }
+        collected.onChange { emissions.add(it.getOrElse { "" }) }
         a.update { it + 1 }
         b.update { it + 5 }
         assertEquals("2-10", emissions[1])
@@ -268,7 +292,7 @@ class ObservableTest {
         fun observableFor(key: String): Observable<Int> = inner.getOrPut(key) { observe(0) }
         val combined = set.combineLatest(transformer = ::observableFor, aggregator = { values -> values.sum() })
         val seen = mutableListOf<Int>()
-        combined.onChange(this) { seen.add(it) }
+        combined.onChange { seen.add(it) }
         assertEquals(0, seen[0])
         set.add("a")
         set.add("b")
@@ -281,39 +305,37 @@ class ObservableTest {
     }
 
     @Test
-    fun `combineLatest on a set unsubscribes from the inner observables on stopWatching`() {
+    fun `combineLatest on a set unsubscribes from the inner observables when released`() {
         val set = ObservableMutableSet<String>()
         val inner = mutableMapOf<String, MutableObservable<Int>>()
         fun observableFor(key: String): Observable<Int> = inner.getOrPut(key) { observe(0) }
         set.add("x")
         set.add("y")
         val combined = set.combineLatest(transformer = ::observableFor, aggregator = { values -> values.sum() })
-        val registrant = "test-registrant"
-        combined.onChange(registrant) { }
-        assertEquals(1, inner.getValue("x").observers.size)
-        assertEquals(1, inner.getValue("y").observers.size)
-        combined.stopWatching(registrant)
-        assertEquals(0, inner.getValue("x").observers.size)
-        assertEquals(0, inner.getValue("y").observers.size)
+        val subscription = combined.onChange { }
+        assertEquals(1, inner.getValue("x").observerCount)
+        assertEquals(1, inner.getValue("y").observerCount)
+        subscription.dispose()
+        assertEquals(0, inner.getValue("x").observerCount)
+        assertEquals(0, inner.getValue("y").observerCount)
     }
 
     @Test
-    fun `combineLatest unsubscribes from its sources when the last observer stops watching`() {
+    fun `combineLatest unsubscribes from its sources when the last observer is released`() {
         val a = observe(1)
         val b = observe(2)
         val collected: Observable<Option<Int>> =
             listOf<Observable<Int>>(a, b).combineLatest { values ->
                 values.sum()
             }
-        val registrant = "collector-observer"
-        assertEquals(0, a.observers.size)
-        assertEquals(0, b.observers.size)
-        collected.onChange(registrant) { }
-        assertTrue(a.observers.isNotEmpty())
-        assertTrue(b.observers.isNotEmpty())
-        collected.stopWatching(registrant)
-        assertEquals(0, a.observers.size)
-        assertEquals(0, b.observers.size)
+        assertEquals(0, a.observerCount)
+        assertEquals(0, b.observerCount)
+        val subscription = collected.onChange { }
+        assertTrue(a.isObserved)
+        assertTrue(b.isObserved)
+        subscription.dispose()
+        assertEquals(0, a.observerCount)
+        assertEquals(0, b.observerCount)
     }
 
     @Test
@@ -329,7 +351,7 @@ class ObservableTest {
         val set = ObservableMutableSet<String>()
         val fused = set.flatMap { observe(10) }
         val seen = mutableListOf<Option<Int>>()
-        fused.onChange(this) { seen.add(it) }
+        fused.onChange { seen.add(it) }
         assertEquals(listOf(none()), seen)
     }
 
@@ -340,7 +362,7 @@ class ObservableTest {
         fun observableFor(key: String): Observable<Int> = inner.getOrPut(key) { observe(0) }
         val fused = set.flatMap(::observableFor)
         val seen = mutableListOf<Option<Int>>()
-        fused.onChange(this) { seen.add(it) }
+        fused.onChange { seen.add(it) }
         inner.getValue("a").update { 7 }
         set.remove("a")
         assertEquals(listOf(0.some(), 7.some(), none()), seen)
@@ -354,7 +376,7 @@ class ObservableTest {
         set.add("a")
         val fused = set.flatMap(::observableFor)
         val seen = mutableListOf<Int>()
-        fused.onChange(this) { seen.add(it.getOrElse { -1 }) }
+        fused.onChange { seen.add(it.getOrElse { -1 }) }
         assertEquals(0, seen[0])
         inner["b"] = observe(10)
         set.add("b")
@@ -364,18 +386,18 @@ class ObservableTest {
     }
 
     @Test
-    fun `flatMap unsubscribes from the inner observables on stopWatching`() {
+    fun `flatMap unsubscribes from the inner observables when released`() {
         val set = ObservableMutableSet("a")
         val inner = mutableMapOf<String, MutableObservable<Int>>()
         fun observableFor(key: String): Observable<Int> = inner.getOrPut(key) { observe(0) }
         val fused = set.flatMap(::observableFor)
-        fused.onChange(this) { }
+        val subscription = fused.onChange { }
         set.add("b")
-        assertEquals(1, inner.getValue("a").observers.size)
-        assertEquals(1, inner.getValue("b").observers.size)
-        fused.stopWatching(this)
-        assertEquals(0, inner.getValue("a").observers.size)
-        assertEquals(0, inner.getValue("b").observers.size)
+        assertEquals(1, inner.getValue("a").observerCount)
+        assertEquals(1, inner.getValue("b").observerCount)
+        subscription.dispose()
+        assertEquals(0, inner.getValue("a").observerCount)
+        assertEquals(0, inner.getValue("b").observerCount)
     }
 
     @Test
@@ -383,7 +405,7 @@ class ObservableTest {
         val set = ObservableMutableSet<Observable<Int>>()
         val merged = set.flattenMerge()
         val seen = mutableListOf<Any?>()
-        merged.onChange(this) { seen.add(it.getOrNull()) }
+        merged.onChange { seen.add(it.getOrNull()) }
         assertEquals(listOf<Any?>(null), seen)
     }
 
@@ -393,7 +415,7 @@ class ObservableTest {
         val set = ObservableMutableSet<Observable<Int>>(a)
         val merged = set.flattenMerge()
         val seen = mutableListOf<Any?>()
-        merged.onChange(this) { seen.add(it.getOrNull()) }
+        merged.onChange { seen.add(it.getOrNull()) }
         set.remove(a)
         val b = observe(9)
         set.add(b)
@@ -401,42 +423,39 @@ class ObservableTest {
     }
 
     @Test
-    fun `multiple registrants are all notified`() {
+    fun `multiple observers are all notified`() {
         val observable = observe(0)
         var aCount = -1
         var bCount = -1
-        val registrantA = "A"
-        val registrantB = "B"
-        observable.onChange(registrantA) { aCount++ }
-        observable.onChange(registrantB) { bCount++ }
+        observable.onChange { aCount++ }
+        observable.onChange { bCount++ }
         repeat(3) { observable.update { curr -> curr + 1 } }
         assertEquals(3, aCount)
         assertEquals(3, bCount)
-        assertContains(observable.observers, registrantA)
-        assertContains(observable.observers, registrantB)
+        assertEquals(2, observable.observerCount)
     }
 
     @Test
     fun `onChange immediately emits the current value to the observer`() {
         val observable = observe(42)
         var lastSeen: Int? = null
-        observable.onChange(this) { lastSeen = it }
+        observable.onChange { lastSeen = it }
         assertEquals(42, lastSeen)
     }
 
     @Test
-    fun `onChange with invokeOnRegistration emits the current value`() {
+    fun `onChange with notifyOnRegistration emits the current value`() {
         val observable = observe(42)
         var lastSeen: Int? = null
-        observable.onChange(this, true) { lastSeen = it }
+        observable.onChange(true) { lastSeen = it }
         assertEquals(42, lastSeen)
     }
 
     @Test
-    fun `onChange without invokeOnRegistration does not emit the current value`() {
+    fun `onChange without notifyOnRegistration does not emit the current value`() {
         val observable = observe(42)
         var lastSeen: Int? = null
-        observable.onChange(this, false) { lastSeen = it }
+        observable.onChange(false) { lastSeen = it }
         assertNull(lastSeen)
     }
 
@@ -445,15 +464,15 @@ class ObservableTest {
         val observable = observe(0)
         val emissions = mutableListOf<String>()
         lateinit var first: Disposable
-        first = observable.subscribe(invokeOnSubscription = false) { value ->
+        first = observable.onChange(notifyOnRegistration = false) { value ->
             emissions += "first:$value"
             if (value == 1) {
                 first.dispose()
-                observable.subscribe(invokeOnSubscription = false) { emissions += "late:$it" }
+                observable.onChange(notifyOnRegistration = false) { emissions += "late:$it" }
                 observable.current = 2
             }
         }
-        observable.subscribe(invokeOnSubscription = false) { emissions += "second:$it" }
+        observable.onChange(notifyOnRegistration = false) { emissions += "second:$it" }
         observable.current = 1
         // The outdated value is not delivered after the newer one.
         assertEquals(listOf("first:1", "second:2", "late:2"), emissions)
@@ -464,30 +483,17 @@ class ObservableTest {
         val observable = observe(0)
         var firstCount = 0
         var secondCount = 0
-        val first = observable.subscribe(invokeOnSubscription = false) { firstCount++ }
-        val second = observable.subscribe(invokeOnSubscription = false) { secondCount++ }
-        assertEquals(2, observable.observers.size)
+        val first = observable.onChange(notifyOnRegistration = false) { firstCount++ }
+        val second = observable.onChange(notifyOnRegistration = false) { secondCount++ }
+        assertEquals(2, observable.observerCount)
         first.dispose()
         first.dispose()
         observable.update { it + 1 }
         assertEquals(0, firstCount)
         assertEquals(1, secondCount)
-        assertEquals(1, observable.observers.size)
+        assertEquals(1, observable.observerCount)
         second.dispose()
-        assertEquals(0, observable.observers.size)
-    }
-
-    @Test
-    fun `the same registrant can have multiple callbacks`() {
-        val observable = observe(0)
-        var sum = 0
-        var count = -1
-        val registrant = "same-registrant"
-        observable.onChange(registrant) { sum += it }
-        observable.onChange(registrant) { count++ }
-        repeat(3) { observable.update { curr -> curr + 1 } }
-        assertEquals(1 + 2 + 3, sum)
-        assertEquals(3, count)
+        assertEquals(0, observable.observerCount)
     }
 
     @Test
@@ -511,7 +517,7 @@ class ObservableTest {
     fun `updating an observable with its own value emits nothing`() {
         val observable = observe(10)
         var changesCount = -1
-        observable.onChange(this) { changesCount++ }
+        observable.onChange { changesCount++ }
         repeat(10) { _ ->
             observable.update { it }
         }

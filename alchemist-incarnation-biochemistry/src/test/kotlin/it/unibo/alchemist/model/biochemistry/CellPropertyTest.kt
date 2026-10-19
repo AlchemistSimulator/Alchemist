@@ -29,7 +29,7 @@ class CellPropertyTest {
     @Test
     fun `observed junction links follow neighbors joining and leaving an existing junction`() {
         var linked = emptySet<Any>()
-        cell.observeNeighborLinkWithJunction(junction).subscribe { linked = it }
+        cell.observeNeighborLinkWithJunction(junction).onChange { linked = it }
         neighbors.forEach { cell.addJunction(junction, it) }
         assertEquals(neighbors.toSet(), linked)
         cell.removeJunction(junction, neighbors.first())

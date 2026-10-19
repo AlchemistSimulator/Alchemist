@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TerminationPredicate
 import it.unibo.alchemist.model.networks.NoLinks
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.ObservableMutableList
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.ObservableMutableSet
@@ -358,7 +359,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     }
 
     private fun followNeighborhood(node: Node<T>) {
-        neighborhoodSubscriptions[node.id] = networkModel.neighborhoodOf(node).subscribe { neighborhood ->
+        neighborhoodSubscriptions[node.id] = networkModel.neighborhoodOf(node).onChange { neighborhood ->
             check(neighborhood.center == node) {
                 "The network model $networkModel published the neighborhood of ${neighborhood.center} for $node"
             }
@@ -460,30 +461,24 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
      * The center is either [centerNode], which is excluded from the members and followed as it moves, or a fixed
      * position; [centerPosition] provides the current center in both cases.
      *
-     * The query implements [ObservableSet] directly, rather than delegating, so that every subscription path,
-     * including the default members of [Observable], goes through [onChange] and [stopWatching]. The first observer
-     * computes the members and activates the query; the last one to leave deactivates it. While unobserved, [current]
-     * is computed on demand. Once its center node leaves the environment, the query is empty and never updates again.
+     * While observed, the query is active: the environment updates its members as nodes move, and it publishes them.
+     * While unobserved, [current] is computed on demand. Once its center node leaves the environment, the query is
+     * empty and never updates again.
      */
     private inner class RangeQuery(
         val centerNode: Node<T>?,
         val radius: Double,
         private val centerPosition: () -> P = { checkNotNull(centerNode).currentPosition },
-    ) : ObservableSet<Node<T>> {
+    ) : AbstractObservable<Set<Node<T>>>(emitOnDistinct = false),
+        ObservableSet<Node<T>> {
         override val current: Set<Node<T>>
             get() = when {
                 centerRemoved -> emptySet()
-                isActive -> members.current
+                isObserved -> members.current
                 else -> computeMembers()
             }
 
-        override val observers: List<Any> get() = members.observers
-
-        override val observingCallbacks: Map<Any, List<(Set<Node<T>>) -> Unit>> get() = members.observingCallbacks
-
         override val size: Observable<Int> = map { it.size }
-
-        private val isActive: Boolean get() = members.observers.isNotEmpty()
 
         private val members = ObservableMutableSet<Node<T>>()
 
@@ -493,28 +488,14 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         private var centerRemoved = false
             get() = field || centerNode != null && centerNode !in this@AbstractEnvironment
 
+        override fun computeFresh(): Set<Node<T>> = if (centerRemoved) emptySet() else computeMembers()
+
         override fun containsItem(item: Node<T>): Observable<Boolean> = map { item in it }
 
         override fun dispose() {
+            super.dispose()
             members.dispose()
             activeRangeQueries -= this
-        }
-
-        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<Node<T>>) -> Unit) {
-            if (!isActive && !centerRemoved) {
-                members.clearAndAddAll(computeMembers())
-                activeRangeQueries += this
-            }
-            members.onChange(registrant, invokeOnRegistration, callback)
-        }
-
-        override fun stopWatching(registrant: Any) {
-            members.stopWatching(registrant)
-            if (!isActive) {
-                activeRangeQueries -= this
-                // Unobserved members go stale: later subscribers recompute them, or get none if the center left.
-                members.clearAndAddAll(emptySet())
-            }
         }
 
         /**
@@ -531,6 +512,20 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
                 newPosition != null && newPosition.distanceTo(centerPosition()) <= radius -> members.add(node)
                 else -> members.remove(node)
             }
+        }
+
+        override fun startObservingSources() {
+            if (!centerRemoved) {
+                members.clearAndAddAll(computeMembers())
+                activeRangeQueries += this
+            }
+            observeSource(members) { updateAndNotify(it) }
+        }
+
+        override fun stopObservingSources() {
+            activeRangeQueries -= this
+            // Unobserved members go stale: later observers recompute them, or get none if the center left.
+            members.clearAndAddAll(emptySet())
         }
 
         private fun computeMembers(): Set<Node<T>> =

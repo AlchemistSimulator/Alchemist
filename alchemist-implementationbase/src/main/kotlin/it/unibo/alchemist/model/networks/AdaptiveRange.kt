@@ -14,8 +14,10 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 import kotlin.math.abs
 import kotlin.math.max
@@ -154,41 +156,29 @@ constructor(
     private fun withinTolerance(neighborCount: Int): Boolean = neighborCount in tolerated
 
     /*
-     * The neighborhood of center, whose range converges after each change of the neighborhood has been delivered.
-     * Reading the current neighborhood changes nothing.
-     * While observed, the range is adjusted by an observer kept after every other one,
-     * so that the newer neighborhoods caused by an adjustment reach the observers after the one that triggered it,
-     * rather than being overwritten by it.
+     * The neighborhood of center, whose range converges once each change of the neighborhood has been delivered to its
+     * observers, so that the newer neighborhoods caused by an adjustment reach them after the one that triggered it,
+     * rather than being overwritten by it. Reading the current neighborhood changes nothing.
      */
-    private inner class ConvergingNeighborhood(private val center: Node<T>) : Observable<Neighborhood<T>> {
-        override val current: Neighborhood<T> get() = base.current
-
-        override val observers: List<Any> get() = base.observers - this
-
-        override val observingCallbacks: Map<Any, List<(Neighborhood<T>) -> Unit>>
-            get() = base.observingCallbacks - this
-
+    private inner class ConvergingNeighborhood(private val center: Node<T>) : AbstractObservable<Neighborhood<T>>() {
         private val base = super@AdaptiveRange.neighborhoodOf(center)
 
-        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Neighborhood<T>) -> Unit) {
-            val firstObserver = observers.isEmpty()
-            // The converger is registered again after the new observer, to stay the last one notified.
-            base.stopWatching(this)
-            base.onChange(registrant, invokeOnRegistration, callback)
-            base.onChange(this, invokeOnRegistration = firstObserver) { converge(center, it.neighbors.size) }
+        override fun computeFresh(): Neighborhood<T> = base.current
+
+        override fun startObservingSources() {
+            observeSource(base) { neighborhood ->
+                updateAndNotify(neighborhood)
+                converge(center, neighborhood.neighbors.size)
+            }
+            converge(center, base.current.neighbors.size)
         }
 
-        override fun stopWatching(registrant: Any) {
-            val wasObserved = observers.isNotEmpty()
-            base.stopWatching(registrant)
-            if (wasObserved && observers.isEmpty()) {
-                base.stopWatching(this)
-                /*
-                 * Nodes no longer observed, e.g., removed ones, do not keep their range. Another observed neighborhood
-                 * of the same node, if any, observes the range being forgotten, and converges again.
-                 */
-                ranges.remove(center.id)
-            }
+        override fun stopObservingSources() {
+            /*
+             * Nodes no longer observed, e.g., removed ones, do not keep their range. Another observed neighborhood
+             * of the same node, if any, observes the range being forgotten, and converges again.
+             */
+            ranges.remove(center.id)
         }
 
         override fun toString(): String = "ConvergingNeighborhood($current)[from: $base]"

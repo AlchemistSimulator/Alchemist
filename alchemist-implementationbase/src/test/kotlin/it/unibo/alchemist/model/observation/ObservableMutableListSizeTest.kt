@@ -17,7 +17,7 @@ class ObservableMutableListSizeTest {
     private fun assertSize(expected: Int, list: ObservableMutableList<Int>) {
         assertEquals(expected, list.size.current)
         var replayed = -1
-        list.size.subscribe { replayed = it }
+        list.size.onChange { replayed = it }
         assertEquals(expected, replayed)
     }
 

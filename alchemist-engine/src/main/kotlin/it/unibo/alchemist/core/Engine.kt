@@ -199,7 +199,7 @@ open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protec
         scheduler.addReaction(reaction)
         // Do not emit the current value on subscription: scheduler insertion already indexed it.
         schedulingSubscriptions[reaction] =
-            reaction.nextOccurrence.subscribe(invokeOnSubscription = false) {
+            reaction.nextOccurrence.onChange(notifyOnRegistration = false) {
                 checkCaller()
                 scheduler.updateReaction(reaction)
             }

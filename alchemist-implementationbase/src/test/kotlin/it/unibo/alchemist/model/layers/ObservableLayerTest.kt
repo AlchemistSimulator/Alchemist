@@ -38,7 +38,7 @@ class ObservableLayerTest {
         assertNull(environment.observeLayerValue(SimpleMolecule("absent"), node).current)
         val value = environment.observeLayerValue(LAYER, node)
         val received = mutableListOf<Any?>()
-        val subscription = value.subscribe(invokeOnSubscription = false) { received += it }
+        val subscription = value.onChange(notifyOnRegistration = false) { received += it }
         environment.moveNodeTo(node, environment.makePosition(-2, -2))
         assertEquals(emptyList(), received)
         environment.moveNodeTo(node, environment.makePosition(1, 1))
@@ -60,14 +60,14 @@ class ObservableLayerTest {
         environment.addNode(node, environment.makePosition(2, 0))
         val value = environment.observeLayerValue(LAYER, node)
         val received = mutableListOf<Any?>()
-        val subscription = value.subscribe { received += it }
+        val subscription = value.onChange { received += it }
         layer.scale.current = 3.0
         environment.moveNodeTo(node, environment.makePosition(1, 0))
         assertEquals(listOf<Any?>(2.0, 6.0, 3.0), received)
         subscription.dispose()
         layer.scale.current = 5.0
         assertEquals(listOf<Any?>(2.0, 6.0, 3.0), received)
-        assertEquals(0, layer.scale.observers.size)
+        assertEquals(0, layer.scale.observerCount)
     }
 
     @Test

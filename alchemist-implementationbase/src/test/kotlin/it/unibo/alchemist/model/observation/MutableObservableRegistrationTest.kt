@@ -18,7 +18,7 @@ class MutableObservableRegistrationTest {
 
     @Test
     fun `a change made by the initial callback is notified to the same callback`() {
-        observable.onChange(this) { value ->
+        observable.onChange { value ->
             received += value
             if (value == 0) {
                 observable.current = 1
@@ -28,13 +28,15 @@ class MutableObservableRegistrationTest {
     }
 
     @Test
-    fun `the initial callback can unsubscribe itself`() {
-        observable.onChange(this) { value ->
+    fun `a callback can unsubscribe itself`() {
+        lateinit var subscription: Disposable
+        subscription = observable.onChange(notifyOnRegistration = false) { value ->
             received += value
-            observable.stopWatching(this)
+            subscription.dispose()
         }
         observable.current = 1
-        assertEquals(listOf(0), received)
-        assertEquals(emptyList(), observable.observers)
+        observable.current = 2
+        assertEquals(listOf(1), received)
+        assertEquals(0, observable.observerCount)
     }
 }

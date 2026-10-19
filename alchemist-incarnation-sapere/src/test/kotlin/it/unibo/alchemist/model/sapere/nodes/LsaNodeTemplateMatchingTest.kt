@@ -43,7 +43,7 @@ class LsaNodeTemplateMatchingTest {
     @Test
     fun `observing a template with a variable first argument follows later additions`() {
         val contained = mutableListOf<Boolean>()
-        node.containsMolecule(LsaMolecule("A, 4")).subscribe { contained += it }
+        node.containsMolecule(LsaMolecule("A, 4")).onChange { contained += it }
         node.addLsa(LsaMolecule("bar, 4"))
         assertEquals(listOf(false, true), contained)
     }

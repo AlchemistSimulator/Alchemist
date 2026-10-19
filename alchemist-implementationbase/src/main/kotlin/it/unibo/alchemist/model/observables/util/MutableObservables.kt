@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.observables.util
 
 import arrow.core.Option
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observation.MutableObservable
-import it.unibo.alchemist.model.observation.Observable.Companion.notifyCurrentObservers
 
 /** Factory and utilities for mutable observables. */
 object MutableObservables {
@@ -25,34 +25,21 @@ object MutableObservables {
      */
     @JvmOverloads
     @JvmStatic
-    fun <T> observe(initial: T, emitOnDistinct: Boolean = true): MutableObservable<T> = object : MutableObservable<T> {
-        override val observers: List<Any> get() = observingCallbacks.keys.toList()
-
-        override val observingCallbacks: MutableMap<Any, List<(T) -> Unit>> = linkedMapOf()
-
-        override var current: T = initial
-            set(value) {
-                if (!emitOnDistinct || value != field) {
-                    field = value
-                    val emission = ++emissions
-                    notifyCurrentObservers(value) { emissions == emission }
+    fun <T> observe(initial: T, emitOnDistinct: Boolean = true): MutableObservable<T> =
+        object : AbstractObservable<T>(emitOnDistinct), MutableObservable<T> {
+            override var current: T
+                get() = value
+                set(newValue) {
+                    if (!emitOnDistinct || newValue != value) {
+                        value = newValue
+                        updateAndNotify(newValue)
+                    }
                 }
-            }
 
-        // Counts the emissions, so that a notification can tell whether a callback emitted again.
-        private var emissions = 0L
+            private var value: T = initial
 
-        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
-            observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-            if (invokeOnRegistration) {
-                callback(current)
-            }
+            override fun computeFresh(): T = value
         }
-
-        override fun stopWatching(registrant: Any) {
-            observingCallbacks.remove(registrant)
-        }
-    }
 
     /**
      * Handy method to update the optional[Option] contents of this [MutableObservable].

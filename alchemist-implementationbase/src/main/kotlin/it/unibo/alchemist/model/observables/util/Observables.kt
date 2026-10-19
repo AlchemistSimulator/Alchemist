@@ -13,7 +13,7 @@ import arrow.core.Option
 import arrow.core.firstOrNone
 import arrow.core.none
 import arrow.core.some
-import it.unibo.alchemist.model.observation.AbstractObservable
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observation.Disposable
 import it.unibo.alchemist.model.observation.Observable
 
@@ -43,19 +43,12 @@ object Observables {
     @JvmStatic
     fun <T, O> List<Observable<T>>.combineLatest(collector: (List<T>) -> O): Observable<Option<O>> =
         object : AbstractObservable<Option<O>>() {
-
             override fun computeFresh(): Option<O> = this@combineLatest.takeIf { it.isNotEmpty() }
                 ?.let { _ -> collector(this@combineLatest.map { it.current }).some() }
                 ?: none<O>()
 
-            override fun startMonitoring() {
-                this@combineLatest.forEach { observable ->
-                    observable.onChange(this, invokeOnRegistration = false) { updateAndNotify(computeFresh()) }
-                }
-            }
-
-            override fun stopMonitoring() {
-                this@combineLatest.forEach { it.stopWatching(this) }
+            override fun startObservingSources() {
+                this@combineLatest.forEach { observeSource(it) { updateAndNotify(computeFresh()) } }
             }
         }
 
@@ -84,8 +77,8 @@ object Observables {
 
             override fun computeFresh(): R = transform(this@switchMap.current).also { lastSelected = it }.current
 
-            override fun startMonitoring() {
-                this@switchMap.onChange(this, invokeOnRegistration = false, ::switchInner)
+            override fun startObservingSources() {
+                observeSource(this@switchMap, ::switchInner)
                 // Follow the inner observable whose value is cached, if any, rather than selecting a new one.
                 follow(
                     lastSelected?.takeIf { cached.isSome() } ?: transform(this@switchMap.current),
@@ -93,9 +86,7 @@ object Observables {
                 )
             }
 
-            override fun stopMonitoring() {
-                this@switchMap.stopWatching(this)
-                innerSubscription?.dispose()
+            override fun stopObservingSources() {
                 innerSubscription = null
                 lastSelected = null
             }
@@ -104,7 +95,7 @@ object Observables {
 
             private fun follow(inner: Observable<R>, emitCurrent: Boolean) {
                 innerSubscription?.dispose()
-                innerSubscription = inner.subscribe(invokeOnSubscription = false, callback = ::updateAndNotify)
+                innerSubscription = observeSource(inner, ::updateAndNotify)
                 if (emitCurrent) {
                     updateAndNotify(inner.current)
                 } else {
@@ -126,7 +117,9 @@ object Observables {
 
         private val sources = mutableMapOf<T, Observable<R>>()
 
-        // The observables created by the latest computeFresh for unmonitored elements, whose values may be cached.
+        private val subscriptions = mutableMapOf<T, Disposable>()
+
+        // The observables created by the latest computeFresh for unobserved elements, whose values may be cached.
         private var lastCreated: Map<T, Observable<R>> = emptyMap()
 
         override fun computeFresh(): O {
@@ -138,34 +131,35 @@ object Observables {
             return aggregator(values)
         }
 
-        override fun startMonitoring() {
+        override fun startObservingSources() {
             val callback: (C) -> Unit = { current ->
                 reconcile(
-                    owner = this,
                     sources = sources,
+                    subscriptions = subscriptions,
+                    observeSource = { source, callback -> observeSource(source, callback) },
                     current = current,
                     transformer = transformer,
                     doOnChange = { updateAndNotify(computeFresh()) },
                     postCleanup = { updateAndNotify(computeFresh()) },
                 )
             }
-            this@combineLatestCollection.onChange(this, invokeOnRegistration = false, callback)
-            // Monitor the observables whose values are cached, if any, rather than creating new ones.
+            observeSource(this@combineLatestCollection, callback)
+            // Observe the observables whose values are cached, if any, rather than creating new ones.
             val retained = lastCreated.takeIf { cached.isSome() }.orEmpty()
             reconcile(
-                owner = this,
                 sources = sources,
+                subscriptions = subscriptions,
+                observeSource = { source, callback -> observeSource(source, callback) },
                 current = this@combineLatestCollection.current,
                 transformer = { key -> retained[key] ?: transformer(key) },
                 doOnChange = { updateAndNotify(computeFresh()) },
-                invokeOnRegistration = false,
+                notifyOnRegistration = false,
             )
             lastCreated = emptyMap()
         }
 
-        override fun stopMonitoring() {
-            this@combineLatestCollection.stopWatching(this)
-            sources.forEach { (key, source) -> source.stopWatching(this to key) }
+        override fun stopObservingSources() {
+            subscriptions.clear()
             sources.clear()
         }
     }
@@ -192,7 +186,9 @@ object Observables {
     ): Observable<Option<O>> = object : AbstractObservable<Option<O>>() {
         private val sources = mutableMapOf<T, Observable<O>>()
 
-        // The observable created by the latest computeFresh for an unmonitored element, whose value may be cached.
+        private val subscriptions = mutableMapOf<T, Disposable>()
+
+        // The observable created by the latest computeFresh for an unobserved element, whose value may be cached.
         private var lastCreated: Map<T, Observable<O>> = emptyMap()
 
         override fun computeFresh(): Option<O> {
@@ -202,11 +198,12 @@ object Observables {
             }
         }
 
-        override fun startMonitoring() {
+        override fun startObservingSources() {
             val callback: (C) -> Unit = { current ->
                 reconcile(
-                    owner = this,
                     sources = sources,
+                    subscriptions = subscriptions,
+                    observeSource = { source, callback -> observeSource(source, callback) },
                     current = current,
                     transformer = transformer,
                     doOnChange = { updateAndNotify(it.some()) },
@@ -217,48 +214,64 @@ object Observables {
                     },
                 )
             }
-            this@flatMapCollection.onChange(this, invokeOnRegistration = false, callback)
-            // Monitor the observable whose value is cached, if any, rather than creating a new one.
+            observeSource(this@flatMapCollection, callback)
+            // Observe the observable whose value is cached, if any, rather than creating a new one.
             val retained = lastCreated.takeIf { cached.isSome() }.orEmpty()
             reconcile(
-                owner = this,
                 sources = sources,
+                subscriptions = subscriptions,
+                observeSource = { source, callback -> observeSource(source, callback) },
                 current = this@flatMapCollection.current,
                 transformer = { key -> retained[key] ?: transformer(key) },
                 doOnChange = { updateAndNotify(it.some()) },
-                invokeOnRegistration = false,
+                notifyOnRegistration = false,
             )
             lastCreated = emptyMap()
         }
 
-        override fun stopMonitoring() {
-            this@flatMapCollection.stopWatching(this)
-            sources.forEach { (key, source) -> source.stopWatching(this to key) }
+        override fun stopObservingSources() {
+            subscriptions.clear()
             sources.clear()
         }
     }
 
     /*
-     * Each element subscribes to its observable under the pair (owner, element), so that neither other observables
-     * derived from the same collection nor other elements mapped to the same observable share the registration.
-     * All the joining observables are installed before subscribing to any, so that registration callbacks
-     * computing from the sources find them all.
+     * Each element has its own registration with its observable, released when the element leaves.
+     * Every joining observable is registered with before any current value is notified, so that notifications
+     * computing from the sources find them all; elements leaving meanwhile are skipped.
      */
     @JvmStatic
+    @Suppress("LongParameterList") // Shared by operators that differ in how they react to the elements.
     private fun <T, O> reconcile(
-        owner: Observable<*>,
         sources: MutableMap<T, Observable<O>>,
+        subscriptions: MutableMap<T, Disposable>,
+        observeSource: (Observable<O>, (O) -> Unit) -> Disposable,
         current: Collection<T>,
         transformer: (T) -> Observable<O>,
         doOnChange: (O) -> Unit,
         postCleanup: () -> Unit = {},
-        invokeOnRegistration: Boolean = true,
+        notifyOnRegistration: Boolean = true,
     ) {
         val currentSet = current.toSet()
-        (sources.keys - currentSet).forEach { key -> sources.remove(key)?.stopWatching(owner to key) }
+        (sources.keys - currentSet).forEach { key ->
+            sources.remove(key)
+            subscriptions.remove(key)?.dispose()
+        }
         val joining = (currentSet - sources.keys).associateWith(transformer)
         sources += joining
-        joining.forEach { (key, source) -> source.onChange(owner to key, invokeOnRegistration, doOnChange) }
+        joining.forEach { (key, source) ->
+            val subscription = observeSource(source, doOnChange)
+            if (sources[key] === source) {
+                subscriptions[key] = subscription
+            }
+        }
+        if (notifyOnRegistration) {
+            joining.forEach { (key, source) ->
+                if (sources[key] === source) {
+                    doOnChange(source.current)
+                }
+            }
+        }
         postCleanup()
     }
 }

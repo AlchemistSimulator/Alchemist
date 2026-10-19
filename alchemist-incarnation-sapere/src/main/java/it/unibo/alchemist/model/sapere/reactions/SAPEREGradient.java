@@ -643,7 +643,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
         Disposable subscribeToSchedulingInvalidation(@Nonnull final Runnable invalidation) {
             final CompositeDisposable subscriptions = new CompositeDisposable();
             for (final Observable<?> input : schedulingInputs) {
-                subscriptions.add(input.subscribe(false, ignored -> {
+                subscriptions.add(input.onChange(false, ignored -> {
                     invalidation.run();
                     return Unit.INSTANCE;
                 }));

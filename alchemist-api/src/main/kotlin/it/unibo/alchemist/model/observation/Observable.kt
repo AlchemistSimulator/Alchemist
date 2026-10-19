@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.observation
 
 /**
  * Represents an observable object that emits updates to registered observers when its value changes.
- * Subscription changes take effect on later emissions.
+ * Registration changes take effect on later emissions.
  *
  * Observers are notified as soon as the value changes, while other observables depending on the same change may not
  * have been updated yet.
@@ -27,69 +27,19 @@ interface Observable<T> : Disposable {
     val current: T
 
     /**
-     * Represents a list of all entities currently observing changes to this observable object.
+     * Whether any callback is currently registered.
      */
-    val observers: List<Any>
+    val isObserved: Boolean get() = observerCount > 0
 
     /**
-     * Stores the set of observers along with the list of callbacks associated with them.
+     * How many callbacks are currently registered.
      */
-    val observingCallbacks: Map<Any, List<(T) -> Unit>>
+    val observerCount: Int
 
     /**
-     * Registers a callback to be notified of changes in the observable. The callback is invoked
-     * whenever the state of the observable changes.
-     *
-     * @param registrant The entity registering the callback.
-     * @param callback   The callback to be executed when the observable's state changes. It receives
-     *                   the updated value of the observable as an argument.
+     * Unregisters every callback registered with this observable.
      */
-    fun onChange(registrant: Any, callback: (T) -> Unit) = onChange(registrant, true, callback)
-
-    /**
-     * Registers a callback to be notified of changes in the observable. The callback is invoked
-     * whenever the state of the observable changes.
-     *
-     * @param registrant The entity registering the callback.
-     * @param invokeOnRegistration Whether the callback should be invoked immediately upon registration.
-     * @param callback   The callback to be executed when the observable's state changes. It receives
-     *                   the updated value of the observable as an argument.
-     */
-    fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit)
-
-    /**
-     * Subscribes [callback] to this observable using a unique subscription identity.
-     *
-     * @param invokeOnSubscription whether [callback] should receive [current] immediately
-     * @param callback the callback to invoke on updates
-     * @return a non-null handle that removes exactly this subscription when disposed
-     */
-    fun subscribe(invokeOnSubscription: Boolean = true, callback: (T) -> Unit): Disposable {
-        val subscription = Any()
-        onChange(subscription, invokeOnSubscription, callback)
-        var active = true
-        return Disposable {
-            if (active) {
-                active = false
-                stopWatching(subscription)
-            }
-        }
-    }
-
-    /**
-     * Unregisters the specified registrant from watching for changes or updates in the observable.
-     *
-     * @param registrant The entity to be unregistered from observing changes.
-     */
-    fun stopWatching(registrant: Any)
-
-    /**
-     * Disposes of the observable by unregistering all currently registered observers.
-     * This method ensures that no further updates or notifications are sent to the observers.
-     */
-    override fun dispose() {
-        observers.forEach { this.stopWatching(it) }
-    }
+    override fun dispose()
 
     /**
      * Transforms the current observable into a new observable by applying the specified transformation function
@@ -98,22 +48,7 @@ interface Observable<T> : Disposable {
      * @param transform The function to transform each value emitted by this observable.
      * @return A new observable that emits the transformed values.
      */
-    fun <S> map(transform: (T) -> S): Observable<S> = object : AbstractObservable<S>() {
-
-        override fun computeFresh(): S = transform(this@Observable.current)
-
-        override fun startMonitoring() {
-            this@Observable.onChange(this, invokeOnRegistration = false) {
-                updateAndNotify(transform(it))
-            }
-        }
-
-        override fun stopMonitoring() {
-            this@Observable.stopWatching(this)
-        }
-
-        override fun toString(): String = "MapObservable($current)[from: ${this@Observable}]"
-    }
+    fun <S> map(transform: (T) -> S): Observable<S>
 
     /**
      * Combines the current observable with another observable, producing a new observable that emits
@@ -123,43 +58,13 @@ interface Observable<T> : Disposable {
      * @param merge The function that combines the values from the two observables into a single value.
      * @return A new observable that emits values resulting from merging the two observables.
      */
-    fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R> = object : AbstractObservable<R>() {
-
-        override fun computeFresh(): R = merge(this@Observable.current, other.current)
-
-        override fun startMonitoring() {
-            val handleUpdate: (Any?) -> Unit = {
-                updateAndNotify(merge(this@Observable.current, other.current))
-            }
-
-            listOf(this@Observable, other).forEach { obs ->
-                obs.onChange(this, invokeOnRegistration = false, handleUpdate)
-            }
-        }
-
-        override fun stopMonitoring() {
-            listOf(this@Observable, other).forEach { it.stopWatching(this) }
-        }
-
-        override fun toString() = "MergeObservable($current)[from: ${this@Observable}, other: $other]"
-    }
+    fun <O, R> mergeWith(other: Observable<O>, merge: (T, O) -> R): Observable<R>
 
     /**
-     * Utilities for implementations of [Observable].
+     * Registers [callback] to be invoked with every new value of this observable, and right away with the current one
+     * if [notifyOnRegistration].
+     *
+     * @return a handle unregistering [callback]; disposing it more than once has no effect
      */
-    companion object {
-        /**
-         * Notifies [value] to the [observingCallbacks] of this observable, by registrant, while [isCurrent] holds.
-         * It is meant for implementations of [Observable] notifying their own observers.
-         *
-         * Both registrants and callbacks are snapshotted, so that subscriptions may change during the notification.
-         * A callback may also publish a newer value, whose nested notification reaches every observer: the remaining
-         * observers must not receive the outdated [value] afterwards, so the notification stops as soon as
-         * [isCurrent] no longer holds. It is checked right before each callback, after the previous one ran.
-         */
-        fun <T> Observable<T>.notifyCurrentObservers(value: T, isCurrent: () -> Boolean = { true }) {
-            // The sequence is lazy, so that isCurrent is evaluated after each callback rather than all upfront.
-            observingCallbacks.values.flatten().asSequence().takeWhile { isCurrent() }.forEach { it(value) }
-        }
-    }
+    fun onChange(notifyOnRegistration: Boolean = true, callback: (T) -> Unit): Disposable
 }

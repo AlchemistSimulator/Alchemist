@@ -13,9 +13,9 @@ import arrow.core.Option
 import arrow.core.getOrNone
 import arrow.core.none
 import arrow.core.some
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.util.Observables.currentOrNull
 import it.unibo.alchemist.model.observation.Observable
-import it.unibo.alchemist.model.observation.Observable.Companion.notifyCurrentObservers
 import it.unibo.alchemist.model.observation.ObservableMap
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
@@ -31,21 +31,18 @@ import kotlinx.collections.immutable.toPersistentMap
  * @param V The type of mapped values.
  * @property backingMap The internal mutable map that stores the key-value pairs.
  */
-open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : ObservableMap<K, V> {
+open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) :
+    AbstractObservable<Map<K, V>>(emitOnDistinct = false),
+    ObservableMap<K, V> {
 
     override val current: Map<K, V> get() = backingMap
 
-    override val observers: List<Any> get() = observingCallbacks.keys.toList()
-
-    override val observingCallbacks: MutableMap<Any, List<(Map<K, V>) -> Unit>> = linkedMapOf()
-
     /*
-     * Subscribers of the per-key observables, by key.
-     * Per-key observables are stateless façades over this map,
-     * so any handle for a key reads the live value and shares these subscribers;
-     * only keys being observed have an entry.
+     * The observed per-key observables, by key: only keys being observed have an entry.
+     * Several per-key observables of the same key may be observed at once, and they are all notified:
+     * they are equal, so they are kept in a list and told apart by identity.
      */
-    private val keyCallbacks: MutableMap<K, MutableMap<Any, List<(Option<V>) -> Unit>>> = linkedMapOf()
+    private val observedKeys: MutableMap<K, MutableList<KeyObservable>> = linkedMapOf()
 
     private var backingMap: PersistentMap<K, V> = initial.toPersistentMap()
 
@@ -72,18 +69,16 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
         }
     }
 
+    override fun computeFresh(): Map<K, V> = backingMap
+
     override fun dispose() {
-        keyCallbacks.clear()
-        observingCallbacks.clear()
+        super.dispose()
+        observedKeys.values.flatten().forEach { it.dispose() }
+        observedKeys.clear()
         backingMap = persistentMapOf()
     }
 
     override operator fun get(key: K): Observable<Option<V>> = KeyObservable(key)
-
-    override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Map<K, V>) -> Unit) {
-        observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-        if (invokeOnRegistration) callback(backingMap)
-    }
 
     /**
      * Adds the specified key-value pair to the map. If the key already exists, the value is updated.
@@ -124,13 +119,11 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
      */
     operator fun set(key: K, value: V) = put(key, value)
 
-    // Per-key subscriptions belong to the per-key observables, which release them independently.
-    override fun stopWatching(registrant: Any) {
-        observingCallbacks.remove(registrant)
-    }
-
+    // A key observer that changed the key again has already notified the newer value: the outdated one stops there.
     private fun notifyKeyObservers(key: K, value: Option<V>) {
-        KeyObservable(key).notifyCurrentObservers(value) { backingMap.getOrNone(key) == value }
+        observedKeys[key]?.toList()?.asSequence()?.takeWhile { backingMap.getOrNone(key) == value }?.forEach {
+            it.publish(value)
+        }
     }
 
     /*
@@ -139,44 +132,40 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) : Observa
      */
     private fun notifyMapObserversUnlessChangedSince(updated: PersistentMap<K, V>) {
         if (backingMap === updated) {
-            notifyCurrentObservers(updated) { backingMap === updated }
-        }
-    }
-
-    private fun stopWatchingKey(key: K, registrant: Any) {
-        keyCallbacks[key]?.let { callbacks ->
-            callbacks.remove(registrant)
-            if (callbacks.isEmpty()) {
-                keyCallbacks.remove(key)
-            }
+            updateAndNotify(updated)
         }
     }
 
     /**
-     * The observable value of [key] in this map: a stateless façade, equal to any other façade of the same key.
+     * The observable value of [key] in this map, equal to any other of the same key.
+     * While observed, it is among the observed keys of the map, which notifies it of the changes of [key].
      */
-    private inner class KeyObservable(private val key: K) : Observable<Option<V>> {
+    private inner class KeyObservable(private val key: K) : AbstractObservable<Option<V>>(emitOnDistinct = false) {
         override val current: Option<V> get() = backingMap.getOrNone(key)
 
-        override val observers: List<Any> get() = observingCallbacks.keys.toList()
-
-        override val observingCallbacks: Map<Any, List<(Option<V>) -> Unit>>
-            get() = keyCallbacks[key].orEmpty()
-
         private val map get() = this@ObservableMutableMap
+
+        override fun computeFresh(): Option<V> = backingMap.getOrNone(key)
 
         override fun equals(other: Any?): Boolean =
             other is ObservableMutableMap<*, *>.KeyObservable && other.map === map && other.key == key
 
         override fun hashCode(): Int = 31 * map.hashCode() + key.hashCode()
 
-        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Option<V>) -> Unit) {
-            val callbacks = keyCallbacks.getOrPut(key) { linkedMapOf() }
-            callbacks[registrant] = callbacks[registrant].orEmpty() + callback
-            if (invokeOnRegistration) callback(current)
+        fun publish(value: Option<V>) = updateAndNotify(value)
+
+        override fun startObservingSources() {
+            observedKeys.getOrPut(key) { mutableListOf() } += this
         }
 
-        override fun stopWatching(registrant: Any) = stopWatchingKey(key, registrant)
+        override fun stopObservingSources() {
+            observedKeys[key]?.let { observed ->
+                observed.removeIf { it === this }
+                if (observed.isEmpty()) {
+                    observedKeys -= key
+                }
+            }
+        }
 
         override fun toString(): String = "KeyObservable($key=$current)"
     }

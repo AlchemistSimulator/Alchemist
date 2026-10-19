@@ -31,7 +31,7 @@ class LsaNodeContentsTest {
     @Test
     fun `subscribers of the observable contents receive the molecule counts`() {
         val received = mutableListOf<Map<Molecule, Any?>>()
-        node.contents.onChange(this, invokeOnRegistration = false) { received += count(it) }
+        node.contents.onChange(notifyOnRegistration = false) { received += count(it) }
         node.addLsa(molecule)
         node.addLsa(molecule)
         node.removeOneMatchedLsa(molecule)
@@ -45,7 +45,7 @@ class LsaNodeContentsTest {
     @Test
     fun `the concentration of an LSA is present only if the node contains a matching LSA`() {
         val received = mutableListOf<Option<List<ILsaMolecule>>>()
-        node.concentrationOf(molecule).onChange(this, invokeOnRegistration = true) { received += it }
+        node.concentrationOf(molecule).onChange(notifyOnRegistration = true) { received += it }
         assertEquals(none(), node[molecule])
         node.addLsa(molecule)
         assertEquals(listOf<ILsaMolecule>(molecule).some(), node[molecule])
@@ -57,7 +57,7 @@ class LsaNodeContentsTest {
     fun `observers of the molecule count read a node already updated`() {
         val other = LsaMolecule("other, 2")
         val received = mutableListOf<Triple<Int, Int, Int>>()
-        node.moleculeCount.onChange(this, invokeOnRegistration = false) { count ->
+        node.moleculeCount.onChange(notifyOnRegistration = false) { count ->
             received += Triple(count, node.lsaSpace.size, node.matching(molecule).size)
         }
         node.addLsa(molecule)

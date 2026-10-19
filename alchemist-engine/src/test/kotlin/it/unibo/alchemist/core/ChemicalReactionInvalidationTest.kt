@@ -86,7 +86,7 @@ class ChemicalReactionInvalidationTest : StringSpec({
                 try {
                     observedReactions.forEach { target ->
                         target.initializationComplete(Time.ZERO, environment)
-                        subscriptions += target.nextOccurrence.subscribe(invokeOnSubscription = false) {
+                        subscriptions += target.nextOccurrence.onChange(notifyOnRegistration = false) {
                             emissionCounters.getValue(target).incrementAndGet()
                         }
                     }

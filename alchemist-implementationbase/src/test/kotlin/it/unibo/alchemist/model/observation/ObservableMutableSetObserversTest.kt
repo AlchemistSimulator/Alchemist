@@ -16,26 +16,26 @@ class ObservableMutableSetObserversTest {
     private val set = ObservableMutableSet(1)
 
     @Test
-    fun `an advertised observer can be stopped`() {
+    fun `a released observer is no longer notified`() {
         val seen = mutableListOf<Set<Int>>()
-        set.onChange(this, invokeOnRegistration = false) { seen += it }
-        set.observers.forEach(set::stopWatching)
+        set.onChange(notifyOnRegistration = false) { seen += it }.dispose()
         set.add(2)
         assertEquals(emptyList(), seen)
-        assertEquals(emptyList(), set.observers)
+        assertEquals(0, set.observerCount)
     }
 
     @Test
-    fun `observers are the registrants of the set`() {
-        set.onChange(this, invokeOnRegistration = false) { }
-        assertEquals(listOf<Any>(this), set.observers)
+    fun `observers of the size are not observers of the set`() {
+        set.onChange(notifyOnRegistration = false) { }
+        set.size.onChange(notifyOnRegistration = false) { }
+        assertEquals(1, set.observerCount)
     }
 
     @Test
     fun `replacing the contents notifies the observers of each changed item`() {
         val membership = listOf(1, 2, 3).associateWith { item ->
             mutableListOf<Boolean>().also { seen ->
-                set.containsItem(item).subscribe(invokeOnSubscription = false) {
+                set.containsItem(item).onChange(notifyOnRegistration = false) {
                     seen +=
                         it
                 }
@@ -48,7 +48,7 @@ class ObservableMutableSetObserversTest {
     @Test
     fun `replacing the contents notifies the observers of the set once`() {
         val seen = mutableListOf<Set<Int>>()
-        set.onChange(this, invokeOnRegistration = false) { seen += it }
+        set.onChange(notifyOnRegistration = false) { seen += it }
         set.clearAndAddAll(setOf(2, 3))
         assertEquals(listOf(setOf(2, 3)), seen)
     }
@@ -56,7 +56,7 @@ class ObservableMutableSetObserversTest {
     @Test
     fun `replacing the contents with the same items notifies nobody`() {
         val seen = mutableListOf<Set<Int>>()
-        set.onChange(this, invokeOnRegistration = false) { seen += it }
+        set.onChange(notifyOnRegistration = false) { seen += it }
         set.clearAndAddAll(setOf(1))
         assertEquals(emptyList(), seen)
     }

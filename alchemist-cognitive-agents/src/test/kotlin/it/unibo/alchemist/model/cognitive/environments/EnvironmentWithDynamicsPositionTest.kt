@@ -21,7 +21,7 @@ class EnvironmentWithDynamicsPositionTest {
     @Test
     fun `position observers read the new position when a node moves`() {
         val readPositions = mutableListOf<Euclidean2DPosition>()
-        environment.positionOf(node).subscribe(invokeOnSubscription = false) {
+        environment.positionOf(node).onChange(notifyOnRegistration = false) {
             readPositions += environment.currentPositionOf(node)
         }
         environment.moveNodeTo(node, Euclidean2DPosition(5.0, 5.0))

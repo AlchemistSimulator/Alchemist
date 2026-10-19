@@ -33,7 +33,7 @@ class NoOtherReactionCanExecuteTest {
         guarded.conditions = listOf(condition)
         node.addReaction(guarded)
         val validity = condition.isValid
-        val subscription = validity.subscribe { }
+        val subscription = validity.onChange { }
         assertTrue(validity.current)
         val competitor = GenericReaction(node, DiracComb(1.0)).apply {
             conditions = listOf(ContainsMolecule(this, MOLECULE))

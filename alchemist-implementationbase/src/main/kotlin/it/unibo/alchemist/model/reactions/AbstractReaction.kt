@@ -184,7 +184,7 @@ abstract class AbstractReaction<T>(initialOccurrence: Time) : Reaction<T> {
      */
     protected open fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
         subscriptions.add(
-            canExecute.subscribe(invokeOnSubscription = false) {
+            canExecute.onChange(notifyOnRegistration = false) {
                 schedulingInputChanged()
             },
         )

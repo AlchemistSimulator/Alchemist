@@ -47,7 +47,7 @@ class TensionPresentTest {
         val cell = deformableCellAt(0.0, maximumDiameter = 1.0, rigidity = 1.0)
         val tension = tensionOn(cell)
         val validity = mutableListOf<Boolean>()
-        tension.isValid.subscribe { validity += it }
+        tension.isValid.onChange { validity += it }
         assertEquals(listOf(false), validity)
         // Farther than the previous biggest diameter, but within the sum of the maximum radii (0.5 + 2).
         deformableCellAt(2.2, maximumDiameter = 4.0, rigidity = 0.5)

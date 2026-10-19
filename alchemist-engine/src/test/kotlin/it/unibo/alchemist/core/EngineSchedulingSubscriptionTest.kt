@@ -63,7 +63,7 @@ class EngineSchedulingSubscriptionTest {
     // The real scheduler, spied to verify calls; every removal must follow the disposal of the engine subscription.
     private val scheduler = spyk(ArrayIndexedPriorityQueue<Double>()).apply {
         every { removeReaction(any()) } answers {
-            assertEquals(0, firstArg<Reaction<Double>>().nextOccurrence.observers.size)
+            assertEquals(0, firstArg<Reaction<Double>>().nextOccurrence.observerCount)
             callOriginal()
         }
     }
@@ -113,7 +113,7 @@ class EngineSchedulingSubscriptionTest {
         assertFalse(event.isScheduled())
         verify(exactly = 0) { scheduler.updateReaction(event) }
         assertFalse(event in environment.reactions.current)
-        assertEquals(0, event.nextOccurrence.observers.size)
+        assertEquals(0, event.nextOccurrence.observerCount)
     }
 
     @Test
@@ -127,7 +127,7 @@ class EngineSchedulingSubscriptionTest {
         assertFalse(event.isScheduled())
         verify(exactly = 0) { scheduler.updateReaction(event) }
         assertFalse(event in node.reactions.current)
-        assertEquals(0, event.nextOccurrence.observers.size)
+        assertEquals(0, event.nextOccurrence.observerCount)
     }
 
     @Test
@@ -244,7 +244,7 @@ class EngineSchedulingSubscriptionTest {
         events.forEach { event ->
             assertFalse(event.isScheduled())
             verify(exactly = 0) { scheduler.updateReaction(event) }
-            assertEquals(0, event.nextOccurrence.observers.size)
+            assertEquals(0, event.nextOccurrence.observerCount)
         }
         assertTrue(node.reactions.current.isEmpty())
         assertTrue(environment.reactions.current.isEmpty())
@@ -260,7 +260,7 @@ class EngineSchedulingSubscriptionTest {
         node.place()
         every { scheduler.addReaction(any()) } throws IllegalStateException("synthetic scheduler failure")
         assertFailsWith<IllegalStateException> { engine.initializeForTest() }
-        assertEquals(0, reaction.nextOccurrence.observers.size)
+        assertEquals(0, reaction.nextOccurrence.observerCount)
         assertFalse(reaction.isScheduled())
         verify(exactly = 0) { reaction.dispose() }
     }
@@ -294,7 +294,7 @@ class EngineSchedulingSubscriptionTest {
         reactions.forEach { reaction ->
             verify(exactly = 0) { reaction.initializationComplete(any(), any()) }
             verify(exactly = 0) { scheduler.addReaction(reaction) }
-            assertEquals(0, reaction.nextOccurrence.observers.size)
+            assertEquals(0, reaction.nextOccurrence.observerCount)
         }
     }
 
@@ -439,7 +439,7 @@ class EngineSchedulingSubscriptionTest {
 
     /** Reports [inputs] changes to the engine, as reactions do for their scheduling inputs. */
     private fun Reaction<Double>.invalidatedBy(vararg inputs: Observable<*>) = inputs.forEach { input ->
-        input.subscribe(invokeOnSubscription = false) { engine.reactionInvalidated(this) }
+        input.onChange(notifyOnRegistration = false) { engine.reactionInvalidated(this) }
     }
 
     private fun Reaction<Double>.isScheduled() = this in scheduler.tree

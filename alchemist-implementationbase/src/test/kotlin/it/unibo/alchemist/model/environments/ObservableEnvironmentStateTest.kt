@@ -118,5 +118,5 @@ class ObservableEnvironmentStateTest {
     private fun nodeAt(x: Double, y: Double = 0.0): Node<Any> =
         GenericNode(environment).also { environment.addNode(it, Euclidean2DPosition(x, y)) }
 
-    private fun <T> Observable<T>.record(): List<T> = mutableListOf<T>().also { values -> subscribe { values += it } }
+    private fun <T> Observable<T>.record(): List<T> = mutableListOf<T>().also { values -> onChange { values += it } }
 }

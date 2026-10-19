@@ -60,7 +60,7 @@ class TestNeighborhood {
         val observable = environment.neighborhoodOf(center)
         val published = observable.current
         val received = mutableListOf<Neighborhood<Int>>()
-        val subscription = observable.subscribe(invokeOnSubscription = false) { received += it }
+        val subscription = observable.onChange(notifyOnRegistration = false) { received += it }
         try {
             environment.moveNodeTo(far, environment.makePosition(0, 0.5))
             assertEquals(listOf(near), published.neighbors)

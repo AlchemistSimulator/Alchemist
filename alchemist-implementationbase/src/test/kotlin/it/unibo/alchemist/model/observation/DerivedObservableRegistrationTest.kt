@@ -19,7 +19,7 @@ class DerivedObservableRegistrationTest {
     @Test
     fun `a source change made by the initial callback reaches the derived observable`() {
         val received = mutableListOf<Int>()
-        derived.subscribe { value ->
+        derived.onChange { value ->
             received += value
             if (value == 0) {
                 source.current = 1

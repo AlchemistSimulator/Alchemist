@@ -78,7 +78,7 @@ class ReactiveScalingTest {
         val origin = currentPositionOf(middle).x
         val subscriptions = nodes.current.flatMap { node ->
             node.reactions.current.map { reaction ->
-                reaction.nextOccurrence.subscribe(invokeOnSubscription = false) {
+                reaction.nextOccurrence.onChange(notifyOnRegistration = false) {
                     rescheduled += (currentPositionOf(node).x - origin).roundToInt()
                 }
             }
@@ -113,7 +113,7 @@ class ReactiveScalingTest {
     @Test
     fun `a node is observed only by its neighbors whatever the population`() {
         val observers: EuclideanEnvironment<Any, Euclidean2DPosition>.(Node<Any>) -> Int = { middle ->
-            middle.concentrationOf(MOLECULE).observers.size
+            middle.concentrationOf(MOLECULE).observerCount
         }
         assertEquals(onLine(SMALL, observers), onLine(LARGE, observers))
     }
@@ -122,7 +122,7 @@ class ReactiveScalingTest {
     fun `removing the reactions releases every subscription to node contents`() {
         val remaining = onLine(SMALL) {
             nodes.current.forEach { node -> node.reactions.current.forEach(node::removeReaction) }
-            nodes.current.sumOf { node -> node.concentrationOf(MOLECULE).observers.size }
+            nodes.current.sumOf { node -> node.concentrationOf(MOLECULE).observerCount }
         }
         assertEquals(0, remaining)
     }

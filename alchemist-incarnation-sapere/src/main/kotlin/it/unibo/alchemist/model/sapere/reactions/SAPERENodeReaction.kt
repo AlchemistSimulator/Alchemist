@@ -137,7 +137,7 @@ class SAPERENodeReaction(
     override fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
         sapereConditions.forEach { condition ->
             subscriptions.add(
-                condition.matchingInput.subscribe(invokeOnSubscription = false) {
+                condition.matchingInput.onChange(notifyOnRegistration = false) {
                     schedulingInputChanged()
                 },
             )

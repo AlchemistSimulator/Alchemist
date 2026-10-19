@@ -56,7 +56,7 @@ class NodeInsertionTest {
         ).apply { networkModel = connectWithinDistance(1.0) }
         val first = GenericNode(environment).also { environment.addNode(it, environment.makePosition(0, 0)) }
         val neighborsOnArrival = mutableListOf<List<Node<Any>>>()
-        environment.nodes.subscribe(invokeOnSubscription = false) { nodes ->
+        environment.nodes.onChange(notifyOnRegistration = false) { nodes ->
             neighborsOnArrival += environment.neighborhoodOf(nodes.last()).current.neighbors.toList()
         }
         val second = GenericNode(environment).also { environment.addNode(it, environment.makePosition(0.5, 0)) }

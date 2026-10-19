@@ -29,6 +29,7 @@ import kotlin.math.exp
 import kotlin.math.ln
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import org.apache.commons.math3.random.RandomGenerator
 import org.junit.jupiter.api.Test
@@ -177,11 +178,11 @@ class NodeReactionTransitionTest {
             fixture.propensity,
         )
         reaction.initializationComplete(Time.ZERO, fixture.environment)
-        assertEquals(1, fixture.propensity.observers.size)
+        assertEquals(1, fixture.propensity.observerCount)
         reaction.dispose()
-        assertTrue(fixture.propensity.observers.isEmpty())
+        assertFalse(fixture.propensity.isObserved)
         var observed = fixture.propensity.current
-        val independentSubscription = fixture.propensity.subscribe(invokeOnSubscription = false) { observed = it }
+        val independentSubscription = fixture.propensity.onChange(notifyOnRegistration = false) { observed = it }
         fixture.propensity.current = 2.0
         assertEquals(2.0, observed)
         independentSubscription.dispose()
@@ -277,7 +278,7 @@ class NodeReactionTransitionTest {
 
         override fun subscribeToSchedulingInputs(subscriptions: CompositeDisposable) {
             subscriptions.add(
-                observableRate.subscribe(invokeOnSubscription = false) {
+                observableRate.onChange(notifyOnRegistration = false) {
                     schedulingInputChanged()
                 },
             )

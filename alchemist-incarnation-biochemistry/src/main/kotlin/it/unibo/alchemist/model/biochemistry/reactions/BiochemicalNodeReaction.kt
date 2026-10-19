@@ -75,7 +75,7 @@ class BiochemicalNodeReaction(
                 else -> error("Unsupported biochemical condition: $condition")
             }
             subscriptions.add(
-                input.subscribe(invokeOnSubscription = false) {
+                input.onChange(notifyOnRegistration = false) {
                     schedulingInputChanged()
                 },
             )

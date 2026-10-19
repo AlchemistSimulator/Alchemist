@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.NetworkModel
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.util.Observables.combineLatest
 import it.unibo.alchemist.model.observation.Disposable
@@ -61,7 +62,7 @@ class OffsetGraphStreamNetworkModel<T, P : Position<P>>(
      * The neighborhood of center, following the presence of its graph neighbors while observed. The presence of all
      * the nodes is tracked once for every neighborhood, from the first one being observed to the last one left.
      */
-    private inner class GraphNeighborhood(private val center: Node<T>) : Observable<Neighborhood<T>> {
+    private inner class GraphNeighborhood(private val center: Node<T>) : AbstractObservable<Neighborhood<T>>() {
 
         private val neighborIds = graphNeighborIdsOf(center)
 
@@ -69,31 +70,28 @@ class OffsetGraphStreamNetworkModel<T, P : Position<P>>(
             .combineLatest { presence -> presence.mapNotNull { it.getOrNull() } }
             .map { neighbors -> Neighborhood(center, neighbors.getOrNull().orEmpty()) }
 
-        override val current: Neighborhood<T> get() = when {
-            isObserved -> base.current
+        // Whether this neighborhood tracks the presence of the nodes, which it does while observing its sources.
+        private var tracksPresence = false
+
+        // Without tracking the presence, the neighbors are looked up among the nodes of the environment.
+        override fun computeFresh(): Neighborhood<T> = when {
+            tracksPresence -> base.current
             else -> Neighborhood(center, environment.nodes.current.filter { it.id in neighborIds })
         }
 
-        override val observers: List<Any> get() = base.observers
-
-        override val observingCallbacks: Map<Any, List<(Neighborhood<T>) -> Unit>> get() = base.observingCallbacks
-
-        private val isObserved: Boolean get() = observers.isNotEmpty()
-
-        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Neighborhood<T>) -> Unit) {
-            if (!isObserved && observedNeighborhoods++ == 0) {
-                // The presence is tracked before the neighborhood reads it.
-                presenceTracking = environment.nodes.subscribe { nodes ->
+        override fun startObservingSources() {
+            if (observedNeighborhoods++ == 0) {
+                presenceTracking = environment.nodes.onChange { nodes ->
                     present.clearAndPutAll(nodes.associateBy(Node<T>::id))
                 }
             }
-            base.onChange(registrant, invokeOnRegistration, callback)
+            tracksPresence = true
+            observeSource(base) { updateAndNotify(it) }
         }
 
-        override fun stopWatching(registrant: Any) {
-            val wasObserved = isObserved
-            base.stopWatching(registrant)
-            if (wasObserved && !isObserved && --observedNeighborhoods == 0) {
+        override fun stopObservingSources() {
+            tracksPresence = false
+            if (--observedNeighborhoods == 0) {
                 presenceTracking?.dispose()
                 presenceTracking = null
                 present.clearAndPutAll(emptyMap())

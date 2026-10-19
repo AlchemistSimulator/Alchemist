@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observation.Observable
 
 /**
@@ -25,21 +26,12 @@ import it.unibo.alchemist.model.observation.Observable
 abstract class TimeInvariantLayer<T, P : Position<out P>> : Layer<T, P> {
     abstract override fun currentValueAt(position: P): T
 
-    final override fun valueAt(position: P): Observable<T> = object : Observable<T> {
-        override val current: T = currentValueAt(position)
+    // The value at a position never changes: its observers are never notified, except on registration.
+    final override fun valueAt(position: P): Observable<T> = object : AbstractObservable<T>() {
+        private val value = currentValueAt(position)
 
-        override val observers: List<Any> = emptyList()
+        override fun computeFresh(): T = value
 
-        override val observingCallbacks: Map<Any, List<(T) -> Unit>> = emptyMap()
-
-        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (T) -> Unit) {
-            if (invokeOnRegistration) {
-                callback(current)
-            }
-        }
-
-        override fun stopWatching(registrant: Any) = Unit
-
-        override fun toString(): String = "Constant($current)"
+        override fun toString(): String = "Constant($value)"
     }
 }

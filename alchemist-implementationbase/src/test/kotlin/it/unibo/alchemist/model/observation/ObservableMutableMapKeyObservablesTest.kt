@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
 class ObservableMutableMapKeyObservablesTest {
     private val map = ObservableMutableMap(mapOf("initial" to 1))
 
-    private fun stopObservingTheMap() = map.subscribe { }.dispose()
+    private fun stopObservingTheMap() = map.onChange { }.dispose()
 
     @Test
     fun `stopping a map observer keeps the values of initial keys observable`() {
@@ -35,7 +35,7 @@ class ObservableMutableMapKeyObservablesTest {
 
     @Test
     fun `stopping a map observer keeps removed keys absent`() {
-        map["initial"].subscribe { }.dispose()
+        map["initial"].onChange { }.dispose()
         map.remove("initial")
         stopObservingTheMap()
         assertEquals(none(), map["initial"].current)
@@ -48,27 +48,26 @@ class ObservableMutableMapKeyObservablesTest {
         map.put("late", 3)
         assertEquals(3.some(), handle.current)
         val seen = mutableListOf<Option<Int>>()
-        handle.subscribe(invokeOnSubscription = false) { seen += it }
+        handle.onChange(notifyOnRegistration = false) { seen += it }
         map.remove("late")
         map.put("late", 4)
         assertEquals(listOf(none(), 4.some()), seen)
     }
 
     @Test
-    fun `a key subscription can be released through another handle for the same key`() {
+    fun `a key subscription can be released`() {
         val seen = mutableListOf<Option<Int>>()
-        map["initial"].onChange(this, invokeOnRegistration = false) { seen += it }
-        map["initial"].stopWatching(this)
+        map["initial"].onChange(notifyOnRegistration = false) { seen += it }.dispose()
         map.put("initial", 2)
         assertEquals(emptyList(), seen)
     }
 
     @Test
-    fun `stopping a registrant on the map keeps its key subscriptions`() {
+    fun `releasing a map subscription keeps the key subscriptions`() {
         val seen = mutableListOf<Option<Int>>()
-        map.onChange(this, invokeOnRegistration = false) { }
-        map["initial"].onChange(this, invokeOnRegistration = false) { seen += it }
-        map.stopWatching(this)
+        val subscription = map.onChange(notifyOnRegistration = false) { }
+        map["initial"].onChange(notifyOnRegistration = false) { seen += it }
+        subscription.dispose()
         map.put("initial", 2)
         assertEquals(listOf(2.some()), seen)
     }
@@ -76,25 +75,25 @@ class ObservableMutableMapKeyObservablesTest {
     @Test
     fun `key observers of a replaced map read the whole replacement`() {
         val seen = mutableListOf<Map<String, Int>>()
-        map["initial"].subscribe(invokeOnSubscription = false) { seen += map.current }
+        map["initial"].onChange(notifyOnRegistration = false) { seen += map.current }
         map.clearAndPutAll(mapOf("replacement" to 2))
         assertEquals(listOf(mapOf("replacement" to 2)), seen)
     }
 
     @Test
     fun `map observers receive each map once when a key observer changes the map on a put`() {
-        map["initial"].subscribe(invokeOnSubscription = false) { if (it == 2.some()) map.put("other", 3) }
+        map["initial"].onChange(notifyOnRegistration = false) { if (it == 2.some()) map.put("other", 3) }
         val seen = mutableListOf<Map<String, Int>>()
-        map.subscribe(invokeOnSubscription = false) { seen += it }
+        map.onChange(notifyOnRegistration = false) { seen += it }
         map.put("initial", 2)
         assertEquals(listOf(mapOf("initial" to 2, "other" to 3)), seen)
     }
 
     @Test
     fun `map observers receive each map once when a key observer changes the map on a remove`() {
-        map["initial"].subscribe(invokeOnSubscription = false) { if (it == none<Int>()) map.put("other", 3) }
+        map["initial"].onChange(notifyOnRegistration = false) { if (it == none<Int>()) map.put("other", 3) }
         val seen = mutableListOf<Map<String, Int>>()
-        map.subscribe(invokeOnSubscription = false) { seen += it }
+        map.onChange(notifyOnRegistration = false) { seen += it }
         map.remove("initial")
         assertEquals(listOf(mapOf("other" to 3)), seen)
     }

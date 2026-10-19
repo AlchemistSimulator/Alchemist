@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.observables.util
 
 import arrow.core.Option
+import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.ObservableMutableSet
 import it.unibo.alchemist.model.observables.util.Observables.combineLatestCollection
 import it.unibo.alchemist.model.observables.util.Observables.flatMapCollection
@@ -93,42 +94,27 @@ object ObservableSets {
      * @param other The observable set to be merged with the current one.
      * @return A new observable set that emits the union of the values.
      */
-    infix fun <T> ObservableSet<T>.union(other: ObservableSet<T>): ObservableSet<T> = object : ObservableSet<T> {
-        private val backing = this@union.mergeWith(other) { s1, s2 -> s1 + s2 }
+    infix fun <T> ObservableSet<T>.union(other: ObservableSet<T>): ObservableSet<T> =
+        object : AbstractObservable<Set<T>>(), ObservableSet<T> {
+            override val size: Observable<Int> = map { it.size }
 
-        override val current: Set<T> get() = backing.current
+            override fun computeFresh(): Set<T> = this@union.current + other.current
 
-        override var observers: List<Any> = emptyList()
+            override fun containsItem(item: T): Observable<Boolean> =
+                this@union.containsItem(item).mergeWith(other.containsItem(item)) { a, b -> a || b }
 
-        override val observingCallbacks: MutableMap<Any, List<(Set<T>) -> Unit>> = mutableMapOf()
+            override fun dispose() {
+                // The size observes this union, so it is released first.
+                size.dispose()
+                super.dispose()
+            }
 
-        override val size: Observable<Int> = backing.map { it.size }
+            override fun startObservingSources() {
+                listOf(this@union, other).forEach { observeSource(it) { updateAndNotify(computeFresh()) } }
+            }
 
-        override fun onChange(registrant: Any, invokeOnRegistration: Boolean, callback: (Set<T>) -> Unit) {
-            observers += registrant
-            observingCallbacks[registrant] = observingCallbacks[registrant].orEmpty() + callback
-            backing.onChange(this to registrant, invokeOnRegistration, callback)
+            override fun toString(): String = "UnionObservableSet($current)[from: ${this@union}, other: $other]"
         }
-
-        override fun stopWatching(registrant: Any) {
-            observers -= registrant
-            observingCallbacks.remove(registrant)
-            backing.stopWatching(this to registrant)
-        }
-
-        override fun containsItem(item: T): Observable<Boolean> =
-            this@union.containsItem(item).mergeWith(other.containsItem(item)) { a, b -> a || b }
-
-        override fun dispose() {
-            // The size subscribes to the backing observable directly, so it is released before it.
-            size.dispose()
-            backing.dispose()
-            observers = emptyList()
-            observingCallbacks.clear()
-        }
-
-        override fun toString(): String = "UnionObservableSet($current)[from: ${this@union}, other: $other]"
-    }
 
     /**
      * Creates a new [ObservableSet] and populates it with the specified items.

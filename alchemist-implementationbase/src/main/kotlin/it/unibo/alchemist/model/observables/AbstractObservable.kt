@@ -84,9 +84,12 @@ abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true)
 
     override fun onChange(notifyOnRegistration: Boolean, callback: (T) -> Unit): Disposable {
         val wasEmpty = !isObserved
-        val handle = Disposable {
-            if (callbacks.remove(this) != null && !isObserved && isListening) {
-                stopListening()
+        // An object rather than a lambda: the handle removes itself, and in a lambda `this` is the observable.
+        val handle = object : Disposable {
+            override fun dispose() {
+                if (callbacks.remove(this) != null && !isObserved && isListening) {
+                    stopListening()
+                }
             }
         }
         callbacks[handle] = callback

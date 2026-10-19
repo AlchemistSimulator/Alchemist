@@ -283,7 +283,7 @@ If left unspecified, nodes get created through
 
 **Type**: SpecMap
 
-Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+Definition of the contents ({{% api class="Molecule" %}}s and their concentrations) of a group of nodes.
 
 **(Multi)Spec**
 
@@ -414,7 +414,7 @@ own their reactions.
 
 **Type**: SpecMap
 
-Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+Definition of the contents ({{% api class="Molecule" %}}s and their concentrations) of a group of nodes.
 
 **(Multi)Spec**
 
@@ -473,7 +473,7 @@ The created molecule is read from every node.
 **Type**: String
 
 Name of a property to be extracted from the selected {{% api class="Molecule" %}}.
-The Molecule and the String are passed down to {{% api class="Incarnation" method="getProperty" %}}.
+The Molecule and the String are passed down to {{% api class="Incarnation" method="readConcentration" %}}.
 The obtained value is added to the exports.
 
 ### `extractor.aggregators`
@@ -602,7 +602,7 @@ and no node will have any neighbor.
 
 **Type**: SpecMap
 
-Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+Definition of the contents ({{% api class="Molecule" %}}s and their concentrations) of a group of nodes.
 
 **(Multi)Spec**
 

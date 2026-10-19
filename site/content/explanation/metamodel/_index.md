@@ -22,7 +22,7 @@ The world of Alchemist is composed of the following entities:
 * **{{% api package="model" class="Molecule" %}}**
     * The name of a data item
     * If Alchemist were an imperative programming language, a *molecule* would be the concept of *variable name*
-* **{{% api package="model" class="Concentration" %}}**
+* **Concentration**
     * The value associated to a particular *molecule*
     * If Alchemist were an imperative programming language, a *concentration* would be the concept of *value associated to a variable*
 * **{{% api package="model" class="Node" %}}**

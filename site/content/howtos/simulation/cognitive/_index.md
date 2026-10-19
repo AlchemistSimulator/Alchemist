@@ -8,8 +8,8 @@ summary = "Agents with realistic human behavior."
 We recommend to read our [explanation of the cognitive agents](/explanation/cognitive)
 to better understand the contents of this how-to.
 
-Different kinds of pedestrians are obtainable by attaching
-{{% api class=NodeProperty %}}s
+Different kinds of pedestrians are obtainable by attaching capabilities
+({{% api class=Capability %}})
 to nodes (e.g {{%api package=model.nodes class=GenericNode %}}).
 Common properties concern abilities such as perceiving other nodes
 ({{% api package=model.cognitive.properties class=PerceptiveProperty %}})

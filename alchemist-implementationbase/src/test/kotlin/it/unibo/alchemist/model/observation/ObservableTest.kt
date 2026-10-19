@@ -60,6 +60,28 @@ class ObservableTest {
     }
 
     @Test
+    fun `a combined observable releases an element leaving while it registers with it`() {
+        // An element publishing a newer value while it starts observing its sources, as network models do.
+        val element = object : AbstractObservable<Int>() {
+            var value = 1
+
+            override fun computeFresh(): Int = value
+
+            override fun startObservingSources() {
+                value = 2
+                updateAndNotify(value)
+            }
+        }
+        val set = ObservableMutableSet<String>()
+        val combined = set.combineLatest(transformer = { element }, aggregator = { values -> values.sum() })
+        // The newer value makes the element leave the set while the combination registers with it.
+        combined.onChange(notifyOnRegistration = false) { if (it == 2) set.remove("a") }
+        set.add("a")
+        assertTrue(combined.isObserved)
+        assertEquals(0, element.observerCount)
+    }
+
+    @Test
     fun `a disposed EventObservable has no observers and notifies nobody`() {
         val event = EventObservable()
         var calls = -2

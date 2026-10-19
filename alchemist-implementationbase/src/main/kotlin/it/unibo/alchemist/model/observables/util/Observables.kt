@@ -261,8 +261,11 @@ object Observables {
         sources += joining
         joining.forEach { (key, source) ->
             val subscription = observeSource(source, doOnChange)
+            // An element leaving while being registered with is released right away.
             if (sources[key] === source) {
                 subscriptions[key] = subscription
+            } else {
+                subscription.dispose()
             }
         }
         if (notifyOnRegistration) {

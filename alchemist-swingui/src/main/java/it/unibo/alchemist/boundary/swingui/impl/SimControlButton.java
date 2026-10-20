@@ -33,10 +33,10 @@ public class SimControlButton extends JButton {
      */
     public SimControlButton(final String imagePath, final Enum<?> command, final String tooltip) {
         super(AlchemistSwingUI.loadScaledImage(imagePath));
-        setActionCommand(command.toString());
-        setToolTipText(tooltip);
+        super.setActionCommand(command.toString());
+        super.setToolTipText(tooltip);
         // TODO find a better way to do this
-        setText(tooltip);
+        super.setText(tooltip);
     }
 
 }

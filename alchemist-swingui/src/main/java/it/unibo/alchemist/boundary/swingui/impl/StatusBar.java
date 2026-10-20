@@ -35,7 +35,7 @@ public class StatusBar extends JLabel {
      */
     public StatusBar() {
         super("Init OK", SwingConstants.LEADING);
-        setIcon(ok);
+        super.setIcon(ok);
     }
 
     /**

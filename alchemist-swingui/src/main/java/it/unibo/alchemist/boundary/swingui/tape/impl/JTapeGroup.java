@@ -42,15 +42,15 @@ public class JTapeGroup extends JPanel {
      */
     public JTapeGroup(final String d) {
         super();
-        setLayout(new BorderLayout(0, 0));
+        super.setLayout(new BorderLayout(0, 0));
 
         lblDescription = new JLabel(d);
         lblDescription.setFont(new Font("Dialog", Font.BOLD, DESC_TEXT_SIZE));
         lblDescription.setHorizontalAlignment(SwingConstants.CENTER);
-        add(lblDescription, BorderLayout.SOUTH);
+        super.add(lblDescription, BorderLayout.SOUTH);
 
         contentPanel = new JPanel();
-        add(contentPanel, BorderLayout.CENTER);
+        super.add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new MigLayout("", "", "[grow,fill]"));
     }
 

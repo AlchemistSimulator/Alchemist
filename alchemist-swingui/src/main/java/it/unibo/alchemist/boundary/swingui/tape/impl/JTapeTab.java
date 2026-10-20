@@ -46,14 +46,14 @@ public class JTapeTab extends JPanel {
      */
     public JTapeTab(final String t) {
         super();
-        setLayout(new BorderLayout(0, 0));
+        super.setLayout(new BorderLayout(0, 0));
 
         progressBar = new JProgressBar();
-        add(progressBar, BorderLayout.SOUTH);
+        super.add(progressBar, BorderLayout.SOUTH);
         progressBar.setVisible(false);
 
         contentPanel = new JPanel();
-        add(contentPanel, BorderLayout.CENTER);
+        super.add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new MigLayout("", "", GROW_FILL));
 
         title = t;

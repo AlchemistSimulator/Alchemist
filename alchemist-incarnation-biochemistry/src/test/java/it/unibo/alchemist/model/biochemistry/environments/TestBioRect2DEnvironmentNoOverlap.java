@@ -45,14 +45,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- *
- */
 @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
 class TestBioRect2DEnvironmentNoOverlap {
 
     /**
-     * The test seems to work for values of delta up to 2*10^(-8)
+     * The test seems to work for values of delta up to 2*10^(-8).
      *
      * <p>
      * As future changes in the core can vary the sensibility of floating point operations, leading to an undesired
@@ -130,9 +127,6 @@ class TestBioRect2DEnvironmentNoOverlap {
         return environment.getIncarnation().createNode(new MersenneTwister(), environment, Double.toString(diameter));
     }
 
-    /**
-     *
-     */
     @BeforeEach
     void setUp() {
         environment = new BioRect2DEnvironmentNoOverlap(INCARNATION);

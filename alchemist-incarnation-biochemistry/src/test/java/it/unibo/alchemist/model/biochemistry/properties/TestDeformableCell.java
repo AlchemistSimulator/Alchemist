@@ -34,10 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- *
- *
- */
 class TestDeformableCell {
 
     private static final double PRECISION = 1e-13;
@@ -90,7 +86,7 @@ class TestDeformableCell {
     }
 
     /**
-     *
+     * Sets up the environment and the deformable cells used by the tests.
      */
     @BeforeEach
     public void setUp() {

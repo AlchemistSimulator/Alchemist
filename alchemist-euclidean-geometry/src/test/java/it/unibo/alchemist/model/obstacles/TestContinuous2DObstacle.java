@@ -21,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import static org.apache.commons.math3.util.FastMath.nextAfter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- */
 class TestContinuous2DObstacle {
 
     private static final RectObstacle2D<Euclidean2DPosition> R1021 = new RectObstacle2D<>(1, 0, 1, 1);
@@ -33,7 +31,7 @@ class TestContinuous2DObstacle {
     }
 
     /**
-     *
+     * Tests node placement, reachable positions, and obstacle range queries in an environment with obstacles.
      */
     @Test
     void test() {

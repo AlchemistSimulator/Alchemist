@@ -26,9 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- *
- */
 final class TestContinuous2DEnvironment {
 
     private static final double[] ZEROS = {0, 0};

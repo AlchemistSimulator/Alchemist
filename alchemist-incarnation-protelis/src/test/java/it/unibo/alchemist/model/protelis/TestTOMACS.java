@@ -26,9 +26,6 @@ import java.util.Collection;
  */
 class TestTOMACS {
 
-    /**
-     *
-     */
     @Test
     @SuppressWarnings("unchecked")
     void testCustomRetainTimeLoading() {

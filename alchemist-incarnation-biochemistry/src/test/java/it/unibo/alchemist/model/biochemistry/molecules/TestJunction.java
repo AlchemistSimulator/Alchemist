@@ -27,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- */
 @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
 class TestJunction {
 
@@ -42,6 +40,7 @@ class TestJunction {
     }
 
     /**
+     * Sets up the incarnation, the environment, and the nodes used by the tests.
      */
     @BeforeEach
     public void setUp() {

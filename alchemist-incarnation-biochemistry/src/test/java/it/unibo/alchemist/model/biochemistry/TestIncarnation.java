@@ -62,6 +62,7 @@ class TestIncarnation {
     }
 
     /**
+     * Sets up the environment, the node, and the time distribution used by the tests.
      */
     @BeforeEach
     public void setUp() {
@@ -71,8 +72,6 @@ class TestIncarnation {
         time = new ExponentialTime<>(1, rand);
     }
 
-    /**
-     */
     @Test
     void testCreateMolecule() {
         makeMol("C");
@@ -191,7 +190,7 @@ class TestIncarnation {
     }
 
     /**
-     *
+     * Tests that node creation fails with invalid parameters.
      */
     @Test
     void testCreateNode() {

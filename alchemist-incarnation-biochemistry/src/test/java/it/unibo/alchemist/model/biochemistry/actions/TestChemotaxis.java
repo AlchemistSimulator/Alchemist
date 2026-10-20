@@ -53,7 +53,7 @@ class TestChemotaxis {
     private TimeDistribution<Double> time;
 
     /**
-     *
+     * Sets up the environment and the nodes used by the tests.
      */
     @BeforeEach
     public void setUp() {

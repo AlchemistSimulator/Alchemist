@@ -25,6 +25,8 @@ import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
 public class WormholeSwing<P extends Position2D<? extends P>> extends AbstractWormhole2D<P> {
 
     /**
+     * Builds a new wormhole for the given environment and Swing component.
+     *
      * @param environment the environment
      * @param component the {@link it.unibo.alchemist.boundary.ui.api.ViewPort}
      *     of the UI used for implementing the wormhole

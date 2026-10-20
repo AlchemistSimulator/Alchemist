@@ -112,7 +112,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private static final Logger L = LoggerFactory.getLogger(Generic2DDisplay.class);
     private static final int MS_PER_SECOND = 1000;
     /**
-     *
+     * Delay, in milliseconds, between real and simulated time beyond which the simulation is considered paused.
      */
     private static final long PAUSE_DETECTION_THRESHOLD = 200;
     @Serial
@@ -147,9 +147,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private long timeInit = System.currentTimeMillis();
     private transient Wormhole2D<P> wormhole;
     private transient ZoomManager zoomManager;
-    private boolean isPreviousStateMarking = true;
+    private volatile boolean isPreviousStateMarking = true;
     private ViewStatus status = ViewStatus.VIEW_WITH_MARKER;
-    private boolean isDraggingMouse;
+    private volatile boolean isDraggingMouse;
     private @Nullable Point originPoint;
     private @Nullable Point endingPoint;
     private Set<Node<T>> selectedNodes = new HashSet<>();
@@ -176,11 +176,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             );
         }
         setStep(step);
-        setBackground(Color.WHITE);
+        super.setBackground(Color.WHITE);
         final MouseManager mgr = new MouseManager();
-        addMouseListener(mgr);
-        addMouseMotionListener(mgr);
-        addMouseWheelListener(mgr);
+        super.addMouseListener(mgr);
+        super.addMouseMotionListener(mgr);
+        super.addMouseWheelListener(mgr);
         bindKeys();
     }
 
@@ -590,6 +590,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     /**
+     * Checks whether this monitor is trying to draw in real time.
+     *
      * @return true if this monitor is trying to draw in realtime
      */
     @Override
@@ -783,6 +785,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     /**
+     * Checks whether the given environment has mobile obstacles.
+     *
      * @param environment
      *            the current environment
      * @return true if env is subclass of {@link Environment2DWithObstacles}
@@ -823,6 +827,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      */
     protected final class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
         /**
+         * Shows the tooltip at the position of the mouse click.
+         *
          * @param e the {@link MouseEvent}
          */
         @Override
@@ -875,6 +881,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
 
         /**
+         * Shows the tooltip at the position of the mouse while dragging.
+         *
          * @param e the {@link MouseEvent}
          */
         @Override

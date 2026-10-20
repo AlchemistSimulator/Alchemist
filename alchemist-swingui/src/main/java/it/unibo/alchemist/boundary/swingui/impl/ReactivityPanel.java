@@ -27,6 +27,8 @@ import java.io.Serial;
 import static it.unibo.alchemist.boundary.swingui.impl.LocalizedResourceBundle.getString;
 
 /**
+ * A panel controlling how often the GUI gets updated.
+ *
  * @deprecated The entire Swing UI is deprecated and is set to be replaced with a modern UI
  */
 @Deprecated
@@ -50,6 +52,7 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
     private Status status = Status.MAX_REACTIVITY;
 
     /**
+     * The GUI update policies.
      */
     public enum Status {
         /**
@@ -68,7 +71,7 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
     }
 
     /**
-     *
+     * Builds a new reactivity panel.
      */
     public ReactivityPanel() {
         super(UI_REACTIVITY);
@@ -113,6 +116,8 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
     }
 
     /**
+     * Adds a listener for changes of the reactivity slider.
+     *
      * @param c
      *            the ChangeListener to add
      */
@@ -121,6 +126,8 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
     }
 
     /**
+     * Returns the current update policy.
+     *
      * @return the current status
      */
     public Status getStatus() {
@@ -128,6 +135,8 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
     }
 
     /**
+     * Returns the reactivity selected by the user.
+     *
      * @return the current reactivity set by user
      */
     public int getUserReactivity() {

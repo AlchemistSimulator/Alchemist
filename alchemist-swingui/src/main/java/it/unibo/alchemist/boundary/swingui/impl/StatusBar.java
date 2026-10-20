@@ -17,6 +17,8 @@ import java.io.Serial;
 import static it.unibo.alchemist.boundary.swingui.impl.AlchemistSwingUI.loadScaledImage;
 
 /**
+ * A status bar showing an icon signaling whether everything is fine.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
@@ -29,7 +31,7 @@ public class StatusBar extends JLabel {
     private final Icon no = loadScaledImage("/oxygen/emotes/opinion-no.png", ICON_SIZE);
 
     /**
-     *
+     * Builds a new status bar, initially in the OK status.
      */
     public StatusBar() {
         super("Init OK", SwingConstants.LEADING);
@@ -37,14 +39,14 @@ public class StatusBar extends JLabel {
     }
 
     /**
-     *
+     * Shows the error icon.
      */
     public void setNo() {
         setIcon(no);
     }
 
     /**
-     *
+     * Shows the OK icon.
      */
     public void setOK() {
         setIcon(ok);

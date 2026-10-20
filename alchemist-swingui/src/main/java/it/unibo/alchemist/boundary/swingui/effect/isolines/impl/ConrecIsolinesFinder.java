@@ -36,6 +36,8 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
     private final IsolinesFactory factory;
 
     /**
+     * Builds a new isolines finder.
+     *
      * @param factory - the factory used to create segments and isolines
      */
     public ConrecIsolinesFinder(final IsolinesFactory factory) {

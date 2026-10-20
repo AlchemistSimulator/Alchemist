@@ -14,6 +14,8 @@ import java.io.Serial;
 import java.util.List;
 
 /**
+ * A tape section stacking its features horizontally or vertically.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
@@ -25,38 +27,39 @@ public class JTapeFeatureStack extends AbstractJTapeSection {
     private final Type type;
 
     /**
-     *
-     *
+     * The stacking direction.
      */
     public enum Type {
         /**
-         *
+         * Features are stacked horizontally.
          */
         HORIZONTAL_STACK,
 
         /**
-         *
+         * Features are stacked vertically.
          */
         VERTICAL_STACK
     }
 
     /**
-     *
+     * Builds a new vertical feature stack.
      */
     public JTapeFeatureStack() {
         this(Type.VERTICAL_STACK);
     }
 
     /**
+     * Builds a new feature stack of the given type.
+     *
      * @param t the type
      */
     public JTapeFeatureStack(final Type t) {
         super();
         type = t;
         if (type == Type.VERTICAL_STACK) {
-            setLayout(new VerticalFlowLayout(0, AbstractFlowLayout.BOTH, AbstractFlowLayout.TOP, true));
+            super.setLayout(new VerticalFlowLayout(0, AbstractFlowLayout.BOTH, AbstractFlowLayout.TOP, true));
         } else if (type == Type.HORIZONTAL_STACK) {
-            setLayout(new HorizontalFlowLayout(0, AbstractFlowLayout.BOTH, AbstractFlowLayout.LEFT, true));
+            super.setLayout(new HorizontalFlowLayout(0, AbstractFlowLayout.BOTH, AbstractFlowLayout.LEFT, true));
         }
     }
 
@@ -79,6 +82,8 @@ public class JTapeFeatureStack extends AbstractJTapeSection {
     }
 
     /**
+     * Returns the components in their layout order.
+     *
      * @return the ordered components
      */
     public List<Component> getOrderedComponents() {
@@ -86,6 +91,8 @@ public class JTapeFeatureStack extends AbstractJTapeSection {
     }
 
     /**
+     * Returns the stacking direction.
+     *
      * @return the type
      */
     public Type getType() {
@@ -111,6 +118,8 @@ public class JTapeFeatureStack extends AbstractJTapeSection {
     }
 
     /**
+     * Sets the position of the given component in the stack.
+     *
      * @param c
      *            the component
      * @param order

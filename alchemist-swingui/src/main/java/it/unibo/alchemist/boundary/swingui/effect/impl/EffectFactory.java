@@ -14,6 +14,8 @@ import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import java.lang.reflect.InvocationTargetException;
 
 /**
+ * Factory for the default {@link Effect}s.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
@@ -23,6 +25,8 @@ public final class EffectFactory {
     }
 
     /**
+     * Builds the default effect.
+     *
      * @return the effect which is inserted by default
      */
     public static Effect buildDefaultEffect() {

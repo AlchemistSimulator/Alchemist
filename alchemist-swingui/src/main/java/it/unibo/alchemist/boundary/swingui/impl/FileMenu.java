@@ -30,6 +30,8 @@ import java.util.Locale;
 import static it.unibo.alchemist.boundary.swingui.impl.LocalizedResourceBundle.getString;
 
 /**
+ * The File menu, allowing to load jar files and to quit.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated

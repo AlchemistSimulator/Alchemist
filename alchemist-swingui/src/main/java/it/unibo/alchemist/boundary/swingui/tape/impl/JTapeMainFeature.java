@@ -18,6 +18,8 @@ import java.awt.Dimension;
 import java.io.Serial;
 
 /**
+ * A tape section hosting a single feature, which fills the whole section.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
@@ -29,7 +31,7 @@ public final class JTapeMainFeature extends AbstractJTapeSection {
     private final SpringLayout springLayout; // NOPMD: this class is not intended to be serialized
 
     /**
-     *
+     * Builds a new, empty main feature section.
      */
     public JTapeMainFeature() {
         super();
@@ -41,7 +43,7 @@ public final class JTapeMainFeature extends AbstractJTapeSection {
     }
 
     /**
-     *
+     * Registers the given component, if no other component is present, filling the whole section.
      */
     @Override
     public boolean registerFeature(final Component c) {

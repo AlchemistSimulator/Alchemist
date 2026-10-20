@@ -90,6 +90,8 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     /**
+     * Creates a new control panel for the given simulation.
+     *
      * @param sim the simulation. `null` values allowed.
      * @return a new SimControlPanel
      */
@@ -117,6 +119,8 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     /**
+     * Enables or disables the button corresponding to the given command.
+     *
      * @param cmd
      *            the command corresponding to the button
      * @param enabled
@@ -137,6 +141,8 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     /**
+     * Sets the simulation controlled by this panel.
+     *
      * @param sim
      *            the simulation to set
      */
@@ -221,6 +227,8 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     /**
+     * Returns the controlled simulation.
+     *
      * @param <T>
      *            concentrations
      * @return the simulation
@@ -231,6 +239,8 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     /**
+     * Checks whether this control panel has been shut down.
+     *
      * @return the isDown
      */
     public boolean isDown() {

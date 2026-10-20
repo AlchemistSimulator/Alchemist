@@ -35,12 +35,15 @@ import java.util.List;
 public class DrawPedestrianPath extends AbstractDrawOnce {
 
     /**
+     * Maximum value of a color channel.
      */
     protected static final int MAX_COLOUR_VALUE = 255;
     /**
+     * Divider applied to the maximum color value to compute the initial alpha.
      */
     protected static final int INITIAL_ALPHA_DIVIDER = 3;
     /**
+     * Logger of this class.
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawPedestrianPath.class);
     /**
@@ -61,6 +64,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     private final List<Position2D<?>> path = new ArrayList<>();
 
     /**
+     * Records the current position of the node and, if enabled, draws the path followed so far.
+     *
      * @param graphics2D        graphics
      * @param node        node
      * @param environment      environment
@@ -96,6 +101,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the alpha channel.
+     *
      * @return alpha channel
      */
     public RangedInteger getAlpha() {
@@ -103,6 +110,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the alpha channel.
+     *
      * @param alpha alpha channel
      */
     public void setAlpha(final RangedInteger alpha) {
@@ -110,6 +119,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the red channel.
+     *
      * @return red channel
      */
     public RangedInteger getRed() {
@@ -117,6 +128,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the red channel.
+     *
      * @param red red channel
      */
     public void setRed(final RangedInteger red) {
@@ -124,6 +137,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the green channel.
+     *
      * @return green channel
      */
     public RangedInteger getGreen() {
@@ -131,6 +146,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the green channel.
+     *
      * @param green green channel
      */
     public void setGreen(final RangedInteger green) {
@@ -138,6 +155,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the blue channel.
+     *
      * @return blue channel
      */
     public RangedInteger getBlue() {
@@ -145,6 +164,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the blue channel.
+     *
      * @param blue blue channel
      */
     public void setBlue(final RangedInteger blue) {
@@ -152,6 +173,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Checks whether the path is to be drawn.
+     *
      * @return if it is to be drawn
      */
     public boolean isToBeDrawn() {
@@ -159,6 +182,8 @@ public class DrawPedestrianPath extends AbstractDrawOnce {
     }
 
     /**
+     * Sets whether the path is to be drawn.
+     *
      * @param toBeDrawn if it is to be drawn
      */
     public void setToBeDrawn(final boolean toBeDrawn) {

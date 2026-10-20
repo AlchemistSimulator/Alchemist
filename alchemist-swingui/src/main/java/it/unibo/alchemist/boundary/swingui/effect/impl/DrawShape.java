@@ -30,6 +30,8 @@ import java.awt.Graphics2D;
 import java.util.Set;
 
 /**
+ * Effect drawing nodes as shapes, optionally filtered and colored according to a molecule.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
@@ -171,6 +173,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the alpha channel.
+     *
      * @return Alpha
      */
     public RangedInteger getAlpha() {
@@ -178,6 +182,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the alpha channel.
+     *
      * @param a alpha
      */
     public void setAlpha(final RangedInteger a) {
@@ -185,6 +191,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the blue channel.
+     *
      * @return Blue
      */
     public RangedInteger getBlue() {
@@ -192,6 +200,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the blue channel.
+     *
      * @param b blue
      */
     public void setBlue(final RangedInteger b) {
@@ -199,6 +209,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the color channel altered according to the molecule property.
+     *
      * @return Color Channel
      */
     public ColorChannel getColorChannel() {
@@ -211,6 +223,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the green channel.
+     *
      * @return Green
      */
     public RangedInteger getGreen() {
@@ -218,6 +232,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the green channel.
+     *
      * @param g green
      */
     public void setGreen(final RangedInteger g) {
@@ -225,6 +241,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the incarnation to use.
+     *
      * @return the current incarnation
      */
     public CollectionWithCurrentElement<String> getIncarnation() {
@@ -232,6 +250,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the incarnation to use.
+     *
      * @param element incarnation
      */
     public void setIncarnation(final CollectionWithCurrentElement<String> element) {
@@ -239,6 +259,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the maximum property value.
+     *
      * @return maxprop
      */
     public RangedInteger getMaxprop() {
@@ -246,6 +268,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the maximum property value.
+     *
      * @param mp maxprop
      */
     public void setMaxprop(final RangedInteger mp) {
@@ -253,6 +277,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the minimum property value.
+     *
      * @return minprop
      */
     public RangedInteger getMinprop() {
@@ -260,6 +286,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the minimum property value.
+     *
      * @param mp minprop
      */
     public void setMinprop(final RangedInteger mp) {
@@ -267,6 +295,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the drawing mode.
+     *
      * @return current mode
      */
     public Mode getMode() {
@@ -274,6 +304,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the drawing mode.
+     *
      * @param m mode
      */
     public void setMode(final Mode m) {
@@ -281,6 +313,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the molecule used for filtering.
+     *
      * @return molecule
      */
     @org.jetbrains.annotations.Nullable
@@ -289,6 +323,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the string representing the molecule.
+     *
      * @return molString
      */
     public String getMolString() {
@@ -296,6 +332,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the string representing the molecule.
+     *
      * @param mols molString
      */
     public void setMolString(final String mols) {
@@ -303,6 +341,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the name of the molecule property.
+     *
      * @return property
      */
     public String getProperty() {
@@ -310,6 +350,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the name of the molecule property.
+     *
      * @param pr property
      */
     public void setProperty(final String pr) {
@@ -317,6 +359,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the order of magnitude of the property.
+     *
      * @return propoom
      */
     public RangedInteger getPropoom() {
@@ -324,6 +368,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the order of magnitude of the property.
+     *
      * @param oom Order of magnitude
      */
     public void setPropoom(final RangedInteger oom) {
@@ -331,6 +377,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the red channel.
+     *
      * @return red
      */
     public RangedInteger getRed() {
@@ -338,6 +386,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the red channel.
+     *
      * @param r red
      */
     public void setRed(final RangedInteger r) {
@@ -345,6 +395,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the scale factor.
+     *
      * @return scaleFactor
      */
     public RangedInteger getScaleFactor() {
@@ -352,6 +404,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the scale factor.
+     *
      * @param sf scaleFactor
      */
     public void setScaleFactor(final RangedInteger sf) {
@@ -359,6 +413,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Returns the size of the shape.
+     *
      * @return size
      */
     public RangedInteger getSize() {
@@ -366,6 +422,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the size of the shape.
+     *
      * @param s size
      */
     public void setSize(final RangedInteger s) {
@@ -373,6 +431,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Checks whether only nodes containing the molecule are drawn.
+     *
      * @return molFilter
      */
     public boolean isMolFilter() {
@@ -380,6 +440,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets whether only nodes containing the molecule are drawn.
+     *
      * @param mol
      *            molFilter
      */
@@ -388,6 +450,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Checks whether colors are tuned using a molecule property.
+     *
      * @return molPropertyFilter
      */
     public boolean isMolPropertyFilter() {
@@ -395,6 +459,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets whether colors are tuned using a molecule property.
+     *
      * @param molpf molPropertyFilter
      */
     public void setMolPropertyFilter(final boolean molpf) {
@@ -402,6 +468,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Checks whether the effect of the property is reversed.
+     *
      * @return reverse
      */
     public boolean isReverse() {
@@ -409,6 +477,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets whether the effect of the property is reversed.
+     *
      * @param r
      *            reverse
      */
@@ -417,6 +487,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets the color channel altered according to the molecule property.
+     *
      * @param colorChannel colorChannel
      */
     public void setC(final ColorChannel colorChannel) {
@@ -424,6 +496,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Checks whether the property value is written.
+     *
      * @return true if it is writing the property value
      */
     public boolean isWritingPropertyValue() {
@@ -431,6 +505,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Sets whether the property value is written.
+     *
      * @param writingPropertyValue
      *            if it should draw the property value
      */
@@ -439,12 +515,28 @@ public final class DrawShape implements Effect {
     }
 
     /**
+     * Drawing modes for the shapes.
      */
     public enum Mode {
         /**
-         *
+         * Draws the outline of an ellipse.
          */
-        DRAW_ELLIPSE, DRAW_RECTANGLE, FILL_ELLIPSE, FILL_RECTANGLE;
+        DRAW_ELLIPSE,
+
+        /**
+         * Draws the outline of a rectangle.
+         */
+        DRAW_RECTANGLE,
+
+        /**
+         * Draws a filled ellipse.
+         */
+        FILL_ELLIPSE,
+
+        /**
+         * Draws a filled rectangle.
+         */
+        FILL_RECTANGLE;
 
         @Override
         public String toString() {

@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.layers.BidimensionalGaussianLayer;
 public class DrawBidimensionalGaussianLayersIsolines extends AbstractrDrawLayersIsolines {
 
     /**
+     * Builds a new effect drawing isolines with the CONREC algorithm.
      */
     public DrawBidimensionalGaussianLayersIsolines() {
         super(

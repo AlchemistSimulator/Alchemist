@@ -18,6 +18,8 @@ import java.io.Serial;
 import java.util.regex.Pattern;
 
 /**
+ * A {@link JTextField} accepting only integer numbers.
+ *
  * @deprecated The entire Swing UI is deprecated and is set to be replaced with a modern UI
  */
 @Deprecated

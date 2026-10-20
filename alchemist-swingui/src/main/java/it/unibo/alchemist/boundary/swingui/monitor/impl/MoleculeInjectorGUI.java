@@ -84,6 +84,8 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
     private final JButton apply = new JButton("Apply");
 
     /**
+     * Builds a new GUI for injecting molecules into the given nodes.
+     *
      * @param nodes The nodes which will be affected by the molecule injection.
      */
     public MoleculeInjectorGUI(final Set<Node<T>> nodes) {

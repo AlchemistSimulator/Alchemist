@@ -44,12 +44,15 @@ import java.awt.geom.Rectangle2D;
 public class DrawCognitiveMap extends AbstractDrawOnce {
 
     /**
+     * Maximum value of a color channel.
      */
     protected static final int MAX_COLOUR_VALUE = 255;
     /**
+     * Divider applied to the maximum color value to compute the initial alpha.
      */
     protected static final int INITIAL_ALPHA_DIVIDER = 5;
     /**
+     * Logger of this class.
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
     @ExportForGUI(nameToExport = "A")
@@ -65,6 +68,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     private transient volatile NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap;
 
     /**
+     * Applies the effect, retrieving the cognitive map of the marker node if not available yet.
+     *
      * @param graphics        graphics
      * @param node        node
      * @param environment      environment
@@ -164,6 +169,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the alpha channel.
+     *
      * @return alpha channel
      */
     public RangedInteger getAlpha() {
@@ -171,6 +178,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the alpha channel.
+     *
      * @param alpha alpha channel
      */
     public void setAlpha(final RangedInteger alpha) {
@@ -178,6 +187,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the red channel.
+     *
      * @return red channel
      */
     public RangedInteger getRed() {
@@ -185,6 +196,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the red channel.
+     *
      * @param red red channel
      */
     public void setRed(final RangedInteger red) {
@@ -192,6 +205,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the green channel.
+     *
      * @return green channel
      */
     public RangedInteger getGreen() {
@@ -199,6 +214,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the green channel.
+     *
      * @param green green channel
      */
     public void setGreen(final RangedInteger green) {
@@ -206,6 +223,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the blue channel.
+     *
      * @return blue channel
      */
     public RangedInteger getBlue() {
@@ -213,6 +232,8 @@ public class DrawCognitiveMap extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the blue channel.
+     *
      * @param blue blue channel
      */
     public void setBlue(final RangedInteger blue) {

@@ -192,6 +192,8 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
     }
 
     /**
+     * Returns the active effects, in order.
+     *
      * @return The list of currently active {@link Effect}s.
      */
     public List<Effect> getEffects() {

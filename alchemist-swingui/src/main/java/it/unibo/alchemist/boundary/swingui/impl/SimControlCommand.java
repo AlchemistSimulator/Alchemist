@@ -12,25 +12,27 @@ package it.unibo.alchemist.boundary.swingui.impl;
 import static it.unibo.alchemist.boundary.swingui.impl.LocalizedResourceBundle.getString;
 
 /**
+ * The commands that can be issued to a simulation from the GUI.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
 public enum SimControlCommand {
 
     /**
-     *
+     * Starts the simulation.
      */
     PLAY("/actions/media-playback-start.png", getString("play")),
     /**
-     *
+     * Executes a single simulation step.
      */
     STEP("/actions/media-skip-forward.png", getString("step")),
     /**
-     *
+     * Pauses the simulation.
      */
     PAUSE("/actions/media-playback-pause.png", getString("pause")),
     /**
-     *
+     * Stops the simulation.
      */
     STOP("/actions/media-playback-stop.png", getString("stop"));
 
@@ -43,6 +45,8 @@ public enum SimControlCommand {
     }
 
     /**
+     * Creates a button issuing this command.
+     *
      * @return a new {@link SimControlButton} for this enum
      */
     public SimControlButton createButton() {

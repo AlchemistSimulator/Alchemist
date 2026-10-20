@@ -42,15 +42,15 @@ import java.awt.geom.Path2D;
 public class DrawNavigationGraph extends AbstractDrawOnce {
 
     /**
-     *
+     * Maximum value of a color channel.
      */
     protected static final int MAX_COLOUR_VALUE = 255;
     /**
-     *
+     * Divider applied to the maximum color value to compute the initial alpha.
      */
     protected static final int INITIAL_ALPHA_DIVIDER = 5;
     /**
-     *
+     * Logger of this class.
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawNavigationGraph.class);
     @ExportForGUI(nameToExport = "A")
@@ -66,6 +66,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     private transient volatile NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, Euclidean2DPassage> graph;
 
     /**
+     * Draws the navigation graph of the environment, if available.
+     *
      * @param graphics2D        graphics
      * @param node        node
      * @param environment      environment
@@ -146,6 +148,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the alpha channel.
+     *
      * @return alpha channel
      */
     public RangedInteger getAlpha() {
@@ -153,6 +157,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the alpha channel.
+     *
      * @param alpha alpha channel
      */
     public void setAlpha(final RangedInteger alpha) {
@@ -160,6 +166,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the red channel.
+     *
      * @return red channel
      */
     public RangedInteger getRed() {
@@ -167,6 +175,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the red channel.
+     *
      * @param red red channel
      */
     public void setRed(final RangedInteger red) {
@@ -174,6 +184,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the green channel.
+     *
      * @return green channel
      */
     public RangedInteger getGreen() {
@@ -181,6 +193,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the green channel.
+     *
      * @param green green channel
      */
     public void setGreen(final RangedInteger green) {
@@ -188,6 +202,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     }
 
     /**
+     * Returns the blue channel.
+     *
      * @return blue channel
      */
     public RangedInteger getBlue() {
@@ -195,6 +211,8 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     }
 
     /**
+     * Sets the blue channel.
+     *
      * @param blue blue channel
      */
     public void setBlue(final RangedInteger blue) {

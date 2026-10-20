@@ -22,6 +22,8 @@ public final class LocalizedResourceBundle {
     }
 
     /**
+     * Returns the default UI strings resource bundle.
+     *
      * @return a ResourceBundle using the current {@link Locale} (if available),
      *         falling back to {@link Locale#US} in case no localized bundle is
      *         available.
@@ -31,6 +33,8 @@ public final class LocalizedResourceBundle {
     }
 
     /**
+     * Returns the resource bundle with the given name.
+     *
      * @param resourceBundle
      *            the resource bundle to load (fully qualified name)
      *

@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
+ * A window that lets the user pick the {@link Effect} to add.
+ *
  * @deprecated The entire Swing UI is deprecated and is scheduled to be replaced with a modern UI.
  */
 @Deprecated
@@ -90,6 +92,8 @@ public final class EffectBuilder extends JFrame implements ActionListener {
     }
 
     /**
+     * Waits for the user to confirm the choice and returns the selected effect class.
+     *
      * @return a future with the built effect
      */
     @SuppressWarnings("unchecked")

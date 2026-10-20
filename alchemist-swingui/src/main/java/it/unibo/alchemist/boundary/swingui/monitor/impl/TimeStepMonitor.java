@@ -34,6 +34,8 @@ import static it.unibo.alchemist.boundary.swingui.impl.AlchemistSwingUI.DEFAULT_
 import static it.unibo.alchemist.boundary.swingui.impl.AlchemistSwingUI.loadScaledImage;
 
 /**
+ * A panel showing the current simulation time and step.
+ *
  * @param <P> position type
  * @param <T>
  *            Concentration type

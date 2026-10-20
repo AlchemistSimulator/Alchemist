@@ -47,12 +47,15 @@ import java.util.List;
 public abstract class AbstractDrawLayers extends AbstractDrawOnce implements DrawLayers {
 
     /**
+     * Maximum value of a color channel.
      */
     protected static final int MAX_COLOUR_VALUE = 255;
     /**
+     * Divider applied to the maximum color value to compute the initial alpha.
      */
     protected static final int INITIAL_ALPHA_DIVIDER = 2;
     /**
+     * Logger of this class.
      */
     protected static final Logger L = LoggerFactory.getLogger(AbstractDrawLayers.class);
     @ExportForGUI(nameToExport = "Draw only layer containing a molecule")
@@ -122,6 +125,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     );
 
     /**
+     * Checks whether the layer filter is on.
+     *
      * @return a boolean representing whether layer filter is on
      */
     public boolean isLayerFilter() {
@@ -129,6 +134,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Enables or disables the layer filter.
+     *
      * @param layerFilter a boolean representing whether layer filter must be on
      */
     public void setLayerFilter(final boolean layerFilter) {
@@ -136,6 +143,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Returns the string representing the current molecule.
+     *
      * @return a string representing the current molecule
      */
     public String getMolString() {
@@ -143,6 +152,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Sets the string representing the molecule to use.
+     *
      * @param molString a string representing the molecule to use
      */
     public void setMolString(final String molString) {
@@ -150,6 +161,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Returns the alpha channel.
+     *
      * @return alpha channel
      */
     public RangedInteger getAlpha() {
@@ -157,6 +170,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Sets the alpha channel.
+     *
      * @param alpha alpha channel
      */
     public void setAlpha(final RangedInteger alpha) {
@@ -164,6 +179,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Returns the red channel.
+     *
      * @return red channel
      */
     public RangedInteger getRed() {
@@ -171,6 +188,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Sets the red channel.
+     *
      * @param red red channel
      */
     public void setRed(final RangedInteger red) {
@@ -178,6 +197,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Returns the green channel.
+     *
      * @return green channel
      */
     public RangedInteger getGreen() {
@@ -185,6 +206,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Sets the green channel.
+     *
      * @param green green channel
      */
     public void setGreen(final RangedInteger green) {
@@ -192,6 +215,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Returns the blue channel.
+     *
      * @return blue channel
      */
     public RangedInteger getBlue() {
@@ -199,6 +224,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Sets the blue channel.
+     *
      * @param blue blue channel
      */
     public void setBlue(final RangedInteger blue) {
@@ -206,6 +233,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Returns the cached color.
+     *
      * @return the cached color
      */
     protected Color getColorCache() {
@@ -213,6 +242,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Sets the cached color.
+     *
      * @param c color
      */
     protected void setColorCache(final Color c) {
@@ -220,6 +251,8 @@ public abstract class AbstractDrawLayers extends AbstractDrawOnce implements Dra
     }
 
     /**
+     * Returns the molecule used for the layer filter.
+     *
      * @return the molecule used for layer filter
      */
     @org.jetbrains.annotations.Nullable

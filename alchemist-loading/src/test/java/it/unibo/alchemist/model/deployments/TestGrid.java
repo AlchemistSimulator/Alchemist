@@ -17,9 +17,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- *
- */
 class TestGrid {
 
     private static Continuous2DEnvironment<?> environment() {
@@ -33,49 +30,34 @@ class TestGrid {
     }
 
     // CHECKSTYLE: MagicNumber OFF
-    /**
-     *
-     */
     @Test
     void testVerticalLine() {
         test(10, 1, 9.9);
         assertEquals(10L, new Grid<>(environment(), randomGenerator(), 0, 0, 1, 10, 1, 1, 0, 0).stream().count());
     }
 
-    /**
-     *
-     */
     @Test
     void testHorizontalLine() {
         test(10, 10, 1);
     }
 
-    /**
-     *
-     */
     @Test
     void testEmpty() {
         test(0, 0, 0);
     }
 
-    /**
-     *
-     */
     @Test
     void test1x1() {
         test(1, 1, 1);
     }
 
-    /**
-     *
-     */
     @Test
     void test10x10() {
         test(100, 10, 10);
     }
 
     /**
-     *
+     * Tests that a randomized grid generates no duplicate positions (bug 73).
      */
     @Test
     void testbug73() {
@@ -86,9 +68,6 @@ class TestGrid {
         );
     }
 
-    /**
-     *
-     */
     @Test
     void test10x10negative() {
         test(100, -10, -10);

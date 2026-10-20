@@ -17,15 +17,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- *
- */
 class TestCircleFilter {
 
     private final PositionBasedFilter<GeoPosition> s = new Circle<>(0, 0, 1);
 
     /**
-     *
+     * Tests which positions are inside a unit circle, including those near its border.
      */
     @Test
     void test() {

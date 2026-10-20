@@ -19,6 +19,8 @@ import it.unibo.alchemist.model.Environment;
 public final class TestNode<T> extends GenericNode<T> {
 
     /**
+     * Builds a new test node.
+     *
      * @param environment the environment
      */
     public TestNode(final Environment<T, ?> environment) {

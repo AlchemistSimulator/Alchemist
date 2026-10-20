@@ -14,6 +14,8 @@ import it.unibo.alchemist.model.networks.NoLinks;
 import java.util.List;
 
 /**
+ * A dummy linking rule for testing, checking that its parameters are non-empty lists of numbers.
+ *
  * @param <T>
  *            concentration type
  * @param <P>
@@ -22,6 +24,8 @@ import java.util.List;
 public final class DummyRule<T, P extends Position<P>> extends NoLinks<T> {
 
     /**
+     * Builds a new dummy rule, checking that both parameters are non-empty lists of numbers.
+     *
      * @param param1
      *            p1
      * @param param2

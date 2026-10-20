@@ -17,13 +17,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- *
- */
 class TestRectangleFilter {
 
     /**
-     *
+     * Tests that a rectangle contains a geographic position.
      */
     @Test
     void test() {
@@ -33,9 +30,6 @@ class TestRectangleFilter {
         // CHECKSTYLE: MagicNumber ON
     }
 
-    /**
-     *
-     */
     @Test
     void rectangleWithNegativeDimension() {
         /*

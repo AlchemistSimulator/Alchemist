@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -54,9 +54,6 @@ import java.util.Objects;
 @SuppressWarnings("CPD-START")
 public final class HorizontalFlowLayout extends AbstractFlowLayout {
 
-    /**
-     *
-     */
     @Serial
     private static final long serialVersionUID = 5625120689939529161L;
     private static final int DEFAULT_V_GAP = 5;

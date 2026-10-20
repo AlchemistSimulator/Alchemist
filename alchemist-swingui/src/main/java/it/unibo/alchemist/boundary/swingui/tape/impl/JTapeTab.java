@@ -29,9 +29,6 @@ import java.io.Serial;
  */
 @Deprecated
 public class JTapeTab extends JPanel {
-    /**
-     *
-     */
     @Serial
     private static final long serialVersionUID = -5784994713230091928L;
     private static final String GROW_FILL = "[grow,fill]";

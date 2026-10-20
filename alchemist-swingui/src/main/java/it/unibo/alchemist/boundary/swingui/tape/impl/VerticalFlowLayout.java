@@ -50,9 +50,6 @@ import java.util.Objects;
 @Deprecated
 @SuppressWarnings("CPD-START")
 public final class VerticalFlowLayout extends AbstractFlowLayout {
-    /**
-     *
-     */
     @Serial
     private static final long serialVersionUID = -4226183812841326639L;
     private static final int DEFAULTVGAP = 5;

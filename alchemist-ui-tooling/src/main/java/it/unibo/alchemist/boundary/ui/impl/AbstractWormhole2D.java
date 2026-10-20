@@ -347,7 +347,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public void setRotation(final double rad) {

@@ -47,6 +47,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
+     * Subtracts the provided point from this one.
+     *
      * @param op
      *            the {@link PointAdapter} to sum
      * @return a new {@link PointAdapter} obtained by subtracting the passed
@@ -64,6 +66,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
+     * Returns the x coordinate.
+     *
      * @return x coordinate
      */
     public double getX() {
@@ -71,6 +75,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
+     * Returns the y coordinate.
+     *
      * @return y coordinate
      */
     public double getY() {
@@ -86,6 +92,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
+     * Sums the provided point to this one.
+     *
      * @param op
      *            the {@link PointAdapter} to sum
      * @return a new {@link PointAdapter} obtained by summing the passed
@@ -96,6 +104,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
+     * Returns this point as a {@link Point}.
+     *
      * @return the {@link Point} view of this {@link PointAdapter}
      */
     public Point toPoint() {
@@ -103,6 +113,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
+     * Returns this point as a {@link Point2D}.
+     *
      * @return the {@link Point2D} view of this {@link PointAdapter}
      */
     public Point2D toPoint2D() {
@@ -110,6 +122,8 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     }
 
     /**
+     * Returns this point as a position of the provided environment.
+     *
      * @param environment the environment
      *
      * @return the {@link it.unibo.alchemist.model.Position} view of this {@link PointAdapter}

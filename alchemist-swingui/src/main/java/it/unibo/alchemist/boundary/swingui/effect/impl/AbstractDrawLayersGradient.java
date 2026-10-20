@@ -48,6 +48,8 @@ public abstract class AbstractDrawLayersGradient extends AbstractDrawLayersValue
     private RangedInteger samples = new RangedInteger(MIN_SAMPLES, MAX_SAMPLES, MIN_SAMPLES * 10);
 
     /**
+     * Builds a new gradient-drawing effect.
+     *
      * @param mapper the {@link LayerToFunctionMapper} converting a layer into a function.
      */
     protected AbstractDrawLayersGradient(final LayerToFunctionMapper mapper) {
@@ -117,6 +119,8 @@ public abstract class AbstractDrawLayersGradient extends AbstractDrawLayersValue
     }
 
     /**
+     * Returns the number of samples.
+     *
      * @return the number of samples
      */
     @SuppressFBWarnings("EI_EXPOSE_REP")
@@ -125,6 +129,8 @@ public abstract class AbstractDrawLayersGradient extends AbstractDrawLayersValue
     }
 
     /**
+     * Sets the number of samples.
+     *
      * @param samples to set
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")

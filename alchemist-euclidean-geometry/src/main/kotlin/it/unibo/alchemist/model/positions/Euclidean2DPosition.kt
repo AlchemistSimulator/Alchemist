@@ -25,12 +25,12 @@ class Euclidean2DPosition :
      * @param yp
      * The Y coordinate
      */
-    constructor(xp: Double, yp: Double) : super(false, xp, yp)
+    constructor(xp: Double, yp: Double) : super(false, doubleArrayOf(xp, yp))
 
     /**
      * @param c an array of length 2 containing the coordinates
      */
-    constructor(c: DoubleArray) : super(false, *c) {
+    constructor(c: DoubleArray) : super(true, c) {
         require(c.size == 2) { "The array must have exactly two elements." }
     }
 

@@ -13,6 +13,8 @@ import javax.swing.JButton;
 import java.io.Serial;
 
 /**
+ * A button controlling the simulation.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated

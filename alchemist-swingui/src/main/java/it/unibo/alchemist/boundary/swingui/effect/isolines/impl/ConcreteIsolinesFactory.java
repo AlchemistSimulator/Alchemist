@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
+ * Default {@link IsolinesFactory}, building {@link Segment2DImpl} and {@link IsolineImpl} instances.
  */
 public class ConcreteIsolinesFactory implements IsolinesFactory {
 

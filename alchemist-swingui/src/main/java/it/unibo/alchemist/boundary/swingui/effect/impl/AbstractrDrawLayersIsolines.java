@@ -133,6 +133,8 @@ public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValu
     }
 
     /**
+     * Returns the number of isolines.
+     *
      * @return the number of iso lines
      */
     public RangedInteger getNumberOfIsolines() {
@@ -140,6 +142,8 @@ public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValu
     }
 
     /**
+     * Sets the number of isolines.
+     *
      * @param isolines the number of isolines
      */
     public void setNumberOfIsolines(final RangedInteger isolines) {
@@ -147,6 +151,8 @@ public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValu
     }
 
     /**
+     * Returns the current distribution.
+     *
      * @return the current distribution
      */
     public Distribution getDistribution() {
@@ -154,6 +160,8 @@ public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValu
     }
 
     /**
+     * Sets the distribution.
+     *
      * @param distribution to set
      */
     public void setDistribution(final Distribution distribution) {
@@ -161,6 +169,8 @@ public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValu
     }
 
     /**
+     * Returns whether the values of the isolines are to be drawn.
+     *
      * @return whether the values of the isolines are to be drawn or not
      */
     public Boolean getDrawValues() {
@@ -168,6 +178,8 @@ public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValu
     }
 
     /**
+     * Sets whether the values of the isolines are to be drawn.
+     *
      * @param drawValues whether the values of the isolines are to be drawn or not
      */
     public void setDrawValues(final Boolean drawValues) {
@@ -175,6 +187,8 @@ public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValu
     }
 
     /**
+     * Returns the algorithm used to extract isolines.
+     *
      * @return the algorithm used to extract isolines
      */
     protected IsolinesFinder getIsolinesFinder() {
@@ -186,8 +200,14 @@ public abstract class AbstractrDrawLayersIsolines extends AbstractDrawLayersValu
      */
     public enum Distribution {
         /**
+         * Values evenly spaced across the interval.
          */
-        LINEAR, LOGARITHMIC;
+        LINEAR,
+
+        /**
+         * Values spaced evenly on a logarithmic scale.
+         */
+        LOGARITHMIC;
 
         @Override
         public String toString() {

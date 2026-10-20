@@ -17,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.io.Serial;
 
 /**
+ * A {@link JMenu} built from a fixed set of items, which listens to their actions.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
@@ -26,6 +28,8 @@ public abstract class AbstractMenu extends JMenu implements ActionListener {
     private static final long serialVersionUID = 5209455686362711386L;
 
     /**
+     * Builds a new menu.
+     *
      * @param title
      *            the menu name
      * @param items

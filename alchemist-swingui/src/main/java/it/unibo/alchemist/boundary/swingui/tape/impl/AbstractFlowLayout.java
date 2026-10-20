@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * A {@link LayoutManager} laying out components in a single row or column, optionally in a user-defined order.
+ *
  * @deprecated The entire Swing UI is deprecated and is scheduled to be replaced with a modern UI.
  */
 @Deprecated
@@ -63,6 +65,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     private final @Nullable List<Component> compOrder;
 
     /**
+     * Builds a new flow layout.
+     *
      * @param hGap the vertical gap between components
      * @param alignment how the components are justified
      * @param anchor where the components are positioned
@@ -83,6 +87,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Returns the current alignment.
+     *
      * @return the current alignment
      */
     protected int getAlignment() {
@@ -90,6 +96,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Returns the current anchor.
+     *
      * @return the current anchor
      */
     protected int getAnchor() {
@@ -97,6 +105,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Returns the position of the given component in the ordering.
+     *
      * @param c the component you want to know the order
      * @return the order
      */
@@ -116,6 +126,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Returns the ordered list of components.
+     *
      * @return a list with the ordered components
      */
     public List<Component> getComponentsList() {
@@ -123,6 +135,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Returns the current gap.
+     *
      * @return the current gap
      */
     protected int getGap() {
@@ -130,6 +144,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Checks whether the components are ordered.
+     *
      * @return true if the components are ordered
      */
     public boolean isOrdered() {
@@ -166,6 +182,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Sets the alignment.
+     *
      * @param alignment the new alignment
      */
     protected void setAlignment(final int alignment) {
@@ -173,6 +191,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Sets the anchor.
+     *
      * @param anchor the new anchor
      */
     protected void setAnchor(final int anchor) {
@@ -180,6 +200,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Sets the position of the given component in the ordering.
+     *
      * @param c the component you want to order
      * @param order the position of the component
      */
@@ -194,6 +216,8 @@ public abstract class AbstractFlowLayout implements LayoutManager, Serializable 
     }
 
     /**
+     * Sets the gap.
+     *
      * @param gap the new gap
      */
     protected void setGap(final int gap) {

@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.swingui.impl;
 import java.awt.Color;
 
 /**
+ * The color channels, in the RGB and HSB color models.
  */
 public enum ColorChannel {
 

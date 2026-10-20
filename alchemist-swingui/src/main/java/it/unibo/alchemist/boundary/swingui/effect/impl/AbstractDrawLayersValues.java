@@ -90,6 +90,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     );
 
     /**
+     * Checks whether the min or max layer values changed since they were last cached.
+     *
      * @return a boolean representing whether min and max layer values should be updated
      */
     protected boolean minOrMaxLayerValuesNeedsToBeUpdated() {
@@ -111,6 +113,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Returns a string representation of the min layer value.
+     *
      * @return a string representation of the min layer value
      */
     public String getMinLayerValue() {
@@ -118,6 +122,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Sets the string representation of the min layer value.
+     *
      * @param minLayerValue a string representation of the min layer value to set
      */
     public void setMinLayerValue(final String minLayerValue) {
@@ -125,6 +131,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Returns a string representation of the max layer value.
+     *
      * @return a string representation of the max layer value
      */
     public String getMaxLayerValue() {
@@ -132,6 +140,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Sets the string representation of the max layer value.
+     *
      * @param maxLayerValue a string representation of the max layer value to set
      */
     public void setMaxLayerValue(final String maxLayerValue) {
@@ -139,6 +149,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Returns the cached string representation of the min layer value.
+     *
      * @return a string representation of the min layer value cached
      */
     protected String getMinLayerValueCached() {
@@ -146,6 +158,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Sets the cached string representation of the min layer value.
+     *
      * @param minLayerValueCached a string representation of the min layer value to cache
      */
     protected void setMinLayerValueCached(final String minLayerValueCached) {
@@ -153,6 +167,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Returns the cached string representation of the max layer value.
+     *
      * @return a string representation of the max layer value cached
      */
     protected String getMaxLayerValueCached() {
@@ -160,6 +176,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Sets the cached string representation of the max layer value.
+     *
      * @param maxLayerValueCached a string representation of the max layer value to cache
      */
     protected void setMaxLayerValueCached(final String maxLayerValueCached) {
@@ -167,6 +185,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Returns the min layer value.
+     *
      * @return the min layer value
      */
     protected Double getMinLayerValueDouble() {
@@ -174,6 +194,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Sets the min layer value.
+     *
      * @param minLayerValueDouble the min layer value to set
      */
     protected void setMinLayerValueDouble(final Double minLayerValueDouble) {
@@ -181,6 +203,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Returns the max layer value.
+     *
      * @return the max layer value
      */
     protected Double getMaxLayerValueDouble() {
@@ -188,6 +212,8 @@ public abstract class AbstractDrawLayersValues extends AbstractDrawLayers implem
     }
 
     /**
+     * Sets the max layer value.
+     *
      * @param maxLayerValueDouble the max layer value to set
      */
     protected void setMaxLayerValueDouble(final Double maxLayerValueDouble) {

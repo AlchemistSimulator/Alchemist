@@ -85,6 +85,8 @@ public abstract class AbstractDrawOnce implements Effect {
     );
 
     /**
+     * Returns the id of the marker node.
+     *
      * @return the marker node id
      */
     @Nullable

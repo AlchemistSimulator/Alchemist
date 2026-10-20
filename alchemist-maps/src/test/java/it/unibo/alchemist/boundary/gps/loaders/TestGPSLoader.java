@@ -70,7 +70,7 @@ class TestGPSLoader {
     private static final int TOTAL_POINTS = 16_486;
 
     /**
-     *
+     * Registers the alignment classes that require no arguments.
      */
     @BeforeEach
     public void setUp() {

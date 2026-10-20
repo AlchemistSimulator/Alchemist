@@ -21,8 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-/**
- */
 class TestOSMEnvironment {
 
     // CHECKSTYLE: IllegalThrows OFF

@@ -53,9 +53,6 @@ class TestNormalizer {
         TRACES.add(TRACE_3);
     }
 
-    /**
-     *
-     */
     @Test
     void testNoAlignment() {
         final ImmutableList<GPSTrace> traces = new NoAlignment().alignTime(TRACES);
@@ -77,7 +74,7 @@ class TestNormalizer {
     }
 
     /**
-     *
+     * Tests that {@link AlignToFirstTrace} aligns the traces to the earliest starting trace.
      */
     @Test
     void testAlignToFirstTrace() {
@@ -106,7 +103,7 @@ class TestNormalizer {
     }
 
     /**
-     *
+     * Tests that {@link AlignToSimulationTime} makes every trace start at time zero.
      */
     @Test
     void testAlignToSimulationTime() {
@@ -131,9 +128,6 @@ class TestNormalizer {
                 traces.get(2).getFinalTime().toDouble(), DELTA);
     }
 
-    /**
-     *
-     */
     @Test
     void testAlignToTimeRetainSinglePoint() {
         final Time time = new DoubleTime(2.0);
@@ -167,9 +161,6 @@ class TestNormalizer {
                 traces.get(2).getFinalTime().toDouble(), DELTA);
     }
 
-    /**
-     *
-     */
     @Test
     void testAlignToTimeDiscardSinglePoint() {
         final Time time = new DoubleTime(4.0);
@@ -202,9 +193,6 @@ class TestNormalizer {
                 traces.get(1).getFinalTime().toDouble(), DELTA);
     }
 
-    /**
-     *
-     */
     @Test
     void testAlignToTimeThrowExceptionOnSinglePoint() {
         final Time time = new DoubleTime(4.0);
@@ -216,9 +204,6 @@ class TestNormalizer {
         }
     }
 
-    /**
-     *
-     */
     @Test
     void testAlignToTimeNegativeTime() {
         final Time time = new DoubleTime(-4.0);
@@ -230,9 +215,6 @@ class TestNormalizer {
         }
     }
 
-    /**
-     *
-     */
     @Test
     void testAlignToTimeWrongPolicy() {
         final Time time = new DoubleTime(4.0);

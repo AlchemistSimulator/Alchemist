@@ -14,14 +14,8 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.maps.positions.GPSPointImpl;
 import org.junit.jupiter.api.Test;
 
-/**
- *
- */
 class TestGPSTraceImpl {
 
-    /**
-     *
-     */
     @Test
     void testConstructionWithList() {
         new GPSTraceImpl(ImmutableList.of(new GPSPointImpl(0d, 0d, Time.ZERO)));

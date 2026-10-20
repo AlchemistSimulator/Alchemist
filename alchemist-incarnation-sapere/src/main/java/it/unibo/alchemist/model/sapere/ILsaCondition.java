@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A condition of the SAPERE incarnation, operating on LSA molecules.
  */
 public interface ILsaCondition extends Condition<List<ILsaMolecule>> {
 

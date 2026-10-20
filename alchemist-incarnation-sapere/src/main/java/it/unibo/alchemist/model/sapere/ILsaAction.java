@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * An action of the SAPERE incarnation, operating on LSA molecules.
  */
 public interface ILsaAction extends Action<List<ILsaMolecule>> {
 

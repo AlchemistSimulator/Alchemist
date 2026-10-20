@@ -52,6 +52,8 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     private final Map<String, MutableObservable<List<ILsaMolecule>>> observablesByName = new HashMap<>();
 
     /**
+     * Builds a new {@link LsaNode}.
+     *
      * @param environment
      *            The environment (used for safe node id computation)
      */

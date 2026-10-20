@@ -260,6 +260,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractNodeRea
     }
 
     /**
+     * Returns the node hosting this reaction.
+     *
      * @return the current node as {@link ILsaNode}
      */
     public ILsaNode getLsaNode() {

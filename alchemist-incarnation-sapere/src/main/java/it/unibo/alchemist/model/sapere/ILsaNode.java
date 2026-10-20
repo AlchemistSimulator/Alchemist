@@ -29,6 +29,8 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
     void addLsa(ILsaMolecule inst);
 
     /**
+     * Returns the LSA molecules in this node.
+     *
      * @return lsaMolecules in the node. This backs the internal LsaSpace: USE READ-ONLY.
      */
     List<ILsaMolecule> getLsaSpace();
@@ -51,6 +53,8 @@ public interface ILsaNode extends Node<List<ILsaMolecule>> {
     Observable<List<ILsaMolecule>> observeCandidates(ILsaMolecule template);
 
     /**
+     * Observes the LSA space of this node.
+     *
      * @return an {@link ObservableList} view of LSA Molecules in the node.
      */
     ObservableList<ILsaMolecule> observeLsaSpace();

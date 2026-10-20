@@ -49,7 +49,7 @@ abstract class AbstractConfigurableMoveNode<T, P : Position<P>> @JvmOverloads pr
 
     final override fun getNextPosition(): P {
         val previousEnd = targetPoint
-        val end = targetSelectionStrategy.getTarget()
+        val end = targetSelectionStrategy.target
         targetPoint = end
         if (end != previousEnd) {
             resetRoute()
@@ -57,7 +57,7 @@ abstract class AbstractConfigurableMoveNode<T, P : Position<P>> @JvmOverloads pr
         val maxWalk = speedSelectionStrategy.getNodeMovementLength(end)
         val currentPosition = environment.currentPositionOf(targetNode)
         return if (currentPosition.distanceTo(end) <= maxWalk) {
-            targetPoint = targetSelectionStrategy.getTarget()
+            targetPoint = targetSelectionStrategy.target
             resetRoute()
             if (isAbsolute) end else end.minus(currentPosition.coordinates)
         } else {

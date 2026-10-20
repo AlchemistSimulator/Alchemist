@@ -29,20 +29,21 @@ abstract class ChangeTargetOnCollision<T, P : Position<P>>(
     private lateinit var lastNodePosition: P
     private lateinit var targetPosition: P
 
-    override fun getTarget(): P {
-        val currentPosition = getCurrentPosition()
-        if (!initialized) {
+    override val target: P
+        get() {
+            val currentPosition = getCurrentPosition()
+            if (!initialized) {
+                lastNodePosition = currentPosition
+                targetPosition = currentPosition
+                initializePositions(currentPosition)
+                initialized = true
+            }
+            if (shouldChangeTarget()) {
+                targetPosition = chooseTarget()
+            }
             lastNodePosition = currentPosition
-            targetPosition = currentPosition
-            initializePositions(currentPosition)
-            initialized = true
+            return targetPosition
         }
-        if (shouldChangeTarget()) {
-            targetPosition = chooseTarget()
-        }
-        lastNodePosition = currentPosition
-        return targetPosition
-    }
 
     /**
      * Utility to initialize lazyinit variables dependent on the environment.

@@ -45,14 +45,15 @@ open class FollowTarget<T, P : Position<P>>(
      */
     protected val currentPosition: P get() = environment.currentPositionOf(node)
 
-    override fun getTarget(): P {
-        @Suppress("UNCHECKED_CAST")
-        return when (val conc = node[targetMolecule].getOrElse { currentPosition }) {
-            is Position<*> -> conc as P
-            is CharSequence, is Iterable<*> -> conc.extractCoordinates() ?: currentPosition
-            else -> conc.toString().extractCoordinates() ?: currentPosition
+    override val target: P
+        get() {
+            @Suppress("UNCHECKED_CAST")
+            return when (val conc = node[targetMolecule].getOrElse { currentPosition }) {
+                is Position<*> -> conc as P
+                is CharSequence, is Iterable<*> -> conc.extractCoordinates() ?: currentPosition
+                else -> conc.toString().extractCoordinates() ?: currentPosition
+            }
         }
-    }
 
     /**
      * Extracts a pair of coordinates from an iterable or a string representation.

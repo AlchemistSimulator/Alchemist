@@ -49,10 +49,8 @@ open class CognitiveAgentWander<T>(
     environment,
     reaction,
     pedestrian,
-    TargetSelectionStrategy {
-        randomGenerator.position(
-            environment,
-        )
+    object : TargetSelectionStrategy<T, Euclidean2DPosition> {
+        override val target: Euclidean2DPosition get() = randomGenerator.position(environment)
     },
 ) {
     private val heading by lazy {

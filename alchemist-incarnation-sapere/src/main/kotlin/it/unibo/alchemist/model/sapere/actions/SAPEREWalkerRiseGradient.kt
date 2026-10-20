@@ -77,7 +77,7 @@ open class SAPEREWalkerRiseGradient(
         private var currentNode: ILsaNode = node.asILsaNode()
         private var currentPosition: GeoPosition? = null
 
-        override fun getTarget(): GeoPosition {
+        override val target: GeoPosition get() {
             val matches = (node as ILsaNode).matching(template)
             val position = environment.currentPositionOf(node)
             // If there is no gradient and there is no goal, or the goal has already been reached, then remain still.

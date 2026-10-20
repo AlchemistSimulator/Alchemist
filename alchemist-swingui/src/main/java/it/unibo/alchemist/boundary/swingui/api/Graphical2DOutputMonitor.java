@@ -23,6 +23,8 @@ import it.unibo.alchemist.model.Position;
 public interface Graphical2DOutputMonitor<T, P extends Position<? extends P>> extends GraphicalOutputMonitor<T, P> {
 
     /**
+     * Zooms the view on the given point, with the given zoom level.
+     *
      * @param center    the point where to zoom
      * @param zoomLevel the desired zoom level
      */

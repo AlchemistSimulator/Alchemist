@@ -19,11 +19,15 @@ import java.util.Collection;
 public interface Isoline {
 
     /**
+     * Returns the value of this isoline.
+     *
      * @return the value associated with this isoline
      */
     Number getValue();
 
     /**
+     * Returns the segments of this isoline.
+     *
      * @return the segments forming this isoline
      */
     Collection<Segment2D> getSegments();

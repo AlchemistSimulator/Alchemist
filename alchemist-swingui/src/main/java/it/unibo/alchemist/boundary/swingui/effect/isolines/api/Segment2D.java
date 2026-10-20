@@ -15,21 +15,29 @@ package it.unibo.alchemist.boundary.swingui.effect.isolines.api;
 public interface Segment2D {
 
     /**
+     * Returns the x coordinate of the first point.
+     *
      * @return x coordinate of point 1
      */
     Number getX1();
 
     /**
+     * Returns the y coordinate of the first point.
+     *
      * @return y coordinate of point 1
      */
     Number getY1();
 
     /**
+     * Returns the x coordinate of the second point.
+     *
      * @return x coordinate of point 2
      */
     Number getX2();
 
     /**
+     * Returns the y coordinate of the second point.
+     *
      * @return y coordinate of point 2
      */
     Number getY2();

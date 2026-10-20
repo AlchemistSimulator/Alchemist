@@ -19,6 +19,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 /**
+ * A graphical effect applied when drawing nodes.
+ *
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
@@ -63,6 +65,8 @@ public interface Effect {
     }
 
     /**
+     * Returns a color summarizing this effect.
+     *
      * @return a color which resembles the color of this effect
      */
     Color getColorSummary();

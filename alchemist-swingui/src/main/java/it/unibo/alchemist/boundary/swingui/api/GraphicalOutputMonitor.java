@@ -26,17 +26,23 @@ import java.util.List;
 public interface GraphicalOutputMonitor<T, P extends Position<? extends P>> extends OutputMonitor<T, P> {
 
     /**
+     * Returns the number of simulation steps between two graphics updates.
+     *
      * @return how many simulation steps this monitor updates the graphics
      */
     int getStep();
 
     /**
+     * Sets the number of simulation steps between two graphics updates.
+     *
      * @param step How many steps should be computed by the engine for the
      *             display to update the graphics
      */
     void setStep(int step);
 
     /**
+     * Checks whether this monitor is trying to draw in real time.
+     *
      * @return true if this monitor is trying to draw in realtime
      */
     boolean isRealTime();
@@ -57,11 +63,15 @@ public interface GraphicalOutputMonitor<T, P extends Position<? extends P>> exte
     void repaint();
 
     /**
+     * Enables or disables the drawing of the links between nodes.
+     *
      * @param b if true, this monitor draws the links between nodes
      */
     void setDrawLinks(boolean b);
 
     /**
+     * Sets the stack of effects to use.
+     *
      * @param l the Effect stack to use
      */
     void setEffectStack(List<Effect> l);

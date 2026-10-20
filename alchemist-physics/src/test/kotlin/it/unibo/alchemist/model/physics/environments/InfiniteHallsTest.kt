@@ -26,18 +26,44 @@ class InfiniteHallsTest {
     private val node = GenericNode(environment)
 
     @Test
-    fun `positions are allowed in the room, lanes, and corridors, but not in the walls`() {
-        assertTrue(environment.allowed(2.0, 2.0))
-        assertTrue(environment.allowed(4.5, 0.5))
-        assertTrue(environment.allowed(9.0, 0.5))
-        assertFalse(environment.allowed(2.0, 8.5))
-        assertFalse(environment.allowed(0.5, 0.5))
+    fun `closing the doors walls off the horizontal lane`() {
+        assertTrue(environment.allowed(0.5, 4.5))
+        environment.isDoorsOpen = false
+        assertFalse(environment.allowed(0.5, 4.5))
     }
 
     @Test
     fun `nodes cannot be placed in walls`() {
         environment.addNode(node, Euclidean2DPosition(0.5, 0.5))
         assertEquals(0, environment.nodeCount.current)
+    }
+
+    @Test
+    fun `nodes moving from the horizontal lane are stopped at its border`() {
+        environment.addNode(node, Euclidean2DPosition(0.5, 4.5))
+        environment.moveNodeTo(node, Euclidean2DPosition(0.5, 2.0))
+        assertEquals(Euclidean2DPosition(0.5, environment.ci), environment.currentPositionOf(node))
+    }
+
+    @Test
+    fun `nodes moving from the right corridor are stopped at its border`() {
+        environment.addNode(node, Euclidean2DPosition(9.5, 2.0))
+        environment.moveNodeTo(node, Euclidean2DPosition(8.5, 2.0))
+        assertEquals(Euclidean2DPosition(environment.ex, 2.0), environment.currentPositionOf(node))
+    }
+
+    @Test
+    fun `nodes moving from the room are stopped at the room border`() {
+        environment.addNode(node, Euclidean2DPosition(2.0, 2.0))
+        environment.moveNodeTo(node, Euclidean2DPosition(2.0, 8.5))
+        assertEquals(Euclidean2DPosition(2.0, environment.sf), environment.currentPositionOf(node))
+    }
+
+    @Test
+    fun `nodes moving from the vertical lane are stopped at its border`() {
+        environment.addNode(node, Euclidean2DPosition(4.5, 0.5))
+        environment.moveNodeTo(node, Euclidean2DPosition(2.0, 0.5))
+        assertEquals(Euclidean2DPosition(environment.ci, 0.5), environment.currentPositionOf(node))
     }
 
     @Test
@@ -48,9 +74,11 @@ class InfiniteHallsTest {
     }
 
     @Test
-    fun `nodes moving from the room are stopped at the room border`() {
-        environment.addNode(node, Euclidean2DPosition(2.0, 2.0))
-        environment.moveNodeTo(node, Euclidean2DPosition(2.0, 8.5))
-        assertEquals(Euclidean2DPosition(2.0, environment.sf), environment.currentPositionOf(node))
+    fun `positions are allowed in the room, lanes, and corridors, but not in the walls`() {
+        assertTrue(environment.allowed(2.0, 2.0))
+        assertTrue(environment.allowed(4.5, 0.5))
+        assertTrue(environment.allowed(9.0, 0.5))
+        assertFalse(environment.allowed(2.0, 8.5))
+        assertFalse(environment.allowed(0.5, 0.5))
     }
 }

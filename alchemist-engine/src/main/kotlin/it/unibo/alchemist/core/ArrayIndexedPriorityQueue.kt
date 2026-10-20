@@ -85,46 +85,52 @@ class ArrayIndexedPriorityQueue<T> : Scheduler<T> {
         }
     }
 
-    private tailrec fun down(reaction: Reaction<T>, index: Int, time: Time) {
+    /**
+     * Shifts the children preceding [time] into the hole at [index], returning where the hole ends.
+     */
+    private tailrec fun down(index: Int, time: Time): Int {
         val left = 2 * index + 1
         if (left < tree.size) {
             val right = left + 1
             val minIndex = if (right < tree.size && times[right] < times[left]) right else left
             if (time > times[minIndex]) {
-                swap(index, reaction, minIndex, tree[minIndex])
-                down(reaction, minIndex, time)
+                move(minIndex, index)
+                return down(minIndex, time)
             }
         }
+        return index
     }
 
-    private fun swap(i1: Int, r1: Reaction<T>, i2: Int, r2: Reaction<T>) {
-        indexes.put(r1, i2)
-        indexes.put(r2, i1)
-        tree[i1] = r2
-        tree[i2] = r1
-        times[i1] = times.set(i2, times[i1])
+    private fun move(from: Int, to: Int) {
+        val moved = tree[from]
+        indexes.put(moved, to)
+        tree[to] = moved
+        times[to] = times[from]
     }
 
     /**
-     * Moves [reaction] towards the root while it precedes its parent.
-     * Returns whether it [moved].
+     * Shifts the parents following [time] into the hole at [index], returning where the hole ends.
      */
-    private tailrec fun up(reaction: Reaction<T>, index: Int, time: Time, moved: Boolean = false): Boolean {
+    private tailrec fun up(index: Int, time: Time): Int {
         val parentIndex = (index - 1) / 2
         return when {
             index > 0 && time < times[parentIndex] -> {
-                swap(index, reaction, parentIndex, tree[parentIndex])
-                up(reaction, parentIndex, time, moved = true)
+                move(parentIndex, index)
+                up(parentIndex, time)
             }
-            else -> moved
+            else -> index
         }
     }
 
     private fun updateEffectively(reaction: Reaction<T>, index: Int) {
         // times[index] always holds the reaction's current occurrence here.
         val time = times[index]
-        if (!up(reaction, index, time)) {
-            down(reaction, index, time)
+        val raised = up(index, time)
+        val destination = if (raised == index) down(index, time) else raised
+        if (destination != index) {
+            indexes.put(reaction, destination)
+            tree[destination] = reaction
+            times[destination] = time
         }
     }
 

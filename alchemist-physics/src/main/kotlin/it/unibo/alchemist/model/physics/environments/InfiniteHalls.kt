@@ -12,119 +12,94 @@ package it.unibo.alchemist.model.physics.environments
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import kotlin.math.floor
 
 /**
  * An environment made of an infinite grid of halls, each one with a room connected to corridors through doors.
  *
  * @param T concentration type
  * @param incarnation the incarnation to be used.
- * @param size the size of a single hall.
- * @param allOpen whether all the doors are initially open.
+ * @param hallSize the size of a single hall.
+ * @param openDoors if true, every room has four open accesses, otherwise only two.
  */
 class InfiniteHalls<T> @JvmOverloads constructor(
     incarnation: Incarnation<T, Euclidean2DPosition>,
-    size: Double = DEFAULT_SIZE,
-    allOpen: Boolean = true,
+    internal val hallSize: Double = DEFAULT_SIZE,
+    val openDoors: Boolean = true,
 ) : AbstractLimitedContinuous2D<T>(incarnation) {
     /**
-     * The size of a single hall.
+     * The central corridors, crossing each hall horizontally and vertically.
      */
-    val hallSize: Double = size
+    internal val centralCorridor = hallSize * CORRIDOR_START..hallSize * CORRIDOR_END
 
     /**
-     * The final margin of the central corridor.
+     * The margin of the external corridors, delimiting each hall on the right and on the top.
      */
-    val cf: Double = size * CORRIDOR_END
+    internal val externalBorder: Double get() = externalCorridor.start
 
     /**
-     * The initial margin of the central corridor.
+     * The external corridors, delimiting each hall on the right and on the top.
      */
-    val ci: Double = size * CORRIDOR_START
+    internal val externalCorridor = hallSize * EXTERNAL_BORDER..hallSize
 
     /**
-     * The external border margin.
+     * The room at the center of each hall.
      */
-    val ex: Double = size * EXTERNAL_BORDER
-
-    /**
-     * The final margin of the room.
-     */
-    val sf: Double = size * ROOM_END
-
-    /**
-     * The initial margin of the room.
-     */
-    val si: Double = size * ROOM_START
-
-    /**
-     * Whether the doors of the rooms are open: if true, the room has four open accesses, otherwise only two.
-     */
-    var isDoorsOpen: Boolean = allOpen
-
-    /**
-     * Checks whether the position at ([xp], [yp]) is allowed.
-     */
-    fun allowed(xp: Double, yp: Double): Boolean {
-        val x = xp.wrapped()
-        val y = yp.wrapped()
-        return x >= ex || // Right corridor
-            y >= ex || // Upper corridor
-            x in ci..cf || // Vertical lane
-            isDoorsOpen && y in ci..cf || // Horizontal lane
-            x in si..sf && y in si..sf // Room
-    }
+    internal val mainRoom = hallSize * ROOM_START..hallSize * ROOM_END
 
     /**
      * The farthest position reachable by the node towards the desired one, stopping at the walls of the halls.
      */
     override fun farthestReachablePosition(node: Node<T>, desired: Euclidean2DPosition): Euclidean2DPosition {
-        val current = currentPositionOf(node)
         val reachable = super.farthestReachablePosition(node, desired)
-        return next(current.x, current.y, reachable.x, reachable.y)
-    }
-
-    override fun isAllowed(position: Euclidean2DPosition): Boolean = allowed(position.x, position.y)
-
-    private fun next(ox: Double, oy: Double, nx: Double, ny: Double): Euclidean2DPosition {
-        if (allowed(nx, ny)) {
-            return Euclidean2DPosition(nx, ny)
+        if (isAllowed(reachable)) {
+            return reachable
         }
-        val hallX = (ox / hallSize).toInt() * hallSize
-        val hallY = (oy / hallSize).toInt() * hallSize
-        val oxm = ox % hallSize
-        val oym = oy % hallSize
-        val x = nx.wrapped()
-        val y = ny.wrapped()
+        val (oldX, oldY) = currentPositionOf(node)
+        val (newX, newY) = reachable
+        val hallX = floor(oldX / hallSize) * hallSize
+        val hallY = floor(oldY / hallSize) * hallSize
+        val oldInHallX = oldX.relativeToTheHall
+        val oldInHallY = oldY.relativeToTheHall
+        val x = newX.relativeToTheHall
+        val y = newY.relativeToTheHall
         return when {
             // Right corridor
-            oxm >= ex -> Euclidean2DPosition(nx.stoppedAt(x, hallX, ex, hallSize), ny)
+            oldInHallX >= externalBorder -> makePosition(newX.stoppedAt(x, hallX, externalCorridor), newY)
             // Upper corridor
-            oym >= ex -> Euclidean2DPosition(nx, ny.stoppedAt(y, hallY, ex, hallSize))
+            oldInHallY >= externalBorder -> makePosition(newX, newY.stoppedAt(y, hallY, externalCorridor))
             // Main room
-            oxm in si..sf && oym in si..sf ->
-                Euclidean2DPosition(nx.stoppedAt(x, hallX, si, sf), ny.stoppedAt(y, hallY, si, sf))
+            oldInHallX in mainRoom && oldInHallY in mainRoom ->
+                makePosition(newX.stoppedAt(x, hallX, mainRoom), newY.stoppedAt(y, hallY, mainRoom))
             // Horizontal lane passes (room positions and corridors already checked)
-            isDoorsOpen && oym in ci..cf -> Euclidean2DPosition(nx, ny.stoppedAt(y, hallY, ci, cf))
+            openDoors && oldInHallY in centralCorridor -> makePosition(newX, newY.stoppedAt(y, hallY, centralCorridor))
             // Vertical lane passes (room positions and corridors already checked)
-            oxm in ci..cf -> Euclidean2DPosition(nx.stoppedAt(x, hallX, ci, cf), ny)
-            else -> Euclidean2DPosition(nx, ny)
+            oldInHallX in centralCorridor -> makePosition(newX.stoppedAt(x, hallX, centralCorridor), newY)
+            else -> makePosition(newX, newY)
         }
     }
 
-    /**
-     * This coordinate, or the closest wall of the hall starting at [hallStart] if its position [inHall]
-     * falls outside the [min]..[max] passage.
-     */
-    private fun Double.stoppedAt(inHall: Double, hallStart: Double, min: Double, max: Double): Double = when {
-        inHall < min -> hallStart + min
-        inHall > max -> hallStart + max
-        else -> this
+    override fun isAllowed(position: Euclidean2DPosition): Boolean {
+        val hallX = position.x.relativeToTheHall
+        val hallY = position.y.relativeToTheHall
+        return hallX >= externalBorder || // Right corridor
+            hallY >= externalBorder || // Upper corridor
+            hallX in centralCorridor || // Vertical lane
+            openDoors && hallY in centralCorridor || // Horizontal lane
+            hallX in mainRoom && hallY in mainRoom // Room
     }
 
     /**
      * This coordinate, relative to the hall containing it.
      */
-    private fun Double.wrapped(): Double = (this % hallSize + hallSize) % hallSize
+    private val Double.relativeToTheHall: Double get() = (this % hallSize + hallSize) % hallSize
+
+    /**
+     * This coordinate, or the closest wall of the hall starting at [hallStart] if its position [inHall]
+     * falls outside the [range] passage.
+     */
+    private fun Double.stoppedAt(inHall: Double, hallStart: Double, range: ClosedFloatingPointRange<Double>): Double =
+        if (inHall in range) this else hallStart + inHall.coerceIn(range)
 
     private companion object {
         private const val CORRIDOR_END = 0.51

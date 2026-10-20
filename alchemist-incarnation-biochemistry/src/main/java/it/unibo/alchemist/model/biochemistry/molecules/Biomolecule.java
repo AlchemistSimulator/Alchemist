@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.biochemistry.molecules;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 
 /**
- *
+ * A molecule of the biochemistry incarnation.
  */
 public class Biomolecule extends SimpleMolecule {
 

@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.biochemistry;
 import it.unibo.alchemist.model.Node;
 
 /**
+ * A node of the biochemistry incarnation that is not a cell, representing a portion of the environment.
  */
 public interface EnvironmentNode extends Node<Double> {
 

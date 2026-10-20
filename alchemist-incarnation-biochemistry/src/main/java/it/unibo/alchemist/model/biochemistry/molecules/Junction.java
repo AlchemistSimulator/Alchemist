@@ -55,6 +55,8 @@ public final class Junction extends SimpleMolecule {
     }
 
     /**
+     * Returns the molecules associated with this junction in the current node.
+     *
      * @return a map of molecules and concentrations associated with this junction in the current node.
      */
     public Map<Biomolecule, Double> getMoleculesInCurrentNode() {
@@ -62,6 +64,8 @@ public final class Junction extends SimpleMolecule {
     }
 
     /**
+     * Returns the molecules associated with this junction in the neighbor node.
+     *
      * @return a map of molecules and concentrations associated with this junction in the neighbor node.
      */
     public Map<Biomolecule, Double> getMoleculesInNeighborNode() {

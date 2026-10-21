@@ -13,6 +13,7 @@ plugins {
     `java-library`
     scala
     alias(libs.plugins.spotless)
+    id("publish-convention")
 }
 
 dependencies {

@@ -13,12 +13,14 @@ import com.github.spotbugs.snom.SpotBugsTask
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
 import dev.detekt.gradle.Detekt
+import io.ktor.util.reflect.typeInfo
 import it.unibo.alchemist.build.id
 import it.unibo.alchemist.build.isInCI
 import it.unibo.alchemist.build.isMac
 import it.unibo.alchemist.build.isWindows
 import java.net.InetSocketAddress
 import kotlinx.coroutines.runBlocking
+import org.danilopianini.centralpublisher.impl.models.DeploymentResponseFiles
 import org.danilopianini.gradle.mavencentral.portal.PublishPortalDeployment
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -29,7 +31,6 @@ plugins {
     id("kotlin-jvm-convention")
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.multiJvmTesting)
-    alias(libs.plugins.publishOnCentral)
     alias(libs.plugins.taskTree)
     alias(libs.plugins.hugo)
 }
@@ -41,7 +42,6 @@ allprojects {
     with(rootProject.libs.plugins) {
         apply(plugin = gitSemVer.id)
         apply(plugin = multiJvmTesting.id)
-        apply(plugin = publishOnCentral.id)
         apply(plugin = taskTree.id)
     }
 
@@ -110,40 +110,7 @@ allprojects {
         }
     }
 
-    if (isInCI) {
-        signing {
-            val signingKey: String? by project
-            val signingPassword: String? by project
-            useInMemoryPgpKeys(signingKey, signingPassword)
-        }
-    }
-
     group = "it.unibo.alchemist"
-    val repoSlug = "AlchemistSimulator/Alchemist"
-    publishOnCentral {
-        projectDescription.set(extra["projectDescription"].toString())
-        projectLongName.set(extra["projectLongName"].toString())
-        projectUrl.set("https://github.com/$repoSlug")
-        licenseName.set("GPL 3.0 with linking exception")
-        licenseUrl.set(projectUrl.map { "$it/blob/master/LICENSE.md" })
-        scmConnection.set("git:git@github.com:$repoSlug.git")
-        repository("https://maven.pkg.github.com/${repoSlug.lowercase()}") {
-            user.set("DanySK")
-            password.set(System.getenv("GITHUB_TOKEN"))
-        }
-    }
-    publishing.publications.withType<MavenPublication>().configureEach {
-        pom {
-            developers {
-                developer {
-                    name.set("Danilo Pianini")
-                    email.set("danilo.pianini@unibo.it")
-                    url.set("https://www.danilopianini.org")
-                    roles.set(mutableSetOf("architect", "developer"))
-                }
-            }
-        }
-    }
 }
 
 /*
@@ -172,9 +139,10 @@ dependencies {
 
 val checkMavenCentralPortalPluginClasspath by tasks.registering {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
-    description = "Checks that the Maven Central Portal publishing plugin can upload to a local fake endpoint."
+    description = "Checks that the Maven Central Portal publishing plugin can upload to a local fake endpoint " +
+        "and decode the deployment status it returns."
     val outputFile = layout.buildDirectory.file("reports/checkMavenCentralPortalPluginClasspath/result.txt")
-    inputs.property("publishOnCentralPluginVersion", libs.plugins.publishOnCentral.get().version.requiredVersion)
+    inputs.property("publishOnCentralPluginVersion", libs.versions.publish.on.central)
     outputs.file(outputFile)
     doLast {
         val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
@@ -185,6 +153,30 @@ val checkMavenCentralPortalPluginClasspath by tasks.registering {
                 }
                 exchange.requestBody.use { it.readBytes() }
                 exchange.respond(201, "local-deployment-id")
+            }
+        }
+        /*
+         * Decoding the status response exercises kotlinx-serialization, whose version on the build classpath
+         * must be at least the one the plugin was compiled against, or releasing fails after uploading.
+         */
+        server.createContext("/api/v1/publisher/status") { exchange ->
+            exchange.use {
+                exchange.respond(
+                    200,
+                    """
+                    {
+                        "deploymentId": "local-deployment-id",
+                        "deploymentName": "local",
+                        "deploymentState": "VALIDATED",
+                        "deploymentType": "BUNDLE",
+                        "createTimestamp": 1.0,
+                        "purls": ["pkg:maven/local/local@1"],
+                        "errors": {"common": []},
+                        "deployedComponentVersions": [{"name": "local", "path": "local/local/1", "errors": []}]
+                    }
+                    """.trimIndent(),
+                    contentType = "application/json",
+                )
             }
         }
         server.start()
@@ -206,6 +198,13 @@ val checkMavenCentralPortalPluginClasspath by tasks.registering {
             }
             check(deploymentId == "local-deployment-id") {
                 "Unexpected local Maven Central Portal deployment id: $deploymentId"
+            }
+            val status = runBlocking {
+                deployment.client.apiV1PublisherStatusPost(deploymentId)
+                    .typedBody<DeploymentResponseFiles>(typeInfo<DeploymentResponseFiles>())
+            }
+            check(status.deploymentState == DeploymentResponseFiles.DeploymentState.VALIDATED) {
+                "Unexpected local Maven Central Portal deployment status: $status"
             }
             outputFile.get().asFile.apply {
                 parentFile.mkdirs()
@@ -300,9 +299,9 @@ tasks.hugoBuild.configure {
     finalizedBy(performWebsiteStringReplacements)
 }
 
-private fun HttpExchange.respond(statusCode: Int, body: String) {
+private fun HttpExchange.respond(statusCode: Int, body: String, contentType: String = "text/plain") {
     val response = body.toByteArray()
-    responseHeaders.add("Content-Type", "text/plain; charset=utf-8")
+    responseHeaders.add("Content-Type", "$contentType; charset=utf-8")
     sendResponseHeaders(statusCode, response.size.toLong())
     responseBody.use { it.write(response) }
 }

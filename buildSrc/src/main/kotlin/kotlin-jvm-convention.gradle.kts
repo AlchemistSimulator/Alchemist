@@ -28,6 +28,7 @@ plugins {
     id("org.danilopianini.gradle-java-qa")
     id("com.google.devtools.ksp")
     id("power-assert-convention")
+    id("publish-convention")
 }
 
 dependencies {

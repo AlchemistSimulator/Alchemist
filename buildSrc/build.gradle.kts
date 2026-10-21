@@ -25,4 +25,5 @@ dependencies {
     implementation(libs.kotlin.power.assert.plugin)
     implementation(libs.kotlin.quality.assurance.plugin)
     implementation(libs.ksp.plugin)
+    implementation(libs.publish.on.central.plugin)
 }

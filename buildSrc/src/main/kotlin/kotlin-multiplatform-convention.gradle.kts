@@ -20,6 +20,7 @@ plugins {
     id("io.kotest")
     id("kotlin-static-analysis-convention")
     id("power-assert-convention")
+    id("publish-convention")
 }
 
 @OptIn(ExperimentalWasmDsl::class)

@@ -313,13 +313,9 @@ publishing.publications {
     }
 }
 
-afterEvaluate {
-    components.withType<AdhocComponentWithVariants>().named("java").configure {
-        // Shadow creates a "shadowRuntimeElements" configuration which is added as a variant
-        withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
-            skip()
-        }
-    }
+shadow {
+    // The fat jar is a release asset, it must not reach Maven Central
+    addShadowVariantIntoJavaComponent = false
 }
 
 private val Provider<Directory>.directoryProperty get(): DirectoryProperty = objects.directoryProperty().also {

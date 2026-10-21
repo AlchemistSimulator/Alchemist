@@ -77,7 +77,7 @@ Transactions on Computational Collective Intelligence XXVII. 2017.](https://doi.
 Steering Behaviors for Autonomous Characters. 1999.](https://archive.is/PwYQz)
 
 [Erik Andresen, Mohcine Chraibi & Armin Seyfried\
-A representation of partial spatial knowledge: a cognitive map approach for evacuation simulations](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717)
+A representation of partial spatial knowledge: a cognitive map approach for evacuation simulations](https://doi.org/10.1080/23249935.2018.1432717)
 
 [Nuria Pelechano, Jan M. Allbeck, Norman I. Badler\
-Controlling Individual Agents in High-Density Crowd Simulation](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1223&context=hms)
+Controlling Individual Agents in High-Density Crowd Simulation](https://doi.org/10.2312/SCA/SCA07/099-108)

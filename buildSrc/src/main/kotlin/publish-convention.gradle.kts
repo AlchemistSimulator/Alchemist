@@ -17,8 +17,8 @@ plugins {
 
 if (isInCI) {
     signing {
-        val signingKey: String? by project
-        val signingPassword: String? by project
+        val signingKey = project.findProperty("signingKey")?.toString()
+        val signingPassword = project.findProperty("signingPassword")?.toString()
         useInMemoryPgpKeys(signingKey, signingPassword)
     }
 }

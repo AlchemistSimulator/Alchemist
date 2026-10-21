@@ -1,3 +1,57 @@
+## [44.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.42...44.0.0) (2026-10-21)
+
+### ⚠ BREAKING CHANGES
+
+* **physics:** convert InfiniteHalls to Kotlin (#5688)
+* convert AbstractPosition and AbstractEuclideanPosition to Kotlin
+* replace dependency graph with reactive invalidation (#5641)
+
+### Features
+
+* replace dependency graph with reactive invalidation ([#5641](https://github.com/AlchemistSimulator/Alchemist/issues/5641)) ([f7b13da](https://github.com/AlchemistSimulator/Alchemist/commit/f7b13da4190b80e9dd2e922573c12841bfc2e5f1))
+
+### Dependency updates
+
+* **core-deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.12.0 ([#5679](https://github.com/AlchemistSimulator/Alchemist/issues/5679)) ([8807fd0](https://github.com/AlchemistSimulator/Alchemist/commit/8807fd00b7fcb87a3724282efda053547592de1f))
+
+### Bug Fixes
+
+* **swingui:** avoid overridable calls in constructors ([ee9178d](https://github.com/AlchemistSimulator/Alchemist/commit/ee9178dba01d9f9cb49ecb855f0c8f2f33c4b5a3))
+
+### Documentation
+
+* add Javadoc comments in `AbstractDrawLayers` ([a03089d](https://github.com/AlchemistSimulator/Alchemist/commit/a03089d72c8fff87908fea8b2fb0c2b23789558f))
+* add Javadoc comments in `AbstractDrawLayersGradient` ([7dade84](https://github.com/AlchemistSimulator/Alchemist/commit/7dade8444bcd583fb9aa3df49c62dd34687c1926))
+* **biochemistry:** add missing Javadoc comments ([51eb6d8](https://github.com/AlchemistSimulator/Alchemist/commit/51eb6d84c80782b73b17f9d091b4a63f5bc2bbb7))
+* **sapere:** add missing Javadoc comments ([51d1f88](https://github.com/AlchemistSimulator/Alchemist/commit/51d1f881434f6b73c3ec2903dd241fa501db5d21))
+* **swingui:** add class-level Javadoc for `SimControlButton` ([01aaa6a](https://github.com/AlchemistSimulator/Alchemist/commit/01aaa6a5b6b9d5dab624a0cdfc00eefdf7c37717))
+* **swingui:** add Javadoc comments in `AbstractDrawLayersValues`, `AbstractDrawOnce`, `AbstractFlowLayout`, `AbstractMenu`, `AbstractrDrawLayersIsolines`, `ColorChannel`, `ConcreteIsolinesFactory` ([1c9223c](https://github.com/AlchemistSimulator/Alchemist/commit/1c9223c9c0952bb31c1b25cff875ea2596bedd38))
+* **swingui:** add missing Javadoc comments `Effect`, `Isoline`, `Segment2D`, `GraphicalOutputMonitor`, and `Graphical2DOutputMonitor` ([872941e](https://github.com/AlchemistSimulator/Alchemist/commit/872941e4ec3bb0c48f4697ac3d01b70c30cc3ad6))
+* **swingui:** add missing Javadoc comments for multiple components ([74184b9](https://github.com/AlchemistSimulator/Alchemist/commit/74184b958afec3a4f80e0f2b86a517dcf9be4102))
+* **ui-tooling:** add Javadoc comments for `AbstractWormhole2D` and `PointAdapter` ([351f4f3](https://github.com/AlchemistSimulator/Alchemist/commit/351f4f393fd3b124ce0efed056545915e4ab1268))
+
+### Tests
+
+* **loading:** replace empty Javadoc comments with meaningful descriptions, or drop unnecessary ones ([1329b19](https://github.com/AlchemistSimulator/Alchemist/commit/1329b195921fba732a0db95467a0deca9273915d))
+* **maps:** replace empty Javadoc comments with meaningful descriptions, or drop unnecessary ones ([437661f](https://github.com/AlchemistSimulator/Alchemist/commit/437661ff07d4fa4d1bb620627bb97aa37a42efcd))
+* replace empty Javadoc comments with meaningful descriptions, or drop unnecessary ones ([c33178e](https://github.com/AlchemistSimulator/Alchemist/commit/c33178ec74018d5453665ce677fd06ccfef6ba61))
+
+### Build and continuous integration
+
+* **deps:** update dependency macos github actions runner to v26 ([f2b69b7](https://github.com/AlchemistSimulator/Alchemist/commit/f2b69b7a8b2484a484566e6b6781c2aa16a7cd87))
+* **website:** add flaky DOI link to the lycheeignore list ([0a18a0c](https://github.com/AlchemistSimulator/Alchemist/commit/0a18a0c04045ebb78b657d1511c53be49c3abeea))
+* **website:** add flaky DOI links to the lycheeignore list ([10f5d93](https://github.com/AlchemistSimulator/Alchemist/commit/10f5d9382a822ae9741325a768ce6a5482fea7ae))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([e297328](https://github.com/AlchemistSimulator/Alchemist/commit/e297328d4897d95fba4678e06b2023836febd5eb))
+
+### Refactoring
+
+* convert AbstractPosition and AbstractEuclideanPosition to Kotlin ([4af99aa](https://github.com/AlchemistSimulator/Alchemist/commit/4af99aaa48fe07c23ee716b95afc109d69c79a02))
+* **physics:** convert InfiniteHalls to Kotlin ([#5688](https://github.com/AlchemistSimulator/Alchemist/issues/5688)) ([da4a7fd](https://github.com/AlchemistSimulator/Alchemist/commit/da4a7fd0ea00925adfc7f8534c62c25ce4542073))
+* **swingui:** remove empty Javadoc comments from `JTapeTab`, `HorizontalFlowLayout`, and `VerticalFlowLayout` ([6a5427c](https://github.com/AlchemistSimulator/Alchemist/commit/6a5427c82ce27225ea25936ec25b5291238f94b6))
+
 ## [43.1.42](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.41...43.1.42) (2026-10-18)
 
 ### Dependency updates

@@ -33,6 +33,8 @@ public final class StatUtil {
     }
 
     /**
+     * Creates a {@link UnivariateStatistic} given its name.
+     *
      * @param name
      *            the statistic
      * @return a new instance of the corresponding {@link UnivariateStatistic}
@@ -53,6 +55,8 @@ public final class StatUtil {
     }
 
     /**
+     * Returns the names of the available statistics.
+     *
      * @return all the available statistics at {@link UnivariateStatistic}.
      */
     public static Set<String> availableStatistics() {

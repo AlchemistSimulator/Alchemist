@@ -43,6 +43,8 @@ public final class SupportedIncarnations {
     }
 
     /**
+     * Returns the names of the available incarnations.
+     *
      * @return The set of incarnations currently available.
      */
     public static Set<String> getAvailableIncarnations() {

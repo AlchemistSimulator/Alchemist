@@ -42,6 +42,8 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     private final TimeDistributedReaction<?> timeDistributedReaction;
 
     /**
+     * Builds a new speed strategy that slows the node down when it interacts with other nodes.
+     *
      * @param environment
      *            the environment
      * @param n

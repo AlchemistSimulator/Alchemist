@@ -32,6 +32,8 @@ public final class RealDistributions {
     }
 
     /**
+     * Creates a {@link RealDistribution} given its name and parameters.
+     *
      * @param randomGenerator
      *            the {@link RandomGenerator}
      * @param shortname

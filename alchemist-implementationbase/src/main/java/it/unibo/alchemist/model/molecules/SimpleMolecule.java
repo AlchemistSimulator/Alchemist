@@ -26,6 +26,8 @@ public class SimpleMolecule implements Molecule {
     private final String n;
 
     /**
+     * Builds a new molecule with the given name.
+     *
      * @param name
      *            the molecule name
      */
@@ -34,6 +36,8 @@ public class SimpleMolecule implements Molecule {
     }
 
     /**
+     * Builds a new molecule with the given name.
+     *
      * @param name
      *            the molecule name
      */

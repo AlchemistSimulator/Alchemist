@@ -24,6 +24,8 @@ public final class ConstantSpace<T, P extends Position<P>> implements SpeedSelec
     private final double space;
 
     /**
+     * Builds a new strategy moving the node by a constant step.
+     *
      * @param step
      *            the step length (in meters, or the unit you are using in your simulation)
      */

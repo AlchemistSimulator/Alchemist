@@ -44,7 +44,7 @@ constructor(
     dy: Double = 0.0,
     obstaclesColor: Int = Color.BLACK.rgb,
     roomsColor: Int = Color.BLUE.rgb,
-) : ImageEnvironment<T>(incarnation, obstaclesColor, path, zoom, dx, dy),
+) : ImageEnvironment<T>(incarnation, path, zoom, dx, dy, obstaclesColor),
     EuclideanPhysics2DEnvironmentWithGraph<
         RectObstacle2D<Euclidean2DPosition>,
         T,

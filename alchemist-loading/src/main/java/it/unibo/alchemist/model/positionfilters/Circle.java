@@ -21,6 +21,8 @@ import java.awt.geom.Ellipse2D;
 public class Circle<P extends Position2D<P>> extends Abstract2DShape<P> {
 
     /**
+     * Builds a new circular filter.
+     *
      * @param centerX x coordinate of the circle center
      * @param centerY y coordinate of the circle center
      * @param radius the circle radius

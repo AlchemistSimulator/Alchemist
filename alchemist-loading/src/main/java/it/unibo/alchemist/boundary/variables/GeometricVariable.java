@@ -32,6 +32,8 @@ public final class GeometricVariable extends AbstractPrintableVariable<Double> {
     private final double max;
 
     /**
+     * Builds a new geometric variable.
+     *
      * @param def
      *            default value
      * @param min

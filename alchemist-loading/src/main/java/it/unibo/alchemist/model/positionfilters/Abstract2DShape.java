@@ -22,6 +22,8 @@ public abstract class Abstract2DShape<P extends Position2D<P>> implements Positi
     private final java.awt.Shape shape;
 
     /**
+     * Builds a new filter from the given shape.
+     *
      * @param shape any Java AWT {@link java.awt.Shape}
      */
     protected Abstract2DShape(final java.awt.Shape shape) {

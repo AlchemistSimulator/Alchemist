@@ -48,6 +48,8 @@ public enum CommonFilters {
     }
 
     /**
+     * Returns the filtering policy associated with this value.
+     *
      * @return the {@link ExportFilter}
      */
     public ExportFilter getFilteringPolicy() {
@@ -55,6 +57,8 @@ public enum CommonFilters {
     }
 
     /**
+     * Converts a {@link String} to the corresponding {@link ExportFilter}.
+     *
      * @param input a {@link String} matching a {@link ExportFilter} name (one of the values of {@link CommonFilters})
      * @return the corresponding {@link ExportFilter}
      */

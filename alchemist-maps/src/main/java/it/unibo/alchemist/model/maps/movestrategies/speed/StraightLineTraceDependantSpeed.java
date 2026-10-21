@@ -33,6 +33,8 @@ public final class StraightLineTraceDependantSpeed<
     extends AbstractTraceDependantSpeed<T, O, S> {
 
     /**
+     * Builds a new strategy estimating distances in straight line.
+     *
      * @param environment
      *            the environment
      * @param node

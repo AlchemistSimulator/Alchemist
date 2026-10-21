@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -26,6 +26,8 @@ import java.util.List;
 public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
 
     /**
+     * Builds a new trace from the given points.
+     *
      * @param trace
      *            GPS points
      */
@@ -34,11 +36,13 @@ public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPST
     }
 
     /**
-     * @param tr
+     * Builds a new trace from the given list of points.
+     *
+     * @param trace
      *            GPS points
      */
-    public GPSTraceImpl(final List<GPSPoint> tr) {
-        super(tr);
+    public GPSTraceImpl(final List<GPSPoint> trace) {
+        super(trace);
     }
 
     @Override

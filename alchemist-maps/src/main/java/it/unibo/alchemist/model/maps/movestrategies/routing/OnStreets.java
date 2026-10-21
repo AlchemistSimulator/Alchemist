@@ -33,6 +33,8 @@ public final class OnStreets<T, O extends RoutingServiceOptions<O>, S extends Ro
     private final O options;
 
     /**
+     * Builds a new strategy computing routes on streets with the given options.
+     *
      * @param environment
      *            the environment
      * @param options

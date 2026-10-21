@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- *
+ * Loads {@link GPSTrace}s from a file or directory, aligns their time, and makes them iterable, optionally cyclically.
  */
 public final class TraceLoader implements Iterable<GPSTrace> {
 
@@ -65,6 +65,8 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     private final ImmutableList<GPSTrace> traces;
 
     /**
+     * Builds a new loader using the given time normalizer.
+     *
      * @param path
      *            path with the gps tracks
      * @param cycle
@@ -79,6 +81,8 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     /**
+     * Builds a new loader, creating the time normalizer by class name with the given arguments.
+     *
      * @param path
      *            path with the gps tracks
      * @param cycle
@@ -99,6 +103,8 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     /**
+     * Builds a new non-cyclic loader using the given time normalizer.
+     *
      * @param path
      *            path with the gps tracks
      * @param normalizer
@@ -110,6 +116,8 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     /**
+     * Builds a new non-cyclic loader, creating the time normalizer by class name with the given arguments.
+     *
      * @param path
      *            path with the gps tracks
      * @param timeNormalizerClass
@@ -174,6 +182,8 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     /**
+     * Returns the number of loaded traces, if finite.
+     *
      * @return the number of traces loaded, Optional.empty() if cyclic
      */
     public Optional<Integer> size() {

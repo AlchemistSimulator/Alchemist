@@ -27,6 +27,8 @@ public final class AlignToTime extends AbstractGPSTimeAlignment {
     private final Time time;
 
     /**
+     * Builds a new alignment to the given time, expressed in seconds from Epoch.
+     *
      * @param time
      *            the time from which the traces should begin. E.g., if you want all
      *            traces to begin at 2017-08-01 at 14:45:42 GMT, you should enter
@@ -44,6 +46,8 @@ public final class AlignToTime extends AbstractGPSTimeAlignment {
     }
 
     /**
+     * Builds a new alignment to the given {@link Time}.
+     *
      * @param time
      *            the time from which the traces should begin. E.g., if you want all
      *            traces to begin at 2017-08-01 at 14:45:42 GMT, you should enter

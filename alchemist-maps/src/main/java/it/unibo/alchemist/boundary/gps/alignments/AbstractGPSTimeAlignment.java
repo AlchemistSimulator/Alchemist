@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- *
+ * Base class for {@link GPSTimeAlignment} strategies that shift each trace to a computed start time.
  */
 public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
 
@@ -44,6 +44,8 @@ public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
     }
 
     /**
+     * Builds a new time alignment with the given policy for traces with a single point.
+     *
      * @param policy define policy for traces with a single point
      */
     protected AbstractGPSTimeAlignment(final SinglePointBehavior policy) {
@@ -71,6 +73,8 @@ public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
     }
 
     /**
+     * Computes the time from which the current trace should begin.
+     *
      * @param allTraces all {@link GPSTrace} to normalize
      * @param currentTrace current {@link GPSTrace} to normalize
      * @return the time from which the trace should begin

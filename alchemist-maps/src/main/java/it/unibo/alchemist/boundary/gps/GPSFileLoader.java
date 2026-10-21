@@ -23,6 +23,8 @@ import java.util.List;
 public interface GPSFileLoader {
 
     /**
+     * Reads all the {@link GPSTrace}s contained in the given file.
+     *
      * @param url file with the trace request
      * @return GPSTrace read
      * @throws FileFormatException file format not valid
@@ -31,6 +33,8 @@ public interface GPSFileLoader {
     List<GPSTrace> readTrace(URL url) throws FileFormatException, IOException;
 
     /**
+     * Returns the file extensions supported by this loader.
+     *
      * @return all extension supported by this loader
      */
     Collection<String> supportedExtensions();

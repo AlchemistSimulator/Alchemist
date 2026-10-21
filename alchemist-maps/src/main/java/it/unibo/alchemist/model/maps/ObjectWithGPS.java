@@ -10,11 +10,13 @@
 package it.unibo.alchemist.model.maps;
 
 /**
- *
+ * An object that follows a {@link GPSTrace}.
  */
 public interface ObjectWithGPS {
 
     /**
+     * Sets the GPS trace to follow.
+     *
      * @param trace the {@link GPSTrace} to follow
      */
     void setTrace(GPSTrace trace);

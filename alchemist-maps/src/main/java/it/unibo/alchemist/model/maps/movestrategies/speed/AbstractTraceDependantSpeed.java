@@ -42,6 +42,8 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     private final TimeDistributedReaction<?> timeDistributedReaction;
 
     /**
+     * Builds a new trace-dependant speed strategy for the given node and reaction.
+     *
      * @param environment
      *            the environment
      * @param node
@@ -79,6 +81,8 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     }
 
     /**
+     * Estimates the distance between the current node and the target position.
+     *
      * @param environment
      *            the environment
      * @param currentNode
@@ -95,6 +99,8 @@ public abstract class AbstractTraceDependantSpeed<T, O extends RoutingServiceOpt
     );
 
     /**
+     * Returns the environment.
+     *
      * @return the environment
      */
     protected MapEnvironment<T, O, S> getEnvironment() {

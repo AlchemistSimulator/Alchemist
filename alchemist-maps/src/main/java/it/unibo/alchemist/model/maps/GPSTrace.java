@@ -13,10 +13,13 @@ import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Time;
 
 /**
+ * A {@link TimedRoute} made of {@link GPSPoint}s.
  */
 public interface GPSTrace extends TimedRoute<GPSPoint> {
 
     /**
+     * Returns the first point of the trace after the given time.
+     *
      * @param time
      *            the time
      * @return the next point
@@ -24,6 +27,8 @@ public interface GPSTrace extends TimedRoute<GPSPoint> {
     GPSPoint getNextPosition(Time time);
 
     /**
+     * Returns the last point of the trace before the given time.
+     *
      * @param time
      *            the time
      * @return the previous point
@@ -31,16 +36,22 @@ public interface GPSTrace extends TimedRoute<GPSPoint> {
     GPSPoint getPreviousPosition(Time time);
 
     /**
+     * Returns the time of the first point of the trace.
+     *
      * @return the first time for this {@link GPSTrace}
      */
     Time getStartTime();
 
     /**
+     * Returns the time of the last point of the trace.
+     *
      * @return the final time for this {@link GPSTrace}
      */
     Time getFinalTime();
 
     /**
+     * Interpolates the position along the trace at the given time.
+     *
      * @param time
      *            the time
      * @return the position at which the node would have been if it has moved in
@@ -50,6 +61,8 @@ public interface GPSTrace extends TimedRoute<GPSPoint> {
     GeoPosition interpolate(Time time);
 
     /**
+     * Shifts the trace so that it starts at the given time.
+     *
      * @param time
      *            the time at which the new trace should start
      * @return a new trace, which will have all the points of this trace
@@ -58,11 +71,15 @@ public interface GPSTrace extends TimedRoute<GPSPoint> {
     GPSTrace startAt(Time time);
 
     /**
+     * Returns the first point of the trace.
+     *
      * @return The initial position of the trace
      */
     GPSPoint getInitialPosition();
 
     /**
+     * Returns the last point of the trace.
+     *
      * @return The final position of the trace
      */
     GPSPoint getFinalPosition();

@@ -55,6 +55,8 @@ public final class LatLongPosition implements GeoPosition {
     private final LatLng latlng;
 
     /**
+     * Builds a new position using the default distance formula.
+     *
      * @param lat
      *            latitude
      * @param lon
@@ -65,6 +67,8 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     /**
+     * Builds a new position using the given distance formula.
+     *
      * @param lat
      *            latitude
      * @param lon
@@ -78,6 +82,8 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     /**
+     * Builds a new position using the distance formula with the given index.
+     *
      * @param lat
      *            latitude
      * @param lon
@@ -90,6 +96,8 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     /**
+     * Builds a new position from the given numbers, using the default distance formula.
+     *
      * @param lat
      *            latitude
      * @param lon
@@ -217,6 +225,8 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     /**
+     * Returns the latitude.
+     *
      * @return the latitude
      */
     @Override
@@ -225,6 +235,8 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     /**
+     * Returns the longitude.
+     *
      * @return the longitude
      */
     @Override
@@ -329,9 +341,19 @@ public final class LatLongPosition implements GeoPosition {
     public enum DistanceFormula {
 
         /**
-         *
+         * Equirectangular approximation, the fastest and least precise.
          */
-        EQUIRECTANGULAR, HAVERSINE, SPHERICAL_COSINES
+        EQUIRECTANGULAR,
+
+        /**
+         * Haversine formula, precise also for small distances.
+         */
+        HAVERSINE,
+
+        /**
+         * Spherical law of cosines.
+         */
+        SPHERICAL_COSINES
     }
 
 }

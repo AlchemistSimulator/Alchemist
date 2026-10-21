@@ -32,6 +32,8 @@ public final class RoutingTraceDependantSpeed<T, O extends RoutingServiceOptions
     private final O options;
 
     /**
+     * Builds a new strategy estimating distances along routes computed with the given options.
+     *
      * @param environment
      *            the environment
      * @param node

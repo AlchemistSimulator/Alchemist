@@ -26,6 +26,8 @@ import javax.annotation.Nonnull;
 public final class LinkNodesWithinRoutingRange<T> extends ObservingRangeBasedNetworkModel<T, GeoPosition, GeoPosition> {
 
     /**
+     * Builds a new linking rule with the given routing range.
+     *
      * @param environment the environment whose nodes this model links
      * @param r range
      */

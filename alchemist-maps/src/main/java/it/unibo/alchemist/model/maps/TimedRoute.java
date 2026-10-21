@@ -20,6 +20,8 @@ import it.unibo.alchemist.model.Route;
 public interface TimedRoute<P extends Position<?>> extends Route<P> {
 
     /**
+     * Returns the time required to travel the route.
+     *
      * @return the total trip time
      */
     double getTripTime();

@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.maps.positions.LatLongPosition;
 
 /**
+ * Utility methods for computing distances, bearings, and destinations among geographic positions.
  */
 public final class Maps {
 
@@ -35,6 +36,8 @@ public final class Maps {
     }
 
     /**
+     * Computes the initial bearing from the start position towards the end position.
+     *
      * @param start
      *            initial position
      * @param end
@@ -46,6 +49,8 @@ public final class Maps {
     }
 
     /**
+     * Computes the destination reached moving from the start position with the given bearing for the given distance.
+     *
      * @param start
      *            initial position
      * @param initialBearing
@@ -63,6 +68,8 @@ public final class Maps {
     }
 
     /**
+     * Computes the destination reached moving from the start position towards the end position for the given distance.
+     *
      * @param start
      *            initial position
      * @param end

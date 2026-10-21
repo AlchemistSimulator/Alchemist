@@ -22,6 +22,8 @@ public abstract class AbstractStrategyWithGPS implements ObjectWithGPS {
     private GPSTrace trace;
 
     /**
+     * Returns the GPS trace followed by this strategy.
+     *
      * @return the {@link GPSTrace} used from this strategy
      */
     protected GPSTrace getTrace() {

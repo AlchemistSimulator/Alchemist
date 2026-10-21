@@ -17,6 +17,8 @@ import it.unibo.alchemist.model.RoutingService;
 import it.unibo.alchemist.model.RoutingServiceOptions;
 
 /**
+ * An {@link Environment} backed by map data, able to compute routes among geographic positions.
+ *
  * @param <T> Concentration type
  * @param <O> {@link RoutingServiceOptions} type
  * @param <S> {@link RoutingService} type
@@ -110,6 +112,8 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     Route<GeoPosition> computeRoute(GeoPosition from, GeoPosition to, O options);
 
     /**
+     * Returns the routing service of this environment.
+     *
      * @return the {@link RoutingService} for this environment
      */
     S getRoutingService();

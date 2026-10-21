@@ -19,6 +19,7 @@ kotlinx-coroutines = "1.11.0"
 ktor = "3.6.0"
 mockito = "5.24.0"
 protelis = "19.0.0"
+publish-on-central = "9.2.4"
 react = "2026.10.1-19.3.1"
 scafi = "1.8.0"
 scala3 = "3.10.0"
@@ -124,7 +125,7 @@ mongodb = "org.mongodb:mongodb-driver-sync:5.13.0"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
-publish-on-central-plugin = "org.danilopianini.publish-on-central:org.danilopianini.publish-on-central.gradle.plugin:9.2.4"
+publish-on-central-plugin = { module = "org.danilopianini.publish-on-central:org.danilopianini.publish-on-central.gradle.plugin", version.ref = "publish-on-central" }
 quadtree = "org.danilopianini:java-quadtree:1.0.2"
 resourceloader = "org.danilopianini:thread-inheritable-resource-loader:0.3.8"
 rtree = "com.github.davidmoten:rtree:0.12"

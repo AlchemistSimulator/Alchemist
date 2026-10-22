@@ -24,7 +24,6 @@ import org.danilopianini.centralpublisher.impl.models.DeploymentResponseFiles
 import org.danilopianini.gradle.mavencentral.portal.PublishPortalDeployment
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
 
 plugins {
@@ -35,7 +34,7 @@ plugins {
     alias(libs.plugins.hugo)
 }
 
-val minJavaVersion: String by properties
+val minJavaVersion = property("minJavaVersion").toString()
 
 allprojects {
 
@@ -99,17 +98,6 @@ allprojects {
         enabled = false
     }
 
-    /*
-     * Work around:
-     * Task ':...:dokkaJavadoc' uses this output of task ':...:jar' without declaring an explicit or implicit dependency.
-     * This can lead to incorrect results being produced, depending on what order the tasks are executed.
-     */
-    tasks.withType<AbstractDokkaTask>().configureEach {
-        allprojects.forEach { otherProject ->
-            dependsOn(otherProject.tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name == "jar" })
-        }
-    }
-
     group = "it.unibo.alchemist"
 }
 
@@ -118,7 +106,7 @@ allprojects {
  */
 evaluationDependsOnChildren()
 
-val dokkaGlobalClasspath by configurations.creating
+val dokkaGlobalClasspath = configurations.create("dokkaGlobalClasspath")
 dependencies {
     // Depend on subprojects whose presence is necessary to run
     listOf("api", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
@@ -137,7 +125,7 @@ dependencies {
     dokkaGlobalClasspath(alchemist("full"))
 }
 
-val checkMavenCentralPortalPluginClasspath by tasks.registering {
+val checkMavenCentralPortalPluginClasspath = tasks.register("checkMavenCentralPortalPluginClasspath") {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
     description = "Checks that the Maven Central Portal publishing plugin can upload to a local fake endpoint " +
         "and decode the deployment status it returns."
@@ -256,21 +244,28 @@ hugo {
 }
 
 fun Project.dokkaCopyTask(destination: String): Copy.() -> Unit = {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description =
+        "Copies the Dokka HTML documentation of the ${this@dokkaCopyTask.displayName} into the website under " +
+        "reference/$destination."
     dependsOn(tasks.withType<DokkaBaseTask>())
     dependsOn(rootProject.tasks.hugoBuild)
     from(dokka.dokkaPublications.html.get().outputDirectory)
     into(File(websiteDir, "reference/$destination"))
 }
 
-val copyGlobalDokkaInTheWebsite by tasks.registering(Copy::class, dokkaCopyTask("kdoc"))
-val copyModuleDokkaInTheWebsite by tasks.registering(Copy::class, alchemist("full").dokkaCopyTask("kdoc-modules"))
+val copyGlobalDokkaInTheWebsite = tasks.register<Copy>("copyGlobalDokkaInTheWebsite", dokkaCopyTask("kdoc"))
+val copyModuleDokkaInTheWebsite =
+    tasks.register<Copy>("copyModuleDokkaInTheWebsite", alchemist("full").dokkaCopyTask("kdoc-modules"))
 
 tasks.hugoBuild.configure {
     outputDirectory = websiteDir
     finalizedBy(copyGlobalDokkaInTheWebsite, copyModuleDokkaInTheWebsite)
 }
 
-val performWebsiteStringReplacements by tasks.registering {
+val performWebsiteStringReplacements = tasks.register("performWebsiteStringReplacements") {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Replaces the placeholders in the HTML pages of the generated website."
     dependsOn(copyGlobalDokkaInTheWebsite, copyModuleDokkaInTheWebsite)
     doLast {
         val index = File(websiteDir, "index.html")

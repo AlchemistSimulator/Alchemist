@@ -1,3 +1,33 @@
+## [45.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/44.0.0...45.0.0) (2026-10-22)
+
+### ⚠ BREAKING CHANGES
+
+* **physics:** convert `ImageEnvironment` to Kotlin (#5690)
+
+### Dependency updates
+
+* **deps:** update gradle to v9.8.2 ([#5678](https://github.com/AlchemistSimulator/Alchemist/issues/5678)) ([6d02b09](https://github.com/AlchemistSimulator/Alchemist/commit/6d02b09ca61c0c07f63f609db9dc931482e58348))
+* **deps:** update plugin gitsemver to v7.3.0 ([#5693](https://github.com/AlchemistSimulator/Alchemist/issues/5693)) ([f4c4afd](https://github.com/AlchemistSimulator/Alchemist/commit/f4c4afd1e4f86f6365e6fb94a5f6324f7c55c4ad))
+
+### Bug Fixes
+
+* **build:** publish through a convention plugin and keep the fat jars off Maven Central ([dbdb2dd](https://github.com/AlchemistSimulator/Alchemist/commit/dbdb2dd8c2e75f37690ed7f4b86fd4ad4755f9da))
+
+### Documentation
+
+* **implementationbase:** add missing Javadoc comments across multiple classes ([6e2eafc](https://github.com/AlchemistSimulator/Alchemist/commit/6e2eafc7cf8f5f8c2a60f440169d4e426066828d))
+* **loading:** add missing Javadoc comments ([239094f](https://github.com/AlchemistSimulator/Alchemist/commit/239094f91130b166f7d682696eca9ea2c32fa578))
+* **maps:** add detailed Javadoc comments ([00f3d8e](https://github.com/AlchemistSimulator/Alchemist/commit/00f3d8efbf762a1f215398f271e139c956ad839a))
+* **website:** prefer DOIs over linking the publishers' websites directly ([fe788e4](https://github.com/AlchemistSimulator/Alchemist/commit/fe788e46cc4c9bc394947cff2535b13b6fa0acb6))
+
+### Build and continuous integration
+
+* explicit version reference for publish-on-central-plugin ([15d7e8a](https://github.com/AlchemistSimulator/Alchemist/commit/15d7e8a4cd1381905e627a650c7f40a3346ca9d1))
+
+### Refactoring
+
+* **physics:** convert `ImageEnvironment` to Kotlin ([#5690](https://github.com/AlchemistSimulator/Alchemist/issues/5690)) ([4fb27d8](https://github.com/AlchemistSimulator/Alchemist/commit/4fb27d80c0d6e480b2cfe65ee3f25c742db1bf9c))
+
 ## [44.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/43.1.42...44.0.0) (2026-10-21)
 
 ### ⚠ BREAKING CHANGES

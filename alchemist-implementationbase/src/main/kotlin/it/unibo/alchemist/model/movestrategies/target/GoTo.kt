@@ -30,7 +30,7 @@ data class GoTo<T, P : Position<P>>(private val destination: P) : TargetSelectio
         vararg destination: Number,
     ) : this(environment.makePosition(*destination))
 
-    override fun getTarget(): P = destination
+    override val target: P get() = destination
 
     override fun toString() = "${GoTo::class.simpleName}:$destination"
 }

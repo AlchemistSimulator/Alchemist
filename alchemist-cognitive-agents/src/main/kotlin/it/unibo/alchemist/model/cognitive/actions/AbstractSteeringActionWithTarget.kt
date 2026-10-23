@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.cognitive.properties.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.movestrategies.target.GoTo
 
 /**
  * A [SteeringActionWithTarget] in a vector space.
@@ -46,7 +47,7 @@ abstract class AbstractSteeringActionWithTarget<T, P, A>(
         environment,
         reaction,
         pedestrian,
-        TargetSelectionStrategy { target },
+        GoTo(target),
     )
 
     override fun target(): P = targetSelectionStrategy.target

@@ -34,25 +34,34 @@ open class FollowTarget<T, P : Position<P>>(
     val targetMolecule: Molecule,
 ) : TargetSelectionStrategy<T, P> {
     /**
+     * the current position.
+     */
+    protected val currentPosition: P get() = environment.currentPositionOf(node)
+
+    override val target: P
+        get() {
+            @Suppress("UNCHECKED_CAST")
+            return when (val conc = node[targetMolecule].getOrElse { currentPosition }) {
+                is Position<*> -> conc as P
+                is CharSequence, is Iterable<*> -> conc.extractCoordinates() ?: currentPosition
+                else -> conc.toString().extractCoordinates() ?: currentPosition
+            }
+        }
+
+    /**
      * @param x first coordinate extracted from the target concentration
      * @param y second coordinate extracted from the target concentration
      * @return a [Position] built using such parameters
      */
     protected open fun createPosition(x: Double, y: Double): P = environment.makePosition(x, y)
 
-    /**
-     * the current position.
-     */
-    protected val currentPosition: P get() = environment.currentPositionOf(node)
+    override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): FollowTarget<T, P> =
+        FollowTarget(environment, destination, this.targetMolecule)
 
-    override fun getTarget(): P {
-        @Suppress("UNCHECKED_CAST")
-        return when (val conc = node[targetMolecule].getOrElse { currentPosition }) {
-            is Position<*> -> conc as P
-            is CharSequence, is Iterable<*> -> conc.extractCoordinates() ?: currentPosition
-            else -> conc.toString().extractCoordinates() ?: currentPosition
-        }
-    }
+    private fun conversionError(value: Any?): Nothing = error(
+        "${this::class.simpleName} tried to convert " +
+            "$this (${value?.let { it::class.simpleName}}) to a Number, but failed",
+    )
 
     /**
      * Extracts a pair of coordinates from an iterable or a string representation.
@@ -92,11 +101,6 @@ open class FollowTarget<T, P : Position<P>>(
         }
     }
 
-    private fun conversionError(value: Any?): Nothing = error(
-        "${this::class.simpleName} tried to convert " +
-            "$this (${value?.let { it::class.simpleName}}) to a Number, but failed",
-    )
-
     /**
      * Tries to convert an object to Double, handling exceptions safely.
      */
@@ -105,9 +109,6 @@ open class FollowTarget<T, P : Position<P>>(
         is CharSequence -> toString().toDoubleOrNull()
         else -> null
     } ?: conversionError(this)
-
-    override fun cloneIfNeeded(destination: Node<T>, reaction: NodeReaction<T>): FollowTarget<T, P> =
-        FollowTarget(environment, destination, this.targetMolecule)
 
     private companion object {
         private val LOGGER = LoggerFactory.getLogger(FollowTarget::class.java)

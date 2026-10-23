@@ -13,21 +13,30 @@ Use narrower Gradle tasks only to iterate faster while working. Do not stop at `
 
 Preserve the existing multi-module structure. Keep changes small, local, and consistent with the style already used in the touched module. Avoid mixing unrelated refactors into a focused fix.
 
-Order the members of classes, interfaces, and objects as follows, in Java and Kotlin alike.
-The order extends the Checkstyle `DeclarationOrder` and `InnerTypeLast` checks, and keeps Kotlin companion objects last as in the Kotlin coding conventions.
-Within every group, sort members by visibility (public, then protected and Kotlin `internal`, then Java package-private, then private), fields and properties sharing a visibility by mutability (Java `final` fields and Kotlin `val`s before non-final fields and `var`s), and then members alphabetically by name, keeping overloads adjacent.
-1. Java static fields.
-2. Java static initializers.
-3. Fields and Kotlin properties, other than extension properties.
-4. Initializer blocks and Kotlin `init` blocks.
-5. Constructors (in Kotlin, secondary constructors).
-6. Methods and Kotlin functions, including overrides, other than extension functions.
-7. Kotlin member extensions, grouped by receiver type, the groups sorted alphabetically by the simple name of the receiver type; within each group, extension properties come before extension functions. Grouping by receiver takes precedence over keeping overloads adjacent.
-8. Java static methods.
-9. Nested types, including Kotlin nested objects other than the companion.
-10. The Kotlin companion object, whose members follow these same rules.
+Order the members of Java classes, interfaces, and enums as follows, extending the Checkstyle `DeclarationOrder` and `InnerTypeLast` checks:
+1. Static fields.
+2. Static initializers.
+3. Instance fields.
+4. Instance initializers.
+5. Constructors.
+6. Methods.
+7. Static methods.
+8. Nested types.
+Within every group, sort members by visibility (public, then protected, then package-private, then private), fields sharing a visibility by mutability (`final` fields before non-final ones), and then members alphabetically by name, keeping overloads adjacent.
 
-Initialization order overrides alphabetical order: fields, properties, and initializer blocks run in declaration order, so a member that reads another one during initialization must stay after it.
+Order the members of Kotlin classes, interfaces, and objects as follows, extending the class layout of the Kotlin coding conventions:
+1. Properties and `init` blocks, other than extension properties: first plain properties, without a custom getter or setter (private state included), then properties with custom accessors.
+2. Secondary constructors.
+3. Functions, including overrides, other than extension functions: first the non-private ones, then the private helpers.
+4. Member extensions: extension properties before extension functions, and in each, non-private ones before private helpers.
+5. Nested types used inside the class.
+6. The companion object, whose members follow these same rules.
+7. Nested types meant for use outside the class and not referenced inside it.
+Within each group, keep members adjacent when they clearly work together, such as the members implementing the same supertype, or hooks next to the function that calls them.
+Otherwise, sort them alphabetically by name, which also keeps overloads adjacent.
+Apart from private helpers going last, do not sort by visibility, and do not reorder members only to satisfy visibility or alphabetical order.
+
+Initialization order overrides every other ordering rule: fields, properties, and initializer blocks run in declaration order, so a member that reads another one during initialization must stay after it.
 Reorder members only in the classes a change already touches, in a separate `style` commit unless asked otherwise.
 
 Do not suppress warnings unless there is no real fix. Every suppression must be narrowly scoped and explained with a short justification next to the suppression site.

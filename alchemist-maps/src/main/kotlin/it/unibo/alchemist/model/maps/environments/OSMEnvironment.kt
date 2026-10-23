@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory
  *             any format (xml, osm, pbf). The map will be processed, optimized
  *             and stored for future use. If null, navigation is unavailable.
  * @param onStreets if true, the nodes will be placed on the street nearest to the desired position.
- *                  Defaults to [DEFAULT_ON_STREETS] when a [file] is provided, to false otherwise.
+ *                  Defaults to true when a [file] is provided, to false otherwise.
  * @param onlyOnStreets if true, the nodes which are too far from a street will be simply discarded.
  *                      If false, they will be placed anyway, in the original position.
  * @param approximation the symbols of IEEE 754-encoded position that may be discarded when comparing two positions,

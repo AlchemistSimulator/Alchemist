@@ -89,7 +89,7 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) :
      */
     fun put(key: K, value: V) {
         if (backingMap.valueWouldBeNewOrChanged(key, value)) {
-            val updated = backingMap.put(key, value)
+            val updated = backingMap.putting(key, value)
             backingMap = updated
             notifyKeyObservers(key, value.some())
             notifyMapObserversUnlessChangedSince(updated)
@@ -106,7 +106,7 @@ open class ObservableMutableMap<K, V>(initial: Map<K, V> = emptyMap()) :
     fun remove(key: K): V? {
         val previous = backingMap[key]
         if (previous != null || key in backingMap) {
-            val updated = backingMap.remove(key)
+            val updated = backingMap.removing(key)
             backingMap = updated
             notifyKeyObservers(key, none())
             notifyMapObserversUnlessChangedSince(updated)

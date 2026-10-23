@@ -50,7 +50,7 @@ interface Neighborhood<T> {
     /**
      * Returns a neighborhood without [node].
      */
-    operator fun minus(node: Node<T>): Neighborhood<T> = Neighborhood(center, neighbors.remove(node))
+    operator fun minus(node: Node<T>): Neighborhood<T> = Neighborhood(center, neighbors.removing(node))
 
     /**
      * Builders of [Neighborhood]s, whose neighbors are always sorted.

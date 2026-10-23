@@ -45,7 +45,7 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
      * @return `true` (as specified by [MutableList.add])
      */
     fun add(item: T): Boolean {
-        backing = backing.add(item)
+        backing = backing.adding(item)
         notifyObservers()
         return true
     }
@@ -58,7 +58,7 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
      * @param item The item to be added to the list.
      */
     fun add(index: Int, item: T) {
-        backing = backing.add(index, item)
+        backing = backing.addingAt(index, item)
         notifyObservers()
     }
 
@@ -69,7 +69,7 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
      * @return `true` if this list changed as a result of the call
      */
     fun addAll(items: Collection<T>): Boolean = if (items.isNotEmpty()) {
-        backing = backing.addAll(items)
+        backing = backing.addingAll(items)
         notifyObservers()
         true
     } else {
@@ -102,7 +102,7 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
      * @return `true` if the list contained the specified element
      */
     fun remove(item: T): Boolean {
-        val newBacking = backing.remove(item)
+        val newBacking = backing.removing(item)
         val result = newBacking !== backing
         if (result) {
             backing = newBacking
@@ -119,7 +119,7 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
      * @return `true` if any element was removed
      */
     fun removeAll(predicate: (T) -> Boolean): Boolean {
-        val newBacking = backing.removeAll(predicate)
+        val newBacking = backing.removingAll(predicate)
         val result = newBacking !== backing
         if (result) {
             backing = newBacking
@@ -136,7 +136,7 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
      */
     fun removeAt(index: Int): T {
         val old = backing[index]
-        backing = backing.removeAt(index)
+        backing = backing.removingAt(index)
         notifyObservers()
         return old
     }
@@ -151,7 +151,7 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
     operator fun set(index: Int, element: T): T {
         val old = backing[index]
         if (old != element) {
-            backing = backing.set(index, element)
+            backing = backing.replacingAt(index, element)
             notifyObservers()
         }
         return old

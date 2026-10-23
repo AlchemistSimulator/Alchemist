@@ -1,3 +1,13 @@
+## [47.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/46.0.0...47.0.0) (2026-10-23)
+
+### ⚠ BREAKING CHANGES
+
+* **maps:** convert `OSMEnvironment` to Kotlin (#5687)
+
+### Refactoring
+
+* **maps:** convert `OSMEnvironment` to Kotlin ([#5687](https://github.com/AlchemistSimulator/Alchemist/issues/5687)) ([d1e0e2a](https://github.com/AlchemistSimulator/Alchemist/commit/d1e0e2a35429e969701ff7959cbe37d17980359d))
+
 ## [46.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/45.0.1...46.0.0) (2026-10-23)
 
 ### ⚠ BREAKING CHANGES

@@ -1,3 +1,25 @@
+## [45.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/45.0.0...45.0.1) (2026-10-23)
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.develocity to v4.6.1 ([#5683](https://github.com/AlchemistSimulator/Alchemist/issues/5683)) ([701faae](https://github.com/AlchemistSimulator/Alchemist/commit/701faae6e3847a7540112e8d2f9a2a40c2d097b6))
+* **deps:** update plugin multijvmtesting to v4.5.11 ([6497f90](https://github.com/AlchemistSimulator/Alchemist/commit/6497f907003cb0f87faca262b25d19f23ac5807c))
+
+### Performance improvements
+
+* **engine:** halve the writes performed while sifting in ArrayIndexedPriorityQueue ([#5686](https://github.com/AlchemistSimulator/Alchemist/issues/5686)) ([56776a1](https://github.com/AlchemistSimulator/Alchemist/commit/56776a1f990065f8fc26d950a4221e09e2e9cbe3))
+
+### Build and continuous integration
+
+* build the installers on ubuntu-24.04, as libarchive cannot read the RPMs built by rpm 6 on ubuntu-26.04 ([8676183](https://github.com/AlchemistSimulator/Alchemist/commit/867618371c93559eb74b96c49360df52f12514d7))
+* **deps:** update dependency ubuntu github actions runner to v26 ([#5682](https://github.com/AlchemistSimulator/Alchemist/issues/5682)) ([65dad1e](https://github.com/AlchemistSimulator/Alchemist/commit/65dad1ed82def288148fcaa492d899530f9f3358))
+* **full:** correct string interpolation for rpmFileName in error message ([#5685](https://github.com/AlchemistSimulator/Alchemist/issues/5685)) ([35375ba](https://github.com/AlchemistSimulator/Alchemist/commit/35375ba1d9e34489776c1697a0dec824c41f54fb))
+* replace deprecated Gradle delegates, drop the dead Dokka V1 workaround, and describe the website tasks ([#5699](https://github.com/AlchemistSimulator/Alchemist/issues/5699)) ([05405cf](https://github.com/AlchemistSimulator/Alchemist/commit/05405cf455a72b028a8de36b821aaf8a98e05fe2))
+
+### Refactoring
+
+* **loading:** port Deployment and its Java implementations to Kotlin ([#5698](https://github.com/AlchemistSimulator/Alchemist/issues/5698)) ([54078e1](https://github.com/AlchemistSimulator/Alchemist/commit/54078e16f40c72667f61aa67ad76e3a54ec8047f))
+
 ## [45.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/44.0.0...45.0.0) (2026-10-22)
 
 ### ⚠ BREAKING CHANGES

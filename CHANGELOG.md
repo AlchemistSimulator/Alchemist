@@ -1,3 +1,13 @@
+## [46.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/45.0.1...46.0.0) (2026-10-23)
+
+### ⚠ BREAKING CHANGES
+
+* port TargetSelectionStrategy and FollowTargetOnMap to Kotlin (#5691)
+
+### Refactoring
+
+* port TargetSelectionStrategy and FollowTargetOnMap to Kotlin ([#5691](https://github.com/AlchemistSimulator/Alchemist/issues/5691)) ([12f5bed](https://github.com/AlchemistSimulator/Alchemist/commit/12f5bed9c5a6250bc0f77233c779bd8e0aff39c6))
+
 ## [45.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/45.0.0...45.0.1) (2026-10-23)
 
 ### Dependency updates

@@ -213,7 +213,7 @@ val generatePKGBUILD = tasks.register("generatePKGBUILD") {
             }
         }
         val rpmFile = rpmFileProvider.get().asFile
-        check(rpmFile.exists()) { "Could not find $rpmFileName in ${rpmFile.parentFile}" }
+        check(rpmFile.exists()) { "Could not find ${rpmFileName.get()} in ${rpmFile.parentFile}" }
         check(rpmFile.isFile) { "$rpmFileName is a directory" }
         val md5 = MessageDigest.getInstance("MD5")
         rpmFile.inputStream().use {

@@ -33,18 +33,6 @@ open class FollowTarget<T, P : Position<P>>(
     private val node: Node<T>,
     val targetMolecule: Molecule,
 ) : TargetSelectionStrategy<T, P> {
-    /**
-     * @param x first coordinate extracted from the target concentration
-     * @param y second coordinate extracted from the target concentration
-     * @return a [Position] built using such parameters
-     */
-    protected open fun createPosition(x: Double, y: Double): P = environment.makePosition(x, y)
-
-    /**
-     * the current position.
-     */
-    protected val currentPosition: P get() = environment.currentPositionOf(node)
-
     override val target: P
         get() {
             @Suppress("UNCHECKED_CAST")
@@ -54,6 +42,18 @@ open class FollowTarget<T, P : Position<P>>(
                 else -> conc.toString().extractCoordinates() ?: currentPosition
             }
         }
+
+    /**
+     * the current position.
+     */
+    protected val currentPosition: P get() = environment.currentPositionOf(node)
+
+    /**
+     * @param x first coordinate extracted from the target concentration
+     * @param y second coordinate extracted from the target concentration
+     * @return a [Position] built using such parameters
+     */
+    protected open fun createPosition(x: Double, y: Double): P = environment.makePosition(x, y)
 
     /**
      * Extracts a pair of coordinates from an iterable or a string representation.

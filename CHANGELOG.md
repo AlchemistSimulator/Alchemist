@@ -1,3 +1,9 @@
+## [47.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.0...47.0.1) (2026-10-23)
+
+### Dependency updates
+
+* **core-deps:** update kotlinx.collections to v0.5.2 ([#5702](https://github.com/AlchemistSimulator/Alchemist/issues/5702)) ([ca54c14](https://github.com/AlchemistSimulator/Alchemist/commit/ca54c1466350330c698214ace540320054c81c25))
+
 ## [47.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/46.0.0...47.0.0) (2026-10-23)
 
 ### ⚠ BREAKING CHANGES

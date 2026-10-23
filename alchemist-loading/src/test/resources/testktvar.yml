@@ -16,4 +16,37 @@ variables:
     language: kotlin
   test3:
     formula: test + test2
+  # The runtime classes of these values are not accessible from scripts
+  list:
+    formula: listOf(1, 2)
+    language: kotlin
+  singletonList:
+    formula: listOf(3)
+    language: kotlin
+  emptyList:
+    formula: emptyList<Int>()
+    language: kotlin
+  set:
+    formula: setOf(4)
+    language: kotlin
+  emptySet:
+    formula: emptySet<Int>()
+    language: kotlin
+  map:
+    formula: mapOf("five" to 5)
+    language: kotlin
+  emptyMap:
+    formula: emptyMap<String, Int>()
+    language: kotlin
+  entry:
+    formula: mapOf("six" to 6, "seven" to 7).entries.first()
+    language: kotlin
+  # References all the collections above
+  collectionSizes:
+    formula: list.size + singletonList.size + emptyList.size + set.size + emptySet.size + map.size + emptyMap.size + entry.value as Int
+    language: kotlin
+  # Evaluated with all the collections above as bindings, without referencing them
+  afterCollections:
+    formula: collectionSizes * 2
+    language: kotlin
 incarnation: sapere

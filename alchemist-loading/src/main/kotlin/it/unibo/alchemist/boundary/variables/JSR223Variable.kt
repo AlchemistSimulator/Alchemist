@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.variables
 
 import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax
+import java.util.AbstractMap.SimpleImmutableEntry
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
@@ -76,28 +77,55 @@ constructor(
             }
         }.getOrElse { cause ->
             val whatHappened = "A $language script evaluation failed"
-            val whyHappened =
-                when (cause) {
-                    is ScriptException -> "due to an error in the script: ${cause.message}"
-                    is TimeoutCancellationException ->
-                        """
-                                because it reached its ${timeout}ms timeout.
-                                This is usually a sign that something is looping.
-                                Either make the script run faster, or allow for a longer time by specifiying a different
-                                `${AlchemistYamlSyntax.DependentVariable.timeout}`.
-                        """.trimIndent().replace(Regex("\\R"), "")
-                    else ->
-                        """
-                    |for a reason unknown to Alchemist. 
-                    |${cause::class.jvmName}: ${cause.message}"
-                        """.trimMargin()
-                }
+            val whyHappened = when (cause) {
+                is ScriptException -> "due to an error in the script: ${cause.message}"
+                is TimeoutCancellationException ->
+                    """
+                        because it reached its ${timeout}ms timeout.
+                        This is usually a sign that something is looping.
+                        Either make the script run faster, or allow for a longer time by specifiying a different
+                        `${AlchemistYamlSyntax.DependentVariable.timeout}`.
+                    """.trimIndent().replace(Regex("\\R"), "")
+                else ->
+                    """
+                |for a reason unknown to Alchemist. 
+                |${cause::class.jvmName}: ${cause.message}"
+                    """.trimMargin()
+            }
             val inspection = "context: $variables\nscript:\n$formula"
             throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection", cause)
         }
     }
 
-    private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(toMutableMap())
+    private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(
+        /*
+         * Remove this workaround as soon as https://youtrack.jetbrains.com/issue/KT-90641 is resolved upstream
+         * and the patched version of Kotlin is integrated in Alchemist.
+         */
+        when {
+            isKotlin -> mapValuesTo(mutableMapOf()) { (_, value) -> value.withAccessibleClass() }
+            else -> toMutableMap()
+        },
+    )
+
+    /*
+     * Since 2.4.21, the Kotlin engine declares every binding with its runtime class as type, and fails to compile any
+     * script if that class is not accessible, as is the case for the results of listOf, emptyList, or List.of.
+     * Collections and map entries are thus copied into public classes, see:
+     * https://youtrack.jetbrains.com/issue/KT-90641
+     *
+     * This workaround MUST be removed as soon as the issue is resolved upstream.
+     */
+    private fun Any?.withAccessibleClass(): Any? = when (this) {
+        is Map<*, *> -> LinkedHashMap(this)
+        is List<*> -> ArrayList(this)
+        is Set<*> -> LinkedHashSet(this)
+        is Collection<*> -> ArrayList(this)
+        is Map.Entry<*, *> -> SimpleImmutableEntry(this)
+        else -> this
+    }
+
+    private val isKotlin by lazy { engine.factory.languageName.equals("kotlin", ignoreCase = true) }
 
     private val isScala by lazy { engine.factory.languageName == "Scala" }
 

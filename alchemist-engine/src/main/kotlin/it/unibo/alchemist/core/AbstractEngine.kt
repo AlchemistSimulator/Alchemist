@@ -276,7 +276,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
                 initialize()
 
                 state = SimulationState.READY
-                logger.trace("Thread {} started running.", Thread.currentThread().id)
+                logger.trace("Thread {} started running.", Thread.currentThread().threadId())
                 monitors.forEach { it.initialized(environment) }
                 processCommandsWhileIn(SimulationState.READY)
                 while (state != SimulationState.TERMINATED && time < Time.INFINITY) {

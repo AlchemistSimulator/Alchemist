@@ -35,7 +35,6 @@ import static it.unibo.alchemist.boundary.swingui.impl.LocalizedResourceBundle.g
  * @deprecated The entire Swing UI is deprecated and planned to be replaced with a modern UI.
  */
 @Deprecated
-@SuppressFBWarnings
 @SuppressWarnings("PMD")
 public final class FileMenu extends AbstractMenu {
 

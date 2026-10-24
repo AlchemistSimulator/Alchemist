@@ -11,11 +11,13 @@ package it.unibo.alchemist.boundary.variables
 
 import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.loader.syntax.AlchemistYamlSyntax
+import java.lang.reflect.Modifier
 import java.util.AbstractMap.SimpleImmutableEntry
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 import javax.script.SimpleBindings
+import kotlin.reflect.KVisibility
 import kotlin.reflect.jvm.jvmName
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.TimeoutCancellationException
@@ -57,6 +59,8 @@ constructor(
         }
     }
 
+    private val isKotlin by lazy { engine.factory.languageName.equals("kotlin", ignoreCase = true) }
+
     /**
      * Given the current controlled variables, computes the current values for
      * this variable.
@@ -97,6 +101,18 @@ constructor(
         }
     }
 
+    /*
+     * Java modifiers are checked first, so that Kotlin reflection never inspects synthetic classes (e.g., lambdas).
+     * Kotlin internal classes, such as EmptyList, are public in bytecode, and are spotted through their metadata.
+     */
+    private val Class<*>.isAccessibleFromScripts: Boolean get() =
+        Modifier.isPublic(modifiers) &&
+            !isSynthetic &&
+            !isAnonymousClass &&
+            !isLocalClass &&
+            kotlin.visibility == KVisibility.PUBLIC &&
+            enclosingClass?.isAccessibleFromScripts != false
+
     private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(
         /*
          * Remove this workaround as soon as https://youtrack.jetbrains.com/issue/KT-90641 is resolved upstream
@@ -111,12 +127,17 @@ constructor(
     /*
      * Since 2.4.21, the Kotlin engine declares every binding with its runtime class as type, and fails to compile any
      * script if that class is not accessible, as is the case for the results of listOf, emptyList, or List.of.
-     * Collections and map entries are thus copied into public classes, see:
+     * Collections and map entries with inaccessible classes are thus copied into public classes, see:
      * https://youtrack.jetbrains.com/issue/KT-90641
      *
      * This workaround MUST be removed as soon as the issue is resolved upstream.
      */
-    private fun Any?.withAccessibleClass(): Any? = when (this) {
+    private fun Any?.withAccessibleClass(): Any? = when {
+        this == null || this::class.java.isAccessibleFromScripts -> this
+        else -> copiedIntoAccessibleClass()
+    }
+
+    private fun Any.copiedIntoAccessibleClass(): Any = when (this) {
         is Map<*, *> -> LinkedHashMap(this)
         is List<*> -> ArrayList(this)
         is Set<*> -> LinkedHashSet(this)
@@ -124,8 +145,6 @@ constructor(
         is Map.Entry<*, *> -> SimpleImmutableEntry(this)
         else -> this
     }
-
-    private val isKotlin by lazy { engine.factory.languageName.equals("kotlin", ignoreCase = true) }
 
     private val isScala by lazy { engine.factory.languageName == "Scala" }
 

@@ -49,4 +49,11 @@ variables:
   afterCollections:
     formula: collectionSizes * 2
     language: kotlin
+  # The runtime class of this value is accessible, and must be preserved
+  sortedMap:
+    formula: java.util.TreeMap(mapOf("b" to 2, "a" to 1))
+    language: kotlin
+  firstKey:
+    formula: sortedMap.firstKey()
+    language: kotlin
 incarnation: sapere

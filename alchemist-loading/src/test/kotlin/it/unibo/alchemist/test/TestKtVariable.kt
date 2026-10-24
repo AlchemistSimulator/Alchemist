@@ -47,6 +47,7 @@ class TestKtVariable<T, P : Position<P>> :
                 assertEquals(mapOf("six" to 6).entries.single(), variable["entry"])
                 assertEquals(11, variable["collectionSizes"])
                 assertEquals(22, variable["afterCollections"])
+                assertEquals("a", variable["firstKey"])
             }
         }
         ClassPathScanner.resourcesMatching(".*", "regression/should-fail").forEach { spec ->

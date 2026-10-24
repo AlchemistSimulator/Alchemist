@@ -1,3 +1,17 @@
+## [47.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.2...47.0.3) (2026-10-24)
+
+### Dependency updates
+
+* **deps:** update dependency com.google.code.gson:gson to v2.15.0 ([#5704](https://github.com/AlchemistSimulator/Alchemist/issues/5704)) ([e5413e0](https://github.com/AlchemistSimulator/Alchemist/commit/e5413e0e6581f48e49161db28f31872ac8fb16d4))
+
+### Bug Fixes
+
+* **loading:** add workaround for inaccessible runtime classes in Kotlin script bindings, see https://youtrack.jetbrains.com/issue/KT-90641 ([#5701](https://github.com/AlchemistSimulator/Alchemist/issues/5701)) ([de9f97c](https://github.com/AlchemistSimulator/Alchemist/commit/de9f97ca1930cf0bd7fcdd7b7f17fbe136b7ae70))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([7af8a9f](https://github.com/AlchemistSimulator/Alchemist/commit/7af8a9f3eeef4d811297c649173af6738e996139))
+
 ## [47.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.1...47.0.2) (2026-10-24)
 
 ### Dependency updates

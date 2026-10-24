@@ -37,6 +37,17 @@ class TestKtVariable<T, P : Position<P>> :
                 val expectedTest = listOf(23, 5.5)
                 assertEquals(expectedTest, variable["test"])
                 assertEquals(expectedTest + expectedTest2, variable["test3"])
+                assertEquals(listOf(1, 2), variable["list"])
+                assertEquals(listOf(3), variable["singletonList"])
+                assertEquals(emptyList<Int>(), variable["emptyList"])
+                assertEquals(setOf(4), variable["set"])
+                assertEquals(emptySet<Int>(), variable["emptySet"])
+                assertEquals(mapOf("five" to 5), variable["map"])
+                assertEquals(emptyMap<String, Int>(), variable["emptyMap"])
+                assertEquals(mapOf("six" to 6).entries.single(), variable["entry"])
+                assertEquals(11, variable["collectionSizes"])
+                assertEquals(22, variable["afterCollections"])
+                assertEquals("a", variable["firstKey"])
             }
         }
         ClassPathScanner.resourcesMatching(".*", "regression/should-fail").forEach { spec ->

@@ -267,7 +267,7 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
         mainJar = tasks.shadowJar.flatMap { it.archiveFileName }
         mainClass = application.mainClass.get()
         verbose = true
-        runtimeImage = providers.provider {
+        javaLauncher = providers.provider {
             val version = JavaLanguageVersion.of(multiJvm.latestLts)
             // Prefer Temurin; fall back to any vendor when no Temurin can be found or downloaded.
             runCatching {
@@ -277,9 +277,15 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
                 }.get()
             }.getOrElse {
                 javaToolchains.launcherFor { languageVersion = version }.get()
-            }.metadata.installationPath
+            }
         }
-        icon = project.projectDir.resolve("package-settings/logo.png")
+        runtimeImage = javaLauncher.map { it.metadata.installationPath }
+        val iconExtension = when {
+            isWindows -> "ico"
+            isMac -> "icns"
+            else -> "png"
+        }
+        icon = project.projectDir.resolve("package-settings/logo.$iconExtension")
         linux {
             linuxShortcut = true
             linuxDebMaintainer = "Danilo Pianini"

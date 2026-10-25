@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -87,10 +86,10 @@ class TestGPSLoader {
     @Test
     void testAlignment() throws IOException {
         for (final String normalizer : CLASS_ALIGNMENT_NO_ARG) {
-            assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, normalizer).size().orElseThrow(unexpectedCyclicTrace()));
+            assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, normalizer).getSize());
         }
         assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, CLASS_TIME_ALIGNMENT_TO_TIME, 0.0, false, false)
-            .size().orElseThrow(unexpectedCyclicTrace()));
+            .getSize());
         final TraceLoader loaderGpx = new TraceLoader(DIRECTORY_WITH_FILES, true, ALIGNMENT);
         final Iterator<GPSTrace> trace2 = loaderGpx.iterator();
         int points = 0;
@@ -125,10 +124,6 @@ class TestGPSLoader {
                 check(error, e.getMessage(), Assertions::assertEquals);
             }
         }
-    }
-
-    private static Supplier<IllegalStateException> unexpectedCyclicTrace() {
-        return () -> new IllegalStateException("Unexpected cyclic trace");
     }
 
     private static void check(final String error, final String message, final Consumer3<String, String, String> assertion) {

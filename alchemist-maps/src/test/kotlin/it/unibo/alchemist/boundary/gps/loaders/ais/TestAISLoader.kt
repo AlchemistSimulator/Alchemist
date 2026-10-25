@@ -49,7 +49,7 @@ class TestAISLoader : StringSpec({
     }
 
     "AISLoader should advertise AIS-like file extensions" {
-        val extensions = AISLoader().supportedExtensions()
+        val extensions = AISLoader().supportedExtensions
         extensions shouldContain "ais"
         extensions shouldContain "nmea"
         extensions shouldContain "txt"

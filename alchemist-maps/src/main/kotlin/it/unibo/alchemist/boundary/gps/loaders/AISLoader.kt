@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.gps.loaders
 
-import com.google.common.collect.ImmutableSet
+import it.unibo.alchemist.boundary.FileFormatException
 import it.unibo.alchemist.boundary.gps.GPSFileLoader
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISDecoder
 import it.unibo.alchemist.boundary.gps.loaders.ais.AISPayload
@@ -21,7 +21,8 @@ import it.unibo.alchemist.model.times.DoubleTime
 import java.net.URL
 import kotlin.time.DurationUnit.SECONDS
 import kotlin.time.Instant
-import org.openstreetmap.osmosis.osmbinary.file.FileFormatException
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 
 /**
  * Reads raw AIS NMEA files as Alchemist GPS traces.
@@ -35,16 +36,16 @@ class AISLoader : GPSFileLoader {
                 .toTraces()
         }
     }.getOrElse {
-        throw FileFormatException("Incorrect AIS Payload in $url").initCause(it)
+        throw FileFormatException("AIS NMEA", url, it)
     }
 
-    override fun supportedExtensions(): ImmutableSet<String> = EXTENSIONS
+    override val supportedExtensions: ImmutableSet<String> = EXTENSIONS
 
     /**
      * AIS trace conversion helpers.
      */
     companion object {
-        private val EXTENSIONS = ImmutableSet.of("ais", "nmea", "txt")
+        private val EXTENSIONS = persistentSetOf("ais", "nmea", "txt")
         private val EPOCH = Instant.fromEpochSeconds(0)
 
         /**

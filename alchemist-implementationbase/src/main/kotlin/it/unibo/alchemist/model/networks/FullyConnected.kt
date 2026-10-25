@@ -20,7 +20,7 @@ import kotlinx.collections.immutable.toPersistentList
 /**
  * This model connects every node of [environment] to each and every other.
  */
-class FullyConnected<T>(private val environment: Environment<T, *>) : NetworkModel<T> {
+class FullyConnected<T>(environment: Environment<T, *>) : NetworkModel<T> {
 
     private val sortedNodes = environment.nodes.map { it.sorted() }
 

@@ -45,7 +45,7 @@ constructor(
     environment: Environment<T, P>,
     private val radius: Double,
     desiredNeighbors: Int,
-    private val tolerance: Int,
+    tolerance: Int,
     private val minRange: Double = DEFAULT_MINRANGE,
     private val maxRange: Double = DEFAULT_MAXRANGE,
     private val adjustment: Double = DEFAULT_ADJUSTMENT,

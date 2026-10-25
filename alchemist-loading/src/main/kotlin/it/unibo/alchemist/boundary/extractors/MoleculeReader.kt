@@ -40,7 +40,7 @@ class MoleculeReader
 constructor(
     private val moleculeName: String,
     private val property: String?,
-    private val incarnation: Incarnation<*, *>,
+    incarnation: Incarnation<*, *>,
     private val filter: ExportFilter,
     aggregatorNames: List<String>,
     precision: Int? = null,

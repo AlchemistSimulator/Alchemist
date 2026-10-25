@@ -16,9 +16,7 @@ import it.unibo.alchemist.boundary.gps.GPSFileLoader
 import it.unibo.alchemist.boundary.gps.GPSTimeAlignment
 import it.unibo.alchemist.model.maps.GPSTrace
 import it.unibo.alchemist.util.ClassPathScanner
-import java.io.IOException
 import java.util.Locale
-import java.util.Optional
 import org.danilopianini.jirf.Factory
 import org.danilopianini.jirf.FactoryBuilder
 import org.kaikikm.threadresloader.ResourceLoader
@@ -94,13 +92,19 @@ class TraceLoader @JvmOverloads constructor(
         }
 
         private fun makeNormalizer(className: String, vararg args: Any?): GPSTimeAlignment {
-            val nameOf: (Class<*>) -> String = if ('.' in className) ({ it.name }) else ({ it.simpleName })
-            val targetClass = requireNotNull(AVAILABLE_GPS_TIME_ALIGNMENT.find { nameOf(it) == className }) {
+            val candidates = AVAILABLE_GPS_TIME_ALIGNMENT.filter {
+                className == if ('.' in className) it.name else it.simpleName
+            }
+            require(candidates.isNotEmpty()) {
                 "Normalizer with class name $className not found. " +
                     "Available GPSTimeAlignment are: ${AVAILABLE_GPS_TIME_ALIGNMENT.map { it.name }}"
             }
+            check(candidates.size == 1) {
+                "Multiple normalizers with class name $className found: ${candidates.joinToString { it.name }}. " +
+                    "Please specify the fully qualified class name."
+            }
             return synchronized(FACTORY) {
-                FACTORY.build(targetClass, *args).createdObjectOrThrowException
+                FACTORY.build(candidates.single(), *args).createdObjectOrThrowException
             }
         }
 
@@ -108,15 +112,9 @@ class TraceLoader @JvmOverloads constructor(
          * Runs [operation] on the entries listed by the resource at [path], each prefixed by [path].
          * If the resource is a directory, the entries are its children.
          */
-        private fun <R> runOnPaths(path: String, operation: (Sequence<String>) -> R): R {
-            val resourceStream = requireNotNull(ResourceLoader.getResourceAsStream(path)) {
+        private fun <R> runOnPaths(path: String, operation: (Sequence<String>) -> R): R =
+            requireNotNull(ResourceLoader.getResourceAsStream(path)) {
                 "resource not found: '$path', make sure the file exists in the classpath"
-            }
-            return try {
-                resourceStream.bufferedReader().use { reader -> operation(reader.lineSequence().map { "$path/$it" }) }
-            } catch (e: IOException) {
-                throw IllegalArgumentException("error reading lines of: $path", e)
-            }
-        }
+            }.bufferedReader().use { reader -> operation(reader.lineSequence().map { "$path/$it" }) }
     }
 }

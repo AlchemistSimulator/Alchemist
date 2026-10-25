@@ -1,3 +1,9 @@
+## [47.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.6...47.0.7) (2026-10-25)
+
+### Bug Fixes
+
+* **maps:** replace Osmosis' `FileFormatException` with an unchecked `FileFormatException`, convert `GPSFileLoader` and `TraceLoader` to Kotlin while in the process ([#5707](https://github.com/AlchemistSimulator/Alchemist/issues/5707)) ([a6db0b5](https://github.com/AlchemistSimulator/Alchemist/commit/a6db0b55b3e1c55d9888a3f495c4c0f2542b74ab))
+
 ## [47.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.5...47.0.6) (2026-10-25)
 
 ### Dependency updates

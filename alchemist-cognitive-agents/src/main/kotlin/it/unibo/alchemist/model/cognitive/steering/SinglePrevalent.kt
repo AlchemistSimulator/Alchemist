@@ -56,7 +56,7 @@ class SinglePrevalent<T, N : ConvexPolygon>(
     /**
      * Alpha value for the [ExponentialSmoothing].
      */
-    private val alpha: Double = DEFAULT_ALPHA,
+    alpha: Double = DEFAULT_ALPHA,
     /**
      * Function computing the maximum distance the node can walk.
      */

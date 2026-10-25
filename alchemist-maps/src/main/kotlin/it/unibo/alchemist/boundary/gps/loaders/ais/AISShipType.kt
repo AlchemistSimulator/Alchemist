@@ -44,7 +44,7 @@ sealed interface AISShipType {
         override val description = "Wing in ground (WIG), all ships of this type"
     }
 
-    sealed class HazardousWingInGround(private val category: String, final override val code: Int) : WingInGround {
+    sealed class HazardousWingInGround(category: String, final override val code: Int) : WingInGround {
         final override val description = "Wing in ground (WIG), Hazardous category $category"
     }
 
@@ -119,7 +119,7 @@ sealed interface AISShipType {
         override val description = "High speed craft (HSC), all ships of this type"
     }
 
-    sealed class HazardousHighSpeedCraft(private val category: String, final override val code: Int) : HighSpeedCraft {
+    sealed class HazardousHighSpeedCraft(category: String, final override val code: Int) : HighSpeedCraft {
         final override val description = "High speed craft (HSC), Hazardous category $category"
     }
 
@@ -199,7 +199,7 @@ sealed interface AISShipType {
         override val description = "Passenger, all ships of this type"
     }
 
-    sealed class HazardousPassenger(private val category: String, final override val code: Int) : Passenger {
+    sealed class HazardousPassenger(category: String, final override val code: Int) : Passenger {
         final override val description = "Passenger, Hazardous category $category"
     }
 
@@ -231,7 +231,7 @@ sealed interface AISShipType {
         override val description = "Cargo, all ships of this type"
     }
 
-    sealed class HazardousCargo(private val category: String, final override val code: Int) : Cargo {
+    sealed class HazardousCargo(category: String, final override val code: Int) : Cargo {
         final override val description = "Cargo, Hazardous category $category"
     }
 
@@ -263,7 +263,7 @@ sealed interface AISShipType {
         override val description = "Tanker, all ships of this type"
     }
 
-    sealed class HazardousTanker(private val category: String, final override val code: Int) : Tanker {
+    sealed class HazardousTanker(category: String, final override val code: Int) : Tanker {
         final override val description = "Tanker, Hazardous category $category"
     }
 
@@ -295,7 +295,7 @@ sealed interface AISShipType {
         override val description = "Other Type, all ships of this type"
     }
 
-    sealed class HazardousOtherType(private val category: String, final override val code: Int) : OtherType {
+    sealed class HazardousOtherType(category: String, final override val code: Int) : OtherType {
         final override val description = "Other Type, Hazardous category $category"
     }
 
@@ -321,7 +321,7 @@ sealed interface AISShipType {
     }
 
     /**
-     * Lookup helpers for AIS ship type codes.
+     * Look up helpers for AIS ship type codes.
      */
     companion object {
         /**

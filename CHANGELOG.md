@@ -1,3 +1,14 @@
+## [47.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.4...47.0.5) (2026-10-25)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.10.3-19.3.1 ([#5705](https://github.com/AlchemistSimulator/Alchemist/issues/5705)) ([6b8bc6a](https://github.com/AlchemistSimulator/Alchemist/commit/6b8bc6a7196a09aa11a5d39812e560b680f92054))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v5 ([#5530](https://github.com/AlchemistSimulator/Alchemist/issues/5530)) ([a83cfe2](https://github.com/AlchemistSimulator/Alchemist/commit/a83cfe2ede80e967ab3108a8d111ff8764c2a0de))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f5846f8](https://github.com/AlchemistSimulator/Alchemist/commit/f5846f82d05a03d4cd39fec469e4b91ef310ad99))
+
 ## [47.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.3...47.0.4) (2026-10-25)
 
 ### Dependency updates

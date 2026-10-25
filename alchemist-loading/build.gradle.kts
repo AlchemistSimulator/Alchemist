@@ -16,6 +16,7 @@ plugins {
 
 dependencies {
     ksp(alchemist("factories-generator"))
+    kspTest(alchemist("factories-generator"))
 
     api(alchemist("api"))
     api(alchemist("implementationbase"))

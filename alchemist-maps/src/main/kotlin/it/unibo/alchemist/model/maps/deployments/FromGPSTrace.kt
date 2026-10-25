@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,68 +16,37 @@ import it.unibo.alchemist.model.maps.GPSTrace
 import java.io.IOException
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
-import kotlin.jvm.optionals.getOrDefault
 
 /**
- * Distributes nodes in the first positions of [GPSTrace].
+ * Distributes [nodeCount] nodes in the first positions of the [GPSTrace]s found at [path],
+ * whose time is aligned using the [normalizer] class created with the given [args].
+ * If [nodeCount] is `null`, one node is deployed per available trace.
+ * If [cycle] is true and there are more nodes to deploy than available GPS traces,
+ * the traces are reused cyclically: e.g., if 10 nodes must be deployed but only 9 GPS traces are available,
+ * the first one is reused for the 10th node.
+ *
+ * @throws IOException if there are errors accessing the file system
  */
-class FromGPSTrace private constructor(private val traces: TraceLoader, private val numNode: Int) :
-    Deployment<GeoPosition> {
+class FromGPSTrace @JvmOverloads constructor(
+    nodeCount: Int? = null,
+    path: String,
+    cycle: Boolean = false,
+    normalizer: String,
+    vararg args: Any,
+) : Deployment<GeoPosition> {
+    private val traces = TraceLoader(path, cycle, normalizer, *args)
 
-    /**
-     * @param nodeCount number of node requests
-     * @param path path with the gps tracks
-     * @param cycle true if, in case there are more nodes to deploy than available GPS traces,
-     * the traces should be reused cyclically. E.g., if 10 nodes must be deployed but only 9 GPS
-     * traces are available, the first one is reused for the 10th node.
-     * @param normalizer class to use to normalize time
-     * @param args args to use to create GPSTimeNormalizer
-     * @throws IOException if there are errors accessing the file system
-     */
-    @Throws(IOException::class)
-    constructor(
-        nodeCount: Int,
-        path: String,
-        cycle: Boolean,
-        normalizer: String,
-        vararg args: Any,
-    ) : this(TraceLoader(path, cycle, normalizer, *args), nodeCount) {
-        requireEnoughTraces(traces, nodeCount)
+    private val numNode: Int = when (nodeCount) {
+        null -> requireNotNull(traces.size) { "The number of nodes must be specified when traces are cyclic" }
+        else -> nodeCount.also {
+            val traceCount = traces.size
+            require(traceCount == null || traceCount >= it) {
+                "at least $it traces required, but $traceCount traces available"
+            }
+        }
     }
-
-    /**
-     * Creates a deployment with one node per loaded GPS trace.
-     *
-     * @param path path with the gps tracks
-     * @param normalizer class to use to normalize time
-     * @param args args to use to create GPSTimeNormalizer
-     * @throws IOException if there are errors accessing the file system
-     */
-    @Throws(IOException::class)
-    constructor(
-        path: String,
-        normalizer: String,
-        vararg args: Any,
-    ) : this(loadWithSize(path, normalizer, *args))
-
-    private constructor(tracesWithSize: Pair<TraceLoader, Int>) : this(tracesWithSize.first, tracesWithSize.second)
 
     override fun stream(): Stream<GeoPosition> = StreamSupport.stream(traces.spliterator(), false)
         .limit(numNode.toLong())
         .map(GPSTrace::getInitialPosition)
-
-    private companion object {
-        @Throws(IOException::class)
-        private fun loadWithSize(path: String, normalizer: String, vararg args: Any): Pair<TraceLoader, Int> {
-            val traces = TraceLoader(path, normalizer, *args)
-            return traces to traces.size().orElseThrow()
-        }
-
-        private fun requireEnoughTraces(traces: TraceLoader, nodeCount: Int) {
-            val traceCount = traces.size()
-            require(traceCount.getOrDefault(Int.MAX_VALUE) >= nodeCount) {
-                "$nodeCount traces required, ${traceCount.orElse(-1)} traces available"
-            }
-        }
-    }
 }

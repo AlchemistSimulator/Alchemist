@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 class TestFromGPSTrace {
     @Test
     fun `inferred node count matches trace count`() {
-        assertEquals(3, FromGPSTrace(TRACE_DIRECTORY, ALIGNMENT).stream().count())
+        assertEquals(3, FromGPSTrace(path = TRACE_DIRECTORY, normalizer = ALIGNMENT).stream().count())
     }
 
     @Test

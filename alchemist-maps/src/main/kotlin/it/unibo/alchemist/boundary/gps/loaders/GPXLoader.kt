@@ -9,75 +9,62 @@
 
 package it.unibo.alchemist.boundary.gps.loaders
 
-import com.google.common.collect.ImmutableSet
 import io.jenetics.jpx.GPX
 import io.jenetics.jpx.Track
+import it.unibo.alchemist.boundary.FileFormatException
 import it.unibo.alchemist.boundary.gps.GPSFileLoader
 import it.unibo.alchemist.model.maps.GPSTrace
 import it.unibo.alchemist.model.maps.positions.GPSPointImpl
 import it.unibo.alchemist.model.maps.routes.GPSTraceImpl
 import it.unibo.alchemist.model.times.DoubleTime
-import java.io.IOException
-import java.io.InputStream
 import java.net.URL
-import java.util.Objects
 import java.util.stream.Collectors
-import org.openstreetmap.osmosis.osmbinary.file.FileFormatException
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.persistentSetOf
 
 /**
  * Class that reads GPS tracks from gpx files.
  */
 class GPXLoader : GPSFileLoader {
+    override val supportedExtensions: ImmutableSet<String> = EXTENSIONS
+
     override fun readTrace(url: URL): List<GPSTrace> = url.openStream().use { stream ->
-        getGPX(stream)
-            .tracks()
-            .map { track: Track -> getTrace(Objects.requireNonNull(track, "GPS track not found")) }
-            .collect(Collectors.toList())
+        runCatching {
+            GPX.Reader.DEFAULT.read(stream).tracks().map { it.toTrace() }.toList()
+        }.getOrElse { throw FileFormatException("GPX", url, it) }
     }
 
-    override fun supportedExtensions(): ImmutableSet<String> = EXTENSIONS
-
-    private fun getGPX(stream: InputStream): GPX = try {
-        GPX.Reader.DEFAULT.read(stream)
-    } catch (e: IOException) {
-        val realException = FileFormatException("Cannot read the GPX content. Please make sure it is a valid GPX.")
-        realException.initCause(e)
-        throw realException
-    }
-
-    private fun getTrace(track: Track): GPSTrace {
+    private fun Track.toTrace(): GPSTrace {
         /*
          * No segments
          */
-        check(track.segments.isNotEmpty()) { "Track $track contains no segment" }
+        check(segments.isNotEmpty()) { "Track $this contains no segment" }
         /*
          * Empty segments
          */
-        check(track.segments().noneMatch { segment -> segment.points.isEmpty() }) {
-            "Track $track contains at least a segment with no points"
+        check(segments().noneMatch { segment -> segment.points.isEmpty() }) {
+            "Track $this contains at least a segment with no points"
         }
         /*
          * Converts the Track points to Alchemist GPSPoints
          */
-        val points: List<GPSPointImpl> =
-            track
-                .segments()
-                .flatMap { segment -> segment.points() }
-                .map { wayPoint ->
-                    val time = wayPoint.time.map { it.toEpochMilli() / 1000.0 }
-                    check(time.isPresent) {
-                        "Track $track contains at least a waypoint without timestamp: $wayPoint"
-                    }
-                    GPSPointImpl(
-                        wayPoint.latitude.toDouble(),
-                        wayPoint.longitude.toDouble(),
-                        DoubleTime(time.get()),
-                    )
-                }.collect(Collectors.toList())
+        val points: List<GPSPointImpl> = segments()
+            .flatMap { segment -> segment.points() }
+            .map { wayPoint ->
+                val time = wayPoint.time.map { it.toEpochMilli() / 1000.0 }
+                check(time.isPresent) {
+                    "Track $this contains at least a waypoint without timestamp: $wayPoint"
+                }
+                GPSPointImpl(
+                    wayPoint.latitude.toDouble(),
+                    wayPoint.longitude.toDouble(),
+                    DoubleTime(time.get()),
+                )
+            }.collect(Collectors.toList())
         return GPSTraceImpl(points)
     }
 
     private companion object {
-        private val EXTENSIONS = ImmutableSet.of("gpx")
+        private val EXTENSIONS = persistentSetOf("gpx")
     }
 }

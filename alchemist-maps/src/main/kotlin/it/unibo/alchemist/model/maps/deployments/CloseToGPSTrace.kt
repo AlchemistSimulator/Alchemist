@@ -38,20 +38,16 @@ constructor(
     normalizerClass: String,
     vararg normalizerArguments: Any,
 ) : AbstractCloseTo<T, GeoPosition>(randomGenerator, environment, nodeCount, variance) {
-    private val traces =
-        TraceLoader(
-            gpsFilePath,
-            normalizerClass,
-            *normalizerArguments,
-        )
+    private val traces = TraceLoader(
+        gpsFilePath,
+        timeNormalizerClass = normalizerClass,
+        normalizerArgs = normalizerArguments,
+    )
 
-    override val sources =
-        traces
-            .asSequence()
-            .flatMap { trace ->
-                generateSequence(from) { it + interval }
-                    .takeWhile { it <= to }
-                    .map { trace.interpolate(it) }
-                    .map { doubleArrayOf(it.latitude, it.longitude) }
-            }
+    override val sources = traces.asSequence().flatMap { trace ->
+        generateSequence(from) { it + interval }
+            .takeWhile { it <= to }
+            .map { trace.interpolate(it) }
+            .map { doubleArrayOf(it.latitude, it.longitude) }
+    }
 }

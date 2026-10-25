@@ -1,3 +1,9 @@
+## [47.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.7...47.0.8) (2026-10-25)
+
+### Performance improvements
+
+* demote private "singular properties" to parameters, or make them public ([#5709](https://github.com/AlchemistSimulator/Alchemist/issues/5709)) ([4ac9b08](https://github.com/AlchemistSimulator/Alchemist/commit/4ac9b081b74976b30b32d441428a59293644d5b9))
+
 ## [47.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.6...47.0.7) (2026-10-25)
 
 ### Bug Fixes

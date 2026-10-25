@@ -1,3 +1,14 @@
+## [47.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.3...47.0.4) (2026-10-25)
+
+### Dependency updates
+
+* **core-deps:** update kotlin to v2.4.20 ([#5632](https://github.com/AlchemistSimulator/Alchemist/issues/5632)) ([7da9e31](https://github.com/AlchemistSimulator/Alchemist/commit/7da9e318ce26c594c3b1ad4e06a4b9e2a497b3bf))
+* **deps:** update dependency org.danilopianini.publish-on-central:org.danilopianini.publish-on-central.gradle.plugin to v9.2.15 ([#5696](https://github.com/AlchemistSimulator/Alchemist/issues/5696)) ([0bdbc16](https://github.com/AlchemistSimulator/Alchemist/commit/0bdbc16631a9e3770cec99fc894b3527dc9d5987))
+
+### General maintenance
+
+* **build:** actualize the Kotlin JS store ([7ac4891](https://github.com/AlchemistSimulator/Alchemist/commit/7ac4891f3a9a646c2e37e33b12da9145931aa0be))
+
 ## [47.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.2...47.0.3) (2026-10-24)
 
 ### Dependency updates

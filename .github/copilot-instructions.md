@@ -7,9 +7,9 @@ The Alchemist Simulator is a multi-module Gradle project written in Kotlin/Java 
 ## Working Effectively
 
 ### Prerequisites and Environment Setup
-- Requires Java 17 or higher (Java 17 is the minimum, project tested with up to Java 24)
+- Requires at least the Java version set by `minJavaVersion` in `gradle.properties`, which is the single source of truth for the minimum supported Java version
 - Uses Gradle 9.0.0 with Kotlin DSL
-- Environment comes pre-configured with Java 17 OpenJDK
+- Environment comes pre-configured with a suitable OpenJDK
 - **NEVER** try to install different Java versions - the environment already has what you need
 - **Submodules required for Hugo builds**: Run `git submodule update --init --recursive` before building website
 
@@ -202,7 +202,7 @@ The project builds a complete simulator. After building:
 ### CI/CD Pipeline
 - The project uses GitHub Actions with extensive testing on multiple platforms
 - Tests run on Windows, macOS, and Linux
-- Multiple JVM versions are tested (17, 21, 24)
+- Multiple JVM versions are tested, starting from the minimum set by `minJavaVersion` in `gradle.properties`
 - Quality gates include code coverage, static analysis, and style checks
 
 **CRITICAL REMINDERS:**

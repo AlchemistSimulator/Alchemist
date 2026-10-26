@@ -243,11 +243,40 @@ val generatePKGBUILD = tasks.register("generatePKGBUILD") {
 
 tasks.assemble.configure { dependsOn(generatePKGBUILD) }
 
+/**
+ * A [JPackageTask] that, on failure, reports the jpackage output in the error message.
+ * The plugin logs the output at INFO level, so it is otherwise invisible unless the build runs with `--info`.
+ */
+abstract class OutputReportingJPackageTask : JPackageTask() {
+    private val output = mutableListOf<String>()
+
+    @TaskAction
+    override fun action() {
+        output.clear()
+        try {
+            super.action()
+        } catch (failure: GradleException) {
+            val report = output.joinToString(separator = "\n", prefix = "jpackage failed, its output follows:\n")
+            throw GradleException(report, failure)
+        }
+    }
+
+    override fun getLogger(): Logger = OutputCapturingLogger(super.getLogger(), output)
+
+    private class OutputCapturingLogger(private val delegate: Logger, private val output: MutableList<String>) :
+        Logger by delegate {
+        override fun info(message: String?) {
+            message?.let(output::add)
+            delegate.info(message)
+        }
+    }
+}
+
 val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packaging: ValidPackaging ->
     val packageSpecificVersion = baseVersion.map { packaging.format.formatVersion(it) }
     val packagingTaskNameSuffix = packaging.name.replaceFirstChar { it.titlecase() } +
         "PerUser".takeIf { packaging.perUser }.orEmpty()
-    tasks.register<JPackageTask>("jpackage$packagingTaskNameSuffix") {
+    tasks.register<OutputReportingJPackageTask>("jpackage$packagingTaskNameSuffix") {
         group = "Distribution"
         description = "Creates application bundle through jpackage using $packaging"
         // Dependencies
@@ -267,7 +296,7 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
         mainJar = tasks.shadowJar.flatMap { it.archiveFileName }
         mainClass = application.mainClass.get()
         verbose = true
-        runtimeImage = providers.provider {
+        javaLauncher = providers.provider {
             val version = JavaLanguageVersion.of(multiJvm.latestLts)
             // Prefer Temurin; fall back to any vendor when no Temurin can be found or downloaded.
             runCatching {
@@ -277,9 +306,15 @@ val packageTasks = validFormats.filterIsInstance<ValidPackaging>().map { packagi
                 }.get()
             }.getOrElse {
                 javaToolchains.launcherFor { languageVersion = version }.get()
-            }.metadata.installationPath
+            }
         }
-        icon = project.projectDir.resolve("package-settings/logo.png")
+        runtimeImage = javaLauncher.map { it.metadata.installationPath }
+        val iconExtension = when {
+            isWindows -> "ico"
+            isMac -> "icns"
+            else -> "png"
+        }
+        icon = project.projectDir.resolve("package-settings/logo.$iconExtension")
         linux {
             linuxShortcut = true
             linuxDebMaintainer = "Danilo Pianini"

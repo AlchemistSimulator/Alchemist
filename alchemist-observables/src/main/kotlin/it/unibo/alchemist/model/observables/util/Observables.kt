@@ -110,7 +110,7 @@ object Observables {
      * observable emits; observables of elements leaving the collection are unsubscribed.
      */
     @JvmStatic
-    internal fun <T, C : Collection<T>, R, O> Observable<C>.combineLatestCollection(
+    fun <T, C : Collection<T>, R, O> Observable<C>.combineLatestCollection(
         transformer: (T) -> Observable<R>,
         aggregator: (List<R>) -> O,
     ): Observable<O> = object : AbstractObservable<O>() {

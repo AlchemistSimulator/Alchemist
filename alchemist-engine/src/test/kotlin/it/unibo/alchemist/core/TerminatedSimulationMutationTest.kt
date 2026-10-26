@@ -30,7 +30,7 @@ class TerminatedSimulationMutationTest {
         environment.addNode(it, environment.makePosition(0, 0))
     }
     private val engine = Engine(environment).apply {
-        environment.addTerminator { it.simulation.time >= END }
+        environment.addTerminator { it.simulation.currentTime >= END }
     }
 
     @Test

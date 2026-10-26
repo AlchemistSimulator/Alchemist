@@ -157,7 +157,7 @@ class EngineSchedulingSubscriptionTest {
         node.place()
         engine.initializeForTest()
         engine.stepForTest()
-        assertEquals(Time.ZERO, engine.time)
+        assertEquals(Time.ZERO, engine.currentTime)
         assertEquals(0L, engine.step)
         verify(exactly = 0) { reaction.execute() }
         verify(exactly = 0) { scheduler.updateReaction(reaction) }

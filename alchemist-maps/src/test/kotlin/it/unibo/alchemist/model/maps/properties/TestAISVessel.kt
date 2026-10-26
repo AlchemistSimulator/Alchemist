@@ -59,7 +59,7 @@ private const val NORMALIZER = "AlignToSimulationTime"
 
 private fun environmentAt(time: Double): MapEnvironment<Any, *, *> {
     val simulation = mockk<Simulation<Any, GeoPosition>>()
-    every { simulation.time } returns DoubleTime(time)
+    every { simulation.currentTime } returns DoubleTime(time)
     return mockk {
         every { simulationOrNull } returns simulation
     }

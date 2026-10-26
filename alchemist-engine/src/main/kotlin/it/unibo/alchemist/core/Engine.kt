@@ -109,24 +109,30 @@ open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protec
             return
         }
         val scheduledTime = nextEvent.nextOccurrence.current
-        check(scheduledTime >= time) {
-            "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $time; current step: $step."
+        check(scheduledTime >= currentTime) {
+            "$nextEvent is scheduled in the past at time $scheduledTime. Current time: $currentTime; " +
+                "current step: $step."
         }
         if (!scheduledTime.isFinite) {
             terminate()
             LOGGER.info("No finite reactions remain.")
             return
         }
-        currentTime = scheduledTime
+        // The scheduler selected the event from the state before time advanced, so its executability is checked there.
         check(nextEvent.canExecute.current) {
             "$nextEvent exposed a finite next occurrence while reporting that it could not execute"
         }
         modelMutation {
+            // Advancing time is part of the step: the reactions it invalidates are refreshed once the step completes.
+            advanceTime(scheduledTime)
             nextEvent.execute()
-            // Successful execution owns post-firing advancement, which supersedes invalidations caused by its actions.
+            /*
+             * Successful execution owns post-firing advancement,
+             * which supersedes invalidations caused by its actions and by the time advancement.
+             */
             dirtyReactions.remove(nextEvent)
         }
-        monitors.forEach { it.stepDone(environment, nextEvent, time, step) }
+        monitors.forEach { it.stepDone(environment, nextEvent, currentTime, step) }
         if (environment.isTerminated) {
             terminate()
             LOGGER.info("Termination condition reached.")
@@ -161,7 +167,7 @@ open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protec
         pending.forEach { reaction ->
             if (schedulingSubscriptions.containsKey(reaction)) {
                 refreshing = reaction
-                reaction.updateSchedulingAfterInvalidation(time)
+                reaction.updateSchedulingAfterInvalidation(currentTime)
                 refreshing = null
             }
         }
@@ -191,10 +197,11 @@ open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protec
         }
         // Registration is fail-fast: AbstractEngine terminates and discards the scheduler if any step throws.
         // Initialization computes the first occurrence before the scheduler reads it.
-        reaction.initializationComplete(time, environment)
+        reaction.initializationComplete(currentTime, environment)
         val firstOccurrence = reaction.nextOccurrence.current
-        require(firstOccurrence >= time) {
-            "$reaction cannot be registered at time $time, as its first occurrence $firstOccurrence is in the past"
+        require(firstOccurrence >= currentTime) {
+            "$reaction cannot be registered at time $currentTime, " +
+                "as its first occurrence $firstOccurrence is in the past"
         }
         scheduler.addReaction(reaction)
         // Do not emit the current value on subscription: scheduler insertion already indexed it.

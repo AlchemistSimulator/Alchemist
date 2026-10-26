@@ -33,7 +33,7 @@ data class SimulationSurrogate<T, P : Position<out P>>(@param:GraphQLIgnore over
      * The time of the simulation.
      */
     @GraphQLDescription("The time of the simulation")
-    fun time(): Double = origin.time.toDouble()
+    fun time(): Double = origin.currentTime.toDouble()
 
     /**
      * The environment of the simulation.

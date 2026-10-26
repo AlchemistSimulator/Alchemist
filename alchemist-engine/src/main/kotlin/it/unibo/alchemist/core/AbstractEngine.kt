@@ -17,6 +17,9 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observation.MutableObservable
+import it.unibo.alchemist.model.observation.Observable
 import java.util.Collections
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.CompletableFuture
@@ -59,14 +62,17 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
     /** The current step (thread-safe). */
     final override val step: Long get() = currentStep
 
+    /** The simulation time, published on the simulation thread through [advanceTime]. */
+    final override val time: Observable<Time> get() = observableTime
+
     /** The current simulation time (thread-safe). */
-    final override val time: Time get() = currentTime
+    final override val currentTime: Time get() = latestTime
 
-    /** Current simulation time. */
-    protected var currentTime: Time = Time.ZERO
-        @Synchronized get
+    private val observableTime: MutableObservable<Time> = observe(Time.ZERO)
 
-        @Synchronized set
+    // A snapshot of the latest published time, readable from any thread, unlike the observable time.
+    @Volatile
+    private var latestTime: Time = Time.ZERO
 
     /** Current simulation step count. */
     protected var currentStep: Long = 0
@@ -108,6 +114,15 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
         monitors.remove(monitor)
     }
 
+    /**
+     * Advances the simulation time to [newTime], notifying the observers of [time]:
+     * it must be called on the simulation thread.
+     */
+    protected fun advanceTime(newTime: Time) {
+        latestTime = newTime
+        observableTime.current = newTime
+    }
+
     /** Records a failure while preserving an existing primary failure. */
     protected fun recordError(failure: Throwable) {
         error.onSome { it.addSuppressed(failure) }.onNone { error = failure.some() }
@@ -127,7 +142,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
      * @param time the target simulation time.
      * @return a [CompletableFuture] that completes once the time is reached.
      */
-    override fun goToTime(time: Time): CompletableFuture<Unit> = pauseWhen { this.time >= time }
+    override fun goToTime(time: Time): CompletableFuture<Unit> = pauseWhen { currentTime >= time }
 
     /** Pauses the simulation. */
     override fun pause(): CompletableFuture<Unit> = newStatus(SimulationState.PAUSED)
@@ -279,7 +294,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
                 logger.trace("Thread {} started running.", Thread.currentThread().threadId())
                 monitors.forEach { it.initialized(environment) }
                 processCommandsWhileIn(SimulationState.READY)
-                while (state != SimulationState.TERMINATED && time < Time.INFINITY) {
+                while (state != SimulationState.TERMINATED && currentTime < Time.INFINITY) {
                     while (commands.isNotEmpty()) {
                         processCommand(commands.poll())
                     }
@@ -295,7 +310,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
                 state = SimulationState.TERMINATED
                 commands.clear()
                 try {
-                    monitors.forEach { it.finished(environment, time, step) }
+                    monitors.forEach { it.finished(environment, currentTime, step) }
                 } catch (e: Throwable) {
                     recordError(e)
                 }
@@ -322,7 +337,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
     protected open fun afterRun() = Unit
 
     /** @return a string representation of the engine. */
-    override fun toString(): String = "${javaClass.simpleName} t: $time, s: $step"
+    override fun toString(): String = "${javaClass.simpleName} t: $currentTime, s: $step"
 
     /**
      * Synchronization helper for status transitions.

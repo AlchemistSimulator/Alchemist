@@ -69,7 +69,7 @@ class EngineTest : FreeSpec({
         environment.addNode(nodeA, environment.makePosition(0, 0))
         environment.addNode(nodeB, environment.makePosition(1, 0))
 
-        environment.addTerminator { it.simulation.time > DoubleTime(5.0) }
+        environment.addTerminator { it.simulation.currentTime > DoubleTime(5.0) }
 
         val engine = Engine(environment)
         engine.play()

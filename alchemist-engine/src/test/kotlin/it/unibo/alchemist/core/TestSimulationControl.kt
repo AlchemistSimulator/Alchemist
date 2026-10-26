@@ -35,7 +35,7 @@ class TestSimulationControl :
                         workerPool.submit { run() }
                         jumpFuture.get(1, TimeUnit.SECONDS)
                         terminate()
-                        time shouldBe jump
+                        currentTime shouldBe jump
                     }
                 }
                 "goToTime should work twice" {
@@ -53,11 +53,11 @@ class TestSimulationControl :
                         firstJumpFuture.thenRun {
                             play()
                         }
-                        firstJumpFuture.thenRun { time shouldBe firstJump }
+                        firstJumpFuture.thenRun { currentTime shouldBe firstJump }
                         workerPool.submit { run() }
                         secondJump.get(1, TimeUnit.SECONDS)
                         terminate()
-                        time shouldBe nextJump
+                        currentTime shouldBe nextJump
                     }
                 }
             }

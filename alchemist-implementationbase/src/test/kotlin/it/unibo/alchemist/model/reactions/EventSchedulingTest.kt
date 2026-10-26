@@ -147,7 +147,7 @@ class EventSchedulingTest {
     private fun environmentWithMutableTime(): Pair<Environment<Any, Nothing>, (Time) -> Unit> {
         var currentTime: Time = Time.ZERO
         val simulation = mockk<Simulation<Any, Nothing>>()
-        every { simulation.time } answers { currentTime }
+        every { simulation.currentTime } answers { currentTime }
         every { simulation.reactionInvalidated(any()) } answers {
             firstArg<Reaction<Any>>().updateSchedulingAfterInvalidation(currentTime)
         }

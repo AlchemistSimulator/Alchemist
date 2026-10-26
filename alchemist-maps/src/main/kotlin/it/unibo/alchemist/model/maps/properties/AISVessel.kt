@@ -43,7 +43,9 @@ class AISVessel<T>(
      * Current AIS payload for the simulation time.
      */
     val currentPayload: AISPayload
-        get() = trace.payloadAt(environment.simulationOrNull?.time ?: error("AISVessel requires a simulation time"))
+        get() = trace.payloadAt(
+            environment.simulationOrNull?.currentTime ?: error("AISVessel requires a simulation time"),
+        )
 
     /**
      * AIS MMSI of the vessel represented by this node.

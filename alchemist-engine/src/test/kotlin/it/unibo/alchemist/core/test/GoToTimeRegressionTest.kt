@@ -48,25 +48,25 @@ object GoToTimeRegressionTest {
             play()
             workerPool.submit { run() }
             firstJump.get(3, TimeUnit.SECONDS)
-            val timeAfterFirst = time
+            val timeAfterFirst = currentTime
             assertTrue(timeAfterFirst.toDouble() >= firstTarget.toDouble())
             // Second goToTime to 15.0 - this should work without old monitor interference
             val secondTarget = DoubleTime(15.0)
             val secondJump = goToTime(secondTarget)
             play()
             secondJump.get(3, TimeUnit.SECONDS)
-            val timeAfterSecond = time
+            val timeAfterSecond = currentTime
             assertTrue(timeAfterSecond.toDouble() >= secondTarget.toDouble())
             // Third goToTime to 25.0 - testing multiple sequential calls
             val thirdTarget = DoubleTime(25.0)
             val thirdJump = goToTime(thirdTarget)
             play()
             thirdJump.get(3, TimeUnit.SECONDS)
-            val timeAfterThird = time
+            val timeAfterThird = currentTime
             assertTrue(timeAfterThird.toDouble() >= thirdTarget.toDouble())
             terminate()
             // Verify final state
-            assertEquals(thirdTarget, time)
+            assertEquals(thirdTarget, currentTime)
         }
     }
 

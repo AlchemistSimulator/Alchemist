@@ -18,6 +18,7 @@ dependencies {
 
     api(alchemist("api"))
     api(alchemist("maintenance-tooling"))
+    api(alchemist("observables"))
     api(libs.apache.commons.math3)
     api(libs.apache.commons.lang3)
     api(libs.quadtree)

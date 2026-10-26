@@ -212,7 +212,7 @@ class AlchemistExecutionContext<P : Position<P>>(
                     check(tolerance is Double) {
                         "APPROXIMATE_NBR_RANGE should be associated with a double concentration"
                     }
-                    val currTime = environmentAccess.simulation.time.toDouble()
+                    val currTime = environmentAccess.simulation.currentTime.toDouble()
                     if (currTime > nbrRangeTimeout) {
                         nbrRangeTimeout = currTime + tolerance
                         precomputedRoutingDistance = routingDistance(p)

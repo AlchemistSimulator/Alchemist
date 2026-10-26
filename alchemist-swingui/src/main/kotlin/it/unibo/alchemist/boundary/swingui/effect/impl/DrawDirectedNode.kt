@@ -149,7 +149,7 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         val positions = positionsMemory[node.id].orEmpty()
         val lastDraw = lastDrawMemory[node.id] ?: 0
         val roundedTime =
-            environment.simulation.time
+            environment.simulation.currentTime
                 .toDouble()
                 .toInt()
         if (roundedTime >= lastDraw) {

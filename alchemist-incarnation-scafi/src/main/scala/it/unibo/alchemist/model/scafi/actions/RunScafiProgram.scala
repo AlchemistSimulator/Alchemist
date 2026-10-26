@@ -88,7 +88,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     // NB: We assume it.unibo.alchemist.model.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
     val alchemistCurrentTime = Try(environment.getSimulation)
-      .map(_.getTime)
+      .map(_.getCurrentTime)
       .orElse(
         Failure(new IllegalStateException("The simulation is uninitialized (did you serialize the environment?)"))
       )

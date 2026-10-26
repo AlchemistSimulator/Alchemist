@@ -34,7 +34,7 @@ class AbsoluteEventRegistrationTest {
         engine.runPendingCommands()
         engine.step()
         assertFalse(event in node.reactions.current)
-        assertEquals(NOW, engine.time)
+        assertEquals(NOW, engine.currentTime)
     }
 
     @Test
@@ -53,7 +53,7 @@ class AbsoluteEventRegistrationTest {
         environment.addReaction(AbsoluteEvent(environment, LATER))
         engine.initializeForTest()
         engine.step()
-        assertEquals(time, engine.time)
+        assertEquals(time, engine.currentTime)
     }
 
     private class SteppableEngine(environment: Continuous2DEnvironment<Double>) :

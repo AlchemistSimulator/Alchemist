@@ -281,7 +281,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     });
                 }
                 sim.schedule(() -> {
-                    update(currentEnv, sim.getTime());
+                    update(currentEnv, sim.getCurrentTime());
                     return Unit.INSTANCE;
                 });
                 resetStatus();
@@ -860,7 +860,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                         for (final Node<T> n : newNodes) {
                             currentEnv.addNode(n, envEnding);
                         }
-                        update(currentEnv, engine.getTime());
+                        update(currentEnv, engine.getCurrentTime());
                         // CHECKSTYLE: IllegalCatch OFF
                     } catch (final RuntimeException exp) { // NOPMD
                         // CHECKSTYLE: IllegalCatch ON
@@ -954,7 +954,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                                 final P finalPos = p.plus(envEnding.minus(envOrigin.getCoordinates()).getCoordinates());
                                 engine.schedule(() -> {
                                     currentEnv.moveNodeTo(n, finalPos);
-                                    update(currentEnv, engine.getTime());
+                                    update(currentEnv, engine.getCurrentTime());
                                     return Unit.INSTANCE;
                                 });
                             }

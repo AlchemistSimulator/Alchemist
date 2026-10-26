@@ -20,7 +20,7 @@ ktor = "3.6.0"
 mockito = "5.24.0"
 protelis = "20.1.0"
 publish-on-central = "9.2.15"
-react = "2026.10.4-19.3.1"
+react = "2026.10.5-19.3.1"
 scafi = "1.8.0"
 scala3 = "3.10.0"
 

@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.observables.util
 
-import arrow.core.Option
 import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observation.MutableObservable
 
@@ -26,29 +25,42 @@ object MutableObservables {
     @JvmOverloads
     @JvmStatic
     fun <T> observe(initial: T, emitOnDistinct: Boolean = true): MutableObservable<T> =
-        object : AbstractObservable<T>(emitOnDistinct), MutableObservable<T> {
-            override var current: T
-                get() = value
-                set(newValue) {
-                    if (!emitOnDistinct || newValue != value) {
-                        value = newValue
-                        updateAndNotify(newValue)
-                    }
-                }
-
-            private var value: T = initial
-
-            override fun computeFresh(): T = value
-        }
+        SimpleMutableObservable(initial, emitOnDistinct)
 
     /**
-     * Handy method to update the optional[Option] contents of this [MutableObservable].
-     * Applies the given function to the value contained by the underlying [Option],
-     * if it is empty nothing is computed.
+     * Creates a [MutableObservable] initialized with [initial], like [observe],
+     * whose [current][MutableObservable.current] value can be read from any thread,
+     * always returning the latest value set.
+     * Only reading the current value is shared: setting it, registering observers,
+     * and deriving further observables must still happen on a single thread.
      *
-     * @param updateFunc the update function to perform on the value wrapped by the underlying [Option]
+     * @param T The type of the value being observed.
+     * @param initial The initial value of the observable.
+     * @param emitOnDistinct whether to notify observers only when the value set differs from the current one.
+     * @return A new instance of [MutableObservable] initialized with the provided value.
      */
-    fun <T> MutableObservable<Option<T>>.updateValue(updateFunc: (T) -> T) {
-        update { it.map(updateFunc) }
+    @JvmOverloads
+    @JvmStatic
+    fun <T> observeShareable(initial: T, emitOnDistinct: Boolean = true): MutableObservable<T> =
+        object : SimpleMutableObservable<T>(initial, emitOnDistinct) {
+            @Volatile
+            override var value: T = initial
+        }
+
+    private open class SimpleMutableObservable<T>(initial: T, emitOnDistinct: Boolean = true) :
+        AbstractObservable<T>(emitOnDistinct),
+        MutableObservable<T> {
+        override var current: T
+            get() = value
+            set(newValue) {
+                if (!emitOnDistinct || newValue != value) {
+                    value = newValue
+                    updateAndNotify(newValue)
+                }
+            }
+
+        protected open var value: T = initial
+
+        override fun computeFresh(): T = value
     }
 }

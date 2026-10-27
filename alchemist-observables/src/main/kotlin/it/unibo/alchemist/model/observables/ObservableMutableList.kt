@@ -158,7 +158,7 @@ class ObservableMutableList<T> @JvmOverloads constructor(initial: Iterable<T> = 
     }
 
     private fun notifyObservers() {
-        size.update { backing.size }
+        size.current = backing.size
         updateAndNotify(backing)
     }
 

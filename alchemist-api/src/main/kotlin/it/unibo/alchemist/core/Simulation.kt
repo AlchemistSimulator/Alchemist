@@ -55,6 +55,7 @@ interface Simulation<T, P : Position<out P>> : Runnable {
 
     /**
      * The simulation time, notifying its observers on the simulation thread whenever it advances.
+     * Observers run before the event occurring at the new time fires: if they remove it, it does not fire.
      */
     val time: Observable<Time>
 

@@ -151,7 +151,7 @@ class ObservableListTest : FunSpec({
             currentSum shouldBe 3
             list.add("c")
             currentSum shouldBe 6
-            sources["a"]?.update { 10 }
+            sources["a"]?.current = 10
             currentSum shouldBe 15
             list.remove("b")
             currentSum shouldBe 13
@@ -169,7 +169,7 @@ class ObservableListTest : FunSpec({
             currentVal shouldBe "A"
             list.add(0, "b")
             currentVal shouldBe "B"
-            sources["b"]?.update { "Z" }
+            sources["b"]?.current = "Z"
             currentVal shouldBe "Z"
             list.clear()
             flattened.current shouldBe none()
@@ -181,7 +181,7 @@ class ObservableListTest : FunSpec({
             var changeCounter = 0
             list.flattenMerge().onChange { changeCounter++ }
             val baseline = changeCounter
-            sources[0].update { it + 100 }
+            sources[0].current += 100
             changeCounter shouldBe baseline + 1
             list.add(observe(40))
             changeCounter shouldBe baseline + 2

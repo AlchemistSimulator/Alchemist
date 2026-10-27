@@ -173,7 +173,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
     node.set(programName, computed.root[T]())
     val toSend = NeighborData(computed, position, alchemistCurrentTime)
     neighborhoodManager = neighborhoodManager + (node.getId -> toSend)
-    _completed.update(_ => true)
+    _completed.setCurrent(true)
 
   def sendExport(id: ID, exportData: NeighborData[P]): Unit = neighborhoodManager += id -> exportData
 
@@ -183,7 +183,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
 
   def observeComputationalCycleComplete: Observable[Boolean] = _completed
 
-  def prepareForComputationalCycle(): Unit = _completed.update(_ => false)
+  def prepareForComputationalCycle(): Unit = _completed.setCurrent(false)
 
 object RunScafiProgram:
   private[actions] def meanDelay[T](reaction: NodeReaction[T]): Double = reaction match

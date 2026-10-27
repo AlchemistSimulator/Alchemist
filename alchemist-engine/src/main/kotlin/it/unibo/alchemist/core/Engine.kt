@@ -26,6 +26,8 @@ import it.unibo.alchemist.model.observation.Disposable
  * must be submitted through [Simulation.schedule].
  * Reaction execution and scheduled commands form invalidation transactions that refresh each affected reaction
  * once before the next scheduler selection.
+ * Advancing time notifies the observers of [time] before the selected event fires:
+ * the event fires only if they did not remove it, and if it can still execute at the new time.
  */
 open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protected val scheduler: Scheduler<T>) :
     AbstractEngine<T, P>(environment) {
@@ -51,6 +53,9 @@ open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protec
 
     // The reaction being refreshed: refreshes change nothing but their own next occurrence, so they invalidate nothing.
     private var refreshing: Reaction<T>? = null
+
+    // The event selected by the current step while time advances to it, null if the observers of time removed it.
+    private var selectedEvent: Reaction<T>? = null
 
     constructor(environment: Environment<T, P>) : this(environment, ArrayIndexedPriorityQueue())
 
@@ -82,6 +87,9 @@ open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protec
     }
 
     override fun reactionRemoved(reactionToRemove: Reaction<T>) {
+        if (reactionToRemove === selectedEvent) {
+            selectedEvent = null
+        }
         if (state != SimulationState.TERMINATED) {
             if (modelMutationDepth > 0) {
                 dirtyReactions.remove(reactionToRemove)
@@ -122,17 +130,25 @@ open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protec
         check(nextEvent.canExecute.current) {
             "$nextEvent exposed a finite next occurrence while reporting that it could not execute"
         }
-        modelMutation {
+        val fired = modelMutation {
             // Advancing time is part of the step: the reactions it invalidates are refreshed once the step completes.
-            advanceTime(scheduledTime)
-            nextEvent.execute()
+            selectedEvent = nextEvent
+            time.current = scheduledTime
+            val stillHosted = selectedEvent === nextEvent
+            selectedEvent = null
             /*
-             * Successful execution owns post-firing advancement,
-             * which supersedes invalidations caused by its actions and by the time advancement.
+             * The observers of time may have removed the event, or conditions depending on time may no longer hold:
+             * either way, the event does not fire, and a valid one is rescheduled by its invalidation.
              */
-            dirtyReactions.remove(nextEvent)
+            (stillHosted && nextEvent.canExecute.current).also { fires ->
+                if (fires) {
+                    nextEvent.execute()
+                    // Successful execution owns post-firing advancement, which supersedes invalidations of the event.
+                    dirtyReactions.remove(nextEvent)
+                }
+            }
         }
-        monitors.forEach { it.stepDone(environment, nextEvent, currentTime, step) }
+        monitors.forEach { it.stepDone(environment, nextEvent.takeIf { fired }, currentTime, step) }
         if (environment.isTerminated) {
             terminate()
             LOGGER.info("Termination condition reached.")

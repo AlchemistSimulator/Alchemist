@@ -17,9 +17,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.MutableObservables.observeShareable
 import it.unibo.alchemist.model.observation.MutableObservable
-import it.unibo.alchemist.model.observation.Observable
 import java.util.Collections
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.CompletableFuture
@@ -62,17 +61,12 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
     /** The current step (thread-safe). */
     final override val step: Long get() = currentStep
 
-    /** The simulation time, published on the simulation thread through [advanceTime]. */
-    final override val time: Observable<Time> get() = observableTime
+    /** The simulation time. */
+    // Shareable, so that the current time can be read from any thread.
+    final override val time: MutableObservable<Time> = observeShareable(Time.ZERO)
 
     /** The current simulation time (thread-safe). */
-    final override val currentTime: Time get() = latestTime
-
-    private val observableTime: MutableObservable<Time> = observe(Time.ZERO)
-
-    // A snapshot of the latest published time, readable from any thread, unlike the observable time.
-    @Volatile
-    private var latestTime: Time = Time.ZERO
+    final override val currentTime: Time get() = time.current
 
     /** Current simulation step count. */
     protected var currentStep: Long = 0
@@ -112,15 +106,6 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
      */
     override fun removeOutputMonitor(monitor: OutputMonitor<T, P>) {
         monitors.remove(monitor)
-    }
-
-    /**
-     * Advances the simulation time to [newTime], notifying the observers of [time]:
-     * it must be called on the simulation thread.
-     */
-    protected fun advanceTime(newTime: Time) {
-        latestTime = newTime
-        observableTime.current = newTime
     }
 
     /** Records a failure while preserving an existing primary failure. */

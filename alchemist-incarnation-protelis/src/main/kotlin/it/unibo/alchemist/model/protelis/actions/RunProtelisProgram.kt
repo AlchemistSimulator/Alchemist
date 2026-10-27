@@ -198,7 +198,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     override fun execute() {
         vm.runCycle()
         targetNode[name] = vm.currentValue
-        computationalCycleIsComplete.update { true }
+        computationalCycleIsComplete.current = true
     }
 
     override fun hashCode() = name.hashCode()
@@ -207,7 +207,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      * Marks the computational cycle as incomplete before the next run.
      */
     fun prepareForComputationalCycle() {
-        computationalCycleIsComplete.update { false }
+        computationalCycleIsComplete.current = false
     }
 
     override fun toString(): String = name.toString() + "@" + targetNode.id

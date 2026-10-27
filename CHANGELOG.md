@@ -1,3 +1,29 @@
+## [48.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.8...48.0.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* raise the minimum supported Java version to 21 (#5706)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v20 ([97d67b8](https://github.com/AlchemistSimulator/Alchemist/commit/97d67b86daba73ce9ea305731d75257164a68d37))
+* **core-deps:** update react to v2026.10.5-19.3.1 ([#5716](https://github.com/AlchemistSimulator/Alchemist/issues/5716)) ([1ce3953](https://github.com/AlchemistSimulator/Alchemist/commit/1ce3953a9ed501825fd5738979d99ce825d0481f))
+* **deps:** update danysk/makepkg docker tag to v2.1.2 ([#5710](https://github.com/AlchemistSimulator/Alchemist/issues/5710)) ([61b1578](https://github.com/AlchemistSimulator/Alchemist/commit/61b157882b8ec06c884d1f695de983b9aba2a0c0))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.6.6 ([#5711](https://github.com/AlchemistSimulator/Alchemist/issues/5711)) ([0be6bd1](https://github.com/AlchemistSimulator/Alchemist/commit/0be6bd16f6e7e067435761d0747a6caadb8185b7))
+* **deps:** update dependency com.miglayout:miglayout-swing to v11.5.2 ([9920fb8](https://github.com/AlchemistSimulator/Alchemist/commit/9920fb851c8f4756e236f46bf0e0f190d837b65f))
+* **deps:** update dependency io.arrow-kt:arrow-core to v2.3.0 ([#5714](https://github.com/AlchemistSimulator/Alchemist/issues/5714)) ([bcd5c27](https://github.com/AlchemistSimulator/Alchemist/commit/bcd5c27fa255818280dae8ac034dba47e59eec31))
+* **deps:** update dependency org.danilopianini.gradle-kotlin-qa:org.danilopianini.gradle-kotlin-qa.gradle.plugin to v1.10.0 ([#5618](https://github.com/AlchemistSimulator/Alchemist/issues/5618)) ([7f808a8](https://github.com/AlchemistSimulator/Alchemist/commit/7f808a8a2b5286e6f6d950b1d32156db625daf16))
+* **deps:** update ksp to v2.3.12 ([#5712](https://github.com/AlchemistSimulator/Alchemist/issues/5712)) ([a7aaf67](https://github.com/AlchemistSimulator/Alchemist/commit/a7aaf67cdf7c3aa3e4657dc796db469570e63b5e))
+
+### Build and continuous integration
+
+* raise the minimum supported Java version to 21 ([#5706](https://github.com/AlchemistSimulator/Alchemist/issues/5706)) ([196e296](https://github.com/AlchemistSimulator/Alchemist/commit/196e2962dde970ea81e4051cc435403a4f3f0d9b))
+* run jpackage with the same version that is shipped. Use the correct icon format on each platform. ([#5713](https://github.com/AlchemistSimulator/Alchemist/issues/5713)) ([2d8cb55](https://github.com/AlchemistSimulator/Alchemist/commit/2d8cb550e53540d83f529727961c754882c92a8d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([e1b3021](https://github.com/AlchemistSimulator/Alchemist/commit/e1b30217c74424eebec988e2599ed335cd312ed6))
+
 ## [47.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.7...47.0.8) (2026-10-25)
 
 ### Performance improvements

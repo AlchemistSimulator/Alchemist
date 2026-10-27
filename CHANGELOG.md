@@ -1,3 +1,13 @@
+## [49.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/48.0.0...49.0.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* **observables:** extract the observable implementations into alchemist-observables (#5715)
+
+### Refactoring
+
+* **observables:** extract the observable implementations into alchemist-observables ([#5715](https://github.com/AlchemistSimulator/Alchemist/issues/5715)) ([882d143](https://github.com/AlchemistSimulator/Alchemist/commit/882d143a634d82db200984186e8793f31159431c))
+
 ## [48.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/47.0.8...48.0.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

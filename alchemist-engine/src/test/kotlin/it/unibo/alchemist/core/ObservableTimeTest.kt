@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.AbsoluteEvent
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.test.Test
@@ -59,20 +58,6 @@ class ObservableTimeTest {
         engine.initializeForTest()
         engine.step()
         assertEquals(listOf(FIRST), observedDuringExecution)
-    }
-
-    private class SteppableEngine(environment: Continuous2DEnvironment<Double>) :
-        Engine<Double, Euclidean2DPosition>(environment) {
-        fun initializeForTest() = initialize()
-
-        // Processes the queued commands, such as the removal of the events already executed.
-        fun runPendingCommands() {
-            while (commands.isNotEmpty()) {
-                processCommand(commands.poll())
-            }
-        }
-
-        fun step() = doStep()
     }
 
     private companion object {

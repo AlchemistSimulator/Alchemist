@@ -17,6 +17,7 @@ dependencies {
     api(alchemist("api"))
 
     implementation(alchemist("maintenance-tooling"))
+    implementation(alchemist("observables"))
     implementation(libs.jgrapht.core)
     implementation(libs.guava)
     implementation(libs.trove4j)

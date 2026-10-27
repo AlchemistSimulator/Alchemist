@@ -69,7 +69,7 @@ class EnvironmentTestReaction<T>(
     override fun execute() {
         conditions.forEach(Condition<T>::beforeReactionFires)
         actions.forEach(Action<T>::execute)
-        updateSchedulingAfterFiring(environment.simulationOrNull?.time ?: nextOccurrence.current)
+        updateSchedulingAfterFiring(environment.simulationOrNull?.currentTime ?: nextOccurrence.current)
     }
 
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) {

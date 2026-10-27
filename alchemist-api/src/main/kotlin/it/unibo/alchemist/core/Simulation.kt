@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observation.Observable
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -53,9 +54,15 @@ interface Simulation<T, P : Position<out P>> : Runnable {
     val step: Long
 
     /**
+     * The simulation time, notifying its observers on the simulation thread whenever it advances.
+     * Observers run before the event occurring at the new time fires: if they remove it, it does not fire.
+     */
+    val time: Observable<Time>
+
+    /**
      * The current simulation time.
      */
-    val time: Time
+    val currentTime: Time get() = time.current
 
     /**
      * Adds an [OutputMonitor] to this simulation.

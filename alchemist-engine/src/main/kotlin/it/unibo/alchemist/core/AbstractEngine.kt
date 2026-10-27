@@ -17,6 +17,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.observables.util.MutableObservables.observeShareable
+import it.unibo.alchemist.model.observation.MutableObservable
 import java.util.Collections
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.CompletableFuture
@@ -59,14 +61,12 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
     /** The current step (thread-safe). */
     final override val step: Long get() = currentStep
 
+    /** The simulation time. */
+    // Shareable, so that the current time can be read from any thread.
+    final override val time: MutableObservable<Time> = observeShareable(Time.ZERO)
+
     /** The current simulation time (thread-safe). */
-    final override val time: Time get() = currentTime
-
-    /** Current simulation time. */
-    protected var currentTime: Time = Time.ZERO
-        @Synchronized get
-
-        @Synchronized set
+    final override val currentTime: Time get() = time.current
 
     /** Current simulation step count. */
     protected var currentStep: Long = 0
@@ -127,7 +127,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
      * @param time the target simulation time.
      * @return a [CompletableFuture] that completes once the time is reached.
      */
-    override fun goToTime(time: Time): CompletableFuture<Unit> = pauseWhen { this.time >= time }
+    override fun goToTime(time: Time): CompletableFuture<Unit> = pauseWhen { currentTime >= time }
 
     /** Pauses the simulation. */
     override fun pause(): CompletableFuture<Unit> = newStatus(SimulationState.PAUSED)
@@ -279,7 +279,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
                 logger.trace("Thread {} started running.", Thread.currentThread().threadId())
                 monitors.forEach { it.initialized(environment) }
                 processCommandsWhileIn(SimulationState.READY)
-                while (state != SimulationState.TERMINATED && time < Time.INFINITY) {
+                while (state != SimulationState.TERMINATED && currentTime < Time.INFINITY) {
                     while (commands.isNotEmpty()) {
                         processCommand(commands.poll())
                     }
@@ -295,7 +295,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
                 state = SimulationState.TERMINATED
                 commands.clear()
                 try {
-                    monitors.forEach { it.finished(environment, time, step) }
+                    monitors.forEach { it.finished(environment, currentTime, step) }
                 } catch (e: Throwable) {
                     recordError(e)
                 }
@@ -322,7 +322,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
     protected open fun afterRun() = Unit
 
     /** @return a string representation of the engine. */
-    override fun toString(): String = "${javaClass.simpleName} t: $time, s: $step"
+    override fun toString(): String = "${javaClass.simpleName} t: $currentTime, s: $step"
 
     /**
      * Synchronization helper for status transitions.

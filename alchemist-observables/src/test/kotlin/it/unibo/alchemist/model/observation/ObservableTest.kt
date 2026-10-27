@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.observables.AbstractObservable
 import it.unibo.alchemist.model.observables.EventObservable
 import it.unibo.alchemist.model.observables.ObservableMutableSet
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
-import it.unibo.alchemist.model.observables.util.MutableObservables.updateValue
 import it.unibo.alchemist.model.observables.util.ObservableSets.combineLatest
 import it.unibo.alchemist.model.observables.util.ObservableSets.flatMap
 import it.unibo.alchemist.model.observables.util.ObservableSets.flattenMerge
@@ -100,11 +99,11 @@ class ObservableTest {
         var changesCount = -1
         observable.onChange { changesCount++ }
         repeat(10) {
-            observable.update { curr -> curr + 10 }
+            observable.current += 10
         }
         observable.dispose()
         repeat(10) {
-            observable.update { curr -> curr + 10 }
+            observable.current += 10
         }
         assertEquals(10, changesCount)
     }
@@ -117,7 +116,7 @@ class ObservableTest {
         parityObservable.onChange { emissions++ }
         // Sequence that keeps parity constant: 0 -> 2 -> 4 -> 6
         repeat(3) {
-            observable.update { curr -> curr + 2 }
+            observable.current += 2
         }
         assertEquals(0, emissions)
     }
@@ -127,9 +126,9 @@ class ObservableTest {
         val counter = observe(0)
         val parities = mutableListOf<Int>()
         counter.map { it % 2 }.onChange(false) { parities += it }
-        counter.update { 2 }
+        counter.current = 2
         assertEquals(emptyList(), parities)
-        counter.update { 3 }
+        counter.current = 3
         assertEquals(listOf(1), parities)
     }
 
@@ -141,8 +140,8 @@ class ObservableTest {
         var emissions = -1
         c.onChange { emissions++ }
         repeat(5) { _ ->
-            a.update { it + 2 }
-            b.update { it + 2 }
+            a.current += 2
+            b.current += 2
         }
         assertEquals(0, emissions)
     }
@@ -155,7 +154,7 @@ class ObservableTest {
         val merged = elements.flattenMerge()
         var counter = 0
         merged.onChange(notifyOnRegistration = false) { counter++ }
-        obsA.update { it + 11 }
+        obsA.current += 11
         elements.add(observe(29))
         assertEquals(2, counter)
     }
@@ -200,7 +199,7 @@ class ObservableTest {
         val strObservable = observable.map { it.toString() }
         var changesCounts = -1
         strObservable.onChange { changesCounts++ }
-        repeat(10) { observable.update { curr -> curr + 10 } }
+        repeat(10) { observable.current += 10 }
         assertEquals(10, changesCounts)
         assertEquals("${10 * 11}", strObservable.current)
     }
@@ -212,9 +211,9 @@ class ObservableTest {
         val c = a.mergeWith(b) { first, second -> first + second }
         var current = 0
         c.onChange { current = it }
-        a.update { it + 10 }
+        a.current += 10
         assertEquals(10, current)
-        b.update { it + 10 }
+        b.current += 10
         assertEquals(20, current)
     }
 
@@ -254,11 +253,11 @@ class ObservableTest {
         var changesCount = -1
         val subscription = observable.onChange { changesCount++ }
         repeat(10) {
-            observable.update { curr -> curr + 10 }
+            observable.current += 10
         }
         subscription.dispose()
         repeat(10) {
-            observable.update { curr -> curr + 10 }
+            observable.current += 10
         }
         assertEquals(10, changesCount)
     }
@@ -269,7 +268,7 @@ class ObservableTest {
         var changesCount = -1 // The first subscription always calls the observing callbacks.
         observable.onChange { changesCount++ }
         repeat(10) {
-            observable.update { curr -> curr + 10 }
+            observable.current += 10
         }
         assertEquals(10, changesCount)
     }
@@ -285,8 +284,8 @@ class ObservableTest {
         var emissions = -1
         collected.onChange { emissions++ }
         repeat(5) { _ ->
-            a.update { it + 2 }
-            b.update { it + 4 }
+            a.current += 2
+            b.current += 4
         }
         assertEquals(0, emissions)
     }
@@ -301,8 +300,8 @@ class ObservableTest {
             }
         val emissions = mutableListOf<String>()
         collected.onChange { emissions.add(it.getOrElse { "" }) }
-        a.update { it + 1 }
-        b.update { it + 5 }
+        a.current += 1
+        b.current += 5
         assertEquals("2-10", emissions[1])
         assertEquals("2-15", emissions[2])
     }
@@ -319,8 +318,8 @@ class ObservableTest {
         set.add("a")
         set.add("b")
         assertEquals(0, seen.last())
-        inner.getValue("a").update { 10 }
-        inner.getValue("b").update { 5 }
+        inner.getValue("a").current = 10
+        inner.getValue("b").current = 5
         assertEquals(listOf(0, 10, 15), seen)
         set.remove("a")
         assertEquals(5, seen.last())
@@ -385,7 +384,7 @@ class ObservableTest {
         val fused = set.flatMap(::observableFor)
         val seen = mutableListOf<Option<Int>>()
         fused.onChange { seen.add(it) }
-        inner.getValue("a").update { 7 }
+        inner.getValue("a").current = 7
         set.remove("a")
         assertEquals(listOf(0.some(), 7.some(), none()), seen)
     }
@@ -402,7 +401,7 @@ class ObservableTest {
         assertEquals(0, seen[0])
         inner["b"] = observe(10)
         set.add("b")
-        inner.getValue("b").update { 20 }
+        inner.getValue("b").current = 20
         set.add("c")
         assertEquals(listOf(0, 10, 20, 0), seen)
     }
@@ -451,7 +450,7 @@ class ObservableTest {
         var bCount = -1
         observable.onChange { aCount++ }
         observable.onChange { bCount++ }
-        repeat(3) { observable.update { curr -> curr + 1 } }
+        repeat(3) { observable.current += 1 }
         assertEquals(3, aCount)
         assertEquals(3, bCount)
         assertEquals(2, observable.observerCount)
@@ -510,7 +509,7 @@ class ObservableTest {
         assertEquals(2, observable.observerCount)
         first.dispose()
         first.dispose()
-        observable.update { it + 1 }
+        observable.current += 1
         assertEquals(0, firstCount)
         assertEquals(1, secondCount)
         assertEquals(1, observable.observerCount)
@@ -519,29 +518,12 @@ class ObservableTest {
     }
 
     @Test
-    fun `update returns the previous value and updates the current one`() {
-        val observable = observe(0)
-        val old = observable.update { it + 5 }
-        assertEquals(0, old)
-        assertEquals(5, observable.current)
-    }
-
-    @Test
-    fun `updateValue updates the content of an optional observable`() {
-        val someObs = observe(1.some())
-        val noneObs = observe(none<Int>())
-        listOf(someObs, noneObs).forEach { obs -> obs.updateValue { it + 1 } }
-        assertEquals(2.some(), someObs.current)
-        assertEquals(none(), noneObs.current)
-    }
-
-    @Test
     fun `updating an observable with its own value emits nothing`() {
         val observable = observe(10)
         var changesCount = -1
         observable.onChange { changesCount++ }
         repeat(10) { _ ->
-            observable.update { it }
+            observable.current = 10
         }
         assertEquals(0, changesCount)
     }

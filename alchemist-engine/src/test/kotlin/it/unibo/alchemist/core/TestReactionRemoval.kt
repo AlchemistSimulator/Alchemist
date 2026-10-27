@@ -42,7 +42,7 @@ class TestReactionRemoval : FreeSpec({
         customReactions.forEach {
             node.addReaction(it)
         }
-        environment.addTerminator { it.simulation.time > DoubleTime(10.0) }
+        environment.addTerminator { it.simulation.currentTime > DoubleTime(10.0) }
         environment.networkModel = NoLinks()
         environment.addNode(node, environment.makePosition(0, 0))
         val engine = Engine(environment)

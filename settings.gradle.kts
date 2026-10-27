@@ -31,6 +31,7 @@ include(
     "alchemist-loading",
     "alchemist-maintenance-tooling",
     "alchemist-maps",
+    "alchemist-observables",
     "alchemist-physics",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",

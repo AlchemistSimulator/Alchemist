@@ -12,7 +12,6 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.AbsoluteEvent
 import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.test.Test
@@ -34,7 +33,7 @@ class AbsoluteEventRegistrationTest {
         engine.runPendingCommands()
         engine.step()
         assertFalse(event in node.reactions.current)
-        assertEquals(NOW, engine.time)
+        assertEquals(NOW, engine.currentTime)
     }
 
     @Test
@@ -53,20 +52,7 @@ class AbsoluteEventRegistrationTest {
         environment.addReaction(AbsoluteEvent(environment, LATER))
         engine.initializeForTest()
         engine.step()
-        assertEquals(time, engine.time)
-    }
-
-    private class SteppableEngine(environment: Continuous2DEnvironment<Double>) :
-        Engine<Double, Euclidean2DPosition>(environment) {
-        fun initializeForTest() = initialize()
-
-        fun runPendingCommands() {
-            while (commands.isNotEmpty()) {
-                processCommand(commands.poll())
-            }
-        }
-
-        fun step() = doStep()
+        assertEquals(time, engine.currentTime)
     }
 
     private companion object {

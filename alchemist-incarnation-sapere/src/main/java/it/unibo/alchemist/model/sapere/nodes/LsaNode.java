@@ -71,7 +71,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                 allInstances.add(instance);
                 bucketChanged(instance, name, list);
                 // The count is updated last, so that its observers find the rest of the node already updated.
-                moleculeCount.update(c -> c + 1);
+                moleculeCount.setCurrent(moleculeCount.getCurrent() + 1);
             }
         } else {
             throw new IllegalStateException("Tried to insert uninstanced " + instance + " into " + this);
@@ -160,7 +160,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
             final int removed = copies - bucket.size();
             allInstances.removeAll(lsa::equals);
             bucketChanged(lsa, name, bucket);
-            moleculeCount.update(c -> c - removed);
+            moleculeCount.setCurrent(moleculeCount.getCurrent() - removed);
         }
     }
 
@@ -178,7 +178,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                     bucket.remove(candidate);
                     allInstances.remove(candidate);
                     bucketChanged(candidate, name, bucket);
-                    moleculeCount.update(c -> c - 1);
+                    moleculeCount.setCurrent(moleculeCount.getCurrent() - 1);
                     return true;
                 }
             }
@@ -205,7 +205,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
         updateCount(instance, bucket);
         final var observable = observablesByName.get(name);
         if (observable != null) {
-            observable.update(it -> new ArrayList<>(bucket));
+            observable.setCurrent(new ArrayList<>(bucket));
         }
     }
 

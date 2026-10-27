@@ -31,6 +31,8 @@ A custom layer whose spatial distribution never changes extends
 A layer whose values change over time implements `valueAt` instead:
 the returned observable emits every new value at the observed position,
 and `currentValueAt` reads its current value.
+A layer whose values depend on the simulation time can derive them from the simulation's `time`,
+which notifies every advancement of time.
 
 Layers are created with the [`type/parameter` syntax](/reference/yaml/#arbitrary-class-loading-system),
 as in this example:

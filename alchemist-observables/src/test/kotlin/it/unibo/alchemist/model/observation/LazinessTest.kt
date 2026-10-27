@@ -90,7 +90,7 @@ class LazinessTest {
         )
         var lastSeen: Int? = null
         combined.onChange(false) { lastSeen = it }
-        inner.update { 20 }
+        inner.current = 20
         assertEquals(20, lastSeen)
         set.add("b")
         assertEquals(40, lastSeen) // Both elements map to the same inner observable.
@@ -126,7 +126,7 @@ class LazinessTest {
         val mapped = source.map { it * 2 }
         var lastSeen: Int? = null
         mapped.onChange(false) { lastSeen = it }
-        source.update { 2 }
+        source.current = 2
         assertEquals(4, lastSeen)
     }
 
@@ -150,9 +150,9 @@ class LazinessTest {
         val merged = a.mergeWith(b) { x, y -> x + y }
         var lastSeen: Int? = null
         merged.onChange(false) { lastSeen = it }
-        a.update { 3 }
+        a.current = 3
         assertEquals(5, lastSeen)
-        b.update { 4 }
+        b.current = 4
         assertEquals(7, lastSeen)
     }
 
@@ -164,7 +164,7 @@ class LazinessTest {
         val switched = source.switchMap { if (it == 1) first else second }
         val subscription = switched.onChange(false) { }
         assertEquals(1, first.observerCount)
-        source.update { 2 }
+        source.current = 2
         assertEquals(0, first.observerCount)
         assertEquals(1, second.observerCount)
         subscription.dispose()
@@ -177,7 +177,7 @@ class LazinessTest {
         val switched = source.switchMap { observe(it * 10) }
         var lastSeen: Int? = null
         switched.onChange(false) { lastSeen = it }
-        source.update { 2 }
+        source.current = 2
         assertEquals(20, lastSeen)
     }
 
@@ -187,9 +187,9 @@ class LazinessTest {
         val switched = source.switchMap { observe(it / 10) }
         var emissions = 0
         switched.onChange(false) { emissions++ }
-        source.update { 11 }
+        source.current = 11
         assertEquals(0, emissions)
-        source.update { 20 }
+        source.current = 20
         assertEquals(1, emissions)
     }
 

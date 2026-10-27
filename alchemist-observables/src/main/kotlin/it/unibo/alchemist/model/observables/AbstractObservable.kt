@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.observation.Observable
  * can be compared against it; otherwise, a registration that does not deliver the current value computes nothing.
  * @param T The type of data being observed.
  */
-abstract class AbstractObservable<T>(private val emitOnDistinct: Boolean = true) : Observable<T> {
+abstract class AbstractObservable<T>(protected val emitOnDistinct: Boolean = true) : Observable<T> {
     /**
      * The current value: while observed, the latest value published; otherwise, a freshly computed one.
      * Observables holding their own state may read it directly.

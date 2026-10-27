@@ -90,7 +90,7 @@ open class LsaStandardCondition(
      * Sets the validity of this condition to [isValid], and returns it. Handle with care.
      */
     protected fun makeValid(isValid: Boolean): Boolean {
-        valid.update { isValid }
+        valid.current = isValid
         return isValid
     }
 }

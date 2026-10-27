@@ -116,7 +116,7 @@ class ObservableSetTest : FunSpec({
             var changeCounter = 0
             set.flattenMerge().onChange { changeCounter++ }
             val baseline = changeCounter
-            sources[0].update { it + 100 }
+            sources[0].current += 100
             changeCounter shouldBe baseline + 1
         }
     }

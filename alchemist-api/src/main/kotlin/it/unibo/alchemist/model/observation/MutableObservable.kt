@@ -11,21 +11,10 @@ package it.unibo.alchemist.model.observation
 
 /**
  * A MutableObservable represents an extension of the Observable interface, designed to maintain
- * mutable state and notify its observers when the state changes. Updates are mainly
- * performed thanks to the [update] function.
+ * mutable state and notify its observers when the state changes, which happens by setting [current].
  *
  * @param T The type of the value being observed and modified.
  */
 interface MutableObservable<T> : Observable<T> {
     override var current: T
-
-    /**
-     * Updates the current value using the specified transformation function and returns the previous value.
-     *
-     * @param computeNewValue A function that computes the new value based on the current value.
-     * @return The previous value before the update.
-     */
-    fun update(computeNewValue: (T) -> T): T = current.also {
-        current = computeNewValue(current)
-    }
 }

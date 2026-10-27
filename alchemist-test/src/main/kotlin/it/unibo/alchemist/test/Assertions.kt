@@ -125,7 +125,7 @@ fun <T, P : Position<P>> Simulation<T, P>.equalsForSteps(other: Simulation<T, P>
                 error("Barrier broken while waiting for step $step to complete")
             }
             if (Thread.currentThread() == actualThread) {
-                assertEquals(other.time, this@equalsForSteps.time)
+                assertEquals(other.currentTime, this@equalsForSteps.currentTime)
                 assertEquals(other.step, this@equalsForSteps.step)
                 this@equalsForSteps.environment shouldEqual other.environment
             }

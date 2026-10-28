@@ -1,0 +1,17 @@
+incarnation: sapere
+
+variables:
+  integer: 1
+  real: 2.5
+  text: "hello"
+  flag: true
+  computedConstant:
+    language: kotlin
+    formula: if (flag) integer + real else text
+  linear:
+    default: 3
+    min: 0
+    max: 10
+    step: 1
+  computedVariable:
+    formula: if (linear + integer > real) text else "smaller"

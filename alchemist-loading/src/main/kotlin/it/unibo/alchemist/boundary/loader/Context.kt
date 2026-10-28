@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -13,7 +13,7 @@ import it.unibo.alchemist.boundary.loader.LoadingSystemLogger.logger
 import java.util.Collections.unmodifiableMap
 import org.danilopianini.jirf.Factory
 
-internal data class Context constructor(
+internal data class Context(
     private val namedLookup: MutableMap<String, Map<*, *>>,
     private val elementLookup: MutableMap<Map<*, *>, Any?> = mutableMapOf(),
     val factory: Factory = ObjectFactory.makeBaseFactory(),
@@ -46,6 +46,19 @@ internal data class Context constructor(
         backingConstants[name] = value
     }
 
+    /**
+     * Registers a constant that has no YAML representation to be replaced in the model,
+     * such as a scalar sitting directly under the variables section.
+     */
+    fun registerConstant(name: String, value: Any?) {
+        logger.debug("Injecting constant {} with value {}", name, value)
+        require(!constants.containsKey(name) || constants[name] == value) {
+            "Inconsistent definition of constant named $name: previous value ${constants[name]}, current value $value"
+        }
+        namedLookup[name] = YAMLScalar
+        backingConstants[name] = value
+    }
+
     fun registerVariable(name: String, representation: Map<*, *>) {
         logger.debug("Injecting variable {} represented by {}", name, representation)
         namedLookup[name] = representation
@@ -53,15 +66,16 @@ internal data class Context constructor(
     }
 
     fun fixVariableValue(name: String, value: Any?) {
-        val key =
-            requireNotNull(namedLookup[name]) {
-                """
-                There is no known "$name" object in the lookup table, although there should be by construction.
-                Known object names: ${namedLookup.keys}
-                This sounds like a bug in Alchemist.
-                """.trimIndent()
-            }
-        elementLookup[key] = value
+        val key = requireNotNull(namedLookup[name]) {
+            """
+            There is no known "$name" object in the lookup table, although there should be by construction.
+            Known object names: ${namedLookup.keys}
+            This sounds like a bug in Alchemist.
+            """.trimIndent()
+        }
+        if (key != YAMLScalar) {
+            elementLookup[key] = value
+        }
         fixedVariables += name
         logger.debug("Contextually set {} = {}. Currently fixed: {}.", name, value, fixedVariables)
     }
@@ -82,4 +96,6 @@ internal data class Context constructor(
             ?: requireNotNull(namedLookup[placeholder.name]) {
                 "Bug in Alchemist: unresolvable variable ${placeholder.name}"
             }.let { lookup(it) }
+
+    private data object YAMLScalar : Map<Any, Any> by emptyMap()
 }

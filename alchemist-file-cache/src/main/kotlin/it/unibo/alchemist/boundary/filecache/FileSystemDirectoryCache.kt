@@ -9,10 +9,14 @@
 
 package it.unibo.alchemist.boundary.filecache
 
+import java.io.IOException
+import java.nio.channels.ClosedChannelException
+import java.nio.channels.FileChannel
 import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
 import net.harawata.appdirs.AppDirsFactory
 import org.slf4j.LoggerFactory
@@ -22,12 +26,16 @@ import org.slf4j.LoggerFactory
  * loading the missing ones through a [CacheableDataLoader].
  * It knows nothing about how data is obtained, depending only on [CachedDirectoryKey].
  *
- * Within a JVM, an entry is loaded at most once: callers asking for the same entry at the same time wait for the
- * first one and then find it in cache.
- * Different entries can still be loaded in parallel, and caches sharing a root wait for each other too.
+ * Each entry is loaded at most once, even across processes sharing the same root: callers asking for an entry
+ * that is being loaded wait for the loading to complete and then find it in cache.
+ * Within a JVM, they synchronize on a monitor per entry; across processes, on an operating system lock
+ * of a file per entry, in the `.locks` directory under [root].
+ * Different entries can still be loaded in parallel.
  *
- * Separate processes do not: both load, one wins the atomic move and the other throws its own copy away.
- * This wastes work in that rare case, but never corrupts the cache.
+ * Loaded entries are published with an atomic move, so they are visible either completely or not at all.
+ * If file locks are not supported (as on some network file systems), processes do not wait for each other:
+ * all of them load the entry, the first one to publish it wins, and the others discard their own copy.
+ * This wastes work, but never corrupts the cache.
  *
  * **Note!** Entries are **trust-based**: an existing directory is assumed to be complete and valid,
  * and its content is not re-verified on a cache hit.
@@ -53,12 +61,16 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
     private val tmpRoot: Path = this.root.resolve(TEMP_SUBDIR)
 
     /**
+     * The directory holding the lock files, one per entry, that processes sharing [root] lock while loading.
+     */
+    private val locksRoot: Path = this.root.resolve(LOCKS_SUBDIR)
+
+    /**
      * Returns the directory associated with [key], producing it if absent.
      *
      * On **cache hit** the existing directory is returned immediately.
-     * On **cache miss** the entry is loaded at most once: concurrent callers
-     * requesting the same entry block until the first one is done, then they observe
-     * a cache hit.
+     * On **cache miss** the entry is loaded at most once: concurrent callers, in this or in other processes,
+     * requesting the same entry block until the first one is done, then they observe a cache hit.
      *
      * @param key the entry identity, determining both the directory name and the data to load.
      * @return the [Path] of the final cache directory, filled with data.
@@ -66,24 +78,47 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      */
     override operator fun get(key: K): Path {
         val directoryName = key.directoryName
-        val finalDir = root.resolve(directoryName)
+        val resolvedDirectory = root.resolve(directoryName)
         // cache hit: the directory already exists
-        if (Files.isDirectory(finalDir)) {
-            logger.info("Cache hit for '$directoryName': using $finalDir")
-            return finalDir
+        if (Files.isDirectory(resolvedDirectory)) {
+            logger.info("Cache hit for '$directoryName': using $resolvedDirectory")
+            return resolvedDirectory
         }
         // the path gets recreated on every execution, so it is not used as the identity
-        val monitor = entryLocks.computeIfAbsent(finalDir) { Any() }
+        val monitor = entryLocks.computeIfAbsent(resolvedDirectory) { Any() }
         logger.debug("Cache miss for '$directoryName': acquiring its monitor")
-        // wait until the monitor becomes available
+        /*
+         * The monitor comes first: a JVM cannot hold overlapping locks of the same file,
+         * so threads of the same JVM must not compete for the file lock.
+         */
         return synchronized(monitor) {
-            // a peer may have loaded the entry while this caller was waiting for the monitor
-            if (Files.isDirectory(finalDir)) {
-                logger.info("Entry '$directoryName' has been loaded by a concurrent peer: using $finalDir")
-                finalDir
-            } else {
-                load(key, directoryName, finalDir)
+            resolvedDirectory.readyOrNull ?: withFileLock(directoryName) {
+                resolvedDirectory.readyOrNull ?: load(key, directoryName, resolvedDirectory)
             }
+        }
+    }
+
+    /**
+     * Runs [action] holding the operating system lock of the file associated with the entry named [directoryName],
+     * so that processes sharing [root] do not load the same entry at the same time.
+     * If the file system does not support locks, [action] runs anyway: the atomic promotion keeps the cache
+     * consistent, at the cost of possibly loading the entry more than once.
+     */
+    private fun <R> withFileLock(directoryName: String, action: () -> R): R {
+        Files.createDirectories(locksRoot)
+        val lockFile = locksRoot.resolve("$directoryName.lock")
+        return FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE).use { channel ->
+            logger.debug("Acquiring the file lock {}", lockFile)
+            runCatching { channel.lock() }
+                .onFailure { failure ->
+                    // Some file systems do not support locks, and throw an IOException that is *not* a
+                    // ClosedChannelException. In that case, we cannot wait for a lock: we just run the action anyway.
+                    if (failure !is IOException || failure is ClosedChannelException) {
+                        throw failure
+                    }
+                }
+                .getOrNull()
+                .use { action() }
         }
     }
 
@@ -96,7 +131,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      * If, for any reason, the [loader] fails, the temporary directory is removed (no "poisoned"
      * entry is left in cache).
      *
-     * **Note:** callers are expected to hold the monitor for the entry.
+     * **Note:** callers are expected to hold the monitor and the file lock for the entry.
      *
      * @param key the entry identity, forwarded to the [loader].
      * @param directoryName the directory name [key] maps to.
@@ -173,6 +208,9 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
          */
         private val entryLocks = ConcurrentHashMap<Path, Any>()
         private const val TEMP_SUBDIR = ".tmp"
+        private const val LOCKS_SUBDIR = ".locks"
         private val logger = LoggerFactory.getLogger(FileSystemDirectoryCache::class.java)
+
+        private val Path.readyOrNull: Path? get() = takeIf { Files.isDirectory(it) }
     }
 }

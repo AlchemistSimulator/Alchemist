@@ -178,6 +178,15 @@ internal object SimulationModel {
             "Invalid simulation descriptor: $root.\n" + AlchemistYamlSyntax.validDescriptors.first()
         }
         val context = Context()
+        /*
+         * Scalars sitting directly under the variables section are constants.
+         * Scalars nested inside a variable descriptor (e.g., the bounds of a linear variable) are not.
+         */
+        (root[AlchemistYamlSyntax.variables] as? Map<*, *>)?.forEach { (name, value) ->
+            if (value is Number || value is String || value is Boolean) {
+                context.registerConstant(name.toString(), value)
+            }
+        }
         var previousSize: Int? = null
         var injectedRoot = root
         val collectedNonFatalFailures = mutableMapOf<String, List<Throwable>>()

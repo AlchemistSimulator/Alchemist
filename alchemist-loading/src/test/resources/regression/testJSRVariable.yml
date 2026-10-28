@@ -1,0 +1,13 @@
+incarnation: sapere
+
+variables:
+  number: 1
+  name: "test"
+  other:
+    type: ArbitraryVariable
+    parameters: [ 1, [1, 2]]
+  simple:
+    language: kotlin
+    formula: |
+      val couple: Pair<Int, String> = (number + other) to name
+      couple

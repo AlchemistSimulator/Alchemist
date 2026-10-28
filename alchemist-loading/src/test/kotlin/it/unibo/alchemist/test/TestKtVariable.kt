@@ -88,4 +88,31 @@ class TestKtVariable<T, P : Position<P>> :
             assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
             loader.variables["seed"] shouldNot beNull()
         }
+
+        // This is a regression test, when using Alchemist variables inside a JSR223Variable scope,
+        // the simulation does not inherit the external variables into the JSR scope.
+        // Caused by: javax.script.ScriptException: ERROR Unresolved reference: *externalVariableName*
+        "simulation should load external variables inside function scope" {
+            val file = ResourceLoader.getResource("regression/testJSRVariable.yml")
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
+            loader.constants["number"] shouldBe 1
+            loader.constants["name"] shouldBe "test"
+            loader.dependentVariables["simple"] shouldNot beNull()
+        }
+
+        "scalars directly under variables should be loaded as constants" {
+            val file = ResourceLoader.getResource("regression/testScalarVariable.yml")
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
+            loader.constants shouldBe
+                mapOf("integer" to 1, "real" to 2.5, "text" to "hello", "flag" to true, "computedConstant" to 3.5)
+            val linear = loader.variables["linear"]
+            linear shouldNot beNull()
+            val computedVariable = loader.dependentVariables["computedVariable"]
+            computedVariable shouldNot beNull()
+            computedVariable?.getWith(loader.constants + ("linear" to linear?.default)) shouldBe "hello"
+        }
     })

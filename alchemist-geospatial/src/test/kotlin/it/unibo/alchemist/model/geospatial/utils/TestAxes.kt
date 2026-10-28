@@ -9,98 +9,113 @@
 
 package it.unibo.alchemist.model.geospatial.utils
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.doubles.plusOrMinus
-import io.kotest.matchers.shouldBe
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
-class TestAxes : StringSpec({
+class TestAxes {
 
     // indices 0..3
-    val axis = doubleArrayOf(10.0, 20.0, 30.0, 40.0)
-    val singleNode = doubleArrayOf(42.0)
+    private val axis = doubleArrayOf(10.0, 20.0, 30.0, 40.0)
+    private val singleNode = doubleArrayOf(42.0)
 
     // nearestIndex tests
-    "nearestIndex returns the exact index on a node hit" {
-        nearestIndex(axis, 10.0) shouldBe 0
-        nearestIndex(axis, 20.0) shouldBe 1
-        nearestIndex(axis, 40.0) shouldBe 3
+    @Test
+    fun `nearestIndex returns the exact index on a node hit`() {
+        assertEquals(0, nearestIndex(axis, 10.0))
+        assertEquals(1, nearestIndex(axis, 20.0))
+        assertEquals(3, nearestIndex(axis, 40.0))
     }
 
-    "nearestIndex picks the closer node between two nodes" {
+    @Test
+    fun `nearestIndex picks the closer node between two nodes`() {
         // closer to 20
-        nearestIndex(axis, 22.0) shouldBe 1
+        assertEquals(1, nearestIndex(axis, 22.0))
         // closer to 30
-        nearestIndex(axis, 28.0) shouldBe 2
+        assertEquals(2, nearestIndex(axis, 28.0))
     }
 
-    "nearestIndex resolves an exact tie to the lower index" {
-        nearestIndex(axis, 25.0) shouldBe 1
+    @Test
+    fun `nearestIndex resolves an exact tie to the lower index`() {
+        assertEquals(1, nearestIndex(axis, 25.0))
     }
 
-    "nearestIndex clamps below the first node" {
-        nearestIndex(axis, 5.0) shouldBe 0
-        nearestIndex(axis, -1000.0) shouldBe 0
+    @Test
+    fun `nearestIndex clamps below the first node`() {
+        assertEquals(0, nearestIndex(axis, 5.0))
+        assertEquals(0, nearestIndex(axis, -1000.0))
     }
 
-    "nearestIndex clamps above the last node" {
-        nearestIndex(axis, 50.0) shouldBe 3
-        nearestIndex(axis, 1000.0) shouldBe 3
+    @Test
+    fun `nearestIndex clamps above the last node`() {
+        assertEquals(3, nearestIndex(axis, 50.0))
+        assertEquals(3, nearestIndex(axis, 1000.0))
     }
 
-    "nearestIndex always returns 0 on a single-node axis" {
-        nearestIndex(singleNode, 42.0) shouldBe 0
-        nearestIndex(singleNode, 0.0) shouldBe 0
-        nearestIndex(singleNode, 100.0) shouldBe 0
+    @Test
+    fun `nearestIndex always returns 0 on a single-node axis`() {
+        assertEquals(0, nearestIndex(singleNode, 42.0))
+        assertEquals(0, nearestIndex(singleNode, 0.0))
+        assertEquals(0, nearestIndex(singleNode, 100.0))
     }
 
-    "nearestIndex rejects an empty axis" {
-        shouldThrow<IllegalArgumentException> { nearestIndex(DoubleArray(0), 5.0) }
+    @Test
+    fun `nearestIndex rejects an empty axis`() {
+        assertFailsWith<IllegalArgumentException> { nearestIndex(DoubleArray(0), 5.0) }
     }
 
-    "nearestIndex rejects a NaN query" {
-        shouldThrow<IllegalArgumentException> { nearestIndex(axis, Double.NaN) }
+    @Test
+    fun `nearestIndex rejects a NaN query`() {
+        assertFailsWith<IllegalArgumentException> { nearestIndex(axis, Double.NaN) }
     }
 
     // bracketIndices tests
-    "bracketIndices returns a degenerate pair on a node hit" {
-        bracketIndices(axis, 30.0) shouldBe (2 to 2)
+    @Test
+    fun `bracketIndices returns a degenerate pair on a node hit`() {
+        assertEquals(2 to 2, bracketIndices(axis, 30.0))
     }
 
-    "bracketIndices brackets an interior coordinate" {
-        bracketIndices(axis, 23.0) shouldBe (1 to 2)
+    @Test
+    fun `bracketIndices brackets an interior coordinate`() {
+        assertEquals(1 to 2, bracketIndices(axis, 23.0))
     }
 
-    "bracketIndices clamps outside the boundaries" {
-        bracketIndices(axis, 5.0) shouldBe (0 to 0)
-        bracketIndices(axis, 50.0) shouldBe (3 to 3)
+    @Test
+    fun `bracketIndices clamps outside the boundaries`() {
+        assertEquals(0 to 0, bracketIndices(axis, 5.0))
+        assertEquals(3 to 3, bracketIndices(axis, 50.0))
     }
 
-    "bracketIndices is degenerate on a single-node axis" {
-        bracketIndices(singleNode, 42.0) shouldBe (0 to 0)
-        bracketIndices(singleNode, 0.0) shouldBe (0 to 0)
-        bracketIndices(singleNode, 100.0) shouldBe (0 to 0)
+    @Test
+    fun `bracketIndices is degenerate on a single-node axis`() {
+        assertEquals(0 to 0, bracketIndices(singleNode, 42.0))
+        assertEquals(0 to 0, bracketIndices(singleNode, 0.0))
+        assertEquals(0 to 0, bracketIndices(singleNode, 100.0))
     }
 
-    "bracketIndices rejects an empty axis and a NaN query" {
-        shouldThrow<IllegalArgumentException> { bracketIndices(DoubleArray(0), 5.0) }
-        shouldThrow<IllegalArgumentException> { bracketIndices(axis, Double.NaN) }
+    @Test
+    fun `bracketIndices rejects an empty axis and a NaN query`() {
+        assertFailsWith<IllegalArgumentException> { bracketIndices(DoubleArray(0), 5.0) }
+        assertFailsWith<IllegalArgumentException> { bracketIndices(axis, Double.NaN) }
     }
 
     // weight tests
-    "weight is 0.0 at the lower node and 1.0 at the upper node" {
-        weight(axis, 1, 2, 20.0) shouldBe 0.0
-        weight(axis, 1, 2, 30.0) shouldBe 1.0
+    @Test
+    fun `weight is 0 at the lower node and 1 at the upper node`() {
+        assertEquals(0.0, weight(axis, 1, 2, 20.0))
+        assertEquals(1.0, weight(axis, 1, 2, 30.0))
     }
 
-    "weight is the normalized position within the segment" {
+    @Test
+    fun `weight is the normalized position within the segment`() {
         // sets a tolerance for the results
         val tolerance = 1e-9
-        weight(axis, 1, 2, 25.0) shouldBe (0.5 plusOrMinus tolerance)
-        weight(axis, 1, 2, 23.0) shouldBe (0.3 plusOrMinus tolerance)
+        assertEquals(0.5, weight(axis, 1, 2, 25.0), tolerance)
+        assertEquals(0.3, weight(axis, 1, 2, 23.0), tolerance)
     }
 
-    "weight is 0.0 on a degenerate bracket" {
-        weight(axis, 2, 2, 30.0) shouldBe 0.0
+    @Test
+    fun `weight is 0 on a degenerate bracket`() {
+        assertEquals(0.0, weight(axis, 2, 2, 30.0))
     }
-})
+}

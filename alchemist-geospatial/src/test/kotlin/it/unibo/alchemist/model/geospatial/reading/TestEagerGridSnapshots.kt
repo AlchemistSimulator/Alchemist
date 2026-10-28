@@ -9,17 +9,18 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.collections.shouldBeSortedWith
-import io.kotest.matchers.doubles.shouldBeNaN
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
-class TestEagerGridSnapshots : StringSpec({
+class TestEagerGridSnapshots {
 
     /**
      * Creates a NetCDF-3 file with:
@@ -31,7 +32,7 @@ class TestEagerGridSnapshots : StringSpec({
      * @param fileName the name of the file.
      * @param timeHours hours offsets from `2024-01-01 00:00`.
      */
-    fun writeFixedTestNetcdf(dir: Path, fileName: String, timeHours: DoubleArray) {
+    private fun writeFixedTestNetcdf(dir: Path, fileName: String, timeHours: DoubleArray) {
         writeTestNetcdf(
             path = dir.resolve(fileName),
             lats = doubleArrayOf(10.0, 20.0, 30.0),
@@ -43,41 +44,46 @@ class TestEagerGridSnapshots : StringSpec({
     /**
      * the directory where the temporary NetCDF files for the tests will be created.
      */
-    val tempDir: Path = Files.createTempDirectory("eagergridsnapshots-test")
+    private val tempDir: Path = Files.createTempDirectory("eagergridsnapshots-test")
 
     // deletes the directory and its files after the tests
-    afterSpec {
+    @AfterTest
+    fun deleteTempDir() {
         tempDir.toFile().deleteRecursively()
     }
 
     // Basic reading tests
-    "should read a single file and expose the correct number of instants" {
+    @Test
+    fun `a single file should be read exposing the correct number of instants`() {
         val dir = Files.createTempDirectory(tempDir, "basic")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0))
         val gridSnaps = EagerGridSnapshots(dir)
-        gridSnaps.instants.size shouldBe 3
+        assertEquals(3, gridSnaps.instants.size)
     }
 
-    "instants should be sorted in ascending chronological order regardless of file order" {
+    @Test
+    fun `instants should be sorted in ascending chronological order regardless of file order`() {
         val dir = Files.createTempDirectory(tempDir, "sorted")
         // b_file.nc is read second (in alphabetical order) but contains the most recent times
         writeFixedTestNetcdf(dir, "b_file.nc", doubleArrayOf(48.0, 72.0))
         writeFixedTestNetcdf(dir, "a_file.nc", doubleArrayOf(0.0, 24.0))
         val gridSnaps = EagerGridSnapshots(dir)
-        gridSnaps.instants.size shouldBe 4
-        gridSnaps.instants shouldBeSortedWith compareBy { it }
+        assertEquals(4, gridSnaps.instants.size)
+        assertEquals(gridSnaps.instants.sortedWith(compareBy { it }), gridSnaps.instants)
     }
 
-    "grid[i] should be accessible for every index in instants" {
+    @Test
+    fun `the grid should be accessible for every index in instants`() {
         val dir = Files.createTempDirectory(tempDir, "align")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0, 72.0, 96.0))
         val gridSnaps = EagerGridSnapshots(dir)
         // if instants and grids were misaligned, the grid(s) would throw an IndexOutOfBoundsException
-        gridSnaps.instants.indices.forEach { i -> gridSnaps.grid(i).latitudes.size shouldBe 3 }
+        gridSnaps.instants.indices.forEach { i -> assertEquals(3, gridSnaps.grid(i).latitudes.size) }
     }
 
     // Descending latitude normalization tests
-    "latitudes should be ascending even when the file stores them descending" {
+    @Test
+    fun `latitudes should be ascending even when the file stores them descending`() {
         val dir = Files.createTempDirectory(tempDir, "lat-desc")
         writeTestNetcdf(
             path = dir.resolve("desc.nc"),
@@ -86,10 +92,11 @@ class TestEagerGridSnapshots : StringSpec({
             timeHours = doubleArrayOf(0.0),
         )
         val resultLats = EagerGridSnapshots(dir).grid(0).latitudes
-        resultLats shouldBe doubleArrayOf(10.0, 20.0, 30.0)
+        assertContentEquals(doubleArrayOf(10.0, 20.0, 30.0), resultLats)
     }
 
-    "values should be correctly re-mapped after descending latitude normalization" {
+    @Test
+    fun `values should be correctly re-mapped after descending latitude normalization`() {
         val dir = Files.createTempDirectory(tempDir, "lat-remap")
         /*
          * 2-by-2 grid with descending lat. Row 0: north (20°), row 1: south (10°).
@@ -105,14 +112,15 @@ class TestEagerGridSnapshots : StringSpec({
         )
         // checks if the rows get reversed
         val grid = EagerGridSnapshots(dir).grid(0)
-        grid.valueAt(0, 0) shouldBe 200.0
-        grid.valueAt(0, 1) shouldBe 201.0
-        grid.valueAt(1, 0) shouldBe 100.0
-        grid.valueAt(1, 1) shouldBe 101.0
+        assertEquals(200.0, grid.valueAt(0, 0))
+        assertEquals(201.0, grid.valueAt(0, 1))
+        assertEquals(100.0, grid.valueAt(1, 0))
+        assertEquals(101.0, grid.valueAt(1, 1))
     }
 
     // "_FillValue" to NaN test
-    "fill values should be exposed as Double.NaN" {
+    @Test
+    fun `fill values should be exposed as NaN`() {
         val dir = Files.createTempDirectory(tempDir, "fillval")
         val fill = -9999.0
         writeTestNetcdf(
@@ -128,12 +136,14 @@ class TestEagerGridSnapshots : StringSpec({
             ),
         )
         val grid = EagerGridSnapshots(dir).grid(0)
-        grid.valueAt(0, 0).shouldBeNaN()
-        grid.valueAt(0, 1) shouldBe 42.0
+        val filled = grid.valueAt(0, 0)
+        assertTrue(filled.isNaN(), "Expected NaN, but got $filled")
+        assertEquals(42.0, grid.valueAt(0, 1))
     }
 
     // Dimension order test
-    "values should be read correctly regardless of the on-disk dimension order" {
+    @Test
+    fun `values should be read correctly regardless of the on-disk dimension order`() {
         val dir = Files.createTempDirectory(tempDir, "dim-order")
         writeTestNetcdf(
             path = dir.resolve("permuted.nc"),
@@ -144,19 +154,21 @@ class TestEagerGridSnapshots : StringSpec({
             dimensionOrder = listOf("longitude", "time", "latitude"),
         )
         val grid = EagerGridSnapshots(dir).grid(0)
-        grid.valueAt(0, 0) shouldBe 0.0
-        grid.valueAt(0, 1) shouldBe 1.0
-        grid.valueAt(1, 0) shouldBe 10.0
-        grid.valueAt(1, 1) shouldBe 11.0
+        assertEquals(0.0, grid.valueAt(0, 0))
+        assertEquals(1.0, grid.valueAt(0, 1))
+        assertEquals(10.0, grid.valueAt(1, 0))
+        assertEquals(11.0, grid.valueAt(1, 1))
     }
 
     // Configuration errors tests
-    "should throw IllegalArgumentException on empty directory" {
+    @Test
+    fun `an empty directory should raise an IllegalArgumentException`() {
         val emptyDir = Files.createTempDirectory(tempDir, "empty")
-        shouldThrow<IllegalArgumentException> { EagerGridSnapshots(emptyDir) }
+        assertFailsWith<IllegalArgumentException> { EagerGridSnapshots(emptyDir) }
     }
 
-    "should ignore duplicate timestamps across files and keep the data of the first one read" {
+    @Test
+    fun `duplicate timestamps across files should be ignored keeping the data of the first one read`() {
         val dir = Files.createTempDirectory(tempDir, "dup-values")
         val lats = doubleArrayOf(10.0)
         val lons = doubleArrayOf(5.0)
@@ -179,11 +191,12 @@ class TestEagerGridSnapshots : StringSpec({
             variables = listOf(TestVariable(rawValues = doubleArrayOf(secondVal))),
         )
         val gridSnaps = EagerGridSnapshots(dir)
-        gridSnaps.instants.size shouldBe 1
-        gridSnaps.grid(0).valueAt(0, 0) shouldBe firstVal
+        assertEquals(1, gridSnaps.instants.size)
+        assertEquals(firstVal, gridSnaps.grid(0).valueAt(0, 0))
     }
 
-    "should throw IllegalArgumentException when files have mismatched spatial grids" {
+    @Test
+    fun `files with mismatched spatial grids should raise an IllegalArgumentException`() {
         val dir = Files.createTempDirectory(tempDir, "mismatch")
         writeTestNetcdf(
             dir.resolve("f1.nc"),
@@ -197,6 +210,6 @@ class TestEagerGridSnapshots : StringSpec({
             doubleArrayOf(5.0, 15.0),
             doubleArrayOf(24.0),
         )
-        shouldThrow<IllegalArgumentException> { EagerGridSnapshots(dir) }
+        assertFailsWith<IllegalArgumentException> { EagerGridSnapshots(dir) }
     }
-})
+}

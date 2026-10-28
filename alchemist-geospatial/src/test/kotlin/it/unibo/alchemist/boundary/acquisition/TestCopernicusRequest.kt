@@ -9,21 +9,20 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.string.shouldMatch
-import io.kotest.matchers.string.shouldNotContain
-import io.kotest.matchers.string.shouldStartWith
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
-class TestCopernicusRequest : StringSpec({
+class TestCopernicusRequest {
 
-    val endpoint = "https://ewds.climate.copernicus.eu/api"
-    val dataset = "cems-glofas-historical"
+    private val endpoint = "https://ewds.climate.copernicus.eu/api"
+    private val dataset = "cems-glofas-historical"
 
     // a realistic request to the EWDS data store
-    val glofas = CopernicusRequest(
+    private val glofas = CopernicusRequest(
         endpoint = endpoint,
         dataset = dataset,
         inputs = mapOf(
@@ -35,13 +34,15 @@ class TestCopernicusRequest : StringSpec({
         ),
     )
 
-    fun emptyRequest(endpoint: String) = CopernicusRequest(endpoint, "dataset-name", mapOf())
+    private fun emptyRequest(endpoint: String) = CopernicusRequest(endpoint, "dataset-name", mapOf())
 
-    "directoryName is deterministic: the same request yields the same name" {
-        glofas.directoryName shouldBe glofas.directoryName
+    @Test
+    fun `directoryName is deterministic, the same request yields the same name`() {
+        assertEquals(glofas.directoryName, glofas.directoryName)
     }
 
-    "directoryName is stable under key reordering" {
+    @Test
+    fun `directoryName is stable under key reordering`() {
         // same logical request, just reordered
         val reordered = CopernicusRequest(
             endpoint = endpoint,
@@ -54,44 +55,52 @@ class TestCopernicusRequest : StringSpec({
                 "variable" to listOf("river_discharge_in_the_last_24_hours"),
             ),
         )
-        reordered.directoryName shouldBe glofas.directoryName
+        assertEquals(glofas.directoryName, reordered.directoryName)
     }
 
-    "a different dataset yields a different name" {
-        glofas.copy(dataset = "reanalysis-era5-single-levels").directoryName shouldNotBe glofas.directoryName
+    @Test
+    fun `a different dataset yields a different name`() {
+        assertNotEquals(glofas.directoryName, glofas.copy(dataset = "reanalysis-era5-single-levels").directoryName)
     }
 
-    "a different input value yields a different name (the bytes change)" {
+    @Test
+    fun `a different input value yields a different name (the bytes change)`() {
         val otherDay = glofas.copy(inputs = glofas.inputs + ("hday" to listOf("11")))
-        otherDay.directoryName shouldNotBe glofas.directoryName
+        assertNotEquals(glofas.directoryName, otherDay.directoryName)
     }
 
-    "reordering a list inside inputs yields a different name (list order is semantic)" {
+    @Test
+    fun `reordering a list inside inputs yields a different name (list order is semantic)`() {
         // area corners reordered = a different request, must not collide
         val area = listOf(50.0, 5.0, 45.0, 10.0)
         val nwse = glofas.copy(inputs = glofas.inputs + ("area" to area))
         val swapped = glofas.copy(inputs = glofas.inputs + ("area" to area.reversed()))
-        nwse.directoryName shouldNotBe swapped.directoryName
+        assertNotEquals(swapped.directoryName, nwse.directoryName)
     }
 
-    "the readable prefix comes from the dataset, sanitized" {
-        glofas.directoryName shouldStartWith "cems-glofas-historical_"
+    @Test
+    fun `the readable prefix comes from the dataset, sanitized`() {
+        assertStartsWith("cems-glofas-historical_", glofas.directoryName)
     }
 
-    "a dataset id with unsafe characters is sanitized in the prefix" {
+    @Test
+    fun `a dataset id with unsafe characters is sanitized in the prefix`() {
         val weird = glofas.copy(dataset = "weird/name with:chars")
-        weird.directoryName shouldStartWith "weird_name_with_chars_"
+        assertStartsWith("weird_name_with_chars_", weird.directoryName)
     }
 
-    "the name complies with the CachedDirectoryKey contract: a single file-system-safe segment" {
-        glofas.directoryName shouldMatch Regex("^[A-Za-z0-9._-]+$")
+    @Test
+    fun `the name complies with the CachedDirectoryKey contract, a single file-system-safe segment`() {
+        assertMatches(Regex("^[A-Za-z0-9._-]+$"), glofas.directoryName)
     }
 
-    "the name is a readable prefix followed by a lowercase-hex hash suffix" {
-        glofas.directoryName shouldMatch Regex("^cems-glofas-historical_[0-9a-f]+$")
+    @Test
+    fun `the name is a readable prefix followed by a lowercase-hex hash suffix`() {
+        assertMatches(Regex("^cems-glofas-historical_[0-9a-f]+$"), glofas.directoryName)
     }
 
-    "should not throw on actual endpoints" {
+    @Test
+    fun `should not throw on actual endpoints`() {
         val endpoints = setOf(
             "https://cds.climate.copernicus.eu/api",
             "https://ewds.climate.copernicus.eu/api",
@@ -103,49 +112,67 @@ class TestCopernicusRequest : StringSpec({
         emptyRequest("https://SOMETHING.SOMETHING_ELSE.copernicus.eu/api")
     }
 
-    "should throw on illegal endpoints" {
-        shouldThrow<IllegalArgumentException> { emptyRequest("") }
-        shouldThrow<IllegalArgumentException> { emptyRequest("https://www.google.com") }
-        shouldThrow<IllegalArgumentException> { emptyRequest("https://cds.climate.eu/api") }
+    @Test
+    fun `should throw on illegal endpoints`() {
+        assertFailsWith<IllegalArgumentException> { emptyRequest("") }
+        assertFailsWith<IllegalArgumentException> { emptyRequest("https://www.google.com") }
+        assertFailsWith<IllegalArgumentException> { emptyRequest("https://cds.climate.eu/api") }
     }
 
     // toFileSystemSafe extension function tests
-    "a plain name with only safe characters is left unchanged" {
-        dataset.toFileSystemSafe() shouldBe dataset
-        "ERA5_2024.v3".toFileSystemSafe() shouldBe "ERA5_2024.v3"
+    @Test
+    fun `a plain name with only safe characters is left unchanged`() {
+        assertEquals(dataset, dataset.toFileSystemSafe())
+        assertEquals("ERA5_2024.v3", "ERA5_2024.v3".toFileSystemSafe())
     }
 
-    "spaces are replaced" {
-        "New York".toFileSystemSafe() shouldBe "New_York"
+    @Test
+    fun `spaces are replaced`() {
+        assertEquals("New_York", "New York".toFileSystemSafe())
     }
 
-    "path separators are replaced" {
-        "a/b".toFileSystemSafe() shouldBe "a_b"
-        "a\\b".toFileSystemSafe() shouldBe "a_b"
+    @Test
+    fun `path separators are replaced`() {
+        assertEquals("a_b", "a/b".toFileSystemSafe())
+        assertEquals("a_b", "a\\b".toFileSystemSafe())
     }
 
-    "Windows-illegal characters are replaced" {
+    @Test
+    fun `Windows-illegal characters are replaced`() {
         // < > : " | ? * are illegal in a Windows filename
-        """a:b<c>d"e|f?g*h""".toFileSystemSafe() shouldBe "a_b_c_d_e_f_g_h"
+        assertEquals("a_b_c_d_e_f_g_h", """a:b<c>d"e|f?g*h""".toFileSystemSafe())
     }
 
-    "non-ASCII letters are replaced" {
-        "Forlì-Cesena".toFileSystemSafe() shouldBe "Forl_-Cesena"
+    @Test
+    fun `non-ASCII letters are replaced`() {
+        assertEquals("Forl_-Cesena", "Forlì-Cesena".toFileSystemSafe())
     }
 
-    "output never contains a path separator, for any input" {
+    @Test
+    fun `output never contains a path separator, for any input`() {
         listOf("a/b", "a\\b", "/", "\\", "C:/x", "../../etc").forEach { raw ->
-            raw.toFileSystemSafe().shouldNotContain("/")
-            raw.toFileSystemSafe().shouldNotContain("\\")
+            val safe = raw.toFileSystemSafe()
+            assertFalse("/" in safe, "Expected '$safe' (from '$raw') not to contain '/'")
+            assertFalse("\\" in safe, "Expected '$safe' (from '$raw') not to contain '\\'")
         }
     }
 
-    "output contains only allowlisted characters" {
-        """!"£$%&/()=?^@#°""".toFileSystemSafe() shouldMatch Regex("^[A-Za-z0-9._-]*$")
+    @Test
+    fun `output contains only allowlisted characters`() {
+        assertMatches(Regex("^[A-Za-z0-9._-]*$"), """!"£$%&/()=?^@#°""".toFileSystemSafe())
     }
 
-    "sanitizing a sanitized name changes nothing" {
+    @Test
+    fun `sanitizing a sanitized name changes nothing`() {
         val once = "a b/c:d".toFileSystemSafe()
-        once.toFileSystemSafe() shouldBe once
+        assertEquals(once, once.toFileSystemSafe())
     }
-})
+}
+
+private fun assertStartsWith(prefix: String, actual: String) {
+    assertTrue(actual.startsWith(prefix), "Expected '$actual' to start with '$prefix'")
+}
+
+private fun assertMatches(regex: Regex, actual: String) {
+    assertTrue(regex.matches(actual), "Expected '$actual' to match $regex")
+}

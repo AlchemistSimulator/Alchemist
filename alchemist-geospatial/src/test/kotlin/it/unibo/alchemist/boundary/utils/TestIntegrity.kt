@@ -9,90 +9,83 @@
 
 package it.unibo.alchemist.boundary.utils
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.assertions.withClue
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
-class TestIntegrity : StringSpec({
+class TestIntegrity {
 
-    val tempDir: Path = Files.createTempDirectory("integrity-test")
+    private val tempDir: Path = Files.createTempDirectory("integrity-test")
 
-    lateinit var file: Path
+    private val file: Path = Files.createTempFile(tempDir, "asset", ".bin")
 
-    afterSpec {
+    @AfterTest
+    fun cleanup() {
         tempDir.toFile().deleteRecursively()
     }
 
-    beforeTest {
-        file = Files.createTempFile(tempDir, "asset", ".bin")
-    }
-
     /**
-     * Exact MD5 digests.
+     * Writes [content] to [file] and checks that its digest matches the known one.
      */
-    val knownMD5 = mapOf(
-        "" to "d41d8cd98f00b204e9800998ecf8427e",
-        "abc" to "900150983cd24fb0d6963f7d28e17f72",
-        "a" to "0cc175b9c0f1b6a831c399e269772661",
-        "168" to "006f52e9102a8d3be2fe5614f42ba989",
-    )
-
-    /**
-     * [knownMD5], but formatted the way data store advertises them:
-     * hashes are emitted without left zero-padding.
-     */
-    val advertisedUnpadded = mapOf(
-        "a" to "cc175b9c0f1b6a831c399e269772661", // 31 chars
-        "168" to "6f52e9102a8d3be2fe5614f42ba989", // 30 chars
-    )
-
-    "md5Hex of empty file matches the known digest" {
-        // file is created empty by beforeTest
-        md5Hex(file) shouldBe knownMD5[""]
+    private fun assertKnownDigest(content: String) {
+        Files.writeString(file, content)
+        assertEquals(knownMD5.getValue(content), md5Hex(file))
     }
 
-    knownMD5.forEach { (content, digest) ->
-        "md5Hex of $content matches the known digest" {
-            Files.writeString(file, content)
-            md5Hex(file) shouldBe digest
-        }
+    @Test
+    fun `md5Hex of empty file matches the known digest`() {
+        // file is created empty for each test
+        assertEquals(knownMD5[""], md5Hex(file))
     }
 
-    "md5Hex preserves the leading zero nibbles of a digest" {
+    @Test
+    fun `md5Hex of the empty string matches the known digest`() = assertKnownDigest("")
+
+    @Test
+    fun `md5Hex of abc matches the known digest`() = assertKnownDigest("abc")
+
+    @Test
+    fun `md5Hex of a matches the known digest`() = assertKnownDigest("a")
+
+    @Test
+    fun `md5Hex of 168 matches the known digest`() = assertKnownDigest("168")
+
+    @Test
+    fun `md5Hex preserves the leading zero nibbles of a digest`() {
         advertisedUnpadded.keys.forEach { content ->
-            withClue("content: '$content'") {
-                Files.writeString(file, content)
-                md5Hex(file) shouldBe knownMD5.getValue(content)
-            }
+            Files.writeString(file, content)
+            assertEquals(knownMD5.getValue(content), md5Hex(file), "content: '$content'")
         }
     }
 
-    "md5Hex is always 32 lowercase hex chars" {
+    @Test
+    fun `md5Hex is always 32 lowercase hex chars`() {
         knownMD5.keys.forEach { content ->
-            withClue("content: '$content'") {
-                Files.writeString(file, content)
-                val hex = md5Hex(file)
-                hex.length shouldBe 32
-                hex shouldBe hex.lowercase()
-            }
+            Files.writeString(file, content)
+            val hex = md5Hex(file)
+            assertEquals(32, hex.length, "content: '$content'")
+            assertEquals(hex.lowercase(), hex, "content: '$content'")
         }
     }
 
-    "verify passes when size and MD5 both match" {
+    @Test
+    fun `verify passes when size and MD5 both match`() {
         Files.writeString(file, "abc")
         // 3 bytes, known MD5
         verify(file, 3, knownMD5.getValue("abc"))
     }
 
-    "verify passes when no MD5 is advertised" {
+    @Test
+    fun `verify passes when no MD5 is advertised`() {
         Files.writeString(file, "abc")
         verify(file, 3)
     }
 
-    "verify accepts uppercase expected MD5 (case-insensitive)" {
+    @Test
+    fun `verify accepts uppercase expected MD5 (case-insensitive)`() {
         Files.writeString(file, "abc")
         verify(file, 3, knownMD5.getValue("abc").uppercase())
     }
@@ -101,48 +94,76 @@ class TestIntegrity : StringSpec({
      * Data stores strip leading zeros from the digest it advertises, so
      * a non-32 chars digest can be valid.
      */
-    "verify accepts an MD5 advertised without its leading zeros" {
+    @Test
+    fun `verify accepts an MD5 advertised without its leading zeros`() {
         Files.writeString(file, "a")
         verify(file, 1, advertisedUnpadded.getValue("a"))
     }
 
-    "verify accepts an MD5 advertised without two leading zeros" {
+    @Test
+    fun `verify accepts an MD5 advertised without two leading zeros`() {
         Files.writeString(file, "168")
         verify(file, 3, advertisedUnpadded.getValue("168"))
     }
 
-    "verify throws on size mismatch" {
+    @Test
+    fun `verify throws on size mismatch`() {
         Files.writeString(file, "abc")
-        shouldThrow<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             verify(file, 999)
         }
     }
 
-    "verify throws on MD5 mismatch even when size is right" {
+    @Test
+    fun `verify throws on MD5 mismatch even when size is right`() {
         Files.writeString(file, "abc")
-        shouldThrow<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             // correct size (3) but wrong checksum
             verify(file, 3, "ffffffffffffffffffffffffffffffff")
         }
     }
 
-    "verify throws on a short MD5 that is wrong rather than unpadded" {
+    @Test
+    fun `verify throws on a short MD5 that is wrong rather than unpadded`() {
         Files.writeString(file, "a")
-        shouldThrow<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             // unpadded digest (of "a") with its last character altered
             verify(file, 1, "cc175b9c0f1b6a831c399e26977266f")
         }
     }
 
-    "verify skips an unusable MD5 instead of failing" {
+    @Test
+    fun `verify skips an unusable MD5 instead of failing`() {
         Files.writeString(file, "abc")
         verify(file, 3, "sha256:not-a-digest")
     }
 
-    "verify still enforces the size when the MD5 is unusable" {
+    @Test
+    fun `verify still enforces the size when the MD5 is unusable`() {
         Files.writeString(file, "abc")
-        shouldThrow<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             verify(file, 999, "not-a-digest")
         }
     }
-})
+
+    private companion object {
+        /**
+         * Exact MD5 digests.
+         */
+        val knownMD5 = mapOf(
+            "" to "d41d8cd98f00b204e9800998ecf8427e",
+            "abc" to "900150983cd24fb0d6963f7d28e17f72",
+            "a" to "0cc175b9c0f1b6a831c399e269772661",
+            "168" to "006f52e9102a8d3be2fe5614f42ba989",
+        )
+
+        /**
+         * [knownMD5], but formatted the way data store advertises them:
+         * hashes are emitted without left zero-padding.
+         */
+        val advertisedUnpadded = mapOf(
+            "a" to "cc175b9c0f1b6a831c399e269772661", // 31 chars
+            "168" to "6f52e9102a8d3be2fe5614f42ba989", // 30 chars
+        )
+    }
+}

@@ -9,30 +9,34 @@
 
 package it.unibo.alchemist.model.geospatial.strategy
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.doubles.shouldBeNaN
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.geospatial.strategy.converter.DoubleIdentityWithFallback
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class TestMeasurementConverter : StringSpec({
+class TestMeasurementConverter {
 
-    val doubleIdentity = DoubleIdentityWithFallback()
+    private val doubleIdentity = DoubleIdentityWithFallback()
 
-    "Double identity gets preserved" {
+    @Test
+    fun `Double identity gets preserved`() {
         (-99..99).forEach { i ->
             val value = i.toDouble()
-            doubleIdentity.convert(value) shouldBe value
+            assertEquals(value, doubleIdentity.convert(value))
         }
     }
 
-    "Double identity yields NaN by default on NaN" {
-        doubleIdentity.convert(Double.NaN).shouldBeNaN()
+    @Test
+    fun `Double identity yields NaN by default on NaN`() {
+        val converted = doubleIdentity.convert(Double.NaN)
+        assertTrue(converted.isNaN(), "expected NaN, but got $converted")
     }
 
-    "Double identity replaces NaN with a default value" {
+    @Test
+    fun `Double identity replaces NaN with a default value`() {
         val defaultValue = -1.0
         val id = DoubleIdentityWithFallback(defaultValue)
-        id.convert(42.0) shouldBe 42.0
-        id.convert(Double.NaN) shouldBe defaultValue
+        assertEquals(42.0, id.convert(42.0))
+        assertEquals(defaultValue, id.convert(Double.NaN))
     }
-})
+}

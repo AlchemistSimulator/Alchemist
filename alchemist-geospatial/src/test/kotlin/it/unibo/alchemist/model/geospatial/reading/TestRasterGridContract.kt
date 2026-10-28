@@ -9,15 +9,13 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.core.spec.style.stringSpec
-import io.kotest.inspectors.forAll
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.doubles.shouldBeNaN
-import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.mockGeoPosition
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Cartesian product of [first] and [second], in row-major order.
@@ -37,42 +35,52 @@ private fun linspace(start: Double, stop: Double, steps: Int): List<Double> = (0
  * Contract shared by every [RasterGrid] implementation, verified
  * once and parameterized by the factory of the concrete implementation under test.
  */
-fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid) = stringSpec {
+abstract class RasterGridContract {
+
+    /**
+     * Factory of the concrete [RasterGrid] implementation under test.
+     */
+    protected abstract val gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid
+
     /**
      * 3 latitudes by 4 longitudes.
      * The cell value at (iLat, iLon) is iLat * 10 + iLon,
      * so it is easily verifiable.
      */
-    val lats = doubleArrayOf(10.0, 20.0, 30.0)
-    val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
-    val values = DoubleArray(12) { idx -> idx / lons.size * 10.0 + (idx % lons.size) }
-    val grid = gridOf(lats, lons, values)
+    private val lats = doubleArrayOf(10.0, 20.0, 30.0)
+    private val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
+    private val values = DoubleArray(12) { idx -> idx / lons.size * 10.0 + (idx % lons.size) }
+    private val grid: RasterGrid by lazy { gridOf(lats, lons, values) }
 
     // Value access tests
-    "valueAt should return the correct value for an interior cell" {
+    @Test
+    fun `valueAt should return the correct value for an interior cell`() {
         // (iLat=1, iLong=2), then index = 1*4 + 2 = 6, then value = 1*10 + 2 = 12
-        grid.valueAt(1, 2) shouldBe 12.0
+        assertEquals(12.0, grid.valueAt(1, 2))
     }
 
-    "valueAt should return correct values at all four corners" {
-        grid.valueAt(0, 0) shouldBe 0.0 // bottom left corner
-        grid.valueAt(0, 3) shouldBe 3.0 // bottom right
-        grid.valueAt(2, 0) shouldBe 20.0 // top left
-        grid.valueAt(2, 3) shouldBe 23.0 // top right
+    @Test
+    fun `valueAt should return correct values at all four corners`() {
+        assertEquals(0.0, grid.valueAt(0, 0)) // bottom left corner
+        assertEquals(3.0, grid.valueAt(0, 3)) // bottom right
+        assertEquals(20.0, grid.valueAt(2, 0)) // top left
+        assertEquals(23.0, grid.valueAt(2, 3)) // top right
     }
 
     // Spatial coverage check
-    "isInBounds should return true for every position within the spatial extent" {
+    @Test
+    fun `isInBounds should return true for every position within the spatial extent`() {
         val steps = 40
         cartesian(
             linspace(lats.first(), lats.last(), steps),
             linspace(lons.first(), lons.last(), steps),
-        ).forAll { (lat, lon) ->
-            grid.isInBounds(mockGeoPosition(lat, lon)).shouldBeTrue()
+        ).forEach { (lat, lon) ->
+            assertTrue(grid.isInBounds(mockGeoPosition(lat, lon)), "($lat, $lon) should be in bounds")
         }
     }
 
-    "isInBounds should return false when a coordinate falls outside the spatial extent" {
+    @Test
+    fun `isInBounds should return false when a coordinate falls outside the spatial extent`() {
         val offset = 0.5
         val midLat = lats[lats.size / 2]
         val midLon = lons[lons.size / 2]
@@ -81,38 +89,45 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
             lats.last() + offset to midLon,
             midLat to lons.first() - offset,
             midLat to lons.last() + offset,
-        ).forAll { (lat, lon) ->
-            grid.isInBounds(mockGeoPosition(lat, lon)).shouldBeFalse()
+        ).forEach { (lat, lon) ->
+            assertFalse(grid.isInBounds(mockGeoPosition(lat, lon)), "($lat, $lon) should be out of bounds")
         }
     }
 
     // Missing values tests
-    "valueAt should return Double.NaN for missing values" {
+    @Test
+    fun `valueAt should return NaN for missing values`() {
         // (iLat=1, iLon=1) is a missing value
         val nanValues = DoubleArray(12) { idx -> if (idx == 5) Double.NaN else idx.toDouble() }
         val nullGrid = ArrayRasterGrid(lats, lons, nanValues)
-        nullGrid.valueAt(1, 1).shouldBeNaN()
+        val value = nullGrid.valueAt(1, 1)
+        assertTrue(value.isNaN(), "Expected NaN, but got $value")
     }
 
-    "a grid entirely made of Double.NaN should return NaN everywhere" {
+    @Test
+    fun `a grid entirely made of NaN should return NaN everywhere`() {
         val allNan = ArrayRasterGrid(lats, lons, DoubleArray(12) { Double.NaN })
-        cartesian(lats.indices, lons.indices).forAll { (iLat, iLon) ->
-            allNan.valueAt(iLat, iLon).shouldBeNaN()
+        cartesian(lats.indices, lons.indices).forEach { (iLat, iLon) ->
+            val value = allNan.valueAt(iLat, iLon)
+            assertTrue(value.isNaN(), "Expected NaN at ($iLat, $iLon), but got $value")
         }
     }
 
     // Axis tests
-    "latitudes should be accessible and match the constructor argument" {
-        grid.latitudes shouldBe lats
+    @Test
+    fun `latitudes should be accessible and match the constructor argument`() {
+        assertContentEquals(lats, grid.latitudes)
     }
 
-    "longitudes should be accessible and match the constructor argument" {
-        grid.longitudes shouldBe lons
+    @Test
+    fun `longitudes should be accessible and match the constructor argument`() {
+        assertContentEquals(lons, grid.longitudes)
     }
 
     // Dimension mismatch
-    "a mismatch between (lats x lons) and values should raise an exception" {
-        shouldThrow<IllegalArgumentException> {
+    @Test
+    fun `a mismatch between the number of cells and the number of values should raise an exception`() {
+        assertFailsWith<IllegalArgumentException> {
             gridOf(
                 lats,
                 lons,
@@ -121,15 +136,16 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
         }
     }
 
-    "axes that are not strictly increasing should raise an exception" {
-        shouldThrow<IllegalArgumentException> {
+    @Test
+    fun `axes that are not strictly increasing should raise an exception`() {
+        assertFailsWith<IllegalArgumentException> {
             gridOf(
                 lats.reversedArray(),
                 lons,
                 values,
             )
         }
-        shouldThrow<IllegalArgumentException> {
+        assertFailsWith<IllegalArgumentException> {
             gridOf(
                 lats,
                 lons.reversedArray(),
@@ -140,11 +156,11 @@ fun rasterGridContract(gridOf: (DoubleArray, DoubleArray, DoubleArray) -> Raster
 }
 
 // tests the array implementation (suitable for dense grids)
-class TestArrayRasterGrid : StringSpec({
-    include(rasterGridContract(::ArrayRasterGrid))
-})
+class TestArrayRasterGrid : RasterGridContract() {
+    override val gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid = ::ArrayRasterGrid
+}
 
 // tests the map implementation (suitable for sparse grids)
-class TestMapRasterGrid : StringSpec({
-    include(rasterGridContract(::MapRasterGrid))
-})
+class TestMapRasterGrid : RasterGridContract() {
+    override val gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid = ::MapRasterGrid
+}

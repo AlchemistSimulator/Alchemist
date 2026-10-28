@@ -9,28 +9,30 @@
 
 package it.unibo.alchemist.boundary.utils
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
-class TestCdsApiRc : StringSpec({
+class TestCdsApiRc {
 
-    val tempDir: Path = Files.createTempDirectory("cdsapirc-test")
+    private val tempDir: Path = Files.createTempDirectory("cdsapirc-test")
 
     // a realistic ECMWF unified access token
-    val realisticKey = "5b65k8c5-fr34-81dc-82b3-88e1hib45559"
+    private val realisticKey = "5b65k8c5-fr34-81dc-82b3-88e1hib45559"
 
     // deletes the directory and its files after the tests
-    afterSpec {
+    @AfterTest
+    fun cleanup() {
         tempDir.toFile().deleteRecursively()
     }
 
     /**
      * Writes [content] to a fresh `.cdsapirc`-style file and returns its path.
      */
-    fun rcFile(content: String): Path = Files.createTempFile(
+    private fun rcFile(content: String): Path = Files.createTempFile(
         tempDir,
         "rc",
         null,
@@ -38,33 +40,37 @@ class TestCdsApiRc : StringSpec({
         Files.writeString(this, content)
     }
 
-    "reads the token from a well-formed file" {
+    @Test
+    fun `reads the token from a well-formed file`() {
         val path = rcFile(
             """
             url: https://cds.climate.copernicus.eu/api
             key: $realisticKey
             """.trimIndent(),
         )
-        CdsApiRc.readToken(path) shouldBe realisticKey
+        assertEquals(realisticKey, CdsApiRc.readToken(path))
     }
 
-    "splits on the FIRST colon, preserving colons inside the token" {
+    @Test
+    fun `splits on the FIRST colon, preserving colons inside the token`() {
         /*
          * the token exact format may change in the future:
          * non-UUID token with internal ':' must survive intact.
          */
         val futureKey = "aaa:bbb:ccc"
         val path = rcFile("key: $futureKey")
-        CdsApiRc.readToken(path) shouldBe futureKey
+        assertEquals(futureKey, CdsApiRc.readToken(path))
     }
 
-    "trims surrounding whitespace around the token value" {
+    @Test
+    fun `trims surrounding whitespace around the token value`() {
         // ECMWF writes a space after the colon in the user-guide
         val path = rcFile("key:    $realisticKey   ")
-        CdsApiRc.readToken(path) shouldBe realisticKey
+        assertEquals(realisticKey, CdsApiRc.readToken(path))
     }
 
-    "ignores the url line and any other keys" {
+    @Test
+    fun `ignores the url line and any other keys`() {
         val path = rcFile(
             """
             url: https://ewds.climate.copernicus.eu/api
@@ -73,10 +79,11 @@ class TestCdsApiRc : StringSpec({
             other: another property
             """.trimIndent(),
         )
-        CdsApiRc.readToken(path) shouldBe realisticKey
+        assertEquals(realisticKey, CdsApiRc.readToken(path))
     }
 
-    "ignores comment lines" {
+    @Test
+    fun `ignores comment lines`() {
         val path = rcFile(
             """
             # personal access token below
@@ -84,11 +91,12 @@ class TestCdsApiRc : StringSpec({
             # personal access token above
             """.trimIndent(),
         )
-        CdsApiRc.readToken(path) shouldBe realisticKey
+        assertEquals(realisticKey, CdsApiRc.readToken(path))
     }
 
-    "throws IllegalStateException when no key line is present" {
+    @Test
+    fun `throws IllegalStateException when no key line is present`() {
         val path = rcFile("url: https://cds.climate.copernicus.eu/api")
-        shouldThrow<IllegalStateException> { CdsApiRc.readToken(path) }
+        assertFailsWith<IllegalStateException> { CdsApiRc.readToken(path) }
     }
-})
+}

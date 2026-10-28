@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.cdm.core)
     implementation(libs.cdm.grib)
     implementation(libs.gson)
+    implementation(alchemist("observables"))
     implementation(libs.guava)
     implementation(libs.slf4j)
 

@@ -23,6 +23,9 @@ import it.unibo.alchemist.model.geospatial.strategy.converter.MeasurementConvert
 import it.unibo.alchemist.model.geospatial.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geospatial.utils.bracketIndices
 import it.unibo.alchemist.model.geospatial.utils.weight
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.Observables.switchMap
+import it.unibo.alchemist.model.observation.Observable
 import java.nio.file.Path
 import kotlin.time.Duration
 import kotlin.time.Instant
@@ -30,14 +33,14 @@ import kotlin.time.Instant
 /**
  * A [GeoLayer] that exposes a value of type [T] for any [GeoPosition] as a function
  * of the current simulation time, backed by temporal NetCDF/GRIB data.
- * On [getValue], the layer knows the perceived simulation time at that moment via
- * [Environment.simulationOrNull].
+ * The value at a position is observed through [valueAt], which follows the time of the simulation
+ * the environment gets attached to (see [Environment.attachedSimulation]); until then, time zero is used.
  *
- * On [getValue], the two time slices enclosing the current time are located and handed to
+ * At each time, the two time slices enclosing the current time are located and handed to
  * [interpolation], which resolves them both spatially and temporally; the resulting `Double`
  * (possibly [Double.NaN]) is mapped to [T] by [converter]. Outside the covered time range the
  * value of the first or last slice is returned; outside the covered **spatial** extent
- * no extrapolation is performed and [getValue] fails.
+ * no extrapolation is performed and the value cannot be computed.
  *
  * At construction time, real-world time [Instant]s are converted proportionally to
  * simulation time using [timeOrigin] and [timeScale].
@@ -50,7 +53,8 @@ import kotlin.time.Instant
  * data through a local cache manager, then reads it. The only one that touches the network. Selected from
  * YAML by providing `endpoint`, `dataset` and `inputsFile`.
  *
- * @param environment simulation environment. Used only to read the current time via [Environment.simulationOrNull].
+ * @param environment simulation environment. Used only to observe the simulation time via
+ * [Environment.attachedSimulation].
  * @param data temporal raster series backing this layer.
  * @param timeOrigin real-world [Instant] corresponding to simulation `Time.ZERO`.
  * Defaults to the first instant in [data] if `null`.
@@ -187,17 +191,26 @@ open class CopernicusLayer<T>(
     )
 
     /**
-     * Reads the simulation time, finds the adjacent time slices using [bracketIndices],
-     * and applies the spatio-temporal [interpolation] strategy.
-     * If the simulation time falls outside the calculated simulation time range,
-     * the returned value will refer to the first or last temporal slice.
+     * Observes the value at [position] as the simulation time changes.
+     * Before the environment gets attached to a simulation, the value at time zero is used;
+     * once attached, the value follows the simulation time.
      *
      * @param position the geographic position to query.
-     * @return the interpolated or extrapolated value converted to [T].
+     * @return the observable value at [position], converted to [T].
      * @throws IllegalArgumentException if the given [position] is outside the spatial extent.
      */
-    override fun getValue(position: GeoPosition): T {
-        val t = environment.simulationOrNull?.time?.toDouble() ?: 0.0
+    override fun valueAt(position: GeoPosition): Observable<T> =
+        environment.attachedSimulation.switchMap { simulation ->
+            simulation?.time?.map { valueAt(position, it.toDouble()) } ?: observe(valueAt(position, 0.0))
+        }
+
+    /**
+     * Finds the time slices adjacent to time [t] using [bracketIndices],
+     * and applies the spatio-temporal [interpolation] strategy.
+     * If [t] falls outside the calculated simulation time range,
+     * the returned value will refer to the first or last temporal slice.
+     */
+    private fun valueAt(position: GeoPosition, t: Double): T {
         // the indices of the spatial slices that enclose time t.
         val (gridIndexBefore, gridIndexAfter) = bracketIndices(sliceTimes, t)
         return if (gridIndexBefore == gridIndexAfter) {

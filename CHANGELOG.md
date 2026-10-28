@@ -1,3 +1,13 @@
+## [49.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/49.0.1...49.1.0) (2026-10-28)
+
+### Features
+
+* **loader:** support scalar constants directly under `variables` in YAML ([#5719](https://github.com/AlchemistSimulator/Alchemist/issues/5719)) ([27ed8fa](https://github.com/AlchemistSimulator/Alchemist/commit/27ed8fa02c457d6f22933ac7c75bf486ff416ca7))
+
+### Dependency updates
+
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.14.0 ([#5718](https://github.com/AlchemistSimulator/Alchemist/issues/5718)) ([bb97e9a](https://github.com/AlchemistSimulator/Alchemist/commit/bb97e9a77663d3fafe753e07d919e336ca78af3c))
+
 ## [49.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/49.0.0...49.0.1) (2026-10-27)
 
 ### Documentation

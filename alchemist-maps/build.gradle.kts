@@ -19,17 +19,16 @@ dependencies {
     api(alchemist("api"))
     api(libs.ais.lib.messages)
 
+    implementation(alchemist("file-cache"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("loading"))
     implementation(libs.bundles.graphhopper) {
         exclude(module = "slf4j-log4j12")
     }
     with(libs.apache.commons) {
-        implementation(codec)
         implementation(io)
         implementation(lang3)
     }
-    implementation(libs.appdirs)
     implementation(libs.boilerplate)
     implementation(libs.caffeine)
     implementation(libs.gson)

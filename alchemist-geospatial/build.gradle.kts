@@ -15,6 +15,7 @@ plugins {
 
 dependencies {
     api(alchemist("api"))
+    api(alchemist("file-cache"))
 
     implementation(libs.cdm.core)
     implementation(libs.cdm.grib)

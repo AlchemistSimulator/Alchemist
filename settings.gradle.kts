@@ -19,6 +19,7 @@ include(
     "alchemist-engine",
     "alchemist-euclidean-geometry",
     "alchemist-factories-generator",
+    "alchemist-file-cache",
     "alchemist-full",
     "alchemist-graphql",
     "alchemist-graphql-surrogates",

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.boundary.acquisition.CopernicusDataStoreProvider
-import it.unibo.alchemist.boundary.acquisition.FileSystemCacheManager
+import it.unibo.alchemist.boundary.filecache.FileSystemCacheManager
 import it.unibo.alchemist.boundary.utils.CdsApiRc
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition

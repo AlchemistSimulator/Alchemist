@@ -27,8 +27,10 @@ import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.time.Duration
 import kotlin.time.Instant
+import org.kaikikm.threadresloader.ResourceLoader
 
 /**
  * A [GeoLayer] that exposes a value of type [T] for any [GeoPosition] as a function
@@ -95,8 +97,8 @@ open class CopernicusLayer<T>(
      * Constructs a [CopernicusLayer] reading a **local directory** of already-available data files:
      * no network I/O, no cache, no credentials.
      *
-     * @param dataDirectory absolute path of a directory holding one or more homogeneous data files (same
-     * variable and spatial grid).
+     * @param dataDirectory path of a directory holding one or more homogeneous data files (same
+     * variable and spatial grid), or, if no such path exists, name of such a directory among the classpath resources.
      * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration (e.g. `"PT6H"`).
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601 instant
      * (e.g. `"2024-06-10T00:00:00Z"`). The first instant found in the data is used when `null`.
@@ -106,7 +108,7 @@ open class CopernicusLayer<T>(
      * @param converter defines how read [Double] values are converted into [T].
      * @throws IllegalArgumentException if [timeScale] or [timeOrigin] are not valid ISO-8601
      * strings; if [timeScale] is negative or infinity; if [dataDirectory] does not hold readable,
-     * homogeneous data files or if the path is not correct.
+     * homogeneous data files or if it is neither an existing path nor a classpath resource.
      */
     constructor(
         environment: Environment<*, GeoPosition>,
@@ -118,7 +120,7 @@ open class CopernicusLayer<T>(
         converter: MeasurementConverter<T>,
     ) : this(
         environment,
-        EagerGridSnapshots(Path.of(dataDirectory), variable),
+        EagerGridSnapshots(localPath(dataDirectory), variable),
         Duration.parseIsoString(timeScale),
         timeOrigin?.let(Instant::parse),
         interpolation,
@@ -136,8 +138,8 @@ open class CopernicusLayer<T>(
      *
      * @param endpoint base URL of the datastore (e.g. `"https://ewds.climate.copernicus.eu/api"`).
      * @param dataset dataset identifier (e.g. `"cems-glofas-historical"`).
-     * @param inputsFile absolute path of a JSON file holding the opaque request map for [dataset] at
-     * [endpoint] (variables, dates, area, type, ...), passed verbatim to the datastore.
+     * @param inputsFile path, or name among the classpath resources, of a JSON file holding the opaque request map
+     * for [dataset] at [endpoint] (variables, dates, area, type, ...), passed verbatim to the datastore.
      * @param checkMd5 whether to check the MD5 digest of the downloaded asset.
      * Sometimes Copernicus stores return the correct requested assets but report an incorrect MD5,
      * so it may be useful to disable this check.
@@ -145,14 +147,15 @@ open class CopernicusLayer<T>(
      * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601
      * instant. The first instant found in the data is used when `null`.
      * @param variable variable name inside the downloaded file. Auto-detected when `null`.
+     * @param cacheDirectory path of the root of the local cache.
+     * @param cdsApiRcFile path of a `.cdsapirc`-formatted file holding the API token.
+     * @param providerTimeout the timeout after which the provider stops trying to retrieve the data.
      * @param interpolation strategy for spatio-temporal evaluation.
      * @param converter defines how read [Double] values are converted into [T].
-     * @param cacheDirectory asbolute path to the root of the local cache.
-     * @param cdsApiRcFile absolute path of a `.cdsapirc`-formatted file holding the API token.
-     * @param providerTimeout the timeout after which the provider stops trying to retrieve the data.
      * @throws IllegalArgumentException if [timeScale]/[timeOrigin]/[providerTimeout] are not valid ISO-8601
      * strings; if [timeScale] is negative or infinity; if [providerTimeout] is negative;
-     * if [endpoint] is not a valid URL; if any path is malformed.
+     * if [endpoint] is not a valid URL; if any path is malformed; if [inputsFile] is neither an existing path
+     * nor a classpath resource.
      * @throws IllegalStateException if the token cannot be read; if the remote job fails or times
      * out; if the downloaded asset fails its integrity check.
      */
@@ -165,11 +168,11 @@ open class CopernicusLayer<T>(
         timeScale: String,
         timeOrigin: String?,
         variable: String?,
-        interpolation: SpatioTemporalInterpolation,
-        converter: MeasurementConverter<T>,
         cacheDirectory: String,
         cdsApiRcFile: String,
         providerTimeout: String,
+        interpolation: SpatioTemporalInterpolation,
+        converter: MeasurementConverter<T>,
     ) : this(
         environment,
         EagerGridSnapshots(
@@ -177,7 +180,7 @@ open class CopernicusLayer<T>(
                 endpoint,
                 dataset,
                 checkMd5,
-                Path.of(inputsFile),
+                localPath(inputsFile),
                 Path.of(cacheDirectory),
                 Path.of(cdsApiRcFile),
                 Duration.parseIsoString(providerTimeout),
@@ -286,27 +289,37 @@ open class CopernicusLayer<T>(
             val request = CopernicusRequest(endpoint.trim().trimEnd('/'), dataset, inputs)
             return FileSystemDirectoryCache(provider, cacheDirectoryRoot)[request]
         }
+
+/**
+         * Converts this [Instant] to a simulation time [Double].
+         *
+         * @param origin the instant that maps to `0.0` in simulation time.
+         * @param scale duration of one simulation time unit.
+         */
+        private fun Instant.toSimulationTime(origin: Instant, scale: Duration): Double = (this - origin) / scale
+
+/**
+         * Builds the failure message for a [position] falling outside the extent of [grid].
+         *
+         * @param position the out-of-bounds [GeoPosition].
+         * @param grid the grid whose extent was exceeded.
+         */
+        private fun outOfBoundsMessage(position: GeoPosition, grid: RasterGrid): String {
+            val latitudes = grid.latitudes
+            val longitudes = grid.longitudes
+            return "GeoPosition out of bounds: requested (lat: ${position.latitude}, lon: ${position.longitude}) " +
+                "but the bounding box is lat: [${latitudes.first()}, ${latitudes.last()}], " +
+                "lon: [${longitudes.first()}, ${longitudes.last()}]"
+        }
+
+/**
+         * Resolves [path] on the file system if it exists there, or among the classpath resources otherwise,
+         * as other Alchemist components do for their data files.
+         *
+         * @throws IllegalArgumentException if [path] is neither an existing path nor a classpath resource.
+         */
+        private fun localPath(path: String): Path = Path.of(path).takeIf { it.exists() }
+            ?: ResourceLoader.getResource(path)?.let { Path.of(it.toURI()) }
+            ?: throw IllegalArgumentException("'$path' is neither an existing path nor a classpath resource")
     }
-}
-
-/**
- * Converts this [Instant] to a simulation time [Double].
- *
- * @param origin the instant that maps to `0.0` in simulation time.
- * @param scale duration of one simulation time unit.
- */
-private fun Instant.toSimulationTime(origin: Instant, scale: Duration): Double = (this - origin) / scale
-
-/**
- * Builds the failure message for a [position] falling outside the extent of [grid].
- *
- * @param position the out-of-bounds [GeoPosition].
- * @param grid the grid whose extent was exceeded.
- */
-private fun outOfBoundsMessage(position: GeoPosition, grid: RasterGrid): String {
-    val latitudes = grid.latitudes
-    val longitudes = grid.longitudes
-    return "GeoPosition out of bounds: requested (lat: ${position.latitude}, lon: ${position.longitude}) " +
-        "but the bounding box is lat: [${latitudes.first()}, ${latitudes.last()}], " +
-        "lon: [${longitudes.first()}, ${longitudes.last()}]"
 }

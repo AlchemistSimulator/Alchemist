@@ -8,12 +8,14 @@
  */
 
 import Libs.alchemist
+import Libs.incarnation
 
 plugins {
     id("kotlin-jvm-convention")
 }
 
 dependencies {
+    ksp(alchemist("factories-generator"))
     api(alchemist("api"))
     api(alchemist("file-cache"))
 
@@ -24,8 +26,10 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.slf4j)
 
+    testImplementation(alchemist("kotlinscript"))
     testImplementation(alchemist("maps"))
     testImplementation(alchemist("test"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 publishing.publications {

@@ -10,79 +10,44 @@
 package it.unibo.alchemist.model.maps.routingservices
 
 import com.google.common.hash.Hashing
+import com.google.common.hash.HashingInputStream
+import com.google.common.io.ByteStreams
 import com.graphhopper.GHRequest
 import com.graphhopper.GraphHopper
 import com.graphhopper.routing.ev.BooleanEncodedValue
 import com.graphhopper.routing.util.AccessFilter
 import com.graphhopper.routing.weighting.custom.CustomModelParser
+import com.graphhopper.util.Constants
+import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
+import it.unibo.alchemist.boundary.filecache.CachedDirectoryKey
+import it.unibo.alchemist.boundary.filecache.FileSystemDirectoryCache
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Route
 import it.unibo.alchemist.model.RoutingService
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.maps.routes.GraphHopperRoute
 import it.unibo.alchemist.model.routes.PolygonalChain
-import java.io.File
-import java.io.InputStream
-import java.io.RandomAccessFile
 import java.net.URL
 import java.nio.file.Files
-import java.nio.file.Paths
-import java.util.concurrent.Semaphore
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.createTempDirectory
-import net.harawata.appdirs.AppDirsFactory
-import org.apache.commons.codec.binary.Base32
-import org.slf4j.LoggerFactory
+import java.nio.file.Path
 
 /**
  * [RoutingService] implementation based on GraphHopper.
+ *
+ * The routing graph of [map] is imported once and stored in a [FileSystemDirectoryCache] rooted in [cacheDirectory],
+ * where later instances (also in other simulations) load it from.
  */
 class GraphHopperRoutingService
 @JvmOverloads
 constructor(
     map: URL,
-    workingDirectory: File = defaultWorkingDirectory(map.openStream()),
+    cacheDirectory: Path = DEFAULT_CACHE_DIRECTORY,
     override val defaultOptions: GraphHopperOptions = Companion.defaultOptions,
 ) : RoutingService<GeoPosition, GraphHopperOptions> {
-    private val graphHopper: GraphHopper
-
-    init {
-        val mapName =
-            map
-                .toExternalForm()
-                .split('/')
-                .last()
-                .takeWhile { it != '?' }
-        val mapFile = File(workingDirectory, mapName)
-        lockfileLock.acquireUninterruptibly()
-        try {
-            RandomAccessFile(File(workingDirectory, ".lock"), "rw").use { fileAccess ->
-                fileAccess.channel.lock().use {
-                    if (!mapFile.exists()) {
-                        Files.copy(map.openStream(), mapFile.toPath())
-                    }
-                }
-                graphHopper =
-                    runCatching { initNavigationSystem(mapFile, workingDirectory) }
-                        .recoverCatching { ex ->
-                            logger.warn(
-                                "Could not initialize $mapFile (version conflict?): erasing cache and retrying",
-                                ex,
-                            )
-                            val corruptedContent =
-                                workingDirectory.listFiles()?.filterNot { it == mapFile }.orEmpty()
-                            corruptedContent.forEach {
-                                require(it.deleteRecursively()) {
-                                    "Could not delete $$it. Something nasty is going on with your file system"
-                                }
-                            }
-                            workingDirectory.mkdirs()
-                            initNavigationSystem(mapFile, workingDirectory)
-                        }.getOrThrow()
-            }
-        } finally {
-            lockfileLock.release()
-        }
+    private val graphHopper: GraphHopper = run {
+        val graph = RoutingGraph(map)
+        val graphDirectory = FileSystemDirectoryCache(RoutingGraph.loader, cacheDirectory)[graph]
+        loadNavigationSystem(graphDirectory.resolve(graph.mapName), graphDirectory)
     }
 
     override fun allowedPointClosestTo(position: GeoPosition, options: GraphHopperOptions): GeoPosition? =
@@ -123,59 +88,75 @@ constructor(
     }
 
     /**
-     * Default valujes for GraphHopper.
+     * Default values for GraphHopper.
      */
     companion object {
-        private val logger = LoggerFactory.getLogger(GraphHopperRoutingService::class.java)
-        private val lockfileLock = Semaphore(1)
-
         /**
          * See [GraphHopperOptions.defaultOptions].
          */
         val defaultOptions = GraphHopperOptions.defaultOptions
 
+        /**
+         * The default root of the cache of the routing graphs.
+         */
+        val DEFAULT_CACHE_DIRECTORY: Path = FileSystemDirectoryCache.DEFAULT_CACHE_DIRECTORY.resolve("graphhopper")
+
+        private const val HASH_PREFIX_LENGTH = 32
+
+        private val encodedValues: String = GraphHopperOptions.allCustomModels
+            .asSequence()
+            .flatMap { model -> CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it } }
+            .distinct()
+            .joinToString(separator = ", ")
+
+        private fun newNavigationSystem(mapFile: Path, graphDirectory: Path): GraphHopper = GraphHopper()
+            .setOSMFile(mapFile.toAbsolutePath().toString())
+            .setElevation(false)
+            .setGraphHopperLocation(graphDirectory.toAbsolutePath().toString())
+            .setProfiles(GraphHopperOptions.allProfiles)
+            .setEncodedValuesString(encodedValues)
+
+        // GraphHopper locks the graph directory while loading: concurrent loads of the same graph would fail.
         @Synchronized
-        private fun defaultWorkingDirectory(map: InputStream): File {
-            val code = map.nameFromHash()
-            val appDirs = AppDirsFactory.getInstance()
-            val possibleLocations: Sequence<(String, String, String) -> String> =
-                sequenceOf(
-                    appDirs::getUserCacheDir,
-                    appDirs::getUserDataDir,
-                    appDirs::getUserConfigDir,
-                    { app, version, _ -> createTempDirectory("$app-$version").absolutePathString() },
-                    { app, version, _ ->
-                        File(Paths.get("").toFile(), "$app-$version").apply { mkdirs() }.absolutePath
-                    },
-                )
-            return possibleLocations.map { File(it("alchemist", "map-$code$", "it.unibo")) }.firstOrNull { folder ->
-                if (folder.exists()) {
-                    (folder.isDirectory && folder.canWrite())
-                        .also { if (!it) logger.warn("{} is not writeable", folder) }
-                } else {
-                    runCatching { folder.mkdirs() }
-                        .onFailure { logger.warn("Directory structure $folder could not be created", it) }
-                        .isSuccess
-                }
-            } ?: error("No writeable path was found.")
+        private fun loadNavigationSystem(mapFile: Path, graphDirectory: Path): GraphHopper =
+            newNavigationSystem(mapFile, graphDirectory).importOrLoad()
+    }
+
+    /**
+     * The routing graph of [map], identified by the content of [map] and by everything determining the graph
+     * GraphHopper imports from it: its version, the profiles, and the encoded values.
+     */
+    private class RoutingGraph(val map: URL) : CachedDirectoryKey {
+        /**
+         * The name of the [map] file, as found at the end of its URL.
+         */
+        val mapName: String = map.toExternalForm().substringAfterLast('/').substringBefore('?')
+
+        override val directoryName: String = run {
+            val mapHash = HashingInputStream(Hashing.sha256(), map.openStream()).use {
+                ByteStreams.exhaust(it)
+                it.hash().toString()
+            }
+            val identity = listOf(
+                mapHash,
+                Constants.VERSION,
+                Constants.getVersions(),
+                GraphHopperOptions.allProfiles.joinToString { "${it.name}|${it.version}" },
+                encodedValues,
+            ).joinToString(separator = "\n")
+            val digest = Hashing.sha256().hashString(identity, Charsets.UTF_8).toString()
+            "${mapName.replace(Regex("[^A-Za-z0-9._-]"), "_")}_${digest.take(HASH_PREFIX_LENGTH)}"
         }
 
-        @Synchronized
-        private fun initNavigationSystem(mapFile: File, internalWorkdir: File): GraphHopper = GraphHopper()
-            .setOSMFile(mapFile.absolutePath)
-            .setElevation(false)
-            .setGraphHopperLocation(internalWorkdir.absolutePath)
-            .setProfiles(GraphHopperOptions.allProfiles)
-            .setEncodedValuesString(
-                GraphHopperOptions.allCustomModels
-                    .asSequence()
-                    .flatMap { model ->
-                        CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it }
-                    }.distinct()
-                    .joinToString(separator = ", "),
-            ).importOrLoad()
-
-        private fun InputStream.nameFromHash(): String =
-            Base32().encodeAsString(Hashing.sha256().hashBytes(readAllBytes()).asBytes()).filter { it != '=' }
+        companion object {
+            /**
+             * Copies the map into the cache entry and imports its routing graph there.
+             */
+            val loader = CacheableDataLoader<RoutingGraph> { graph, target ->
+                val mapFile = target.resolve(graph.mapName)
+                graph.map.openStream().use { Files.copy(it, mapFile) }
+                newNavigationSystem(mapFile, target).importAndClose()
+            }
+        }
     }
 }

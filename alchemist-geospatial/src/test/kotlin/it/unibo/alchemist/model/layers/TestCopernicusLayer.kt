@@ -17,12 +17,16 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.TestVariable
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geospatial.reading.ArrayRasterGrid
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
+import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -44,29 +48,39 @@ class TestCopernicusLayer : StringSpec({
     val netCdfFileName = "data.nc"
 
     /**
-     * Environment mock with the simulation fixed at time [t].
+     * A [Time] mock at [t].
      */
-    fun envAt(t: Double): Environment<Any?, GeoPosition> = mockk {
-        every { simulationOrNull } returns mockk {
-            every { time } returns mockk { every { toDouble() } returns t }
-        }
+    fun timeAt(t: Double): Time = mockk { every { toDouble() } returns t }
+
+    /**
+     * A [Simulation] mock whose time is [simulationTime].
+     */
+    fun simulationAt(simulationTime: Observable<Time>): Simulation<Any?, GeoPosition> = mockk {
+        every { time } returns simulationTime
     }
 
     /**
-     * Environment mock whose simulation time is read from [currentT].
+     * Environment mock attached to the simulation observed by [simulation].
      */
-    fun mutableEnv(currentT: () -> Double): Environment<Any?, GeoPosition> = mockk {
-        every { simulationOrNull } returns mockk {
-            every { time } returns mockk { every { toDouble() } answers { currentT() } }
-        }
+    fun envWith(simulation: Observable<Simulation<Any?, GeoPosition>?>): Environment<Any?, GeoPosition> = mockk {
+        every { attachedSimulation } returns simulation
     }
+
+    /**
+     * Environment mock with the simulation fixed at time [t].
+     */
+    fun envAt(t: Double): Environment<Any?, GeoPosition> = envWith(observe(simulationAt(observe(timeAt(t)))))
+
+    /**
+     * Environment mock whose simulation time is [simulationTime].
+     */
+    fun mutableEnv(simulationTime: Observable<Time>): Environment<Any?, GeoPosition> =
+        envWith(observe(simulationAt(simulationTime)))
 
     /**
      * Environment mock where the simulation has not started yet.
      */
-    val envNoSim: Environment<Any?, GeoPosition> = mockk {
-        every { simulationOrNull } returns null
-    }
+    val envNoSim: Environment<Any?, GeoPosition> = envWith(observe(null))
 
     /**
      * A [RasterGrid] where every cell has a fixed [value].
@@ -124,7 +138,7 @@ class TestCopernicusLayer : StringSpec({
         )
         withClue("t=0.0 should hit the first slice exactly") {
             gridSnaps.instants.indices.forEach { _ ->
-                layer.getValue(center) shouldBe 7.0
+                layer.currentValueAt(center) shouldBe 7.0
             }
         }
     }
@@ -137,7 +151,7 @@ class TestCopernicusLayer : StringSpec({
             timeOrigin = Instant.EPOCH + 1.hours,
         )
         withClue("t=0.0 with shifted origin maps to the second slice = 20.0") {
-            layer.getValue(center) shouldBe 20.0
+            layer.currentValueAt(center) shouldBe 20.0
         }
     }
 
@@ -149,7 +163,7 @@ class TestCopernicusLayer : StringSpec({
             timeOrigin = Instant.EPOCH + 1.hours,
         )
         withClue("t=-2.0 < sliceTimes.first()=-1.0, extrapolates to first slice: 10.0") {
-            layer.getValue(center) shouldBe 10.0
+            layer.currentValueAt(center) shouldBe 10.0
         }
         layer = DoubleCopernicusLayer(
             envAt(2.0),
@@ -157,7 +171,7 @@ class TestCopernicusLayer : StringSpec({
             timeOrigin = Instant.EPOCH + 1.hours,
         )
         withClue("t=2.0 > sliceTimes.last()=1.0, extrapolates to last slice: 30.0") {
-            layer.getValue(center) shouldBe 30.0
+            layer.currentValueAt(center) shouldBe 30.0
         }
     }
 
@@ -173,7 +187,7 @@ class TestCopernicusLayer : StringSpec({
             timeScale = 30.minutes,
         )
         withClue("t=1.0 is halfway between 0.0 and 2.0, LINEAR blending should return 5.0") {
-            layer.getValue(center) shouldBe (5.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(center) shouldBe (5.0 plusOrMinus TOLERANCE)
         }
     }
 
@@ -188,19 +202,19 @@ class TestCopernicusLayer : StringSpec({
             timeScale = 6.hours,
         )
         withClue("t=0.5 halfway, LINEAR blending should return 6.0") {
-            layer.getValue(center) shouldBe (6.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(center) shouldBe (6.0 plusOrMinus TOLERANCE)
         }
     }
 
     // out of bound test
-    "getValue() should raise an exception when an out-of-bounds position is passed" {
+    "currentValueAt() should raise an exception when an out-of-bounds position is passed" {
         val gridSnaps = syntheticGrid(7.0)
         val layer = DoubleCopernicusLayer(
             environment = envAt(0.0),
             data = gridSnaps,
         )
         shouldThrow<IllegalArgumentException> {
-            layer.getValue(mockGeoPosition(lats.first() - 1, lons.first() - 1))
+            layer.currentValueAt(mockGeoPosition(lats.first() - 1, lons.first() - 1))
         }
     }
 
@@ -214,19 +228,32 @@ class TestCopernicusLayer : StringSpec({
                 syntheticGrid(*sliceValues),
             )
             withClue("t=$time hits slice $i = ${sliceValues[i]}") {
-                layer.getValue(center) shouldBe sliceValues[i]
+                layer.currentValueAt(center) shouldBe sliceValues[i]
             }
         }
     }
 
     // no simulation test
-    "simulationOrNull null falls back to t=0.0 and reads the first slice" {
+    "no attached simulation falls back to t=0.0 and reads the first slice" {
         val layer = DoubleCopernicusLayer(
             envNoSim,
             syntheticGrid(42.0, 84.0),
         )
         withClue("null simulation: t=0.0, first slice = 42.0") {
-            layer.getValue(center) shouldBe 42.0
+            layer.currentValueAt(center) shouldBe 42.0
+        }
+    }
+
+    "the observed value follows the simulation time once the simulation is attached" {
+        val simulation = observe<Simulation<Any?, GeoPosition>?>(null)
+        val simulationTime = observe(timeAt(1.0))
+        val layer = DoubleCopernicusLayer(envWith(simulation), syntheticGrid(42.0, 84.0))
+        val observed = mutableListOf<Double>()
+        layer.valueAt(center).onChange { observed += it }
+        simulation.current = simulationAt(simulationTime)
+        simulationTime.current = timeAt(0.5)
+        withClue("t=0.0 before attachment, then t=1.0 at attachment, then t=0.5") {
+            observed shouldBe listOf(42.0, 84.0, 63.0)
         }
     }
 
@@ -248,7 +275,7 @@ class TestCopernicusLayer : StringSpec({
         )
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
         withClue("t=0.0 -> first slice -> all cells = 10.0") {
-            layer.getValue(center) shouldBe (10.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(center) shouldBe (10.0 plusOrMinus TOLERANCE)
         }
     }
 
@@ -263,7 +290,7 @@ class TestCopernicusLayer : StringSpec({
         )
         val layer = DoubleCopernicusLayer(envAt(0.5), dir.absolutePathString())
         withClue("t=0.5 halfway between 0.0 and 10.0 -> 5.0") {
-            layer.getValue(center) shouldBe (5.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(center) shouldBe (5.0 plusOrMinus TOLERANCE)
         }
     }
 
@@ -290,10 +317,10 @@ class TestCopernicusLayer : StringSpec({
         val lat44: GeoPosition = mockGeoPosition(44.0, 12.0)
         val lat46: GeoPosition = mockGeoPosition(46.0, 12.0)
         withClue("after normalisation, lat=44 (file-row 2) should return 3.0") {
-            layer.getValue(lat44) shouldBe (3.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(lat44) shouldBe (3.0 plusOrMinus TOLERANCE)
         }
         withClue("after normalisation, lat=46 (file-row 0) should return 1.0") {
-            layer.getValue(lat46) shouldBe (1.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(lat46) shouldBe (1.0 plusOrMinus TOLERANCE)
         }
     }
 
@@ -313,7 +340,7 @@ class TestCopernicusLayer : StringSpec({
         )
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = null)
         withClue("auto-detected variable; all cells = 7.0") {
-            layer.getValue(center) shouldBe (7.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(center) shouldBe (7.0 plusOrMinus TOLERANCE)
         }
     }
 
@@ -334,7 +361,7 @@ class TestCopernicusLayer : StringSpec({
         )
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = varName)
         withClue("explicit variable '$varName'; all cells = 42.0") {
-            layer.getValue(center) shouldBe (42.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(center) shouldBe (42.0 plusOrMinus TOLERANCE)
         }
     }
 
@@ -360,21 +387,21 @@ class TestCopernicusLayer : StringSpec({
                 TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 30.0 else 40.0 }),
             ),
         )
-        var t = 0.0
-        val layer = DoubleCopernicusLayer(mutableEnv { t }, dir.absolutePathString())
+        val simulationTime = observe(timeAt(0.0))
+        val layer = DoubleCopernicusLayer(mutableEnv(simulationTime), dir.absolutePathString())
         (0..3).forEach {
             val time = it.toDouble()
             val expectedTime = (it + 1) * 10.0
-            t = time
+            simulationTime.current = timeAt(time)
 
             withClue("t=$time. Exact hit on merged series = $expectedTime") {
-                layer.getValue(center) shouldBe (expectedTime plusOrMinus TOLERANCE)
+                layer.currentValueAt(center) shouldBe (expectedTime plusOrMinus TOLERANCE)
             }
         }
         // interpolation across the file boundary: t=1.5 should return the mean with linear interpolation
-        t = 1.5
+        simulationTime.current = timeAt(1.5)
         withClue("t=1.5 crosses file boundary. LINEAR blend of 20.0 and 30.0 = 25.0") {
-            layer.getValue(center) shouldBe (25.0 plusOrMinus TOLERANCE)
+            layer.currentValueAt(center) shouldBe (25.0 plusOrMinus TOLERANCE)
         }
     }
 })

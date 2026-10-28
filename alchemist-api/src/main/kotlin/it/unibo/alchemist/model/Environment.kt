@@ -59,9 +59,15 @@ interface Environment<T, P : Position<out P>> : ReactionHost<T> {
     val offset: DoubleArray
 
     /**
+     * The [Simulation] this environment is attached to, or `null` until it gets attached.
+     * Observers are notified when the simulation is attached.
+     */
+    val attachedSimulation: Observable<Simulation<T, P>?>
+
+    /**
      * Return the current [Simulation], if present, or `null` otherwise.
      */
-    val simulationOrNull: Simulation<T, P>?
+    val simulationOrNull: Simulation<T, P>? get() = attachedSimulation.current
 
     /**
      * The size of the environment as an array of length getDimensions().

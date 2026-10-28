@@ -26,8 +26,10 @@ import it.unibo.alchemist.model.observables.ObservableMutableList
 import it.unibo.alchemist.model.observables.ObservableMutableMap
 import it.unibo.alchemist.model.observables.ObservableMutableSet
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
+import it.unibo.alchemist.model.observables.util.MutableObservables.observeShareable
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Disposable
+import it.unibo.alchemist.model.observation.MutableObservable
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.model.observation.ObservableList
 import it.unibo.alchemist.model.observation.ObservableSet
@@ -90,7 +92,7 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             }
         set(value) {
             if (simulationOrNull == null) {
-                simulationOrNull = value
+                attachedSimulation.current = value
             } else {
                 check(simulationOrNull == value) {
                     "Inconsistent simulation configuration for $this: simulation was set to " +
@@ -100,8 +102,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             }
         }
 
-    final override var simulationOrNull: Simulation<T, P>? = null
-        private set
+    final override val attachedSimulation: Observable<Simulation<T, P>?>
+        field: MutableObservable<Simulation<T, P>?> = observeShareable(null)
 
     /*
      * The range queries that currently have subscribers. Each one is updated incrementally on the node additions,

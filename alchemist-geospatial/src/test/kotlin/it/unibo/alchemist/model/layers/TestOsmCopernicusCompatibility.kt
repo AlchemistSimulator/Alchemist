@@ -59,7 +59,7 @@ class TestOsmCopernicusCompatibility : StringSpec({
             )
             val layer = DoubleCopernicusLayer(environment, dir.absolutePathString())
             withClue("pharmacy is within the synthetic grid's bounding box") {
-                layer.getValue(pharmacyPos) shouldBe fixedMeasurement
+                layer.currentValueAt(pharmacyPos) shouldBe fixedMeasurement
             }
         } finally {
             dir.toFile().deleteRecursively()

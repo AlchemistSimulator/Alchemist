@@ -11,6 +11,10 @@ plugins {
     id("kotlin-jvm-convention")
 }
 
+dependencies {
+    implementation(libs.appdirs)
+}
+
 publishing.publications {
     withType<MavenPublication> {
         pom {

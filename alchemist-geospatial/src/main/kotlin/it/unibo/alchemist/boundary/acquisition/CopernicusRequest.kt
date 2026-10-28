@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
-import it.unibo.alchemist.boundary.filecache.CacheKey
+import it.unibo.alchemist.boundary.filecache.CachedDirectoryKey
 import it.unibo.alchemist.boundary.utils.CanonicalJson
 import java.net.URI
 import java.security.MessageDigest
@@ -25,7 +25,8 @@ import java.security.MessageDigest
  * @throws IllegalArgumentException if the [endpoint] does not represent a valid Copernicus endpoint
  * or the loopback address.
  */
-data class CopernicusRequest(val endpoint: String, val dataset: String, val inputs: Map<String, Any>) : CacheKey {
+data class CopernicusRequest(val endpoint: String, val dataset: String, val inputs: Map<String, Any>) :
+    CachedDirectoryKey {
 
     init {
         URI.create(endpoint).also {
@@ -44,11 +45,11 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
     }
 
     /**
-     * @return a deterministic directory name: a human-readable sanitized prefix from [dataset],
+     * A deterministic directory name: a human-readable sanitized prefix from [dataset],
      * followed by a truncation of the SHA-256 hash of the canonical `(dataset, inputs)` pair. The
      * prefix aids the human reading the cache directory; the hash provides collision resistance.
      */
-    override fun toDirectoryName(): String {
+    override val directoryName: String = run {
         val canonical = CanonicalJson.encode(
             mapOf(
                 "endpoint" to endpoint,
@@ -56,7 +57,7 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
                 "inputs" to inputs,
             ),
         )
-        return "${dataset.toFileSystemSafe()}_${sha256Hex(canonical).take(HASH_PREFIX_LENGTH)}"
+        "${dataset.toFileSystemSafe()}_${sha256Hex(canonical).take(HASH_PREFIX_LENGTH)}"
     }
 
     private companion object {

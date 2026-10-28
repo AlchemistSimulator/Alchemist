@@ -9,11 +9,6 @@
 
 package it.unibo.alchemist.model.layers
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.assertions.withClue
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.doubles.plusOrMinus
-import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.TestVariable
@@ -31,6 +26,10 @@ import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -38,54 +37,55 @@ import kotlin.time.Instant
 
 private const val TOLERANCE = 1e-9
 
-class TestCopernicusLayer : StringSpec({
+class TestCopernicusLayer {
     // fixed spatial grid
-    val lats = doubleArrayOf(44.0, 45.0, 46.0)
-    val lons = doubleArrayOf(11.0, 12.0, 13.0)
+    private val lats = doubleArrayOf(44.0, 45.0, 46.0)
+    private val lons = doubleArrayOf(11.0, 12.0, 13.0)
 
-    val center: GeoPosition = mockGeoPosition(45.0, 12.0)
+    private val center: GeoPosition = mockGeoPosition(45.0, 12.0)
 
-    val netCdfFileName = "data.nc"
+    private val netCdfFileName = "data.nc"
 
     /**
      * A [Time] mock at [t].
      */
-    fun timeAt(t: Double): Time = mockk { every { toDouble() } returns t }
+    private fun timeAt(t: Double): Time = mockk { every { toDouble() } returns t }
 
     /**
      * A [Simulation] mock whose time is [simulationTime].
      */
-    fun simulationAt(simulationTime: Observable<Time>): Simulation<Any?, GeoPosition> = mockk {
+    private fun simulationAt(simulationTime: Observable<Time>): Simulation<Any?, GeoPosition> = mockk {
         every { time } returns simulationTime
     }
 
     /**
      * Environment mock attached to the simulation observed by [simulation].
      */
-    fun envWith(simulation: Observable<Simulation<Any?, GeoPosition>?>): Environment<Any?, GeoPosition> = mockk {
-        every { attachedSimulation } returns simulation
-    }
+    private fun envWith(simulation: Observable<Simulation<Any?, GeoPosition>?>): Environment<Any?, GeoPosition> =
+        mockk {
+            every { attachedSimulation } returns simulation
+        }
 
     /**
      * Environment mock with the simulation fixed at time [t].
      */
-    fun envAt(t: Double): Environment<Any?, GeoPosition> = envWith(observe(simulationAt(observe(timeAt(t)))))
+    private fun envAt(t: Double): Environment<Any?, GeoPosition> = envWith(observe(simulationAt(observe(timeAt(t)))))
 
     /**
      * Environment mock whose simulation time is [simulationTime].
      */
-    fun mutableEnv(simulationTime: Observable<Time>): Environment<Any?, GeoPosition> =
+    private fun mutableEnv(simulationTime: Observable<Time>): Environment<Any?, GeoPosition> =
         envWith(observe(simulationAt(simulationTime)))
 
     /**
      * Environment mock where the simulation has not started yet.
      */
-    val envNoSim: Environment<Any?, GeoPosition> = envWith(observe(null))
+    private val envNoSim: Environment<Any?, GeoPosition> = envWith(observe(null))
 
     /**
      * A [RasterGrid] where every cell has a fixed [value].
      */
-    fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
+    private fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
         lats,
         lons,
         DoubleArray(lats.size * lons.size) { value },
@@ -96,7 +96,7 @@ class TestCopernicusLayer : StringSpec({
      * THe i-th slice has all cells equal to `sliceValue[i]`.
      * Time steps are spaced [step] apart starting from [base].
      */
-    fun syntheticGrid(
+    private fun syntheticGrid(
         vararg sliceValues: Double,
         base: Instant = Instant.EPOCH,
         step: Duration = 1.hours,
@@ -109,19 +109,21 @@ class TestCopernicusLayer : StringSpec({
         }
     }
 
-    val tempDir: Path = createTempDirectory("geo-raster-layer-test")
+    private val tempDir: Path = createTempDirectory("geo-raster-layer-test")
 
-    // deletes the directory and its files after the tests
-    afterSpec {
+    // deletes the directory and its files after each test
+    @AfterTest
+    fun cleanup() {
         tempDir.toFile().deleteRecursively()
     }
 
-    "require fails on empty GridSnapshots" {
+    @Test
+    fun `require fails on empty GridSnapshots`() {
         val emptyGrid = object : GridSnapshots {
             override val instants: List<Instant> = emptyList()
             override fun grid(index: Int): RasterGrid = throw UnsupportedOperationException()
         }
-        shouldThrow<IllegalArgumentException> {
+        assertFailsWith<IllegalArgumentException> {
             DoubleCopernicusLayer(
                 environment = envAt(0.0),
                 data = emptyGrid,
@@ -130,53 +132,57 @@ class TestCopernicusLayer : StringSpec({
     }
 
     // timeOrigin tests
-    "default timeOrigin maps the first instant to t=0.0" {
+    @Test
+    fun `default timeOrigin maps the first instant to time zero`() {
         val gridSnaps = syntheticGrid(7.0, 14.0)
         val layer = DoubleCopernicusLayer(
             environment = envAt(0.0),
             data = gridSnaps,
         )
-        withClue("t=0.0 should hit the first slice exactly") {
-            gridSnaps.instants.indices.forEach { _ ->
-                layer.currentValueAt(center) shouldBe 7.0
-            }
+        gridSnaps.instants.indices.forEach { _ ->
+            assertEquals(7.0, layer.currentValueAt(center), "t=0.0 should hit the first slice exactly")
         }
     }
 
-    "explicit timeOrigin shifts the temporal origin" {
+    @Test
+    fun `explicit timeOrigin shifts the temporal origin`() {
         val layer = DoubleCopernicusLayer(
             envAt(0.0),
             syntheticGrid(10.0, 20.0, 30.0),
             // instants: EPOCH, EPOCH+1h, EPOCH+2h
             timeOrigin = Instant.EPOCH + 1.hours,
         )
-        withClue("t=0.0 with shifted origin maps to the second slice = 20.0") {
-            layer.currentValueAt(center) shouldBe 20.0
-        }
+        assertEquals(20.0, layer.currentValueAt(center), "t=0.0 with shifted origin maps to the second slice = 20.0")
     }
 
-    "explicit timeOrigin: t before shifted range extrapolates with the first or last time slice" {
+    @Test
+    fun `with an explicit timeOrigin, times outside the shifted range extrapolate with the first or last time slice`() {
         // computed simulation times: -1.0, 0.0, 1.0; t=-2.0 and 2 are out of range
         var layer = DoubleCopernicusLayer(
             envAt(-2.0),
             syntheticGrid(10.0, 20.0, 30.0),
             timeOrigin = Instant.EPOCH + 1.hours,
         )
-        withClue("t=-2.0 < sliceTimes.first()=-1.0, extrapolates to first slice: 10.0") {
-            layer.currentValueAt(center) shouldBe 10.0
-        }
+        assertEquals(
+            10.0,
+            layer.currentValueAt(center),
+            "t=-2.0 < sliceTimes.first()=-1.0, extrapolates to first slice: 10.0",
+        )
         layer = DoubleCopernicusLayer(
             envAt(2.0),
             syntheticGrid(10.0, 20.0, 30.0),
             timeOrigin = Instant.EPOCH + 1.hours,
         )
-        withClue("t=2.0 > sliceTimes.last()=1.0, extrapolates to last slice: 30.0") {
-            layer.currentValueAt(center) shouldBe 30.0
-        }
+        assertEquals(
+            30.0,
+            layer.currentValueAt(center),
+            "t=2.0 > sliceTimes.last()=1.0, extrapolates to last slice: 30.0",
+        )
     }
 
     // timescale tests
-    "timeScale PT30M: one real hour maps to t=2.0" {
+    @Test
+    fun `with timeScale PT30M one real hour maps to time two`() {
         /*
          * instants in the file: EPOCH, EPOCH+1h
          * sliceTimes should be [0.0, 2.0] with scale PT30M
@@ -186,12 +192,16 @@ class TestCopernicusLayer : StringSpec({
             syntheticGrid(0.0, 10.0),
             timeScale = 30.minutes,
         )
-        withClue("t=1.0 is halfway between 0.0 and 2.0, LINEAR blending should return 5.0") {
-            layer.currentValueAt(center) shouldBe (5.0 plusOrMinus TOLERANCE)
-        }
+        assertEquals(
+            5.0,
+            layer.currentValueAt(center),
+            TOLERANCE,
+            "t=1.0 is halfway between 0.0 and 2.0, LINEAR blending should return 5.0",
+        )
     }
 
-    "timeScale PT6H: one real six-hour step maps to t=1.0" {
+    @Test
+    fun `with timeScale PT6H one real six-hour step maps to time one`() {
         /*
          * instants in the file: EPOCH, EPOCH+6h
          * sliceTimes should be [0.0, 1.0] with scale PT6H
@@ -201,25 +211,25 @@ class TestCopernicusLayer : StringSpec({
             syntheticGrid(0.0, 12.0, step = 6.hours),
             timeScale = 6.hours,
         )
-        withClue("t=0.5 halfway, LINEAR blending should return 6.0") {
-            layer.currentValueAt(center) shouldBe (6.0 plusOrMinus TOLERANCE)
-        }
+        assertEquals(6.0, layer.currentValueAt(center), TOLERANCE, "t=0.5 halfway, LINEAR blending should return 6.0")
     }
 
     // out of bound test
-    "currentValueAt() should raise an exception when an out-of-bounds position is passed" {
+    @Test
+    fun `currentValueAt should raise an exception when an out-of-bounds position is passed`() {
         val gridSnaps = syntheticGrid(7.0)
         val layer = DoubleCopernicusLayer(
             environment = envAt(0.0),
             data = gridSnaps,
         )
-        shouldThrow<IllegalArgumentException> {
+        assertFailsWith<IllegalArgumentException> {
             layer.currentValueAt(mockGeoPosition(lats.first() - 1, lons.first() - 1))
         }
     }
 
     // strategies tests
-    "exact hits on slices produce values without temporal interpolation" {
+    @Test
+    fun `exact hits on slices produce values without temporal interpolation`() {
         val sliceValues = doubleArrayOf(1.0, 2.0, 3.0)
         for (i in sliceValues.indices) {
             val time = i.toDouble()
@@ -227,24 +237,22 @@ class TestCopernicusLayer : StringSpec({
                 envAt(time),
                 syntheticGrid(*sliceValues),
             )
-            withClue("t=$time hits slice $i = ${sliceValues[i]}") {
-                layer.currentValueAt(center) shouldBe sliceValues[i]
-            }
+            assertEquals(sliceValues[i], layer.currentValueAt(center), "t=$time hits slice $i = ${sliceValues[i]}")
         }
     }
 
     // no simulation test
-    "no attached simulation falls back to t=0.0 and reads the first slice" {
+    @Test
+    fun `no attached simulation falls back to time zero and reads the first slice`() {
         val layer = DoubleCopernicusLayer(
             envNoSim,
             syntheticGrid(42.0, 84.0),
         )
-        withClue("null simulation: t=0.0, first slice = 42.0") {
-            layer.currentValueAt(center) shouldBe 42.0
-        }
+        assertEquals(42.0, layer.currentValueAt(center), "null simulation: t=0.0, first slice = 42.0")
     }
 
-    "the observed value follows the simulation time once the simulation is attached" {
+    @Test
+    fun `the observed value follows the simulation time once the simulation is attached`() {
         val simulation = observe<Simulation<Any?, GeoPosition>?>(null)
         val simulationTime = observe(timeAt(1.0))
         val layer = DoubleCopernicusLayer(envWith(simulation), syntheticGrid(42.0, 84.0))
@@ -252,13 +260,16 @@ class TestCopernicusLayer : StringSpec({
         layer.valueAt(center).onChange { observed += it }
         simulation.current = simulationAt(simulationTime)
         simulationTime.current = timeAt(0.5)
-        withClue("t=0.0 before attachment, then t=1.0 at attachment, then t=0.5") {
-            observed shouldBe listOf(42.0, 84.0, 63.0)
-        }
+        assertEquals(
+            listOf(42.0, 84.0, 63.0),
+            observed,
+            "t=0.0 before attachment, then t=1.0 at attachment, then t=0.5",
+        )
     }
 
     // directory constructor with real NetCDF files tests
-    "directory constructor: single file, exact hit at t=0 with default timeOrigin" {
+    @Test
+    fun `directory constructor with a single file hits exactly at time zero with the default timeOrigin`() {
         val dir = tempDir.resolve("single").also { it.toFile().mkdirs() }
         /*
          * slice values:
@@ -274,12 +285,11 @@ class TestCopernicusLayer : StringSpec({
             variables = listOf(TestVariable(rawValues = DoubleArray(27) { idx -> ((idx / 9) + 1) * 10.0 })),
         )
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
-        withClue("t=0.0 -> first slice -> all cells = 10.0") {
-            layer.currentValueAt(center) shouldBe (10.0 plusOrMinus TOLERANCE)
-        }
+        assertEquals(10.0, layer.currentValueAt(center), TOLERANCE, "t=0.0 -> first slice -> all cells = 10.0")
     }
 
-    "directory constructor: linear interpolation between two slices in file" {
+    @Test
+    fun `directory constructor interpolates linearly between two slices in a file`() {
         val dir = tempDir.resolve("interp").also { it.toFile().mkdirs() }
         writeTestNetcdf(
             path = dir.resolve(netCdfFileName),
@@ -289,12 +299,11 @@ class TestCopernicusLayer : StringSpec({
             variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 0.0 else 10.0 })),
         )
         val layer = DoubleCopernicusLayer(envAt(0.5), dir.absolutePathString())
-        withClue("t=0.5 halfway between 0.0 and 10.0 -> 5.0") {
-            layer.currentValueAt(center) shouldBe (5.0 plusOrMinus TOLERANCE)
-        }
+        assertEquals(5.0, layer.currentValueAt(center), TOLERANCE, "t=0.5 halfway between 0.0 and 10.0 -> 5.0")
     }
 
-    "directory constructor: descending latitude axis is normalised to ascending" {
+    @Test
+    fun `directory constructor normalises a descending latitude axis to ascending`() {
         val dir = tempDir.resolve("desc-lat").also { it.toFile().mkdirs() }
         writeTestNetcdf(
             path = dir.resolve(netCdfFileName),
@@ -316,15 +325,22 @@ class TestCopernicusLayer : StringSpec({
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
         val lat44: GeoPosition = mockGeoPosition(44.0, 12.0)
         val lat46: GeoPosition = mockGeoPosition(46.0, 12.0)
-        withClue("after normalisation, lat=44 (file-row 2) should return 3.0") {
-            layer.currentValueAt(lat44) shouldBe (3.0 plusOrMinus TOLERANCE)
-        }
-        withClue("after normalisation, lat=46 (file-row 0) should return 1.0") {
-            layer.currentValueAt(lat46) shouldBe (1.0 plusOrMinus TOLERANCE)
-        }
+        assertEquals(
+            3.0,
+            layer.currentValueAt(lat44),
+            TOLERANCE,
+            "after normalisation, lat=44 (file-row 2) should return 3.0",
+        )
+        assertEquals(
+            1.0,
+            layer.currentValueAt(lat46),
+            TOLERANCE,
+            "after normalisation, lat=46 (file-row 0) should return 1.0",
+        )
     }
 
-    "directory constructor: variable auto-detected when variableName is null" {
+    @Test
+    fun `directory constructor auto-detects the variable when variableName is null`() {
         val dir = tempDir.resolve("auto-detect").also { it.toFile().mkdirs() }
         writeTestNetcdf(
             path = dir.resolve(netCdfFileName),
@@ -339,12 +355,11 @@ class TestCopernicusLayer : StringSpec({
             ),
         )
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = null)
-        withClue("auto-detected variable; all cells = 7.0") {
-            layer.currentValueAt(center) shouldBe (7.0 plusOrMinus TOLERANCE)
-        }
+        assertEquals(7.0, layer.currentValueAt(center), TOLERANCE, "auto-detected variable; all cells = 7.0")
     }
 
-    "directory constructor: explicit variable name is used correctly" {
+    @Test
+    fun `directory constructor uses an explicit variable name correctly`() {
         val dir = tempDir.resolve("explicit-var").also { it.toFile().mkdirs() }
         val varName = "temperature"
         writeTestNetcdf(
@@ -360,12 +375,11 @@ class TestCopernicusLayer : StringSpec({
             ),
         )
         val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = varName)
-        withClue("explicit variable '$varName'; all cells = 42.0") {
-            layer.currentValueAt(center) shouldBe (42.0 plusOrMinus TOLERANCE)
-        }
+        assertEquals(42.0, layer.currentValueAt(center), TOLERANCE, "explicit variable '$varName'; all cells = 42.0")
     }
 
-    "directory constructor: two different files are merged into a single ordered time series" {
+    @Test
+    fun `directory constructor merges two different files into a single ordered time series`() {
         val dir = tempDir.resolve("two-files").also { it.toFile().mkdirs() }
         // file 1: t=0h (all values=10.0) and t=1h (all values=20.0)
         writeTestNetcdf(
@@ -394,17 +408,23 @@ class TestCopernicusLayer : StringSpec({
             val expectedTime = (it + 1) * 10.0
             simulationTime.current = timeAt(time)
 
-            withClue("t=$time. Exact hit on merged series = $expectedTime") {
-                layer.currentValueAt(center) shouldBe (expectedTime plusOrMinus TOLERANCE)
-            }
+            assertEquals(
+                expectedTime,
+                layer.currentValueAt(center),
+                TOLERANCE,
+                "t=$time. Exact hit on merged series = $expectedTime",
+            )
         }
         // interpolation across the file boundary: t=1.5 should return the mean with linear interpolation
         simulationTime.current = timeAt(1.5)
-        withClue("t=1.5 crosses file boundary. LINEAR blend of 20.0 and 30.0 = 25.0") {
-            layer.currentValueAt(center) shouldBe (25.0 plusOrMinus TOLERANCE)
-        }
+        assertEquals(
+            25.0,
+            layer.currentValueAt(center),
+            TOLERANCE,
+            "t=1.5 crosses file boundary. LINEAR blend of 20.0 and 30.0 = 25.0",
+        )
     }
-})
+}
 
 /**
  * Shorthand for EPOCH time.

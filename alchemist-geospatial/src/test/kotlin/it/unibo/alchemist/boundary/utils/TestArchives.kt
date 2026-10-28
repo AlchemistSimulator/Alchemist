@@ -9,37 +9,37 @@
 
 package it.unibo.alchemist.boundary.utils
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.paths.shouldExist
-import io.kotest.matchers.paths.shouldNotExist
-import io.kotest.matchers.shouldBe
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.exists
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-class TestArchives : StringSpec({
+class TestArchives {
 
-    val tempDir: Path = Files.createTempDirectory("archives-test")
-    val netCdfFileName = "dis24.nc"
-    val zipFileName = "result.zip"
-
-    // deletes the directory and its files after the tests
-    afterSpec {
-        tempDir.toFile().deleteRecursively()
-    }
+    private val tempDir: Path = Files.createTempDirectory("archives-test")
+    private val netCdfFileName = "dis24.nc"
+    private val zipFileName = "result.zip"
 
     // the subdir for each test
-    lateinit var dir: Path
-    beforeTest {
-        dir = Files.createTempDirectory(tempDir, "dir")
+    private val dir: Path = Files.createTempDirectory(tempDir, "dir")
+
+    // deletes the directory and its files after the tests
+    @AfterTest
+    fun cleanup() {
+        tempDir.toFile().deleteRecursively()
     }
 
     /**
      * Writes a real zip named [zipName] into [dir] with the given entry path -> content.
      */
-    fun writeZip(dir: Path, zipName: String, entries: Map<String, String>): Path {
+    private fun writeZip(dir: Path, zipName: String, entries: Map<String, String>): Path {
         val zipPath = dir.resolve(zipName)
         ZipOutputStream(Files.newOutputStream(zipPath)).use { zos ->
             entries.forEach { (name, content) ->
@@ -54,86 +54,96 @@ class TestArchives : StringSpec({
     /**
      * Returns the set of regular file basenames in [dir].
      */
-    fun fileNames(dir: Path): Set<String> = Files.list(dir).use { s ->
+    private fun fileNames(dir: Path): Set<String> = Files.list(dir).use { s ->
         s.filter { Files.isRegularFile(it) }
             .map { it.fileName.toString() }.toList()
     }.toSet()
 
-    "a non-zip file is left untouched" {
+    @Test
+    fun `a non-zip file is left untouched`() {
         val data = dir.resolve(netCdfFileName)
         Files.writeString(data, "I'm not a ZIP!")
         val before = Files.readString(data)
         flattenArchives(dir)
-        data.shouldExist()
-        Files.readString(data) shouldBe before
-        fileNames(dir) shouldBe setOf(netCdfFileName)
+        assertTrue(data.exists(), "$data should exist")
+        assertEquals(before, Files.readString(data))
+        assertEquals(setOf(netCdfFileName), fileNames(dir))
     }
 
-    "a single-entry zip is extracted flat and the archive is deleted" {
+    @Test
+    fun `a single-entry zip is extracted flat and the archive is deleted`() {
         val zip = writeZip(dir, zipFileName, mapOf(netCdfFileName to "payload"))
         flattenArchives(dir)
-        zip.shouldNotExist()
-        dir.resolve(netCdfFileName).shouldExist()
-        Files.readString(dir.resolve(netCdfFileName)) shouldBe "payload"
-        fileNames(dir) shouldBe setOf(netCdfFileName)
+        assertFalse(zip.exists(), "$zip should not exist")
+        assertTrue(dir.resolve(netCdfFileName).exists(), "$netCdfFileName should exist in $dir")
+        assertEquals("payload", Files.readString(dir.resolve(netCdfFileName)))
+        assertEquals(setOf(netCdfFileName), fileNames(dir))
     }
 
-    "multiple archives in the same dir are all extracted and deleted" {
+    @Test
+    fun `multiple archives in the same dir are all extracted and deleted`() {
         writeZip(dir, "part1.zip", mapOf("a.nc" to "A"))
         writeZip(dir, "part2.zip", mapOf("b.nc" to "B"))
         flattenArchives(dir)
-        fileNames(dir) shouldBe setOf("a.nc", "b.nc")
+        assertEquals(setOf("a.nc", "b.nc"), fileNames(dir))
     }
 
-    "a data file alongside an archive: the file stays, the archive is flattened" {
+    @Test
+    fun `a data file alongside an archive stays while the archive is flattened`() {
         Files.writeString(dir.resolve("already.nc"), "plain")
         writeZip(dir, zipFileName, mapOf("fromzip.nc" to "Z"))
         flattenArchives(dir)
-        fileNames(dir) shouldBe setOf("already.nc", "fromzip.nc")
+        assertEquals(setOf("already.nc", "fromzip.nc"), fileNames(dir))
     }
 
-    "a multi-entry zip extracts every entry" {
+    @Test
+    fun `a multi-entry zip extracts every entry`() {
         writeZip(dir, zipFileName, mapOf("a.nc" to "A", "b.nc" to "B"))
         flattenArchives(dir)
-        fileNames(dir) shouldBe setOf("a.nc", "b.nc")
-        Files.readString(dir.resolve("a.nc")) shouldBe "A"
-        Files.readString(dir.resolve("b.nc")) shouldBe "B"
+        assertEquals(setOf("a.nc", "b.nc"), fileNames(dir))
+        assertEquals("A", Files.readString(dir.resolve("a.nc")))
+        assertEquals("B", Files.readString(dir.resolve("b.nc")))
     }
 
-    "nested entry paths are flattened to their basename" {
+    @Test
+    fun `nested entry paths are flattened to their basename`() {
         writeZip(dir, zipFileName, mapOf("data/2024/06/dis24.nc" to "deep"))
         flattenArchives(dir)
-        dir.resolve(netCdfFileName).shouldExist()
-        Files.readString(dir.resolve(netCdfFileName)) shouldBe "deep"
-        fileNames(dir) shouldBe setOf(netCdfFileName)
+        assertTrue(dir.resolve(netCdfFileName).exists(), "$netCdfFileName should exist in $dir")
+        assertEquals("deep", Files.readString(dir.resolve(netCdfFileName)))
+        assertEquals(setOf(netCdfFileName), fileNames(dir))
     }
 
-    "detection is by content, not extension: a zip named '.nc' is still extracted" {
+    @Test
+    fun `detection is by content not extension so a zip named nc is still extracted`() {
         // the archive itself is named like a data file
         val zip = writeZip(dir, "payload.nc", mapOf(netCdfFileName to "inner"))
         flattenArchives(dir)
-        zip.shouldNotExist()
-        dir.resolve(netCdfFileName).shouldExist()
-        Files.readString(dir.resolve(netCdfFileName)) shouldBe "inner"
+        assertFalse(zip.exists(), "$zip should not exist")
+        assertTrue(dir.resolve(netCdfFileName).exists(), "$netCdfFileName should exist in $dir")
+        assertEquals("inner", Files.readString(dir.resolve(netCdfFileName)))
     }
 
-    "detection is by content, not extension: a non-zip named '.zip' is left untouched" {
+    @Test
+    fun `detection is by content not extension so a non-zip named zip is left untouched`() {
         val fake = dir.resolve("archive.zip")
         Files.writeString(fake, "this is plain text, not a zip")
         flattenArchives(dir)
-        fake.shouldExist()
-        Files.readString(fake) shouldBe "this is plain text, not a zip"
+        assertTrue(fake.exists(), "$fake should exist")
+        assertEquals("this is plain text, not a zip", Files.readString(fake))
     }
 
-    "a flatten collision (two entries, same basename) throws IllegalStateException" {
+    @Test
+    fun `a flatten collision with two entries sharing the same basename throws IllegalStateException`() {
         writeZip(dir, zipFileName, mapOf("regionA/dis24.nc" to "A", "regionB/dis24.nc" to "B"))
-        shouldThrow<IllegalStateException> { flattenArchives(dir) }
+        assertFailsWith<IllegalStateException> { flattenArchives(dir) }
     }
 
-    "an empty zip (with no entries) extracts nothing, is deleted, and leaves the dir empty" {
+    @Test
+    fun `an empty zip with no entries extracts nothing, is deleted, and leaves the dir empty`() {
         val zip = writeZip(dir, zipFileName, emptyMap())
         flattenArchives(dir)
-        zip.shouldNotExist()
-        fileNames(dir) shouldBe emptySet()
+        assertFalse(zip.exists(), "$zip should not exist")
+        assertEquals(emptySet(), fileNames(dir))
     }
-})
+}

@@ -9,45 +9,52 @@
 
 package it.unibo.alchemist.boundary.utils
 
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
-class TestCanonicalJson : StringSpec({
+class TestCanonicalJson {
 
-    "map keys are sorted, producing a deterministic result" {
-        CanonicalJson.encode(mapOf("b" to "1", "a" to "2")) shouldBe """{"a":"2","b":"1"}"""
+    @Test
+    fun `map keys are sorted, producing a deterministic result`() {
+        assertEquals("""{"a":"2","b":"1"}""", CanonicalJson.encode(mapOf("b" to "1", "a" to "2")))
     }
 
-    "the same map written with different key order encodes identically" {
+    @Test
+    fun `the same map written with different key order encodes identically`() {
         val items = listOf("dataset" to "x", "variable" to listOf("dis24"), "year" to "2024")
         val map1 = mapOf(*items.toTypedArray())
         val map2 = mapOf(*items.reversed().toTypedArray())
-        CanonicalJson.encode(map1) shouldBe CanonicalJson.encode(map2)
+        assertEquals(CanonicalJson.encode(map2), CanonicalJson.encode(map1))
     }
 
-    "key sorting recurses into nested maps" {
+    @Test
+    fun `key sorting recurses into nested maps`() {
         val a = mapOf("outer" to mapOf("b" to "1", "a" to "2"))
         val b = mapOf("outer" to mapOf("a" to "2", "b" to "1"))
-        CanonicalJson.encode(a) shouldBe CanonicalJson.encode(b)
+        assertEquals(CanonicalJson.encode(b), CanonicalJson.encode(a))
     }
 
-    "list order is significant: reordering elements yields a different encoding" {
+    @Test
+    fun `list order is significant so reordering elements yields a different encoding`() {
         val list = listOf(50.0, 5.0, 45.0, 10.0)
         val nwse = mapOf("area" to list)
         val shuffled = mapOf("area" to list.reversed())
-        CanonicalJson.encode(nwse) shouldNotBe CanonicalJson.encode(shuffled)
+        assertNotEquals(CanonicalJson.encode(shuffled), CanonicalJson.encode(nwse))
     }
 
-    "list order is preserved verbatim, including zero-padded strings" {
-        CanonicalJson.encode(mapOf("day" to listOf("02", "01"))) shouldBe """{"day":["02","01"]}"""
+    @Test
+    fun `list order is preserved verbatim, including zero-padded strings`() {
+        assertEquals("""{"day":["02","01"]}""", CanonicalJson.encode(mapOf("day" to listOf("02", "01"))))
     }
 
-    "explicit nulls are encoded, distinguishing a present but null-key from an absent one" {
-        CanonicalJson.encode(mapOf("a" to null)) shouldNotBe CanonicalJson.encode(emptyMap<String, Any?>())
+    @Test
+    fun `explicit nulls are encoded, distinguishing a present but null key from an absent one`() {
+        assertNotEquals(CanonicalJson.encode(emptyMap<String, Any?>()), CanonicalJson.encode(mapOf("a" to null)))
     }
 
-    "a realistic GloFAS request is order-stable across its keys" {
+    @Test
+    fun `a realistic GloFAS request is order-stable across its keys`() {
         val request = mapOf(
             "system_version" to listOf("version_3_1"),
             "hydrological_model" to listOf("lisflood"),
@@ -66,6 +73,6 @@ class TestCanonicalJson : StringSpec({
             "hydrological_model" to listOf("lisflood"),
             "system_version" to listOf("version_3_1"),
         )
-        CanonicalJson.encode(request) shouldBe CanonicalJson.encode(reordered)
+        assertEquals(CanonicalJson.encode(reordered), CanonicalJson.encode(request))
     }
-})
+}

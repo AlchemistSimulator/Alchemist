@@ -18,10 +18,6 @@
 
 package it.unibo.alchemist.model.layers
 
-import io.kotest.assertions.withClue
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.ints.shouldBeGreaterThan
-import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.model.GeoPosition
@@ -31,20 +27,27 @@ import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.writeTestNetcdf
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class TestOsmCopernicusCompatibility : StringSpec({
+class TestOsmCopernicusCompatibility {
 
     // known positions inside maps/cesena.pbf
-    val pharmacyPos = LatLongPosition(44.14022881997589, 12.234464874617203)
-    val stadiumPos = LatLongPosition(44.140937161857074, 12.261716117329186)
+    private val pharmacyPos = LatLongPosition(44.14022881997589, 12.234464874617203)
+    private val stadiumPos = LatLongPosition(44.140937161857074, 12.261716117329186)
 
-    val incarnation = mockk<Incarnation<Any?, GeoPosition>>()
+    private val incarnation = mockk<Incarnation<Any?, GeoPosition>>()
 
-    "OSMEnvironment .pbf import and DoubleCopernicusLayer must coexist" {
+    @Test
+    fun `OSMEnvironment pbf import and DoubleCopernicusLayer must coexist`() {
         // tries to import an actual .pbf file and use it
         val environment = OSMEnvironment(incarnation, "maps/cesena.pbf")
         val route = environment.computeRoute(pharmacyPos, stadiumPos)
-        route.points.size shouldBeGreaterThan 1
+        assertTrue(
+            route.points.size > 1,
+            "the route should contain more than one point, but has ${route.points.size}",
+        )
 
         // forces cdm-core to be exercised by creating a Copernicus layer
         val dir = createTempDirectory("pbf-copernicus")
@@ -58,11 +61,13 @@ class TestOsmCopernicusCompatibility : StringSpec({
                 variables = listOf(TestVariable(rawValues = DoubleArray(9) { fixedMeasurement })),
             )
             val layer = DoubleCopernicusLayer(environment, dir.absolutePathString())
-            withClue("pharmacy is within the synthetic grid's bounding box") {
-                layer.currentValueAt(pharmacyPos) shouldBe fixedMeasurement
-            }
+            assertEquals(
+                fixedMeasurement,
+                layer.currentValueAt(pharmacyPos),
+                "pharmacy is within the synthetic grid's bounding box",
+            )
         } finally {
             dir.toFile().deleteRecursively()
         }
     }
-})
+}

@@ -69,7 +69,7 @@ abstract class ObservingRangeBasedNetworkModel<T, P : Position<P>, Observed>(
     /**
      * Observes the nodes that may be linked to [center]: those within range, unless links require them to be closer.
      */
-    protected open fun observeCandidates(center: Node<T>): Observable<out Set<Node<T>>> =
+    protected open fun observeCandidates(center: Node<T>): Observable<Set<Node<T>>> =
         environment.observeNodesAround(center, range)
 
     /**

@@ -20,7 +20,7 @@ package it.unibo.alchemist.model.observation
  *
  * @param T The type of the value being observed.
  */
-interface Observable<T> : Disposable {
+interface Observable<out T> : Disposable {
     /**
      * The current state or value of the observable.
      */

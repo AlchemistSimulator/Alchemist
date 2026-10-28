@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.observation.Observable
  * @param T the type of the value measuring the substance at a position
  * @param P the position type
  */
-fun interface Layer<T, P : Position<out P>> {
+fun interface Layer<out T, P : Position<out P>> {
     /**
      * The value at [position], as an observable emitting every change of that value.
      *

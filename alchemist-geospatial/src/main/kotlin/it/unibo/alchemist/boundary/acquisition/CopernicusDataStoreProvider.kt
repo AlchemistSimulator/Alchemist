@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
+import it.unibo.alchemist.boundary.filecache.ExternalDataProvider
 import it.unibo.alchemist.boundary.utils.CanonicalJson
 import it.unibo.alchemist.boundary.utils.RemoteAsset
 import it.unibo.alchemist.boundary.utils.flattenArchives

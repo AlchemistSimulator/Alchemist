@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
+import it.unibo.alchemist.boundary.filecache.CacheKey
 import it.unibo.alchemist.boundary.utils.CanonicalJson
 import java.net.URI
 import java.security.MessageDigest

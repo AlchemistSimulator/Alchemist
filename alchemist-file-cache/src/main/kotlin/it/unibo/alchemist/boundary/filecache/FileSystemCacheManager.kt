@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.acquisition
+package it.unibo.alchemist.boundary.filecache
 
 import java.nio.file.FileSystemException
 import java.nio.file.Files
@@ -123,7 +123,7 @@ class FileSystemCacheManager<in R : CacheKey>(private val provider: ExternalData
         } finally {
             // deletes the temp directory if any accident occurred
             if (!promoted) {
-                logger.debug("Discarding the temporary directory $temp")
+                logger.debug("Discarding the temporary directory {}", temp)
                 if (!temp.toFile().deleteRecursively()) {
                     logger.warn("Could not fully delete the temporary directory $temp")
                 }

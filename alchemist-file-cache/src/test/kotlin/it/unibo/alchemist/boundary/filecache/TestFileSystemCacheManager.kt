@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.acquisition
+package it.unibo.alchemist.boundary.filecache
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
@@ -21,17 +21,23 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
 
 /**
+ * A [CacheKey] whose directory name is its [id].
+ */
+private data class TestKey(val id: String) : CacheKey {
+    override fun toDirectoryName(): String = id
+}
+
+/**
  * Delegates each fetch call to a configurable [behavior], so that [FileSystemCacheManager] can
  * be tested fully offline.
  */
-private class FakeCopernicusProvider(
-    private val behavior: (request: CopernicusRequest, targetDir: Path) -> Unit,
-) : ExternalDataProvider<CopernicusRequest> {
+private class FakeProvider(private val behavior: (request: TestKey, targetDir: Path) -> Unit) :
+    ExternalDataProvider<TestKey> {
 
     var calls: Int = 0
         private set
 
-    override fun fetch(request: CopernicusRequest, targetDir: Path) {
+    override fun fetch(request: TestKey, targetDir: Path) {
         calls++
         behavior(request, targetDir)
     }
@@ -82,18 +88,13 @@ class TestFileSystemCacheManager : StringSpec({
     }
 
     /**
-     * A minimal [CopernicusRequest] for a test case.
-     * The inputs remain constant, only the dataset changes.
+     * A minimal [CacheKey] for a test case.
      */
-    fun request(id: String): CopernicusRequest = CopernicusRequest(
-        endpoint = "https://ewds.climate.copernicus.eu/api",
-        dataset = id,
-        inputs = emptyMap(),
-    )
+    fun request(id: String): TestKey = TestKey(id)
 
     "miss: produce runs exactly once and its files are promoted" {
         val req = request("entry_a")
-        val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
+        val provider = FakeProvider { _, dir -> writeOneFile(dir) }
         val cache = FileSystemCacheManager(provider, newRoot())
         val result = cache.getOrProduce(req)
         provider.calls shouldBe 1
@@ -104,7 +105,7 @@ class TestFileSystemCacheManager : StringSpec({
     "hit: the second call reuses the first entry without re-producing" {
         val req = request("entry_b")
         var marker = "first"
-        val provider = FakeCopernicusProvider { _, dir -> Files.writeString(dir.resolve(dataFileName), marker) }
+        val provider = FakeProvider { _, dir -> Files.writeString(dir.resolve(dataFileName), marker) }
         val cache = FileSystemCacheManager(provider, newRoot())
         val first = cache.getOrProduce(req)
         // if the cache manager wrongly re-ran the provider, the file would contain "second"
@@ -118,7 +119,7 @@ class TestFileSystemCacheManager : StringSpec({
     "the returned directory name is exactly request.toDirectoryName() under root" {
         val root = newRoot()
         val req = request("cems-glofas_abc123")
-        val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
+        val provider = FakeProvider { _, dir -> writeOneFile(dir) }
         val cache = FileSystemCacheManager(provider, root)
         val result = cache.getOrProduce(req)
         result shouldBe root.resolve(req.toDirectoryName())
@@ -127,7 +128,7 @@ class TestFileSystemCacheManager : StringSpec({
     "produce failure: the exception propagates and no entry is promoted" {
         val root = newRoot()
         val req = request("entry_fail")
-        val provider = FakeCopernicusProvider { _, _ -> error("download blew up") }
+        val provider = FakeProvider { _, _ -> error("download blew up") }
         val cache = FileSystemCacheManager(provider, root)
         shouldThrow<IllegalStateException> { cache.getOrProduce(req) }
         root.resolve(req.toDirectoryName()).shouldNotExist() // no poisoned dir
@@ -136,7 +137,7 @@ class TestFileSystemCacheManager : StringSpec({
     "produce failure: the temporary directory is cleaned up, leaving .tmp empty" {
         val root = newRoot()
         val req = request("entry_fail2")
-        val provider = FakeCopernicusProvider { _, dir ->
+        val provider = FakeProvider { _, dir ->
             Files.writeString(dir.resolve("partial.nc"), "half")
             // simulates something gone wrong after having already written a file
             error("error after writing")
@@ -153,7 +154,7 @@ class TestFileSystemCacheManager : StringSpec({
     "empty result: produce leaves no file and throws IllegalStateException, nothing promoted" {
         val root = newRoot()
         val req = request("entry_empty")
-        val provider = FakeCopernicusProvider { _, _ -> } // writes nothing
+        val provider = FakeProvider { _, _ -> } // writes nothing
         val cache = FileSystemCacheManager(provider, root)
         shouldThrow<IllegalStateException> {
             cache.getOrProduce(req)
@@ -164,7 +165,7 @@ class TestFileSystemCacheManager : StringSpec({
     "validate before promoting: a dir with only subdirs (no regular file) is rejected" {
         val root = newRoot()
         val req = request("entry_subdir")
-        val provider = FakeCopernicusProvider { _, dir ->
+        val provider = FakeProvider { _, dir ->
             // a directory, but no regular file
             Files.createDirectory(dir.resolve("nested"))
         }
@@ -178,11 +179,11 @@ class TestFileSystemCacheManager : StringSpec({
     "hit is detected even across a fresh CacheManager over the same root" {
         val root = newRoot()
         val req = request("entry_persist")
-        val firstProvider = FakeCopernicusProvider { _, dir ->
+        val firstProvider = FakeProvider { _, dir ->
             Files.writeString(dir.resolve(dataFileName), "first")
         }
         FileSystemCacheManager(firstProvider, root).getOrProduce(req)
-        val secondProvider = FakeCopernicusProvider { _, dir ->
+        val secondProvider = FakeProvider { _, dir ->
             Files.writeString(dir.resolve(dataFileName), "second")
         }
         val result = FileSystemCacheManager(secondProvider, root).getOrProduce(req)
@@ -194,7 +195,7 @@ class TestFileSystemCacheManager : StringSpec({
         val root = newRoot()
         val req = request("entry_concurrent")
         val threadCount = 3
-        val provider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
+        val provider = FakeProvider { _, dir -> writeOneFile(dir) }
         val cache = FileSystemCacheManager(provider, root)
         val results = ConcurrentLinkedQueue<Path>()
         concurrently(
@@ -210,8 +211,8 @@ class TestFileSystemCacheManager : StringSpec({
     "two managers over the same root fetch a shared entry only once" {
         val root = newRoot()
         val req = request("entry_two_managers")
-        val firstProvider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
-        val secondProvider = FakeCopernicusProvider { _, dir -> writeOneFile(dir) }
+        val firstProvider = FakeProvider { _, dir -> writeOneFile(dir) }
+        val secondProvider = FakeProvider { _, dir -> writeOneFile(dir) }
         val firstCache = FileSystemCacheManager(firstProvider, root)
         val secondCache = FileSystemCacheManager(secondProvider, root)
         concurrently(
@@ -228,7 +229,7 @@ class TestFileSystemCacheManager : StringSpec({
         val req = request("race_lost_test")
         val finalDir = root.resolve(req.toDirectoryName())
         val winnerStr = "I won!"
-        val provider = FakeCopernicusProvider { _, dir ->
+        val provider = FakeProvider { _, dir ->
             // the local work that should lose the race
             Files.writeString(dir.resolve(dataFileName), "local")
             // simulates another process that publishes the exact same cache entry

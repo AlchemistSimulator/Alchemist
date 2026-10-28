@@ -56,9 +56,9 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
 
     /**
      * The directory holding the temporary directories where the [loader] creates files.
-     * Once loaded successfully, a temporary directory is moved to its final location: see [promote].
+     * Once loaded successfully, a temporary directory is moved to its final location: see [load].
      */
-    private val tmpRoot: Path = this.root.resolve(TEMP_SUBDIR)
+    private val temporaryRoot: Path = this.root.resolve(TEMP_SUBDIR)
 
     /**
      * The directory holding the lock files, one per entry, that processes sharing [root] lock while loading.
@@ -142,44 +142,31 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
     private fun load(key: K, directoryName: String, finalDir: Path): Path {
         logger.info("Cache miss for '$directoryName': loading data")
         // also creates the root directory if it does not exist
-        Files.createDirectories(tmpRoot)
-        val temp = Files.createTempDirectory(tmpRoot, directoryName)
-        var promoted = false
+        Files.createDirectories(temporaryRoot)
+        val temp = Files.createTempDirectory(temporaryRoot, directoryName)
         try {
             // tries to fill the directory with data
             loader.load(key, temp)
             check(hasData(temp)) { "The loader produced no files for '$directoryName'" }
-            promoted = promote(temp, finalDir)
-            if (promoted) {
-                logger.info("Data cached in $finalDir")
-            }
+            runCatching { Files.move(temp, finalDir, StandardCopyOption.ATOMIC_MOVE) }
+                .onSuccess { logger.info("Data cached in $finalDir") }
+                .onFailure {
+                    val anotherProcessWon = it is FileSystemException && Files.isDirectory(finalDir)
+                    when {
+                        anotherProcessWon -> logger.info("Another process has already cached the data in $finalDir")
+                        else -> throw IllegalStateException(it)
+                    }
+                }
             return finalDir
         } finally {
             // deletes the temp directory if any accident occurred
-            if (!promoted) {
+            if (Files.exists(temp)) {
                 logger.debug("Discarding the temporary directory {}", temp)
                 if (!temp.toFile().deleteRecursively()) {
                     logger.warn("Could not fully delete the temporary directory $temp")
                 }
             }
         }
-    }
-
-    /**
-     * Atomically promotes [temp] to [finalDir].
-     *
-     * @param temp the path of the temporary directory.
-     * @param finalDir the path of the final directory after [temp] gets promoted.
-     * @return true if this call performed the move, false if a concurrent peer had already
-     * loaded [finalDir].
-     */
-    private fun promote(temp: Path, finalDir: Path): Boolean = try {
-        Files.move(temp, finalDir, StandardCopyOption.ATOMIC_MOVE)
-        true
-    } catch (raceLost: FileSystemException) {
-        if (!Files.isDirectory(finalDir)) throw raceLost
-        // another process won
-        false
     }
 
     /**

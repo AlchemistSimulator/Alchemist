@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.acquisition
 
-import it.unibo.alchemist.boundary.filecache.ExternalDataProvider
+import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
 import it.unibo.alchemist.boundary.utils.CanonicalJson
 import it.unibo.alchemist.boundary.utils.RemoteAsset
 import it.unibo.alchemist.boundary.utils.flattenArchives
@@ -59,7 +59,7 @@ class CopernicusDataStoreProvider(
     private val maxPollInterval: Duration = DEFAULT_MAX_POLL_INTERVAL,
     private val timeout: Duration = DEFAULT_TIMEOUT,
     private val tokenSupplier: () -> String,
-) : ExternalDataProvider<CopernicusRequest> {
+) : CacheableDataLoader<CopernicusRequest> {
 
     init {
         require(pollInterval.isPositive()) { "pollInterval must be positive" }
@@ -74,31 +74,31 @@ class CopernicusDataStoreProvider(
     private val token: String by lazy(tokenSupplier)
 
     /**
-     * The full OGC API processes flow, written into [targetDir].
+     * The full OGC API processes flow, written into [target].
      * Follows the flow submit -> poll -> results -> download, **blocking by design**.
      * Downloaded assets are verified against their size and, optionally, their MD5.
      * Archives are flattened into single files.
      *
-     * @param request the [CopernicusRequest] used to initialize the job on ECMWF servers.
-     * @param targetDir the temporary directory where the downloaded assets will be saved.
-     * @throws IllegalArgumentException if [targetDir] does not exist or is not a directory.
+     * @param key the [CopernicusRequest] used to initialize the job on ECMWF servers.
+     * @param target the temporary directory where the downloaded assets will be saved.
+     * @throws IllegalArgumentException if [target] does not exist or is not a directory.
      * @throws IllegalStateException if the assets can't be downloaded, on timeout or if the
      * asset validation fails.
      */
-    override fun fetch(request: CopernicusRequest, targetDir: Path) {
-        require(targetDir.isDirectory()) {
-            "$targetDir is not a directory or does not exist"
+    override fun load(key: CopernicusRequest, target: Path) {
+        require(target.isDirectory()) {
+            "$target is not a directory or does not exist"
         }
-        logger.info("Fetching dataset '${request.dataset}'.")
+        logger.info("Fetching dataset '${key.dataset}'.")
         val start = TimeSource.Monotonic.markNow()
         // asks ECMWF servers to process the data.
-        val monitorUrl = submit(request)
+        val monitorUrl = submit(key)
         // polls until the data can be retrieved.
         val resultsUrl = awaitSuccess(monitorUrl)
         // retrieves the URI to the produced asset.
         val asset = fetchAsset(resultsUrl)
         // downloads the asset.
-        val file = download(asset, targetDir)
+        val file = download(asset, target)
         // asset validation and archive flattening.
         if (!checkMd5) {
             logger.warn("MD5 check disabled. Only the size in bytes is checked.")
@@ -108,9 +108,9 @@ class CopernicusDataStoreProvider(
                 "Data store advertised an unusable MD5 checksum ($md5) for '$file': could not check asset integrity."
             }
         }
-        flattenArchives(targetDir)
+        flattenArchives(target)
         val elapsed = start.elapsedNow().inWholeMilliseconds.milliseconds
-        logger.info("Dataset '${request.dataset}' successfully downloaded in $elapsed.")
+        logger.info("Dataset '${key.dataset}' successfully downloaded in $elapsed.")
     }
 
     /**

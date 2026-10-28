@@ -37,11 +37,11 @@ class TestCopernicusRequest : StringSpec({
 
     fun emptyRequest(endpoint: String) = CopernicusRequest(endpoint, "dataset-name", mapOf())
 
-    "toDirectoryName is deterministic: the same request yields the same name" {
-        glofas.toDirectoryName() shouldBe glofas.toDirectoryName()
+    "directoryName is deterministic: the same request yields the same name" {
+        glofas.directoryName shouldBe glofas.directoryName
     }
 
-    "toDirectoryName is stable under key reordering" {
+    "directoryName is stable under key reordering" {
         // same logical request, just reordered
         val reordered = CopernicusRequest(
             endpoint = endpoint,
@@ -54,16 +54,16 @@ class TestCopernicusRequest : StringSpec({
                 "variable" to listOf("river_discharge_in_the_last_24_hours"),
             ),
         )
-        reordered.toDirectoryName() shouldBe glofas.toDirectoryName()
+        reordered.directoryName shouldBe glofas.directoryName
     }
 
     "a different dataset yields a different name" {
-        glofas.copy(dataset = "reanalysis-era5-single-levels").toDirectoryName() shouldNotBe glofas.toDirectoryName()
+        glofas.copy(dataset = "reanalysis-era5-single-levels").directoryName shouldNotBe glofas.directoryName
     }
 
     "a different input value yields a different name (the bytes change)" {
         val otherDay = glofas.copy(inputs = glofas.inputs + ("hday" to listOf("11")))
-        otherDay.toDirectoryName() shouldNotBe glofas.toDirectoryName()
+        otherDay.directoryName shouldNotBe glofas.directoryName
     }
 
     "reordering a list inside inputs yields a different name (list order is semantic)" {
@@ -71,24 +71,24 @@ class TestCopernicusRequest : StringSpec({
         val area = listOf(50.0, 5.0, 45.0, 10.0)
         val nwse = glofas.copy(inputs = glofas.inputs + ("area" to area))
         val swapped = glofas.copy(inputs = glofas.inputs + ("area" to area.reversed()))
-        nwse.toDirectoryName() shouldNotBe swapped.toDirectoryName()
+        nwse.directoryName shouldNotBe swapped.directoryName
     }
 
     "the readable prefix comes from the dataset, sanitized" {
-        glofas.toDirectoryName() shouldStartWith "cems-glofas-historical_"
+        glofas.directoryName shouldStartWith "cems-glofas-historical_"
     }
 
     "a dataset id with unsafe characters is sanitized in the prefix" {
         val weird = glofas.copy(dataset = "weird/name with:chars")
-        weird.toDirectoryName() shouldStartWith "weird_name_with_chars_"
+        weird.directoryName shouldStartWith "weird_name_with_chars_"
     }
 
-    "the name complies with the CacheKey contract: a single file-system-safe segment" {
-        glofas.toDirectoryName() shouldMatch Regex("^[A-Za-z0-9._-]+$")
+    "the name complies with the CachedDirectoryKey contract: a single file-system-safe segment" {
+        glofas.directoryName shouldMatch Regex("^[A-Za-z0-9._-]+$")
     }
 
     "the name is a readable prefix followed by a lowercase-hex hash suffix" {
-        glofas.toDirectoryName() shouldMatch Regex("^cems-glofas-historical_[0-9a-f]+$")
+        glofas.directoryName shouldMatch Regex("^cems-glofas-historical_[0-9a-f]+$")
     }
 
     "should not throw on actual endpoints" {

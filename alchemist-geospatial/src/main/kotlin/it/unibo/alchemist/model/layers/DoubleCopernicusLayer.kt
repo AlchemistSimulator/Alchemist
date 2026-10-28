@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.boundary.acquisition.CopernicusDataStoreProvider
-import it.unibo.alchemist.boundary.filecache.FileSystemCacheManager
+import it.unibo.alchemist.boundary.filecache.FileSystemDirectoryCache
 import it.unibo.alchemist.boundary.utils.CdsApiRc
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
@@ -113,7 +113,7 @@ class DoubleCopernicusLayer : CopernicusLayer<Double> {
         private val DEFAULT_TIME_SCALE: Duration = 1.hours
         private val DEFAULT_TIME_SCALE_ISO: String = DEFAULT_TIME_SCALE.toIsoString()
 
-        private val DEFAULT_CACHE_DIRECTORY: String = FileSystemCacheManager
+        private val DEFAULT_CACHE_DIRECTORY: String = FileSystemDirectoryCache
             .DEFAULT_CACHE_DIRECTORY
             .resolve("geospatial")
             .toString()

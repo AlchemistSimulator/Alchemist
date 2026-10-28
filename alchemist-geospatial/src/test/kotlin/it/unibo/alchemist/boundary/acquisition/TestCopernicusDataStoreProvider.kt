@@ -170,7 +170,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.replayResults(cds, payload.size)
             fake.serveAsset(cds, payload)
             val request = CopernicusRequest(fake.baseUrl, cds.dataset, mapOf("day" to "01"))
-            standardProvider.fetch(request, tempDir)
+            standardProvider.load(request, tempDir)
             val downloaded = tempDir.resolve(cds.assetName)
             downloaded.shouldExist()
             downloaded.readBytes() shouldBe payload
@@ -200,7 +200,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.replayResults(cds, payload.size, checksum = "cc175b9c0f1b6a831c399e269772661")
             fake.serveAsset(cds, payload)
             val request = emptyRequest(fake.baseUrl, cds.dataset)
-            standardProvider.fetch(request, tempDir)
+            standardProvider.load(request, tempDir)
             tempDir.resolve(cds.assetName).readBytes() shouldBe payload
         }
     }
@@ -227,7 +227,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
                 )
                 val ex = shouldThrow<IllegalStateException> {
                     val request = emptyRequest(fake.baseUrl, ewds.dataset)
-                    standardProvider.fetch(request, tempDir)
+                    standardProvider.load(request, tempDir)
                 }
                 ex.message shouldContain status
                 ex.message shouldContain message
@@ -257,7 +257,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             }
             val ex = shouldThrow<IllegalStateException> {
                 val request = emptyRequest(fake.baseUrl, ewds.dataset)
-                standardProvider.fetch(request, tempDir)
+                standardProvider.load(request, tempDir)
             }
             ex.message shouldContain "failed"
             ex.message shouldContain "MultiAdaptorNoDataError"
@@ -275,7 +275,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
             val request = emptyRequest(fake.baseUrl, cds.dataset)
-            standardProvider.fetch(request, tempDir)
+            standardProvider.load(request, tempDir)
             tempDir.resolve(cds.assetName).shouldExist()
         }
     }
@@ -288,7 +288,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.constant("GET", cds.jobRoute) { FakeHttpServer.json(200, """{ "status": "running" }""")(it) }
             val ex = shouldThrow<IllegalStateException> {
                 val request = emptyRequest(fake.baseUrl, cds.dataset)
-                provider.fetch(request, tempDir)
+                provider.load(request, tempDir)
             }
             ex.message shouldContain "Timeout"
         }
@@ -304,7 +304,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             }
             val ex = shouldThrow<IllegalStateException> {
                 val request = emptyRequest(fake.baseUrl, ads.dataset)
-                standardProvider.fetch(request, tempDir)
+                standardProvider.load(request, tempDir)
             }
             ex.message shouldContain "404"
             ex.message shouldContain "result-not-ready"
@@ -320,7 +320,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             }
             val ex = shouldThrow<IllegalStateException> {
                 val request = emptyRequest(fake.baseUrl, ads.dataset)
-                standardProvider.fetch(request, tempDir)
+                standardProvider.load(request, tempDir)
             }
             ex.message shouldContain "401"
             ex.message shouldContain "authentication required"
@@ -334,7 +334,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.enqueue("POST", ewds.submitRoute) { FakeHttpServer.json(400, rejection)(it) }
             val ex = shouldThrow<IllegalStateException> {
                 val request = emptyRequest(fake.baseUrl, ewds.dataset)
-                standardProvider.fetch(request, tempDir)
+                standardProvider.load(request, tempDir)
             }
             ex.message shouldContain "400"
             ex.message shouldContain "valid combination of values"
@@ -356,7 +356,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.enqueue("POST", ewds.submitRoute) { FakeHttpServer.json(422, validation)(it) }
             val ex = shouldThrow<IllegalStateException> {
                 val request = emptyRequest(fake.baseUrl, ewds.dataset)
-                standardProvider.fetch(request, tempDir)
+                standardProvider.load(request, tempDir)
             }
             ex.message shouldContain "422"
             ex.message shouldContain "field required"
@@ -370,7 +370,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.answerStatus(cds, """{ "status": "successful", "links": [] }""")
             val ex = shouldThrow<IllegalStateException> {
                 val request = emptyRequest(fake.baseUrl, cds.dataset)
-                standardProvider.fetch(request, tempDir)
+                standardProvider.load(request, tempDir)
             }
             ex.message shouldContain "rel='results'"
         }
@@ -387,7 +387,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.serveAsset(cds, payload)
             val ex = shouldThrow<IllegalStateException> {
                 val request = emptyRequest(fake.baseUrl, cds.dataset)
-                standardProvider.fetch(request, tempDir)
+                standardProvider.load(request, tempDir)
             }
             ex.message shouldContain "Size mismatch"
         }
@@ -401,7 +401,7 @@ class TestCopernicusDataStoreProvider : StringSpec({
             fake.replayResults(cds, sizeBytes = 0)
             fake.serveAsset(cds, ByteArray(0))
             val request = CopernicusRequest(fake.baseUrl, cds.dataset, mapOf("year" to "2023"))
-            standardProvider.fetch(request, tempDir)
+            standardProvider.load(request, tempDir)
             val submit = fake.requests.single { it.method == "POST" }
             submit.body shouldContain "\"inputs\""
             submit.body shouldContain "\"year\""

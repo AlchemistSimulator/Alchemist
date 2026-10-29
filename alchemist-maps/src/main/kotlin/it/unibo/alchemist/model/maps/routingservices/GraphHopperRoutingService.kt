@@ -27,6 +27,7 @@ import it.unibo.alchemist.model.RoutingService
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.maps.routes.GraphHopperRoute
 import it.unibo.alchemist.model.routes.PolygonalChain
+import java.io.InputStream
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
@@ -103,6 +104,8 @@ constructor(
 
         private const val HASH_PREFIX_LENGTH = 32
 
+        private val UNSAFE_FILE_NAME_CHARACTERS = Regex("[^A-Za-z0-9._-]")
+
         private val encodedValues: String = GraphHopperOptions.allCustomModels
             .asSequence()
             .flatMap { model -> CustomModelParser.findVariablesForEncodedValuesString(model, { true }) { it } }
@@ -129,6 +132,15 @@ constructor(
                 }
                 check(loaded) { "No routing graph in $graphDirectory: delete it to import it again" }
             }
+
+        /**
+         * Reads the content of this URL with [consume], returning its SHA-256 hash.
+         */
+        private fun URL.sha256(consume: (InputStream) -> Unit): String =
+            HashingInputStream(Hashing.sha256(), openStream()).use {
+                consume(it)
+                it.hash().toString()
+            }
     }
 
     /**
@@ -137,15 +149,21 @@ constructor(
      */
     private class RoutingGraph(val map: URL) : CachedDirectoryKey {
         /**
-         * The name of the [map] file, as found at the end of its URL.
+         * The name of the [map] file, as found at the end of the path of its URL, made safe for the file system.
+         * It cannot start with `.`, as the cache reserves such names, and it falls back to `map` when empty.
          */
-        val mapName: String = map.toExternalForm().substringAfterLast('/').substringBefore('?')
+        val mapName: String = map.path
+            .substringAfterLast('/')
+            .replace(UNSAFE_FILE_NAME_CHARACTERS, "_")
+            .trimStart('.')
+            .ifEmpty { "map" }
+
+        /**
+         * The SHA-256 hash of the content of [map].
+         */
+        val mapHash: String = map.sha256 { ByteStreams.exhaust(it) }
 
         override val directoryName: String = run {
-            val mapHash = HashingInputStream(Hashing.sha256(), map.openStream()).use {
-                ByteStreams.exhaust(it)
-                it.hash().toString()
-            }
             val identity = listOf(
                 mapHash,
                 Constants.VERSION,
@@ -154,16 +172,18 @@ constructor(
                 encodedValues,
             ).joinToString(separator = "\n")
             val digest = Hashing.sha256().hashString(identity, Charsets.UTF_8).toString()
-            "${mapName.replace(Regex("[^A-Za-z0-9._-]"), "_")}_${digest.take(HASH_PREFIX_LENGTH)}"
+            "${mapName}_${digest.take(HASH_PREFIX_LENGTH)}"
         }
 
         companion object {
             /**
-             * Copies the map into the cache entry and imports its routing graph there.
+             * Copies the map into the cache entry, checking that it is the one the entry is named after,
+             * and imports its routing graph there.
              */
             val loader = CacheableDataLoader { graph: RoutingGraph, target: Path ->
                 val mapFile = target.resolve(graph.mapName)
-                graph.map.openStream().use { Files.copy(it, mapFile) }
+                val copiedHash = graph.map.sha256 { Files.copy(it, mapFile) }
+                check(copiedHash == graph.mapHash) { "The map at ${graph.map} changed while caching its routing graph" }
                 newNavigationSystem(mapFile, target).importAndClose()
             }
         }

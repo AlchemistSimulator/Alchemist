@@ -9,12 +9,20 @@
 
 package it.unibo.alchemist.boundary.filecache
 
-import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createDirectory
+import kotlin.io.path.createFile
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,20 +54,21 @@ private class FakeLoader(private val behavior: (key: TestKey, target: Path) -> U
 
 class TestFileSystemDirectoryCache {
 
-    private val tempDir: Path = Files.createTempDirectory("directory-cache-test")
+    private val tempDir: Path = createTempDirectory("directory-cache-test")
 
     private val root: Path = tempDir.resolve("root")
 
     @AfterTest
+    @OptIn(ExperimentalPathApi::class)
     fun deleteTempDir() {
-        tempDir.toFile().deleteRecursively()
+        tempDir.deleteRecursively()
     }
 
     private fun writeOneFile(dir: Path) {
-        Files.writeString(dir.resolve(DATA_FILE), "payload")
+        dir.resolve(DATA_FILE).writeText("payload")
     }
 
-    private fun Path.content(): String = Files.readString(resolve(DATA_FILE))
+    private fun Path.content(): String = resolve(DATA_FILE).readText()
 
     /**
      * Runs every task on its own thread, releases them all at once, waits for all of them,
@@ -90,7 +99,7 @@ class TestFileSystemDirectoryCache {
     @Test
     fun `on a hit, the entry is reused without loading it again`() {
         var marker = "first"
-        val loader = FakeLoader { _, dir -> Files.writeString(dir.resolve(DATA_FILE), marker) }
+        val loader = FakeLoader { _, dir -> dir.resolve(DATA_FILE).writeText(marker) }
         val cache = FileSystemDirectoryCache(loader, root)
         val first = cache[TestKey("entry_b")]
         // if the cache wrongly re-ran the loader, the file would contain "second"
@@ -131,12 +140,12 @@ class TestFileSystemDirectoryCache {
     @Test
     fun `a failure of the loader removes its temporary directory`() {
         val loader = FakeLoader { _, dir ->
-            Files.writeString(dir.resolve("partial.nc"), "half")
+            dir.resolve("partial.nc").writeText("half")
             // simulates something gone wrong after having already written a file
             error("error after writing")
         }
         assertFailsWith<IllegalStateException> { FileSystemDirectoryCache(loader, root)[TestKey("entry_fail2")] }
-        assertEquals(emptyList(), Files.list(root.resolve(".tmp")).use { it.toList() })
+        assertEquals(emptyList(), root.resolve(".tmp").listDirectoryEntries())
     }
 
     @Test
@@ -149,7 +158,7 @@ class TestFileSystemDirectoryCache {
     @Test
     fun `a loader writing only directories, and no regular file, fails and nothing is promoted`() {
         val key = TestKey("entry_subdir")
-        val loader = FakeLoader { _, dir -> Files.createDirectory(dir.resolve("nested")) }
+        val loader = FakeLoader { _, dir -> dir.resolve("nested").createDirectory() }
         assertFailsWith<IllegalStateException> { FileSystemDirectoryCache(loader, root)[key] }
         assertFalse(root.resolve(key.directoryName).exists())
     }
@@ -157,8 +166,8 @@ class TestFileSystemDirectoryCache {
     @Test
     fun `a new cache over the same root finds the entries loaded by a previous one`() {
         val key = TestKey("entry_persist")
-        FileSystemDirectoryCache(FakeLoader { _, dir -> Files.writeString(dir.resolve(DATA_FILE), "first") }, root)[key]
-        val secondLoader = FakeLoader { _, dir -> Files.writeString(dir.resolve(DATA_FILE), "second") }
+        FileSystemDirectoryCache(FakeLoader { _, dir -> dir.resolve(DATA_FILE).writeText("first") }, root)[key]
+        val secondLoader = FakeLoader { _, dir -> dir.resolve(DATA_FILE).writeText("second") }
         assertEquals("first", FileSystemDirectoryCache(secondLoader, root)[key].content())
         assertEquals(0, secondLoader.calls)
     }
@@ -193,16 +202,16 @@ class TestFileSystemDirectoryCache {
         val finalDir = root.resolve(key.directoryName)
         val loader = FakeLoader { _, dir ->
             // the local work that should lose the race
-            Files.writeString(dir.resolve(DATA_FILE), "local")
+            dir.resolve(DATA_FILE).writeText("local")
             // simulates another process publishing the same entry without coordination
-            Files.createDirectories(finalDir)
-            Files.writeString(finalDir.resolve(DATA_FILE), "I won!")
+            finalDir.createDirectories()
+            finalDir.resolve(DATA_FILE).writeText("I won!")
         }
         val result = FileSystemDirectoryCache(loader, root)[key]
         assertEquals(1, loader.calls)
         assertEquals(finalDir, result)
         assertEquals("I won!", result.content())
-        assertEquals(emptyList(), Files.list(root.resolve(".tmp")).use { it.toList() })
+        assertEquals(emptyList(), root.resolve(".tmp").listDirectoryEntries())
     }
 
     @Test
@@ -231,7 +240,7 @@ class TestFileSystemDirectoryCache {
             waiting.start()
             // the other process completes the load only once this one waits for the lock, or completed without it
             awaitWhile { waiting.isAlive && !waiting.isWaitingForFileLock() }
-            Files.createFile(release)
+            release.createFile()
             waiting.join()
             assertEquals(0, otherProcess.waitFor())
             assertEquals(0, loader.calls)

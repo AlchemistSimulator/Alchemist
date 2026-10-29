@@ -53,6 +53,46 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
     final override val incarnation: Incarnation<T, P>,
     internalIndex: SpatialIndex<Node<T>>,
 ) : Environment<T, P> {
+    /*
+     * The range queries that currently have subscribers. Each one is updated incrementally on the node additions,
+     * movements, and removals that may affect it; unobserved queries are not tracked and compute their members on
+     * demand.
+     */
+    private val activeRangeQueries = ActiveRangeQueries()
+
+    final override val attachedSimulation: Observable<Simulation<T, P>?>
+        field: MutableObservable<Simulation<T, P>?> = observeShareable(null)
+
+    private val environmentReactions = ObservableMutableList<Reaction<T>>()
+
+    // The layers by molecule, observable so that observers of a layer value follow layers associated later.
+    private val layerAssociations = ObservableMutableMap<Molecule, Layer<T, P>>()
+
+    /*
+     * The authoritative model state is the ordered node list, the position of every node, and the neighborhood of
+     * every node. The network model observes the state it depends on and publishes every change of a neighborhood,
+     * which is mirrored here. Positions and neighborhoods are keyed by node id and published through observable maps;
+     * each stored neighborhood is an immutable snapshot that topology changes replace.
+     */
+    private val neighborhoods = ObservableMutableMap<Int, Neighborhood<T>>()
+
+    /*
+     * The subscriptions to the neighborhoods that the network model publishes for each node, by node id.
+     */
+    private val neighborhoodSubscriptions = LinkedHashMap<Int, Disposable>()
+
+    private val nodeList = ObservableMutableList<Node<T>>()
+
+    private val nodesToPositions = ObservableMutableMap<Int, P>()
+
+    /*
+     * A secondary index of node coordinates answering range queries. It must mirror nodesToPositions exactly: every
+     * addition, movement, and removal updates both.
+     */
+    private val spatialIndex: SpatialIndex<Node<T>> = internalIndex
+
+    private var terminationPredicate: TerminationPredicate<T, P> = TerminationPredicate { false }
+
     override val isTerminated: Boolean
         get() = terminationPredicate.test(this)
 
@@ -103,46 +143,6 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
         }
 
     final override val simulationOrNull: Simulation<T, P>? get() = attachedSimulation.current
-
-    final override val attachedSimulation: Observable<Simulation<T, P>?>
-        field: MutableObservable<Simulation<T, P>?> = observeShareable(null)
-
-    /*
-     * The range queries that currently have subscribers. Each one is updated incrementally on the node additions,
-     * movements, and removals that may affect it; unobserved queries are not tracked and compute their members on
-     * demand.
-     */
-    private val activeRangeQueries = ActiveRangeQueries()
-
-    private val environmentReactions = ObservableMutableList<Reaction<T>>()
-
-    // The layers by molecule, observable so that observers of a layer value follow layers associated later.
-    private val layerAssociations = ObservableMutableMap<Molecule, Layer<T, P>>()
-
-    /*
-     * The authoritative model state is the ordered node list, the position of every node, and the neighborhood of
-     * every node. The network model observes the state it depends on and publishes every change of a neighborhood,
-     * which is mirrored here. Positions and neighborhoods are keyed by node id and published through observable maps;
-     * each stored neighborhood is an immutable snapshot that topology changes replace.
-     */
-    private val neighborhoods = ObservableMutableMap<Int, Neighborhood<T>>()
-
-    /*
-     * The subscriptions to the neighborhoods that the network model publishes for each node, by node id.
-     */
-    private val neighborhoodSubscriptions = LinkedHashMap<Int, Disposable>()
-
-    private val nodeList = ObservableMutableList<Node<T>>()
-
-    private val nodesToPositions = ObservableMutableMap<Int, P>()
-
-    /*
-     * A secondary index of node coordinates answering range queries. It must mirror nodesToPositions exactly: every
-     * addition, movement, and removal updates both.
-     */
-    private val spatialIndex: SpatialIndex<Node<T>> = internalIndex
-
-    private var terminationPredicate: TerminationPredicate<T, P> = TerminationPredicate { false }
 
     override fun addLayer(molecule: Molecule, layer: Layer<T, P>) {
         check(simulationOrNull == null) {

@@ -112,7 +112,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
             resolvedDirectory.readyOrNull ?: withFileLock(directoryName) {
                 resolvedDirectory.readyOrNull ?: load(key, directoryName, resolvedDirectory)
             }
-        }
+        }.also { entryLocks.remove(resolvedDirectory, monitor) }
     }
 
     /**
@@ -208,6 +208,8 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
 
         /**
          * The monitors guarding the loading of each cache entry.
+         * A monitor is removed once its entry is in cache, as later callers find it without needing a monitor,
+         * but not when loading fails, as callers still waiting on it would otherwise compete with new ones.
          */
         private val entryLocks = ConcurrentHashMap<Path, Any>()
         private const val TEMP_SUBDIR = ".tmp"

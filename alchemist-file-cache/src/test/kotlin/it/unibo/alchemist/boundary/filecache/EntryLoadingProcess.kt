@@ -9,9 +9,10 @@
 
 package it.unibo.alchemist.boundary.filecache
 
-import java.nio.file.Files
-import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.createFile
 import kotlin.io.path.exists
+import kotlin.io.path.writeText
 
 /**
  * The name of the data file written by the loaders in tests.
@@ -47,9 +48,9 @@ fun main(args: Array<String>) {
         override val directoryName = directoryName
     }
     val loader = CacheableDataLoader<CachedDirectoryKey> { _, target ->
-        Files.createFile(Path.of(loading))
-        awaitWhile { !Path.of(release).exists() }
-        Files.writeString(target.resolve(DATA_FILE), OTHER_PROCESS_DATA)
+        Path(loading).createFile()
+        awaitWhile { !Path(release).exists() }
+        target.resolve(DATA_FILE).writeText(OTHER_PROCESS_DATA)
     }
-    FileSystemDirectoryCache(loader, Path.of(root))[key]
+    FileSystemDirectoryCache(loader, Path(root))[key]
 }

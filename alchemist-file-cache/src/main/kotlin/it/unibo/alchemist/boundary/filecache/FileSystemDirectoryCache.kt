@@ -14,11 +14,20 @@ import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLockInterruptionException
 import java.nio.file.FileSystemException
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.moveTo
 import net.harawata.appdirs.AppDirsFactory
 import org.slf4j.LoggerFactory
 
@@ -88,7 +97,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
             "Invalid cache directory name '$directoryName': it must be a single path segment not starting with '.'"
         }
         // cache hit: the directory already exists
-        if (Files.isDirectory(resolvedDirectory)) {
+        if (resolvedDirectory.isDirectory()) {
             logger.info("Cache hit for '$directoryName': using $resolvedDirectory")
             return resolvedDirectory
         }
@@ -113,7 +122,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      * consistent, at the cost of possibly loading the entry more than once.
      */
     private fun <R> withFileLock(directoryName: String, action: () -> R): R {
-        Files.createDirectories(locksRoot)
+        locksRoot.createDirectories()
         val lockFile = locksRoot.resolve("$directoryName.lock")
         return FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE).use { channel ->
             logger.debug("Acquiring the file lock {}", lockFile)
@@ -146,16 +155,17 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      * @throws IllegalStateException if the [loader] writes no file.
      * Anything thrown by the [loader], or by the file system while publishing the entry, propagates unchanged.
      */
+    @OptIn(ExperimentalPathApi::class)
     private fun load(key: K, directoryName: String, finalDir: Path): Path {
         logger.info("Cache miss for '$directoryName': loading data")
         // also creates the root directory if it does not exist
-        Files.createDirectories(temporaryRoot)
-        val temp = Files.createTempDirectory(temporaryRoot, directoryName)
+        temporaryRoot.createDirectories()
+        val temp = createTempDirectory(temporaryRoot, directoryName)
         try {
             // tries to fill the directory with data
             loader.load(key, temp)
             check(hasData(temp)) { "The loader produced no files for '$directoryName'" }
-            runCatching { Files.move(temp, finalDir, StandardCopyOption.ATOMIC_MOVE) }
+            runCatching { temp.moveTo(finalDir, StandardCopyOption.ATOMIC_MOVE) }
                 .onSuccess { logger.info("Data cached in $finalDir") }
                 .onFailure {
                     // If the failure is not due to another process publishing before us, we throw it
@@ -167,11 +177,11 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
             return finalDir
         } finally {
             // deletes the temp directory if any accident occurred
-            if (Files.exists(temp)) {
+            if (temp.exists()) {
                 logger.debug("Discarding the temporary directory {}", temp)
-                if (!temp.toFile().deleteRecursively()) {
-                    logger.warn("Could not fully delete the temporary directory $temp")
-                }
+                // a failure here must not replace the one that brought here, if any
+                runCatching { temp.deleteRecursively() }
+                    .onFailure { logger.warn("Could not fully delete the temporary directory $temp", it) }
             }
         }
     }
@@ -181,8 +191,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      *
      * @return true if [dir] holds any regular file, false otherwise.
      */
-    private fun hasData(dir: Path): Boolean =
-        Files.list(dir).use { entries -> entries.anyMatch { Files.isRegularFile(it) } }
+    private fun hasData(dir: Path): Boolean = dir.listDirectoryEntries().any { it.isRegularFile() }
 
     /**
      * Conventional locations and internal constants for the filesystem cache.
@@ -193,7 +202,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
          * Alchemist's user cache directory, as conventional for the current operating system
          * (e.g., `~/.cache/alchemist` on Linux).
          */
-        val DEFAULT_CACHE_DIRECTORY: Path = Path.of(
+        val DEFAULT_CACHE_DIRECTORY: Path = Path(
             AppDirsFactory.getInstance().getUserCacheDir("alchemist", null, "it.unibo"),
         )
 
@@ -205,7 +214,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
         private const val LOCKS_SUBDIR = ".locks"
         private val logger = LoggerFactory.getLogger(FileSystemDirectoryCache::class.java)
 
-        private val Path.readyOrNull: Path? get() = takeIf { Files.isDirectory(it) }
+        private val Path.readyOrNull: Path? get() = takeIf { it.isDirectory() }
 
         // Some file systems do not support locks, and throw an IOException that is neither a
         // ClosedChannelException nor a FileLockInterruptionException. In that case, we cannot wait for a lock.
@@ -215,6 +224,6 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
         // A move fails with a FileSystemException if the target exists: if it is a directory, another process
         // published the same entry first, and its copy can be used. Any other failure is a real one.
         private fun Throwable.isNotDueToAnotherProcessPublishingBeforeUs(finalDir: Path) =
-            this !is FileSystemException || !Files.isDirectory(finalDir)
+            this !is FileSystemException || !finalDir.isDirectory()
     }
 }

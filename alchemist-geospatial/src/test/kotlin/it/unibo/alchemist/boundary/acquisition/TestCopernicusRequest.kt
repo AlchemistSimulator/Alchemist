@@ -84,9 +84,10 @@ class TestCopernicusRequest {
     }
 
     @Test
-    fun `a dataset id with unsafe characters is sanitized in the prefix`() {
-        val weird = glofas.copy(dataset = "weird/name with:chars")
-        assertStartsWith("weird_name_with_chars_", weird.directoryName)
+    fun `dataset ids that are not a safe path segment are rejected`() {
+        listOf("", ".", "..", "../x", "weird/name with:chars", ".hidden", "-flag").forEach { dataset ->
+            assertFailsWith<IllegalArgumentException>("'$dataset'") { glofas.copy(dataset = dataset) }
+        }
     }
 
     @Test
@@ -109,7 +110,9 @@ class TestCopernicusRequest {
         endpoints.forEach { api ->
             emptyRequest(api)
         }
-        emptyRequest("https://SOMETHING.SOMETHING_ELSE.copernicus.eu/api")
+        emptyRequest("https://something.else.copernicus.eu/api")
+        emptyRequest("http://127.0.0.1:8080")
+        emptyRequest("https://127.0.0.1/any/path")
     }
 
     @Test
@@ -117,6 +120,23 @@ class TestCopernicusRequest {
         assertFailsWith<IllegalArgumentException> { emptyRequest("") }
         assertFailsWith<IllegalArgumentException> { emptyRequest("https://www.google.com") }
         assertFailsWith<IllegalArgumentException> { emptyRequest("https://cds.climate.eu/api") }
+    }
+
+    @Test
+    fun `endpoints that only look like Copernicus data stores are rejected`() {
+        listOf(
+            "https://evil.example/.copernicus.eu/api",
+            "https://evil.example/?x=.copernicus.eu/api",
+            "https://evilcopernicus.eu/api",
+            "http://cds.climate.copernicus.eu/api",
+            "https://cds.climate.copernicus.eu/other",
+            "https://cds.climate.copernicus.eu/api?x=1",
+            "https://cds.climate.copernicus.eu/api#x",
+            "https://user@cds.climate.copernicus.eu/api",
+            "http://127.0.0.1:8080/api?x=1",
+        ).forEach { endpoint ->
+            assertFailsWith<IllegalArgumentException>("'$endpoint'") { emptyRequest(endpoint) }
+        }
     }
 
     // toFileSystemSafe extension function tests

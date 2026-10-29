@@ -22,25 +22,34 @@ import java.security.MessageDigest
  * @property inputs the **opaque** request map: the selection (variables, dates, area, format, ...)
  * of parameters used for the request to the datastore. It is intentionally untyped because the fields
  * vary widely per dataset.
- * @throws IllegalArgumentException if the [endpoint] does not represent a valid Copernicus endpoint
- * or the loopback address.
+ * @throws IllegalArgumentException if the [endpoint] is neither the `https` API of a Copernicus data store
+ * (`https://<store>.copernicus.eu/api`) nor an address of the loopback interface `127.0.0.1`, or has a query,
+ * a fragment, or user information, or if the [dataset] is not a single path segment made of letters, digits,
+ * `.`, `_`, and `-`, starting with a letter or a digit.
  */
 data class CopernicusRequest(val endpoint: String, val dataset: String, val inputs: Map<String, Any>) :
     CachedDirectoryKey {
 
     init {
-        URI.create(endpoint).also {
-            require(
-                it.isAbsolute &&
-                    it.scheme in setOf("http", "https") &&
-                    (
-                        endpoint.endsWith(COPERNICUS_STORES_ENDPOINT_END) ||
-                            it.host == "127.0.0.1"
-                        ),
-            ) {
-                "The endpoint must be an absolute http/https URL ending with " +
-                    "'$COPERNICUS_STORES_ENDPOINT_END' or point to 127.0.0.1, but was '$endpoint'"
-            }
+        // the parsed parts get checked, as the token is sent to the endpoint
+        val uri = URI.create(endpoint)
+        val isCopernicusStore = uri.scheme == "https" &&
+            uri.host?.endsWith(COPERNICUS_HOST_SUFFIX) == true &&
+            uri.path == COPERNICUS_API_PATH
+        val isLoopback = uri.scheme in setOf("http", "https") && uri.host == LOOPBACK_ADDRESS
+        require(
+            (isCopernicusStore || isLoopback) &&
+                uri.rawQuery == null &&
+                uri.rawFragment == null &&
+                uri.rawUserInfo == null,
+        ) {
+            "The endpoint must be https://<store>$COPERNICUS_HOST_SUFFIX$COPERNICUS_API_PATH or point to " +
+                "$LOOPBACK_ADDRESS, with no query, fragment, or user information, but was '$endpoint'"
+        }
+        // the dataset becomes a segment of the path of the requests
+        require(SAFE_DATASET.matches(dataset)) {
+            "The dataset must be made of letters, digits, '.', '_', and '-', starting with a letter or a digit, " +
+                "but was '$dataset'"
         }
     }
 
@@ -69,9 +78,24 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
         private const val HASH_PREFIX_LENGTH = 16
 
         /**
-         * How Copernicus data store endpoints must end.
+         * The path of the API of the Copernicus data stores.
          */
-        private const val COPERNICUS_STORES_ENDPOINT_END = ".copernicus.eu/api"
+        private const val COPERNICUS_API_PATH = "/api"
+
+        /**
+         * How the hosts of the Copernicus data stores end.
+         */
+        private const val COPERNICUS_HOST_SUFFIX = ".copernicus.eu"
+
+        /**
+         * The loopback address, accepted with any path for testing.
+         */
+        private const val LOOPBACK_ADDRESS = "127.0.0.1"
+
+        /**
+         * The dataset identifiers accepted, safe as segments of a URL path.
+         */
+        private val SAFE_DATASET = Regex("[A-Za-z0-9][A-Za-z0-9._-]*")
 
         /**
          * Returns the SHA-256 digest of [str] (UTF-8) as a lowercase hex string.

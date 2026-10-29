@@ -12,10 +12,11 @@ package it.unibo.alchemist.boundary.filecache
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.incrementAndFetch
+import kotlin.concurrent.thread
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createDirectory
@@ -86,10 +87,10 @@ class TestFileSystemDirectoryCache {
         val gate = CountDownLatch(1)
         val failures = ConcurrentLinkedQueue<Throwable>()
         val threads = tasks.map { task ->
-            Thread {
+            thread {
                 gate.await()
                 runCatching { task() }.onFailure { failures.add(it) }
-            }.apply { start() }
+            }
         }
         gate.countDown()
         threads.forEach(Thread::join)
@@ -235,6 +236,7 @@ class TestFileSystemDirectoryCache {
     }
 
     @Test
+    @OptIn(ExperimentalAtomicApi::class)
     fun `a process waits for another process loading the same entry, then reuses it`() {
         val key = TestKey("entry_other_process")
         val loading = tempDir.resolve("loading")
@@ -255,16 +257,15 @@ class TestFileSystemDirectoryCache {
             awaitWhile { otherProcess.isAlive && !loading.exists() }
             assertTrue(loading.exists(), "The other process terminated before loading the entry")
             val loader = FakeLoader { _, dir -> writeOneFile(dir) }
-            val result = AtomicReference<Result<Path>>()
-            val waiting = Thread { result.set(runCatching { FileSystemDirectoryCache(loader, root)[key] }) }
-            waiting.start()
+            val result = AtomicReference<Result<Path>?>(null)
+            val waiting = thread { result.store(runCatching { FileSystemDirectoryCache(loader, root)[key] }) }
             // the other process completes the load only once this one waits for the lock, or completed without it
             awaitWhile { waiting.isAlive && !waiting.isWaitingForFileLock() }
             release.createFile()
             waiting.join()
             assertEquals(0, otherProcess.waitFor())
             assertEquals(0, loader.calls)
-            assertEquals(OTHER_PROCESS_DATA, result.get().getOrThrow().content())
+            assertEquals(OTHER_PROCESS_DATA, checkNotNull(result.load()).getOrThrow().content())
         } finally {
             otherProcess.destroyForcibly()
         }

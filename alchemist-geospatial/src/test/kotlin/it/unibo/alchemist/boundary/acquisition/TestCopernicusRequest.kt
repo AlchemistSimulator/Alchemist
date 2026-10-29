@@ -12,7 +12,6 @@ package it.unibo.alchemist.boundary.acquisition
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -79,7 +78,7 @@ class TestCopernicusRequest {
     }
 
     @Test
-    fun `the readable prefix comes from the dataset, sanitized`() {
+    fun `the readable prefix is the dataset`() {
         assertStartsWith("cems-glofas-historical_", glofas.directoryName)
     }
 
@@ -137,55 +136,6 @@ class TestCopernicusRequest {
         ).forEach { endpoint ->
             assertFailsWith<IllegalArgumentException>("'$endpoint'") { emptyRequest(endpoint) }
         }
-    }
-
-    // toFileSystemSafe extension function tests
-    @Test
-    fun `a plain name with only safe characters is left unchanged`() {
-        assertEquals(dataset, dataset.toFileSystemSafe())
-        assertEquals("ERA5_2024.v3", "ERA5_2024.v3".toFileSystemSafe())
-    }
-
-    @Test
-    fun `spaces are replaced`() {
-        assertEquals("New_York", "New York".toFileSystemSafe())
-    }
-
-    @Test
-    fun `path separators are replaced`() {
-        assertEquals("a_b", "a/b".toFileSystemSafe())
-        assertEquals("a_b", "a\\b".toFileSystemSafe())
-    }
-
-    @Test
-    fun `Windows-illegal characters are replaced`() {
-        // < > : " | ? * are illegal in a Windows filename
-        assertEquals("a_b_c_d_e_f_g_h", """a:b<c>d"e|f?g*h""".toFileSystemSafe())
-    }
-
-    @Test
-    fun `non-ASCII letters are replaced`() {
-        assertEquals("Forl_-Cesena", "Forlì-Cesena".toFileSystemSafe())
-    }
-
-    @Test
-    fun `output never contains a path separator, for any input`() {
-        listOf("a/b", "a\\b", "/", "\\", "C:/x", "../../etc").forEach { raw ->
-            val safe = raw.toFileSystemSafe()
-            assertFalse("/" in safe, "Expected '$safe' (from '$raw') not to contain '/'")
-            assertFalse("\\" in safe, "Expected '$safe' (from '$raw') not to contain '\\'")
-        }
-    }
-
-    @Test
-    fun `output contains only allowlisted characters`() {
-        assertMatches(Regex("^[A-Za-z0-9._-]*$"), """!"£$%&/()=?^@#°""".toFileSystemSafe())
-    }
-
-    @Test
-    fun `sanitizing a sanitized name changes nothing`() {
-        val once = "a b/c:d".toFileSystemSafe()
-        assertEquals(once, once.toFileSystemSafe())
     }
 }
 

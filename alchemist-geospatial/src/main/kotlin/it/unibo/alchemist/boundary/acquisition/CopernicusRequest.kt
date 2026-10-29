@@ -18,6 +18,7 @@ import java.security.MessageDigest
  * A request to an ECMWF api-friendly datastore (CDS / EWDS / ADS): carries the request **identity** and **what to
  * download**.
  *
+ * @property endpoint the base URL of the API of the data store (e.g. `"https://ewds.climate.copernicus.eu/api"`).
  * @property dataset dataset identifier (e.g. `"cems-glofas-historical"`).
  * @property inputs the **opaque** request map: the selection (variables, dates, area, format, ...)
  * of parameters used for the request to the datastore. It is intentionally untyped because the fields
@@ -54,9 +55,10 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
     }
 
     /**
-     * A deterministic directory name: a human-readable sanitized prefix from [dataset],
-     * followed by a truncation of the SHA-256 hash of the canonical `(dataset, inputs)` pair. The
-     * prefix aids the human reading the cache directory; the hash provides collision resistance.
+     * A deterministic directory name: the [dataset], as a human-readable prefix,
+     * followed by a truncation of the SHA-256 hash of the canonical `(endpoint, dataset, inputs)` triple.
+     * The [endpoint] is part of the hash, so that the same request to different data stores gets a different entry.
+     * The prefix aids the human reading the cache directory; the hash provides collision resistance.
      */
     override val directoryName: String = run {
         val canonical = CanonicalJson.encode(
@@ -66,7 +68,7 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
                 "inputs" to inputs,
             ),
         )
-        "${dataset.toFileSystemSafe()}_${sha256Hex(canonical).take(HASH_PREFIX_LENGTH)}"
+        "${dataset}_${sha256Hex(canonical).take(HASH_PREFIX_LENGTH)}"
     }
 
     private companion object {
@@ -75,27 +77,27 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
          * Number of leading hex characters of the SHA-256 digest kept in the folder name.
          * Used to provide collision-safety for a personal cache while keeping the name short.
          */
-        private const val HASH_PREFIX_LENGTH = 16
+        const val HASH_PREFIX_LENGTH = 16
 
         /**
          * The path of the API of the Copernicus data stores.
          */
-        private const val COPERNICUS_API_PATH = "/api"
+        const val COPERNICUS_API_PATH = "/api"
 
         /**
          * How the hosts of the Copernicus data stores end.
          */
-        private const val COPERNICUS_HOST_SUFFIX = ".copernicus.eu"
+        const val COPERNICUS_HOST_SUFFIX = ".copernicus.eu"
 
         /**
          * The loopback address, accepted with any path for testing.
          */
-        private const val LOOPBACK_ADDRESS = "127.0.0.1"
+        const val LOOPBACK_ADDRESS = "127.0.0.1"
 
         /**
          * The dataset identifiers accepted, safe as segments of a URL path.
          */
-        private val SAFE_DATASET = Regex("[A-Za-z0-9][A-Za-z0-9._-]*")
+        val SAFE_DATASET = Regex("[A-Za-z0-9][A-Za-z0-9._-]*")
 
         /**
          * Returns the SHA-256 digest of [str] (UTF-8) as a lowercase hex string.
@@ -103,16 +105,8 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
          * @param str the UTF-8 string to hash.
          * @return the digest of SHA-256 over [str].
          */
-        private fun sha256Hex(str: String): String = MessageDigest.getInstance("SHA-256")
+        fun sha256Hex(str: String): String = MessageDigest.getInstance("SHA-256")
             .digest(str.toByteArray(Charsets.UTF_8))
             .toHexString()
     }
 }
-
-/**
- * Renders this `String` as a single file-system-safe path segment: every character outside `[A-Za-z0-9._-]`
- * is replaced with `_`. Distinct strings may collapse to the same output (e.g. `"a b"` and `"a_b"`).
- *
- * @return this string sanitized (i.e. all non-alphabetical/numerical characters replaced by `_`)
- */
-internal fun String.toFileSystemSafe(): String = this.replace(Regex("[^A-Za-z0-9._-]"), "_")

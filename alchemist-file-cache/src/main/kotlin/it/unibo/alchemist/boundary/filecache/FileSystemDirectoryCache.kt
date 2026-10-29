@@ -75,11 +75,17 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      *
      * @param key the entry identity, determining both the directory name and the data to load.
      * @return the [Path] of the final cache directory, filled with data.
+     * @throws IllegalArgumentException if the [CachedDirectoryKey.directoryName] of [key] is not a single path
+     * segment, or starts with `.`.
      * @throws IllegalStateException if the [loader] fails or writes no file.
      */
     override operator fun get(key: K): Path {
         val directoryName = key.directoryName
         val resolvedDirectory = root.resolve(directoryName)
+        // names starting with '.' belong to the cache, and catch "", ".", and ".." too
+        require(directoryName.isNotEmpty() && !directoryName.startsWith('.') && resolvedDirectory.parent == root) {
+            "Invalid cache directory name '$directoryName': it must be a single path segment not starting with '.'"
+        }
         // cache hit: the directory already exists
         if (Files.isDirectory(resolvedDirectory)) {
             logger.info("Cache hit for '$directoryName': using $resolvedDirectory")

@@ -109,6 +109,18 @@ class TestFileSystemDirectoryCache {
     }
 
     @Test
+    fun `names that are not a single path segment, or start with a dot, are rejected without loading`() {
+        val loader = FakeLoader { _, dir -> writeOneFile(dir) }
+        val cache = FileSystemDirectoryCache(loader, root)
+        // creates the internal directories, so that their names would otherwise be hits
+        cache[TestKey("entry_valid")]
+        listOf("", ".", "..", "../outside", "nested/entry", tempDir.resolve("absolute").toString(), ".tmp", ".locks")
+            .forEach { name -> assertFailsWith<IllegalArgumentException>("'$name'") { cache[TestKey(name)] } }
+        assertEquals(1, loader.calls)
+        assertFalse(tempDir.resolve("outside").exists())
+    }
+
+    @Test
     fun `a failure of the loader propagates and no entry is promoted`() {
         val key = TestKey("entry_fail")
         val cache = FileSystemDirectoryCache(FakeLoader { _, _ -> error("load blew up") }, root)

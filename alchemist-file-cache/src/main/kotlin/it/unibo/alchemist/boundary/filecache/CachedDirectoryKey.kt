@@ -17,7 +17,8 @@ interface CachedDirectoryKey {
     /**
      * A **deterministic, file-system-safe** name for the directory holding the entry, derived *only* from what
      * determines its content, so that equal content always maps to the same name.
-     * It must be a single path segment: no separators (`/`, `\`), and valid on every operating system.
+     * It must be a single, non-empty path segment: no separators (`/`, `\`), and valid on every operating system.
+     * Names starting with `.` are reserved for the internal use of the cache.
      */
     val directoryName: String
 }

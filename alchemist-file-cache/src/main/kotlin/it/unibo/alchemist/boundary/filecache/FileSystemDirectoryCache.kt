@@ -77,7 +77,8 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      * @return the [Path] of the final cache directory, filled with data.
      * @throws IllegalArgumentException if the [CachedDirectoryKey.directoryName] of [key] is not a single path
      * segment, or starts with `.`.
-     * @throws IllegalStateException if the [loader] fails or writes no file.
+     * @throws IllegalStateException if the [loader] writes no file.
+     * Anything thrown by the [loader], or by the file system while publishing the entry, propagates unchanged.
      */
     override operator fun get(key: K): Path {
         val directoryName = key.directoryName
@@ -142,7 +143,8 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      * @param directoryName the directory name [key] maps to.
      * @param finalDir the destination of the loaded data.
      * @return [finalDir], filled with data.
-     * @throws IllegalStateException if the [loader] fails or writes no file.
+     * @throws IllegalStateException if the [loader] writes no file.
+     * Anything thrown by the [loader], or by the file system while publishing the entry, propagates unchanged.
      */
     private fun load(key: K, directoryName: String, finalDir: Path): Path {
         logger.info("Cache miss for '$directoryName': loading data")
@@ -156,11 +158,11 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
             runCatching { Files.move(temp, finalDir, StandardCopyOption.ATOMIC_MOVE) }
                 .onSuccess { logger.info("Data cached in $finalDir") }
                 .onFailure {
-                    val anotherProcessWon = it is FileSystemException && Files.isDirectory(finalDir)
-                    when {
-                        anotherProcessWon -> logger.info("Another process has already cached the data in $finalDir")
-                        else -> throw IllegalStateException(it)
+                    // If the failure is not due to another process publishing before us, we throw it
+                    if (it.isNotDueToAnotherProcessPublishingBeforeUs(finalDir)) {
+                        throw it
                     }
+                    logger.info("Another process has already cached the data in $finalDir")
                 }
             return finalDir
         } finally {
@@ -209,5 +211,10 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
         // ClosedChannelException nor a FileLockInterruptionException. In that case, we cannot wait for a lock.
         private val Throwable.doesNotMeanThatLockingIsUnsupported get() =
             this !is IOException || this is ClosedChannelException || this is FileLockInterruptionException
+
+        // A move fails with a FileSystemException if the target exists: if it is a directory, another process
+        // published the same entry first, and its copy can be used. Any other failure is a real one.
+        private fun Throwable.isNotDueToAnotherProcessPublishingBeforeUs(finalDir: Path) =
+            this !is FileSystemException || !Files.isDirectory(finalDir)
     }
 }

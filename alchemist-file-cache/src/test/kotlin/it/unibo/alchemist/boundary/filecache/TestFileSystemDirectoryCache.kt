@@ -17,6 +17,7 @@ import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createDirectory
 import kotlin.io.path.createFile
+import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
@@ -54,7 +55,8 @@ private class FakeLoader(private val behavior: (key: TestKey, target: Path) -> U
 
 class TestFileSystemDirectoryCache {
 
-    private val tempDir: Path = createTempDirectory("directory-cache-test")
+    // a real path, as the one of the cache root, so that the paths returned by the cache can be compared directly
+    private val tempDir: Path = createTempDirectory("directory-cache-test").toRealPath()
 
     private val root: Path = tempDir.resolve("root")
 
@@ -192,6 +194,18 @@ class TestFileSystemDirectoryCache {
         val secondLoader = FakeLoader { _, dir -> writeOneFile(dir) }
         val firstCache = FileSystemDirectoryCache(firstLoader, root)
         val secondCache = FileSystemDirectoryCache(secondLoader, root)
+        concurrently(listOf({ firstCache[key] }, { secondCache[key] }))
+        assertEquals(1, firstLoader.calls + secondLoader.calls)
+    }
+
+    @Test
+    fun `two caches whose roots are linked load a shared entry only once`() {
+        val key = TestKey("entry_linked_roots")
+        val link = tempDir.resolve("link").createSymbolicLinkPointingTo(root.createDirectories())
+        val firstLoader = FakeLoader { _, dir -> writeOneFile(dir) }
+        val secondLoader = FakeLoader { _, dir -> writeOneFile(dir) }
+        val firstCache = FileSystemDirectoryCache(firstLoader, root)
+        val secondCache = FileSystemDirectoryCache(secondLoader, link)
         concurrently(listOf({ firstCache[key] }, { secondCache[key] }))
         assertEquals(1, firstLoader.calls + secondLoader.calls)
     }

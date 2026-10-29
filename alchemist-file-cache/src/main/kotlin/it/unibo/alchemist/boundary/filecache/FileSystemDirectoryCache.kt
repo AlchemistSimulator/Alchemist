@@ -53,16 +53,16 @@ import org.slf4j.LoggerFactory
  *
  * @param K the type of [CachedDirectoryKey] accepted by this cache.
  * @param loader fills a cache entry whenever it is missing.
- * @param root path of the cache root directory.
+ * @param root path of the cache root directory, created if missing.
  */
 class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: CacheableDataLoader<K>, root: Path) :
     LoadingDirectoryCache<K> {
 
     /**
-     * Cache root directory, normalized so that equivalent paths written
-     * differently address the same cache.
+     * Cache root directory, as a real path: equivalent paths written differently, or reaching it through symbolic
+     * links, address the same cache, and thus share the monitors of its entries.
      */
-    private val root: Path = root.toAbsolutePath().normalize()
+    private val root: Path = root.createDirectories().toRealPath()
 
     /**
      * The directory holding the temporary directories where the [loader] creates files.

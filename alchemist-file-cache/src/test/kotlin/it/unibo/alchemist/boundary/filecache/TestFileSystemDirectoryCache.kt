@@ -13,6 +13,9 @@ import java.nio.file.Path
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createDirectory
@@ -42,13 +45,16 @@ private data class TestKey(val id: String) : CachedDirectoryKey {
  * Delegates each load call to a configurable [behavior], so that [FileSystemDirectoryCache] can
  * be tested fully offline.
  */
+@OptIn(ExperimentalAtomicApi::class)
 private class FakeLoader(private val behavior: (key: TestKey, target: Path) -> Unit) : CacheableDataLoader<TestKey> {
 
-    var calls: Int = 0
-        private set
+    // atomic, as concurrent tests count the loads of different threads: a racy count could hide a double load
+    private val counter = AtomicInt(0)
+
+    val calls: Int get() = counter.load()
 
     override fun load(key: TestKey, target: Path) {
-        calls++
+        counter.incrementAndFetch()
         behavior(key, target)
     }
 }

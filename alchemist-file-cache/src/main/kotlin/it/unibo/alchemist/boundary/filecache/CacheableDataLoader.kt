@@ -27,7 +27,8 @@ fun interface CacheableDataLoader<in K : CachedDirectoryKey> {
      * Fills [target] with the data denoted by [key].
      *
      * @param key the key identifying the data to load.
-     * @param target the directory to fill with data; it exists and is writable.
+     * @param target the directory to fill with data; it exists, is empty, and is writable.
+     * The loader must write at least one regular file directly in it, or the entry is rejected.
      * @throws IllegalStateException if the data cannot be loaded.
      */
     fun load(key: K, target: Path)

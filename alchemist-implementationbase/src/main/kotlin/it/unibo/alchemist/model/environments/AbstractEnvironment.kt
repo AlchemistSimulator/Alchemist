@@ -102,6 +102,8 @@ abstract class AbstractEnvironment<T, P : Position<P>> protected constructor(
             }
         }
 
+    final override val simulationOrNull: Simulation<T, P>? get() = attachedSimulation.current
+
     final override val attachedSimulation: Observable<Simulation<T, P>?>
         field: MutableObservable<Simulation<T, P>?> = observeShareable(null)
 

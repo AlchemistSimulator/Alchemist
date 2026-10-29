@@ -117,9 +117,18 @@ constructor(
             .setEncodedValuesString(encodedValues)
 
         // GraphHopper locks the graph directory while loading: concurrent loads of the same graph would fail.
+        // The graph was imported before publishing the cache entry: importing it now would write into a shared entry.
         @Synchronized
         private fun loadNavigationSystem(mapFile: Path, graphDirectory: Path): GraphHopper =
-            newNavigationSystem(mapFile, graphDirectory).importOrLoad()
+            newNavigationSystem(mapFile, graphDirectory).apply {
+                val loaded = runCatching { load() }.getOrElse { error ->
+                    throw IllegalStateException(
+                        "Unreadable routing graph in $graphDirectory: delete it to import it again",
+                        error,
+                    )
+                }
+                check(loaded) { "No routing graph in $graphDirectory: delete it to import it again" }
+            }
     }
 
     /**
@@ -152,7 +161,7 @@ constructor(
             /**
              * Copies the map into the cache entry and imports its routing graph there.
              */
-            val loader = CacheableDataLoader<RoutingGraph> { graph, target ->
+            val loader = CacheableDataLoader { graph: RoutingGraph, target: Path ->
                 val mapFile = target.resolve(graph.mapName)
                 graph.map.openStream().use { Files.copy(it, mapFile) }
                 newNavigationSystem(mapFile, target).importAndClose()

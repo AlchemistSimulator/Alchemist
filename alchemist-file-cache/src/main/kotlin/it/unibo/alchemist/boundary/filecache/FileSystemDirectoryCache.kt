@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.filecache
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
+import java.nio.channels.FileLockInterruptionException
 import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -111,9 +112,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
             logger.debug("Acquiring the file lock {}", lockFile)
             runCatching { channel.lock() }
                 .onFailure { failure ->
-                    // Some file systems do not support locks, and throw an IOException that is *not* a
-                    // ClosedChannelException. In that case, we cannot wait for a lock: we just run the action anyway.
-                    if (failure !is IOException || failure is ClosedChannelException) {
+                    if (failure.doesNotMeanThatLockingIsUnsupported) {
                         throw failure
                     }
                 }
@@ -199,5 +198,10 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
         private val logger = LoggerFactory.getLogger(FileSystemDirectoryCache::class.java)
 
         private val Path.readyOrNull: Path? get() = takeIf { Files.isDirectory(it) }
+
+        // Some file systems do not support locks, and throw an IOException that is neither a
+        // ClosedChannelException nor a FileLockInterruptionException. In that case, we cannot wait for a lock.
+        private val Throwable.doesNotMeanThatLockingIsUnsupported get() =
+            this !is IOException || this is ClosedChannelException || this is FileLockInterruptionException
     }
 }

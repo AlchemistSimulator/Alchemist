@@ -66,11 +66,6 @@ constructor(
             ?.snappedPoint
             ?.let { LatLongPosition(it.lat, it.lon) }
 
-    private fun GeoPosition.coerceToMap(): Pair<Double, Double> {
-        val bounds = graphHopper.baseGraph.bounds
-        return latitude.coerceIn(bounds.minLat..bounds.maxLat) to longitude.coerceIn(bounds.minLon..bounds.maxLon)
-    }
-
     override fun route(from: GeoPosition, to: GeoPosition, options: GraphHopperOptions): Route<GeoPosition> {
         if (from == to) {
             return PolygonalChain(from)
@@ -86,6 +81,57 @@ constructor(
 
     override fun parseOptions(options: String): GraphHopperOptions {
         TODO("On-the-fly parsing of navigation options is still to be implemented")
+    }
+
+    private fun GeoPosition.coerceToMap(): Pair<Double, Double> {
+        val bounds = graphHopper.baseGraph.bounds
+        return latitude.coerceIn(bounds.minLat..bounds.maxLat) to longitude.coerceIn(bounds.minLon..bounds.maxLon)
+    }
+
+    /**
+     * The routing graph of [map], identified by the content of [map] and by everything determining the graph
+     * GraphHopper imports from it: its version, the profiles, and the encoded values.
+     */
+    private class RoutingGraph(val map: URL) : CachedDirectoryKey {
+        /**
+         * The name of the [map] file, as found at the end of the path of its URL, made safe for the file system.
+         * It cannot start with `.`, as the cache reserves such names, and it falls back to `map` when empty.
+         */
+        val mapName: String = map.path
+            .substringAfterLast('/')
+            .replace(UNSAFE_FILE_NAME_CHARACTERS, "_")
+            .trimStart('.')
+            .ifEmpty { "map" }
+
+        /**
+         * The SHA-256 hash of the content of [map].
+         */
+        val mapHash: String = map.sha256 { ByteStreams.exhaust(it) }
+
+        override val directoryName: String = run {
+            val identity = listOf(
+                mapHash,
+                Constants.VERSION,
+                Constants.getVersions(),
+                GraphHopperOptions.allProfiles.joinToString { "${it.name}|${it.version}" },
+                encodedValues,
+            ).joinToString(separator = "\n")
+            val digest = Hashing.sha256().hashString(identity, Charsets.UTF_8).toString()
+            "${mapName}_${digest.take(HASH_PREFIX_LENGTH)}"
+        }
+
+        companion object {
+            /**
+             * Copies the map into the cache entry, checking that it is the one the entry is named after,
+             * and imports its routing graph there.
+             */
+            val loader = CacheableDataLoader { graph: RoutingGraph, target: Path ->
+                val mapFile = target.resolve(graph.mapName)
+                val copiedHash = graph.map.sha256 { Files.copy(it, mapFile) }
+                check(copiedHash == graph.mapHash) { "The map at ${graph.map} changed while caching its routing graph" }
+                newNavigationSystem(mapFile, target).importAndClose()
+            }
+        }
     }
 
     /**
@@ -141,51 +187,5 @@ constructor(
                 consume(it)
                 it.hash().toString()
             }
-    }
-
-    /**
-     * The routing graph of [map], identified by the content of [map] and by everything determining the graph
-     * GraphHopper imports from it: its version, the profiles, and the encoded values.
-     */
-    private class RoutingGraph(val map: URL) : CachedDirectoryKey {
-        /**
-         * The name of the [map] file, as found at the end of the path of its URL, made safe for the file system.
-         * It cannot start with `.`, as the cache reserves such names, and it falls back to `map` when empty.
-         */
-        val mapName: String = map.path
-            .substringAfterLast('/')
-            .replace(UNSAFE_FILE_NAME_CHARACTERS, "_")
-            .trimStart('.')
-            .ifEmpty { "map" }
-
-        /**
-         * The SHA-256 hash of the content of [map].
-         */
-        val mapHash: String = map.sha256 { ByteStreams.exhaust(it) }
-
-        override val directoryName: String = run {
-            val identity = listOf(
-                mapHash,
-                Constants.VERSION,
-                Constants.getVersions(),
-                GraphHopperOptions.allProfiles.joinToString { "${it.name}|${it.version}" },
-                encodedValues,
-            ).joinToString(separator = "\n")
-            val digest = Hashing.sha256().hashString(identity, Charsets.UTF_8).toString()
-            "${mapName}_${digest.take(HASH_PREFIX_LENGTH)}"
-        }
-
-        companion object {
-            /**
-             * Copies the map into the cache entry, checking that it is the one the entry is named after,
-             * and imports its routing graph there.
-             */
-            val loader = CacheableDataLoader { graph: RoutingGraph, target: Path ->
-                val mapFile = target.resolve(graph.mapName)
-                val copiedHash = graph.map.sha256 { Files.copy(it, mapFile) }
-                check(copiedHash == graph.mapHash) { "The map at ${graph.map} changed while caching its routing graph" }
-                newNavigationSystem(mapFile, target).importAndClose()
-            }
-        }
     }
 }

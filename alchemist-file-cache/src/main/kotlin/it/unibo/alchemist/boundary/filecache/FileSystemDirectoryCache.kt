@@ -101,7 +101,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
             logger.info("Cache hit for '$directoryName': using $resolvedDirectory")
             return resolvedDirectory
         }
-        // the path gets recreated on every execution, so it is not used as the identity
+        // one monitor per entry path
         val monitor = entryLocks.computeIfAbsent(resolvedDirectory) { Any() }
         logger.debug("Cache miss for '$directoryName': acquiring its monitor")
         /*

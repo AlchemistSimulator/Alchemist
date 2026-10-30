@@ -1,0 +1,12 @@
+{
+  "system_version": ["version_4_0"],
+  "hydrological_model": ["lisflood"],
+  "product_type": ["consolidated"],
+  "variable": ["river_discharge_in_the_last_24_hours"],
+  "hyear": ["2024"],
+  "hmonth": ["06"],
+  "hday": ["10"],
+  "data_format": "netcdf",
+  "download_format": "unarchived",
+  "area": [44.2, 12.2, 44.1, 12.3]
+}

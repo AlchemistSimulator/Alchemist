@@ -25,7 +25,7 @@ Order the members of Java classes, interfaces, and enums as follows, extending t
 Within every group, sort members by visibility (public, then protected, then package-private, then private), fields sharing a visibility by mutability (`final` fields before non-final ones), and then members alphabetically by name, keeping overloads adjacent.
 
 Order the members of Kotlin classes, interfaces, and objects as follows, extending the class layout of the Kotlin coding conventions:
-1. Properties and `init` blocks, other than extension properties: first plain properties, without a custom getter or setter (private state included), then properties with custom accessors.
+1. Properties and `init` blocks, other than extension properties: first `const` properties, then the other plain properties, without a custom getter or setter (private state included), then properties with custom accessors.
 2. Secondary constructors.
 3. Functions, including overrides, other than extension functions: first the non-private ones, then the private helpers.
 4. Member extensions: extension properties before extension functions, and in each, non-private ones before private helpers.

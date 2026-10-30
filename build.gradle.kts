@@ -36,6 +36,10 @@ plugins {
 
 val minJavaVersion = property("minJavaVersion").toString()
 
+tasks.withType<UpdateDaemonJvm>().configureEach {
+    languageVersion = JavaLanguageVersion.of(minJavaVersion)
+}
+
 allprojects {
 
     with(rootProject.libs.plugins) {

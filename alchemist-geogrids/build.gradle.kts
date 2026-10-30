@@ -1,0 +1,46 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+import Libs.alchemist
+import Libs.incarnation
+
+plugins {
+    id("kotlin-jvm-convention")
+}
+
+dependencies {
+    ksp(alchemist("factories-generator"))
+    api(alchemist("api"))
+    api(alchemist("file-cache"))
+
+    implementation(libs.cdm.core)
+    implementation(libs.cdm.grib)
+    implementation(libs.gson)
+    implementation(alchemist("observables"))
+    implementation(libs.guava)
+    implementation(libs.slf4j)
+
+    testImplementation(alchemist("kotlinscript"))
+    testImplementation(alchemist("maps"))
+    testImplementation(alchemist("test"))
+    testRuntimeOnly(incarnation("protelis"))
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            contributors {
+                contributor {
+                    name.set("Emir Wanes Aouioua")
+                    email.set("emirwanes.aouioua@studio.unibo.it")
+                }
+            }
+        }
+    }
+}

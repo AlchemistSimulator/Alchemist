@@ -97,7 +97,7 @@ constructor(
         !conditionForRemoval(environment, center, neighbor, centerInput.range, neighborInput.range)
 
     // Links require neighbors within the range of the center: the query follows it, rather than the maximum range.
-    final override fun observeCandidates(center: Node<T>): Observable<out Set<Node<T>>> =
+    final override fun observeCandidates(center: Node<T>): Observable<Set<Node<T>>> =
         center.range.switchMap { environment.observeNodesAround(center, it) }
 
     // Links depend on the positions and ranges of both nodes, and on what the removal condition observes.

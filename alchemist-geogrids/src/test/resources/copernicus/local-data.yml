@@ -1,0 +1,26 @@
+incarnation: protelis
+
+environment:
+  type: OSMEnvironment
+  parameters: [maps/cesena.pbf]
+
+layers:
+  - type: DoubleGriddedGeoLayer
+    molecule: river-discharge
+    parameters:
+      data:
+        type: GriddedGeoFiles
+        parameters:
+          # A directory of NetCDF or GRIB files sharing the same variable and grid:
+          # a path, or the name of a directory among the classpath resources
+          directory: copernicus/glofas-cesena
+          # The variable to read, optional if the files hold only one
+          variable: dis24
+      # Each simulated time unit lasts one hour of the data
+      timeScale: PT1H
+      # Simulation time zero corresponds to this instant (by default, the first instant in the data)
+      timeOrigin: "2024-06-10T00:00:00Z"
+
+deployments:
+  type: Circle
+  parameters: [10, 44.14, 12.24, 0.01]

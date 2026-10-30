@@ -30,6 +30,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import kotlin.time.toJavaDuration
 import org.slf4j.LoggerFactory
@@ -153,56 +154,56 @@ class CopernicusDataStoreProvider(
      * **Polls** the job status at [monitorUrl] until it becomes `successful`, with exponential
      * backoff capped at [maxPollInterval] and a [timeout] guillotine.
      *
-     * Terminal failure states are listed **explicitly** (`failed`/`rejected`/`dismissed`):
+     * Terminal failure states are listed **explicitly** (`failed`/`rejected`/`dismissed`/`deleted`):
      * consistently with [parseStatus], any other state (known like `accepted`/`running` or unknown),
      * is treated as transient and polling continues.
      *
      * @param monitorUrl the URL to use to check the job status. See [submit].
+     * @param deadline the last moment to poll for the job status.
+     * @param interval the time to wait before the next poll.
+     * @param lastHeartbeat the last time the user was told that polling is still going on,
+     * so that they do not think the program froze.
      * @return the result URL (`rel="results"` link, present only once the job is `successful`).
      * @throws IllegalStateException on a terminal failure state, on [timeout], or if a `successful`
      * job exposes no `rel="results"` link (inconsistent server response).
      */
-    private fun awaitSuccess(monitorUrl: String): String {
-        // the last available moment to check for a successful poll.
-        val deadline = TimeSource.Monotonic.markNow() + timeout
-        var interval = pollInterval
-        /*
-         * tracks the last time the user was alerted that the program is still
-         * polling (to prevent them from thinking it has frozen).
-         */
-        var lastHeartbeat = TimeSource.Monotonic.markNow()
-        // tries to poll until a success/timeout/error
-        while (true) {
-            // fails on timeout
-            val remaining = -deadline.elapsedNow()
-            check(remaining.isPositive()) {
-                "Timeout ($timeout) while waiting for job completion at $monitorUrl"
+    private tailrec fun awaitSuccess(
+        monitorUrl: String,
+        deadline: TimeMark = TimeSource.Monotonic.markNow() + timeout,
+        interval: Duration = pollInterval,
+        lastHeartbeat: TimeMark = TimeSource.Monotonic.markNow(),
+    ): String {
+        // fails on timeout
+        val remaining = -deadline.elapsedNow()
+        check(remaining.isPositive()) {
+            "Timeout ($timeout) while waiting for job completion at $monitorUrl"
+        }
+        // a stalled poll must not outlive the deadline
+        val body = get(monitorUrl, minOf(REQUEST_TIMEOUT, remaining)).body()
+        return when (val status = parseStatus(body)) {
+            SUCCESSFUL -> {
+                logger.info("Job completed at $monitorUrl")
+                parseResultsUrl(body)
+                    ?: error("Job '$SUCCESSFUL' but no rel='results' link at $monitorUrl: inconsistent response")
             }
-            // a stalled poll must not outlive the deadline
-            val body = get(monitorUrl, minOf(REQUEST_TIMEOUT, remaining)).body()
-            // status check
-            when (val status = parseStatus(body)) {
-                "successful" -> {
-                    logger.info("Job completed at $monitorUrl")
-                    return parseResultsUrl(body)
-                        ?: error("Job 'successful' but no rel='results' link at $monitorUrl: inconsistent response")
-                }
-                in TERMINAL_STATUSES -> failOnStatus(monitorUrl, status, body)
-                in RUNNING_STATUSES -> {
-                    // fine details on debug mode
+            in TERMINAL_STATUSES -> failOnStatus(monitorUrl, status, body)
+            else -> {
+                val heartbeat = if (status in RUNNING_STATUSES) {
                     logger.debug("Job status '$status' at $monitorUrl")
                     // reassures the user that the program is in fact not dead.
-                    if (lastHeartbeat.elapsedNow() >= USER_ALERT_INTERVAL) {
-                        logger.info("Still waiting for job at $monitorUrl (status: $status)")
-                        lastHeartbeat = TimeSource.Monotonic.markNow()
-                    }
+                    lastHeartbeat.takeIf { it.elapsedNow() < USER_ALERT_INTERVAL }
+                        ?: TimeSource.Monotonic.markNow().also {
+                            logger.info("Still waiting for job at $monitorUrl (status: $status)")
+                        }
+                } else {
+                    // warns the user about the new unknown status, but keeps polling.
+                    logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
+                    lastHeartbeat
                 }
-                // warns the user about the new unknow status, but keeps polling.
-                else -> logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
+                // never sleeps past the deadline, so that the next poll fails right on time
+                Thread.sleep(minOf(interval, -deadline.elapsedNow()).coerceAtLeast(Duration.ZERO).inWholeMilliseconds)
+                awaitSuccess(monitorUrl, deadline, (interval * 2).coerceAtMost(maxPollInterval), heartbeat)
             }
-            // never sleeps past the deadline, so that the next iteration fails right on time
-            Thread.sleep(minOf(interval, -deadline.elapsedNow()).coerceAtLeast(Duration.ZERO).inWholeMilliseconds)
-            interval = (interval * 2).coerceAtMost(maxPollInterval)
         }
     }
 
@@ -276,7 +277,7 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Always throws for a terminal failure job (HTTP 200 with a `failed`/`rejected`/`dismissed` status).
+     * Always throws for a terminal failure job (HTTP 200 with a `failed`/`rejected`/`dismissed`/`deleted` status).
      *
      * **Note**: the status document does **not** carry the cause: ECMWF exposes it only by showing the
      * `rel="results"` link, which answers 4xx with an RFC 7807 body whose proprietary `traceback`
@@ -284,7 +285,7 @@ class CopernicusDataStoreProvider(
      * the fallbacks, **in that order**.
      *
      * @param monitorUrl the poll URL that reported a terminal failure status.
-     * @param status the terminal failure status (`failed`/`rejected`/`dismissed`).
+     * @param status the terminal failure status (`failed`/`rejected`/`dismissed`/`deleted`).
      * @param body the status document, used to locate the results link and, failing that, as a fallback
      * message source.
      * @throws IllegalStateException always.
@@ -363,6 +364,8 @@ class CopernicusDataStoreProvider(
         private val REQUEST_TIMEOUT = 1.minutes
 
         private const val APPLICATION_JSON = "application/json"
+
+        private const val SUCCESSFUL = "successful"
 
         private val TERMINAL_STATUSES = setOf("failed", "rejected", "dismissed", "deleted")
 

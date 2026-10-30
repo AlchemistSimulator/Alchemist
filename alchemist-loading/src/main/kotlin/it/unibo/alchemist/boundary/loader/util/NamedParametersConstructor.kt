@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.loader.util
 
-import kotlin.collections.get
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
@@ -125,6 +125,17 @@ internal class NamedParametersConstructor(type: String, val parametersMap: Map<*
             .filter { parametersMap.containsKey(replacements.getOrDefault(it.name, it.name)) }
             .map { parametersMap[replacements.getOrDefault(it.name, it.name)] }
     }
+
+    /**
+     * Named parameters are not aligned with the last ones of the constructor, as trailing optional parameters
+     * can be omitted: the [index]-th provided parameter is the [index]-th one of [constructor] that was named.
+     * Constructors lacking some of the named parameters receive none of them.
+     */
+    override fun KFunction<*>.parameterIndexOrNull(provided: List<*>, index: Int): Int? = valueParameters.withIndex()
+        .filter { (_, parameter) -> parametersMap.keys.any { parameter.name.couldBeInterpretedAs(it.toString()) } }
+        .takeIf { it.size == provided.size }
+        ?.getOrNull(index)
+        ?.index
 
     private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +
         filter { it.name != null }.joinToString {

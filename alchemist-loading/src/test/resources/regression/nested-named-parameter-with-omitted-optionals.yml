@@ -1,0 +1,10 @@
+incarnation: protelis
+
+layers:
+  - molecule: level
+    type: another.location.ScaledLevelLayer
+    parameters:
+      level:
+        type: another.location.Level
+        parameters: [3]
+      scale: 2

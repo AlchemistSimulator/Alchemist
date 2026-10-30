@@ -15,7 +15,7 @@ The [Copernicus](https://www.copernicus.eu/) data stores
 distribute this kind of data in the [NetCDF](https://www.unidata.ucar.edu/software/netcdf/)
 and [GRIB](https://community.wmo.int/en/activity-areas/wis/grib-edition-1-and-2) formats.
 
-The `alchemist-geospatial` module turns these files into [layers](/howtos/simulation/layers/):
+The `alchemist-geogrids` module turns these files into [layers](/howtos/simulation/layers/):
 {{% api package="model.layers" class="GriddedGeoLayer" %}} exposes, at every position,
 the value of the data at the current simulation time,
 interpolated in space between the grid points and in time between the slices.
@@ -57,11 +57,11 @@ and their time slices get merged in chronological order
 (if several files hold the same instant, the slice of the first file is used).
 The directory can be a path on the file system or the name of a directory among the classpath resources.
 
-{{< code path="alchemist-geospatial/src/test/resources/copernicus/local-data.yml" >}}
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/local-data.yml" >}}
 
 The same scenario, written with the Kotlin DSL:
 
-{{< code path="alchemist-geospatial/src/test/resources/copernicus/local-data.alchemist.kts" >}}
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/local-data.alchemist.kts" >}}
 
 ## Downloading data from a Copernicus data store
 
@@ -73,11 +73,11 @@ Downloads get cached on the local file system,
 so that the data is downloaded only once and is then shared by all the simulations
 (even running in parallel) requesting it.
 
-{{< code path="alchemist-geospatial/src/test/resources/copernicus/datastore.yml" >}}
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/datastore.yml" >}}
 
 The same scenario, written with the Kotlin DSL:
 
-{{< code path="alchemist-geospatial/src/test/resources/copernicus/datastore.alchemist.kts" >}}
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/datastore.alchemist.kts" >}}
 
 The parameters of `CopernicusData` describing the request are:
 
@@ -93,7 +93,7 @@ The easiest way to write the request is to compose it in the *Download* tab of t
 and to copy the `request` dictionary shown in the *API request* section at the bottom of the page,
 as in the following example:
 
-{{< code path="alchemist-geospatial/src/test/resources/copernicus/glofas-request.json" >}}
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/glofas-request.json" >}}
 
 {{% notice note "Why a separate JSON file?" %}}
 Requests of some datasets have a `type` field,
@@ -125,7 +125,7 @@ simulations finding their data in cache need no credentials.
 Each request is cached in its own directory, named after the dataset and a hash of the whole request,
 so that changing any detail of the request (dates, area, variables, ...) produces a different entry.
 By default, the cache is in the user's cache directory
-(e.g., `~/.cache/alchemist/geospatial` on Linux),
+(e.g., `~/.cache/alchemist/copernicus` on Linux),
 and the `cacheDirectory` parameter selects a different one.
 Entries appear only once their data is complete:
 an interrupted download leaves no entry behind,
@@ -147,22 +147,22 @@ Named parameters are supported in both YAML and the Kotlin DSL;
 when using them, all the optional parameters preceding the last one provided must be specified as well.
 
 By default, values are interpolated linearly in space and time with
-{{% api package="model.geospatial.strategy.spatiotemporal" class="TrilinearInterpolation" %}}.
+{{% api package="model.geogrid.strategy.spatiotemporal" class="TrilinearInterpolation" %}}.
 Other combinations are available through
-{{% api package="model.geospatial.strategy.spatiotemporal" class="SeparableSpatioTemporalInterpolation" %}},
+{{% api package="model.geogrid.strategy.spatiotemporal" class="SeparableSpatioTemporalInterpolation" %}},
 which combines a spatial strategy
-({{% api package="model.geospatial.strategy.spatial" class="BilinearInterpolation" %}} or
-{{% api package="model.geospatial.strategy.spatial" class="NearestInterpolation" %}})
+({{% api package="model.geogrid.strategy.spatial" class="BilinearInterpolation" %}} or
+{{% api package="model.geogrid.strategy.spatial" class="NearestInterpolation" %}})
 with a temporal one
-({{% api package="model.geospatial.strategy.temporal" class="LinearInterpolation" %}},
-{{% api package="model.geospatial.strategy.temporal" class="ClosestInterpolation" %}},
-{{% api package="model.geospatial.strategy.temporal" class="LastInterpolation" %}}, or
-{{% api package="model.geospatial.strategy.temporal" class="NextInterpolation" %}}),
+({{% api package="model.geogrid.strategy.temporal" class="LinearInterpolation" %}},
+{{% api package="model.geogrid.strategy.temporal" class="ClosestInterpolation" %}},
+{{% api package="model.geogrid.strategy.temporal" class="LastInterpolation" %}}, or
+{{% api package="model.geogrid.strategy.temporal" class="NextInterpolation" %}}),
 to be passed as the `interpolation` parameter.
 
 Grid points with no data (e.g., river discharge far from rivers) are read as `NaN`.
 The `converter` parameter decides how interpolated values become the values of the layer:
-the default {{% api package="model.geospatial.strategy.converter" class="DoubleIdentityWithFallback" %}}
+the default {{% api package="model.geogrid.strategy.converter" class="DoubleIdentityWithFallback" %}}
 keeps them as they are, optionally replacing missing values with a fallback.
 Layers of other types can be created with {{% api package="model.layers" class="GriddedGeoLayer" %}}
-and a custom {{% api package="model.geospatial.strategy.converter" class="MeasurementConverter" %}}.
+and a custom {{% api package="model.geogrid.strategy.converter" class="MeasurementConverter" %}}.

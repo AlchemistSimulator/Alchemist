@@ -21,7 +21,7 @@ include(
     "alchemist-factories-generator",
     "alchemist-file-cache",
     "alchemist-full",
-    "alchemist-geospatial",
+    "alchemist-geogrids",
     "alchemist-graphql",
     "alchemist-graphql-surrogates",
     "alchemist-implementationbase",

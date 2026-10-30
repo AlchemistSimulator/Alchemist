@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.geospatial.strategy.spatiotemporal
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
-import java.io.Serializable
 
 /**
  * Strategy interface for performing combined spatio-temporal interpolation.
@@ -21,7 +20,7 @@ import java.io.Serializable
  *
  * Missing or invalid data during calculation should be signaled by returning [Double.NaN].
  */
-fun interface SpatioTemporalInterpolation : Serializable {
+fun interface SpatioTemporalInterpolation {
 
     /**
      * Interpolates a value at the specified geographic [position] and temporal offset.

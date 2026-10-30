@@ -32,12 +32,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 private const val TOLERANCE = 1e-9
 
-class TestCopernicusLayer {
+class TestGriddedGeoLayer {
     // fixed spatial grid
     private val lats = doubleArrayOf(44.0, 45.0, 46.0)
     private val lons = doubleArrayOf(11.0, 12.0, 13.0)
@@ -124,7 +123,7 @@ class TestCopernicusLayer {
             override fun grid(index: Int): RasterGrid = throw UnsupportedOperationException()
         }
         assertFailsWith<IllegalArgumentException> {
-            DoubleCopernicusLayer(
+            DoubleGriddedGeoLayer(
                 environment = envAt(0.0),
                 data = emptyGrid,
             )
@@ -135,7 +134,7 @@ class TestCopernicusLayer {
     @Test
     fun `default timeOrigin maps the first instant to time zero`() {
         val gridSnaps = syntheticGrid(7.0, 14.0)
-        val layer = DoubleCopernicusLayer(
+        val layer = DoubleGriddedGeoLayer(
             environment = envAt(0.0),
             data = gridSnaps,
         )
@@ -146,11 +145,11 @@ class TestCopernicusLayer {
 
     @Test
     fun `explicit timeOrigin shifts the temporal origin`() {
-        val layer = DoubleCopernicusLayer(
+        val layer = DoubleGriddedGeoLayer(
             envAt(0.0),
             syntheticGrid(10.0, 20.0, 30.0),
             // instants: EPOCH, EPOCH+1h, EPOCH+2h
-            timeOrigin = Instant.EPOCH + 1.hours,
+            timeOrigin = (Instant.EPOCH + 1.hours).toString(),
         )
         assertEquals(20.0, layer.currentValueAt(center), "t=0.0 with shifted origin maps to the second slice = 20.0")
     }
@@ -158,20 +157,20 @@ class TestCopernicusLayer {
     @Test
     fun `with an explicit timeOrigin, times outside the shifted range extrapolate with the first or last time slice`() {
         // computed simulation times: -1.0, 0.0, 1.0; t=-2.0 and 2 are out of range
-        var layer = DoubleCopernicusLayer(
+        var layer = DoubleGriddedGeoLayer(
             envAt(-2.0),
             syntheticGrid(10.0, 20.0, 30.0),
-            timeOrigin = Instant.EPOCH + 1.hours,
+            timeOrigin = (Instant.EPOCH + 1.hours).toString(),
         )
         assertEquals(
             10.0,
             layer.currentValueAt(center),
             "t=-2.0 < sliceTimes.first()=-1.0, extrapolates to first slice: 10.0",
         )
-        layer = DoubleCopernicusLayer(
+        layer = DoubleGriddedGeoLayer(
             envAt(2.0),
             syntheticGrid(10.0, 20.0, 30.0),
-            timeOrigin = Instant.EPOCH + 1.hours,
+            timeOrigin = (Instant.EPOCH + 1.hours).toString(),
         )
         assertEquals(
             30.0,
@@ -187,10 +186,10 @@ class TestCopernicusLayer {
          * instants in the file: EPOCH, EPOCH+1h
          * sliceTimes should be [0.0, 2.0] with scale PT30M
          */
-        val layer = DoubleCopernicusLayer(
+        val layer = DoubleGriddedGeoLayer(
             envAt(1.0),
             syntheticGrid(0.0, 10.0),
-            timeScale = 30.minutes,
+            timeScale = "PT30M",
         )
         assertEquals(
             5.0,
@@ -206,10 +205,10 @@ class TestCopernicusLayer {
          * instants in the file: EPOCH, EPOCH+6h
          * sliceTimes should be [0.0, 1.0] with scale PT6H
          */
-        val layer = DoubleCopernicusLayer(
+        val layer = DoubleGriddedGeoLayer(
             envAt(0.5),
             syntheticGrid(0.0, 12.0, step = 6.hours),
-            timeScale = 6.hours,
+            timeScale = "PT6H",
         )
         assertEquals(6.0, layer.currentValueAt(center), TOLERANCE, "t=0.5 halfway, LINEAR blending should return 6.0")
     }
@@ -218,7 +217,7 @@ class TestCopernicusLayer {
     @Test
     fun `currentValueAt should raise an exception when an out-of-bounds position is passed`() {
         val gridSnaps = syntheticGrid(7.0)
-        val layer = DoubleCopernicusLayer(
+        val layer = DoubleGriddedGeoLayer(
             environment = envAt(0.0),
             data = gridSnaps,
         )
@@ -233,7 +232,7 @@ class TestCopernicusLayer {
         val sliceValues = doubleArrayOf(1.0, 2.0, 3.0)
         for (i in sliceValues.indices) {
             val time = i.toDouble()
-            val layer = DoubleCopernicusLayer(
+            val layer = DoubleGriddedGeoLayer(
                 envAt(time),
                 syntheticGrid(*sliceValues),
             )
@@ -244,7 +243,7 @@ class TestCopernicusLayer {
     // no simulation test
     @Test
     fun `no attached simulation falls back to time zero and reads the first slice`() {
-        val layer = DoubleCopernicusLayer(
+        val layer = DoubleGriddedGeoLayer(
             envNoSim,
             syntheticGrid(42.0, 84.0),
         )
@@ -255,7 +254,7 @@ class TestCopernicusLayer {
     fun `the observed value follows the simulation time once the simulation is attached`() {
         val simulation = observe<Simulation<Any?, GeoPosition>?>(null)
         val simulationTime = observe(timeAt(1.0))
-        val layer = DoubleCopernicusLayer(envWith(simulation), syntheticGrid(42.0, 84.0))
+        val layer = DoubleGriddedGeoLayer(envWith(simulation), syntheticGrid(42.0, 84.0))
         val observed = mutableListOf<Double>()
         layer.valueAt(center).onChange { observed += it }
         simulation.current = simulationAt(simulationTime)
@@ -284,7 +283,7 @@ class TestCopernicusLayer {
             timeHours = doubleArrayOf(0.0, 1.0, 2.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(27) { idx -> ((idx / 9) + 1) * 10.0 })),
         )
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), GriddedGeoFiles(dir.absolutePathString()))
         assertEquals(10.0, layer.currentValueAt(center), TOLERANCE, "t=0.0 -> first slice -> all cells = 10.0")
     }
 
@@ -298,7 +297,7 @@ class TestCopernicusLayer {
             timeHours = doubleArrayOf(0.0, 1.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 0.0 else 10.0 })),
         )
-        val layer = DoubleCopernicusLayer(envAt(0.5), dir.absolutePathString())
+        val layer = DoubleGriddedGeoLayer(envAt(0.5), GriddedGeoFiles(dir.absolutePathString()))
         assertEquals(5.0, layer.currentValueAt(center), TOLERANCE, "t=0.5 halfway between 0.0 and 10.0 -> 5.0")
     }
 
@@ -322,7 +321,7 @@ class TestCopernicusLayer {
                 ),
             ),
         )
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString())
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), GriddedGeoFiles(dir.absolutePathString()))
         val lat44: GeoPosition = mockGeoPosition(44.0, 12.0)
         val lat46: GeoPosition = mockGeoPosition(46.0, 12.0)
         assertEquals(
@@ -354,7 +353,7 @@ class TestCopernicusLayer {
                 ),
             ),
         )
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = null)
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), GriddedGeoFiles(dir.absolutePathString(), variable = null))
         assertEquals(7.0, layer.currentValueAt(center), TOLERANCE, "auto-detected variable; all cells = 7.0")
     }
 
@@ -374,7 +373,7 @@ class TestCopernicusLayer {
                 ),
             ),
         )
-        val layer = DoubleCopernicusLayer(envAt(0.0), dir.absolutePathString(), variable = varName)
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), GriddedGeoFiles(dir.absolutePathString(), variable = varName))
         assertEquals(42.0, layer.currentValueAt(center), TOLERANCE, "explicit variable '$varName'; all cells = 42.0")
     }
 
@@ -402,7 +401,7 @@ class TestCopernicusLayer {
             ),
         )
         val simulationTime = observe(timeAt(0.0))
-        val layer = DoubleCopernicusLayer(mutableEnv(simulationTime), dir.absolutePathString())
+        val layer = DoubleGriddedGeoLayer(mutableEnv(simulationTime), GriddedGeoFiles(dir.absolutePathString()))
         (0..3).forEach {
             val time = it.toDouble()
             val expectedTime = (it + 1) * 10.0

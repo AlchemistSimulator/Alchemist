@@ -30,8 +30,4 @@ class MissingValueFallbackConverter<T>(private val delegate: MeasurementConverte
      * @return the converted value of type [T], or [defaultValue] if the input was [Double.NaN].
      */
     override fun convert(value: Double): T = if (value.isNaN()) defaultValue else delegate.convert(value)
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }

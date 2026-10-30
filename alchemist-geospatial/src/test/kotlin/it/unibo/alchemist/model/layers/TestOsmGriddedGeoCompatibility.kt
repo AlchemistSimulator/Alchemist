@@ -31,7 +31,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TestOsmCopernicusCompatibility {
+class TestOsmGriddedGeoCompatibility {
 
     // known positions inside maps/cesena.pbf
     private val pharmacyPos = LatLongPosition(44.14022881997589, 12.234464874617203)
@@ -40,7 +40,7 @@ class TestOsmCopernicusCompatibility {
     private val incarnation = mockk<Incarnation<Any?, GeoPosition>>()
 
     @Test
-    fun `OSMEnvironment pbf import and DoubleCopernicusLayer must coexist`() {
+    fun `OSMEnvironment pbf import and DoubleGriddedGeoLayer must coexist`() {
         // tries to import an actual .pbf file and use it
         val environment = OSMEnvironment(incarnation, "maps/cesena.pbf")
         val route = environment.computeRoute(pharmacyPos, stadiumPos)
@@ -49,7 +49,7 @@ class TestOsmCopernicusCompatibility {
             "the route should contain more than one point, but has ${route.points.size}",
         )
 
-        // forces cdm-core to be exercised by creating a Copernicus layer
+        // forces cdm-core to be exercised by creating a gridded geographic layer
         val dir = createTempDirectory("pbf-copernicus")
         try {
             val fixedMeasurement = 42.0
@@ -60,7 +60,7 @@ class TestOsmCopernicusCompatibility {
                 timeHours = doubleArrayOf(0.0),
                 variables = listOf(TestVariable(rawValues = DoubleArray(9) { fixedMeasurement })),
             )
-            val layer = DoubleCopernicusLayer(environment, dir.absolutePathString())
+            val layer = DoubleGriddedGeoLayer(environment, GriddedGeoFiles(dir.absolutePathString()))
             assertEquals(
                 fixedMeasurement,
                 layer.currentValueAt(pharmacyPos),

@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.boundary.utils
 
+import it.unibo.alchemist.boundary.copernicus.MD5Integrity.md5Hex
+import it.unibo.alchemist.boundary.copernicus.MD5Integrity.verify
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.AfterTest
@@ -133,9 +135,11 @@ class TestIntegrity {
     }
 
     @Test
-    fun `verify skips an unusable MD5 instead of failing`() {
+    fun `verify rejects an unusable MD5`() {
         Files.writeString(file, "abc")
-        verify(file, 3, "sha256:not-a-digest")
+        assertFailsWith<IllegalStateException> {
+            verify(file, 3, "sha256:not-a-digest")
+        }
     }
 
     @Test

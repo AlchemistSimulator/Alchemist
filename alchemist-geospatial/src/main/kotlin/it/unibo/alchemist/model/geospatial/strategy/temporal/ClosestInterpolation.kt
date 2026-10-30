@@ -20,8 +20,4 @@ class ClosestInterpolation :
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double =
         if (weight < 0.5) valueBefore else valueAfter
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }

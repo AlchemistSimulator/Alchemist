@@ -9,14 +9,12 @@
 
 package it.unibo.alchemist.model.geospatial.strategy.temporal
 
-import java.io.Serializable
-
 /**
  * Strategy for **temporal interpolation**: given the two **already** spatially resolved values of the
  * slices bracketing the current time, plus a normalized weight, produces the value at the current
  * time.
  */
-fun interface TemporalInterpolation : Serializable {
+fun interface TemporalInterpolation {
 
     /**
      * @param valueBefore spatially resolved value of the slice at or immediately before the current time.

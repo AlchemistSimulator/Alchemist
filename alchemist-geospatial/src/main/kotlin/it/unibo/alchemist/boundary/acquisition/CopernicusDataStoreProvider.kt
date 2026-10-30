@@ -31,6 +31,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
+import kotlin.time.toJavaDuration
 import org.slf4j.LoggerFactory
 
 /**
@@ -46,15 +47,16 @@ import org.slf4j.LoggerFactory
  * return the correct requested assets but report an incorrect MD5, so it may be useful to
  * disable this check.
  * @param tokenSupplier supplies the ECMWF token sent as the `PRIVATE-TOKEN` header on the OGC GET/POST calls.
- * @param http HTTP client to use; defaults to the JDK [HttpClient].
+ * @param http HTTP client to use; defaults to the JDK [HttpClient], giving up connecting after 30 seconds.
  * @param pollInterval base interval between two status polls; grows with backoff up to [maxPollInterval].
  * @param maxPollInterval cap on the polling interval. Defaults to 120 seconds, matching the official
  * ECMWF client's duration.
- * @param timeout overall guillotine on the wait for job completion.
+ * @param timeout overall guillotine on the wait for job completion, polls included.
+ * Each request to the OGC endpoints is bounded by one minute; the download of the asset is not, as it can be large.
  */
 class CopernicusDataStoreProvider(
     private val checkMd5: Boolean = true,
-    private val http: HttpClient = HttpClient.newHttpClient(),
+    private val http: HttpClient = HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT.toJavaDuration()).build(),
     private val pollInterval: Duration = DEFAULT_POLL_INTERVAL,
     private val maxPollInterval: Duration = DEFAULT_MAX_POLL_INTERVAL,
     private val timeout: Duration = DEFAULT_TIMEOUT,
@@ -135,6 +137,7 @@ class CopernicusDataStoreProvider(
             .header("Content-Type", APPLICATION_JSON)
             .header("Accept", APPLICATION_JSON)
             .POST(HttpRequest.BodyPublishers.ofString(body))
+            .timeout(REQUEST_TIMEOUT.toJavaDuration())
             .build()
         val response = http.send(httpRequest, HttpResponse.BodyHandlers.ofString())
         // something has gone wrong
@@ -170,7 +173,13 @@ class CopernicusDataStoreProvider(
         var lastHeartbeat = TimeSource.Monotonic.markNow()
         // tries to poll until a success/timeout/error
         while (true) {
-            val body = get(monitorUrl).body()
+            // fails on timeout
+            val remaining = -deadline.elapsedNow()
+            check(remaining.isPositive()) {
+                "Timeout ($timeout) while waiting for job completion at $monitorUrl"
+            }
+            // a stalled poll must not outlive the deadline
+            val body = get(monitorUrl, minOf(REQUEST_TIMEOUT, remaining)).body()
             // status check
             when (val status = parseStatus(body)) {
                 "successful" -> {
@@ -191,11 +200,8 @@ class CopernicusDataStoreProvider(
                 // warns the user about the new unknow status, but keeps polling.
                 else -> logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
             }
-            // fails on timeout
-            check(deadline.hasNotPassedNow()) {
-                "Timeout ($timeout) while waiting for job completion at $monitorUrl"
-            }
-            Thread.sleep(interval.inWholeMilliseconds)
+            // never sleeps past the deadline, so that the next iteration fails right on time
+            Thread.sleep(minOf(interval, -deadline.elapsedNow()).coerceAtLeast(Duration.ZERO).inWholeMilliseconds)
             interval = (interval * 2).coerceAtMost(maxPollInterval)
         }
     }
@@ -300,21 +306,24 @@ class CopernicusDataStoreProvider(
      * Authenticated GET (with `PRIVATE-TOKEN` header) to an OGC endpoint.
      *
      * @param url the request URL.
+     * @param responseTimeout the maximum time to wait for the response.
      * @return the [HttpResponse] received after the request.
      * @throws IllegalStateException on a non-2xx response.
      */
-    private fun get(url: String): HttpResponse<String> = getRaw(url).also {
-        if (!it.isSuccessful) failOnHttpError("GET $url", it)
-    }
+    private fun get(url: String, responseTimeout: Duration = REQUEST_TIMEOUT): HttpResponse<String> =
+        getRaw(url, responseTimeout).also {
+            if (!it.isSuccessful) failOnHttpError("GET $url", it)
+        }
 
     /**
      * Authenticated GET that does **not** check the status code: the caller inspects the body.
      */
-    private fun getRaw(url: String): HttpResponse<String> = http.send(
+    private fun getRaw(url: String, responseTimeout: Duration = REQUEST_TIMEOUT): HttpResponse<String> = http.send(
         HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("PRIVATE-TOKEN", token)
             .header("Accept", APPLICATION_JSON)
+            .timeout(responseTimeout.toJavaDuration())
             .GET()
             .build(),
         HttpResponse.BodyHandlers.ofString(),
@@ -342,6 +351,16 @@ class CopernicusDataStoreProvider(
          * has frozen).
          */
         private val USER_ALERT_INTERVAL = 30.seconds
+
+        /**
+         * Maximum time to wait for a connection to be established.
+         */
+        private val CONNECT_TIMEOUT = 30.seconds
+
+        /**
+         * Maximum time to wait for the response to a request to an OGC endpoint.
+         */
+        private val REQUEST_TIMEOUT = 1.minutes
 
         private const val APPLICATION_JSON = "application/json"
 

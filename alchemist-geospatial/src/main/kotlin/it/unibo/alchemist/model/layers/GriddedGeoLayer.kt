@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GeoLayer
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.GridSnapshots
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
@@ -26,7 +27,7 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
 /**
- * A [GeoLayer] that exposes a value of type [T] for any [GeoPosition] as a function
+ * A [it.unibo.alchemist.model.GeoLayer] that exposes a value of type [T] for any [GeoPosition] as a function
  * of the current simulation time, backed by gridded geographic data that evolves over time,
  * such as climate and weather data.
  * The value at a position is observed through [valueAt], which follows the time of the simulation

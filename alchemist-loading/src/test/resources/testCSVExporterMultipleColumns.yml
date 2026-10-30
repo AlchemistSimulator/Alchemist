@@ -1,0 +1,48 @@
+incarnation: protelis
+
+variables:
+  seed: &seed
+    default: 0
+    min: 0
+    max: 99
+    step: 1
+  scenario_seed: &scenario_seed
+    formula: (seed + 31) * seed
+
+seeds:
+  simulation: *seed
+  scenario: *scenario_seed
+
+export:
+  - type: CSVExporter
+    parameters:
+      fileNameRoot: "multiple-columns"
+      interval: 1.0
+      decimalPlacesCount: 2
+    data:
+      - time
+      - molecule: "default_module:default_program"
+        property: 1.23456
+        aggregators: [ mean ]
+      - molecule: "default_module:default_program"
+        property: 2.34567
+        aggregators: [ mean ]
+      - molecule: "default_module:default_program"
+        property: 3
+        aggregators: [ mean ]
+      - molecule: "default_module:default_program"
+        property: 4.56789
+        aggregators: [ mean ]
+
+environment:
+  type: Continuous2DEnvironment
+
+deployments:
+  - type: Point
+    parameters: [1, 0, 0]
+    programs:
+      - program: "0"
+
+terminate:
+  - type: AfterTime
+    parameters: 1

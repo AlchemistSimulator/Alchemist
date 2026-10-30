@@ -5,22 +5,23 @@ environment:
   parameters: [maps/cesena.pbf]
 
 layers:
-  - type: DoubleCopernicusLayer
+  - type: DoubleGriddedGeoLayer
     molecule: river-discharge
     parameters:
-      # The datastore API: CDS, EWDS, or ADS
-      endpoint: https://ewds.climate.copernicus.eu/api
-      dataset: cems-glofas-historical
-      # The request, as shown by the "API request" section of the dataset download form:
-      # a path, or the name of a file among the classpath resources
-      inputsFile: copernicus/glofas-request.json
-      checkMd5: true
+      data:
+        type: CopernicusData
+        parameters:
+          # The datastore API: CDS, EWDS, or ADS
+          endpoint: https://ewds.climate.copernicus.eu/api
+          dataset: cems-glofas-historical
+          # The request, as shown by the "API request" section of the dataset download form:
+          # a path, or the name of a file among the classpath resources
+          inputsFile: copernicus/glofas-request.json
+          # Named parameters must include the optional ones preceding the last one provided
+          variable: null
+          # Optional: where the downloaded data is cached, by default in the user cache directory
+          cacheDirectory: build/copernicus-cache
       timeScale: PT1H
-      # Named parameters must include the optional ones preceding the last one provided
-      timeOrigin: null
-      variable: null
-      # Optional: where the downloaded data is cached, by default in the user cache directory
-      cacheDirectory: build/copernicus-cache
 
 deployments:
   type: Circle

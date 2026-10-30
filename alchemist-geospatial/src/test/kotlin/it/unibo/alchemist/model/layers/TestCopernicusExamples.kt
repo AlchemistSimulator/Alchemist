@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.boundary.LoadAlchemist
-import it.unibo.alchemist.boundary.acquisition.CopernicusRequest
+import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.boundary.utils.CopernicusInputs
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
@@ -65,7 +65,7 @@ class TestCopernicusExamples {
 
     private fun assertNodesPerceiveFirstSlice(environment: Environment<Any?, GeoPosition>) {
         val molecule = environment.incarnation.createMolecule("river-discharge")
-        assertIs<DoubleCopernicusLayer>(environment.layerFor(molecule))
+        assertIs<DoubleGriddedGeoLayer>(environment.layerFor(molecule))
         assertTrue(environment.nodes.current.isNotEmpty())
         environment.nodes.current.forEach { node ->
             // at time zero, the value of the first slice of the data

@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.model.geospatial.strategy.converter
 
-import java.io.Serializable
-
 /**
  * Converts a raw `Double` value read from a GRIB / NetCDF file, into a value of type [T].
  *
@@ -19,7 +17,7 @@ import java.io.Serializable
  *
  * @param T the data type resulting from the conversion.
  */
-fun interface MeasurementConverter<T> : Serializable {
+fun interface MeasurementConverter<T> {
 
     /**
      * Converts the raw `Double` value to [T].

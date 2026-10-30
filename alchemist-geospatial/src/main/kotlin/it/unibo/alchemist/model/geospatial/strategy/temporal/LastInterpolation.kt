@@ -19,8 +19,4 @@ class LastInterpolation :
     TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueBefore
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }

@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.geospatial.reading
 
-import java.io.Serializable
 import kotlin.time.Instant
 
 /**
@@ -20,7 +19,7 @@ import kotlin.time.Instant
  * duplicates. [instants] exposes [Instant] so that callers can convert
  * real-world timestamps to simulation time once at construction.
  */
-interface GridSnapshots : Serializable {
+interface GridSnapshots {
     /**
      * Real-world timestamps of each slice, strictly ascending, aligned with [grid].
      */

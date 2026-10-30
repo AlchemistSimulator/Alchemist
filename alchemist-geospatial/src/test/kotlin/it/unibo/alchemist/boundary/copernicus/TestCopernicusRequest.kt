@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.acquisition
+package it.unibo.alchemist.boundary.copernicus
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

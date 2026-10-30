@@ -34,8 +34,4 @@ class MapRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, gridValues:
 
     override fun valueAt(latIndex: Int, lonIndex: Int): Double =
         availableValues.getOrDefault(latIndex to lonIndex, Double.NaN)
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }

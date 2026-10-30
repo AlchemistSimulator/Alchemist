@@ -22,8 +22,4 @@ class ArrayRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, val gridV
     RasterGrid(latitudes, longitudes, gridValues) {
 
     override fun valueAt(latIndex: Int, lonIndex: Int): Double = gridValues[latIndex * longitudes.size + lonIndex]
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }

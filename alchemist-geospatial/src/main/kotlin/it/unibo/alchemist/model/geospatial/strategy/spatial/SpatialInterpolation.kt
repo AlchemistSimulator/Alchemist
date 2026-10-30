@@ -11,13 +11,12 @@ package it.unibo.alchemist.model.geospatial.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geospatial.reading.RasterGrid
-import java.io.Serializable
 
 /**
  * Strategy for **spatial interpolation**: given a [RasterGrid] and a position assumed to be *inside*
  * its extent, produces a value by combining nearby cells.
  */
-fun interface SpatialInterpolation : Serializable {
+fun interface SpatialInterpolation {
 
     /**
      * @param grid the slice to sample.

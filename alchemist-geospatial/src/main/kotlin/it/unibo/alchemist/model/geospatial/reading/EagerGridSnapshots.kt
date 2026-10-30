@@ -121,7 +121,6 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
     override fun grid(index: Int): RasterGrid = grids[index]
 
     private companion object {
-        private const val serialVersionUID = 1L
         private val logger = LoggerFactory.getLogger(EagerGridSnapshots::class.java)
     }
 }

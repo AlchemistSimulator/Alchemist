@@ -26,8 +26,4 @@ class NearestInterpolation :
         val nearestLongitudeIndex = nearestIndex(grid.longitudes, position.longitude)
         return grid.valueAt(nearestLatitudeIndex, nearestLongitudeIndex)
     }
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }

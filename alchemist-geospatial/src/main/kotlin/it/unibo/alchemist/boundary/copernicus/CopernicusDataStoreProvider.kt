@@ -7,9 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.acquisition
+package it.unibo.alchemist.boundary.copernicus
 
 import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
+import it.unibo.alchemist.boundary.util.MD5Integrity
 import it.unibo.alchemist.boundary.utils.CanonicalJson
 import it.unibo.alchemist.boundary.utils.RemoteAsset
 import it.unibo.alchemist.boundary.utils.flattenArchives
@@ -19,7 +20,6 @@ import it.unibo.alchemist.boundary.utils.parseMonitorUrl
 import it.unibo.alchemist.boundary.utils.parseProblemDetail
 import it.unibo.alchemist.boundary.utils.parseResultsUrl
 import it.unibo.alchemist.boundary.utils.parseStatus
-import it.unibo.alchemist.boundary.utils.verify
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -44,9 +44,6 @@ import org.slf4j.LoggerFactory
  * The sole auth asymmetry is the final download GET, which carries **no** token
  * (the asset lives on a public object store on a different host): see [download].
  *
- * @param checkMd5 whether to check the MD5 digest of the downloaded file. Sometimes Copernicus stores
- * return the correct requested assets but report an incorrect MD5, so it may be useful to
- * disable this check.
  * @param tokenSupplier supplies the ECMWF token sent as the `PRIVATE-TOKEN` header on the OGC GET/POST calls.
  * @param http HTTP client to use; defaults to the JDK [HttpClient], giving up connecting after 30 seconds.
  * @param pollInterval base interval between two status polls; grows with backoff up to [maxPollInterval].
@@ -56,7 +53,6 @@ import org.slf4j.LoggerFactory
  * Each request to the OGC endpoints is bounded by one minute; the download of the asset is not, as it can be large.
  */
 class CopernicusDataStoreProvider(
-    private val checkMd5: Boolean = true,
     private val http: HttpClient = HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT.toJavaDuration()).build(),
     private val pollInterval: Duration = DEFAULT_POLL_INTERVAL,
     private val maxPollInterval: Duration = DEFAULT_MAX_POLL_INTERVAL,
@@ -79,7 +75,7 @@ class CopernicusDataStoreProvider(
     /**
      * The full OGC API processes flow, written into [target].
      * Follows the flow submit -> poll -> results -> download, **blocking by design**.
-     * Downloaded assets are verified against their size and, optionally, their MD5.
+     * Downloaded assets are verified against their size and, when advertised, their MD5.
      * Archives are flattened into single files.
      *
      * @param key the [CopernicusRequest] used to initialize the job on ECMWF servers.
@@ -103,14 +99,7 @@ class CopernicusDataStoreProvider(
         // downloads the asset.
         val file = download(asset, target)
         // asset validation and archive flattening.
-        if (!checkMd5) {
-            logger.warn("MD5 check disabled. Only the size in bytes is checked.")
-        }
-        verify(file, asset.sizeBytes, asset.takeIf { checkMd5 }?.md5) { md5, file ->
-            check(!checkMd5) {
-                "Data store advertised an unusable MD5 checksum ($md5) for '$file': could not check asset integrity."
-            }
-        }
+        MD5Integrity.verify(file, asset.sizeBytes, asset.md5)
         flattenArchives(target)
         val elapsed = start.elapsedNow().inWholeMilliseconds.milliseconds
         logger.info("Dataset '${key.dataset}' successfully downloaded in $elapsed.")

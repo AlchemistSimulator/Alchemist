@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.geospatial.reading
 
 import it.unibo.alchemist.model.GeoPosition
-import java.io.Serializable
 
 /**
  * A single 2D spatial bounding box, based on a geographic grid (latitude/longitude).
@@ -22,8 +21,7 @@ import java.io.Serializable
  * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
  * [gridValues]' size does not equal `latitudes.size * longitudes.size`.
  */
-abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArray, gridValues: DoubleArray) :
-    Serializable {
+abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArray, gridValues: DoubleArray) {
 
     init {
         require(latitudes.isStrictlyAscending()) {
@@ -56,10 +54,6 @@ abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArra
      */
     fun isInBounds(position: GeoPosition): Boolean = position.latitude in latitudes.first()..latitudes.last() &&
         position.longitude in longitudes.first()..longitudes.last()
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }
 
 /**

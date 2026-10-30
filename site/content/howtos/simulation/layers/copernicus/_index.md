@@ -1,5 +1,5 @@
 +++
-title = "Layers from Copernicus data"
+title = "Layers from gridded geographic data"
 weight = 5
 tags = ["layer", "layers", "data", "copernicus", "climate", "weather", "netcdf", "grib", "geo-spatial data"]
 summary = "Feed real-world, time-varying gridded data (e.g., from Copernicus) into the simulation as layers"
@@ -16,18 +16,22 @@ distribute this kind of data in the [NetCDF](https://www.unidata.ucar.edu/softwa
 and [GRIB](https://community.wmo.int/en/activity-areas/wis/grib-edition-1-and-2) formats.
 
 The `alchemist-geospatial` module turns these files into [layers](/howtos/simulation/layers/):
-{{% api package="model.layers" class="CopernicusLayer" %}} exposes, at every position,
+{{% api package="model.layers" class="GriddedGeoLayer" %}} exposes, at every position,
 the value of the data at the current simulation time,
 interpolated in space between the grid points and in time between the slices.
-Its specialization {{% api package="model.layers" class="DoubleCopernicusLayer" %}}
+Its specialization {{% api package="model.layers" class="DoubleGriddedGeoLayer" %}}
 yields `Double`s with sensible defaults, and it is what most simulations need.
 Nodes observing the layer are notified whenever its value at their position changes,
 either because they move or because the simulation time advances.
 
-Copernicus layers live on geographic coordinates,
+These layers live on geographic coordinates,
 so they require an environment whose positions are
 {{% api class="GeoPosition" %}}s, such as the
 [map environments](/howtos/simulation/environment/maps/).
+
+The data backing a layer is provided as its `data` parameter:
+a {{% api package="model.layers" class="GriddedGeoFiles" %}} reads it from local files of any provider,
+while a {{% api package="model.layers" class="CopernicusData" %}} downloads it from a Copernicus data store.
 
 ## Mapping data time to simulation time
 
@@ -45,8 +49,9 @@ make sure that the data covers the area where nodes move.
 ## Reading local data files
 
 If the data files are already available,
-for instance because they were downloaded from the data store web interface,
-the layer can read them from a directory, with no network access and no credentials.
+for instance because they were downloaded from the web interface of a data store,
+`GriddedGeoFiles` reads them from the given `directory`,
+with no network access and no credentials.
 All the files in the directory must hold the same variable on the same grid,
 and their time slices get merged in chronological order
 (if several files hold the same instant, the slice of the first file is used).
@@ -60,7 +65,8 @@ The same scenario, written with the Kotlin DSL:
 
 ## Downloading data from a Copernicus data store
 
-The layer can also request the data directly to a data store:
+Given an `endpoint`, a `dataset`, and an `inputsFile`,
+`CopernicusData` requests the data directly to a data store:
 it submits the request, waits for the data store to prepare the data, downloads it,
 and verifies its integrity before using it.
 Downloads get cached on the local file system,
@@ -73,7 +79,7 @@ The same scenario, written with the Kotlin DSL:
 
 {{< code path="alchemist-geospatial/src/test/resources/copernicus/datastore.alchemist.kts" >}}
 
-The parameters describing the request are:
+The parameters of `CopernicusData` describing the request are:
 
 * `endpoint`: the base URL of the data store API, e.g., `https://cds.climate.copernicus.eu/api`
   for the Climate Data Store, `https://ewds.climate.copernicus.eu/api` for the Early Warning Data Store,
@@ -99,7 +105,7 @@ so the request cannot be written inline in the YAML file.
 ### Credentials
 
 Data stores require an account and the acceptance of the dataset license.
-The layer reads the API token from a `.cdsapirc` file,
+`CopernicusData` reads the API token from a `.cdsapirc` file,
 the same used by the [official ECMWF client](https://cds.climate.copernicus.eu/how-to-api),
 by default in the user's home directory:
 
@@ -131,10 +137,6 @@ delete the corresponding entry from the cache directory.
 
 ### Other parameters
 
-* `checkMd5`: whether to check the MD5 digest that the data store reports for the downloaded file.
-  The file size is always checked,
-  but data stores occasionally report wrong digests for correct files,
-  in which case the check can be disabled.
 * `providerTimeout`: how long, in ISO-8601, to wait for the data store to prepare the data
   (by default, `PT30M`).
   Large requests may spend a long time in the data store queue.
@@ -162,5 +164,5 @@ Grid points with no data (e.g., river discharge far from rivers) are read as `Na
 The `converter` parameter decides how interpolated values become the values of the layer:
 the default {{% api package="model.geospatial.strategy.converter" class="DoubleIdentityWithFallback" %}}
 keeps them as they are, optionally replacing missing values with a fallback.
-Layers of other types can be created with {{% api package="model.layers" class="CopernicusLayer" %}}
+Layers of other types can be created with {{% api package="model.layers" class="GriddedGeoLayer" %}}
 and a custom {{% api package="model.geospatial.strategy.converter" class="MeasurementConverter" %}}.

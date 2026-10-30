@@ -24,8 +24,4 @@ class LinearInterpolation :
         valueBefore.isNaN() || valueAfter.isNaN() -> Double.NaN
         else -> valueBefore + (valueAfter - valueBefore) * weight
     }
-
-    private companion object {
-        private const val serialVersionUID = 1L
-    }
 }

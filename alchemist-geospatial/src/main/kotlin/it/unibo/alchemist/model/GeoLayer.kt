@@ -7,10 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.layers
-
-import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.Layer
+package it.unibo.alchemist.model
 
 /**
  * Specialization of [Layer] where spatial positions are represented as [GeoPosition]s.

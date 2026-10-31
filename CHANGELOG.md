@@ -1,3 +1,22 @@
+## [49.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/49.1.0...49.1.1) (2026-10-31)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.10.6-19.3.1 ([#5726](https://github.com/AlchemistSimulator/Alchemist/issues/5726)) ([678f6eb](https://github.com/AlchemistSimulator/Alchemist/commit/678f6eb381c1ff38ee9572c561336855e464cb55))
+* **deps:** update dependency org.jooq:jool to v0.9.16 ([#5723](https://github.com/AlchemistSimulator/Alchemist/issues/5723)) ([3b40a75](https://github.com/AlchemistSimulator/Alchemist/commit/3b40a75a96e6f48f2b895cc1828ca1d3338fb787))
+* **deps:** update ksp monorepo to v2.3.13 ([#5728](https://github.com/AlchemistSimulator/Alchemist/issues/5728)) ([6b1ea6f](https://github.com/AlchemistSimulator/Alchemist/commit/6b1ea6fdc240ef4c35fbc873def009c1a0f7a220))
+* **deps:** update ktor monorepo to v3.6.1 ([b707d9a](https://github.com/AlchemistSimulator/Alchemist/commit/b707d9a191a8597f33e1305ea17af947d031ee29))
+* **deps:** update node.js to v26 ([#5729](https://github.com/AlchemistSimulator/Alchemist/issues/5729)) ([90492c9](https://github.com/AlchemistSimulator/Alchemist/commit/90492c95ec8aeb30410cd544145d3efaa1246f5e))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.50 ([#5722](https://github.com/AlchemistSimulator/Alchemist/issues/5722)) ([7a9199b](https://github.com/AlchemistSimulator/Alchemist/commit/7a9199b7124f20453aac36d36da80d5ecbea3546))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([6c869dc](https://github.com/AlchemistSimulator/Alchemist/commit/6c869dc5a26a2a633bae2b118dbd14173b36c78e))
+* **build:** update the javadoc.io cache ([a7b4206](https://github.com/AlchemistSimulator/Alchemist/commit/a7b42062666e916ffd6dff3c0b300fdf2060f120))
+
 ## [49.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/49.0.1...49.1.0) (2026-10-28)
 
 ### Features

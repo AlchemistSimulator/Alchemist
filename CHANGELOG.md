@@ -1,3 +1,9 @@
+## [49.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/49.1.2...49.1.3) (2026-11-02)
+
+### Bug Fixes
+
+* **loading:** allow omitting trailing optional parameters after objects passed as named parameters ([#5727](https://github.com/AlchemistSimulator/Alchemist/issues/5727)) ([14a8c90](https://github.com/AlchemistSimulator/Alchemist/commit/14a8c90b69d3f86a94919461dec3e25dfe1d105b))
+
 ## [49.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/49.1.1...49.1.2) (2026-11-02)
 
 ### Dependency updates

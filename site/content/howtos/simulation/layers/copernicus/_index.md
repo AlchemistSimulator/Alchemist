@@ -163,6 +163,8 @@ to be passed as the `interpolation` parameter.
 Grid points with no data (e.g., river discharge far from rivers) are read as `NaN`.
 {{% api package="model.geogrid.layers" class="DoubleGriddedGeoLayer" %}} keeps them as they are,
 unless its `missingValue` parameter gives them another value (e.g., `missingValue: 0.0`).
-Layers of other types can be created with {{% api package="model.geogrid.layers" class="GriddedGeoLayer" %}}
-and a {{% api package="model.geogrid.strategy.converter" class="MeasurementConverter" %}}
-turning interpolated values, `NaN` included, into the values of the layer.
+Layers of other types can be created with {{% api package="model.geogrid.layers" class="GriddedGeoLayer" %}},
+whose `converter` turns interpolated values, `NaN` included, into the values of the layer.
+For categorical data, such as precipitation types or land cover classes,
+use nearest interpolation in space and closest, last, or next in time,
+so that values of different categories never get blended.

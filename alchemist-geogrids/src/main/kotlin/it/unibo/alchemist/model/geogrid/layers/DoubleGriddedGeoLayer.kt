@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.GridSnapshots
 import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData
 import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
-import it.unibo.alchemist.model.geogrid.strategy.converter.MissingValueFallbackConverter
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
 
@@ -39,7 +38,7 @@ class DoubleGriddedGeoLayer @JvmOverloads constructor(
 ) : GriddedGeoLayer<Double>(
     environment,
     data,
-    MissingValueFallbackConverter({ it }, missingValue),
+    { if (it.isNaN()) missingValue else it },
     timeScale,
     timeOrigin,
     interpolation,

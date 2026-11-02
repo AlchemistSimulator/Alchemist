@@ -134,6 +134,12 @@ class TestGriddedGeoLayer {
     }
 
     @Test
+    fun `the converter turns the interpolated values into the values of the layer`() {
+        val layer = GriddedGeoLayer(envAt(0.0), syntheticGrid(5.0), { value: Double -> "level ${value.toInt()}" })
+        assertEquals("level 5", layer.currentValueAt(center))
+    }
+
+    @Test
     fun `missing values are NaN by default`() {
         val value = DoubleGriddedGeoLayer(envAt(0.0), syntheticGrid(Double.NaN)).currentValueAt(center)
         assertTrue(value.isNaN(), "expected NaN, but got $value")

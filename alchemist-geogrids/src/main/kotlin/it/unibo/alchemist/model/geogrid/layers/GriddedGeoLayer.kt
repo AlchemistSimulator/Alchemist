@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
 import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData
 import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
-import it.unibo.alchemist.model.geogrid.strategy.converter.MeasurementConverter
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
@@ -37,7 +36,7 @@ import kotlin.time.Instant
  *
  * @param environment the environment, whose simulation provides the time.
  * @param data the data, such as [GridsFromDirectory] or [CopernicusData].
- * @param converter how to convert the interpolated values, [Double.NaN] if missing.
+ * @param converter how to turn the interpolated values, [Double.NaN] if missing, into the values of the layer.
  * @param timeScale the real-world duration of a simulation time unit, as an ISO-8601 duration (e.g., `PT6H`).
  * @param timeOrigin the real-world instant of simulation time 0, as an ISO-8601 instant
  * (e.g., `2024-06-10T00:00:00Z`); the first instant of [data] when `null`.
@@ -48,7 +47,7 @@ import kotlin.time.Instant
 open class GriddedGeoLayer<T> @JvmOverloads constructor(
     private val environment: Environment<*, GeoPosition>,
     private val data: GridSnapshots,
-    private val converter: MeasurementConverter<T>,
+    private val converter: (Double) -> T,
     timeScale: String = DEFAULT_TIME_SCALE.toIsoString(),
     timeOrigin: String? = null,
     private val interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
@@ -107,7 +106,7 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
         val gridBefore = data.grid(gridBeforeIndex)
         val gridAfter = data.grid(gridAfterIndex)
         require(gridBefore.isInBounds(position)) { outOfBoundsMessage(position, gridBefore) }
-        return converter.convert(interpolation.interpolate(position, gridBefore, gridAfter, timeWeight))
+        return converter(interpolation.interpolate(position, gridBefore, gridAfter, timeWeight))
     }
 
     /**

@@ -14,8 +14,7 @@ import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
- * Bilinear interpolation over the 4 cells surrounding the point. If any of the 4 corners is
- * missing, returns [Double.NaN].
+ * Bilinear interpolation of the four nodes around the position, missing if any of them is.
  */
 class BilinearInterpolation :
     StatelessStrategy(),

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
- * Value of the nearest cell to the point.
+ * The value of the node nearest to the position.
  */
 class NearestInterpolation : StatelessStrategy(), SpatialInterpolation {
 
@@ -27,9 +27,7 @@ class NearestInterpolation : StatelessStrategy(), SpatialInterpolation {
 
     internal companion object {
         /**
-         * The index of the coordinate of this axis closest to [coordinate].
-         * Coordinates outside the axis get the index of its nearest end;
-         * ties go to the lower index.
+         * The index of the coordinate of this axis closest to [coordinate], the lower one on ties.
          *
          * @throws IllegalArgumentException if [coordinate] is NaN.
          */

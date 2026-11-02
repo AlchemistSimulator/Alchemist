@@ -12,13 +12,12 @@ package it.unibo.alchemist.model.geogrid.reading
 import it.unibo.alchemist.model.GeoPosition
 
 /**
- * A single 2D spatial bounding box, based on a geographic grid (latitude/longitude).
+ * Values over a latitude/longitude grid, in degrees, with [Double.NaN] for the missing ones.
  *
- * @property latitudes of grid nodes, in degrees.
- * @property longitudes of grid nodes, in degrees.
- * @param gridValues cell values in row-major order respect to [latitudes] x [longitudes];
- * [Double.NaN] values represent missing/fill values.
- * @throws IllegalArgumentException if [gridValues]' size does not equal `latitudes.size * longitudes.size`.
+ * @property latitudes the latitudes of the grid.
+ * @property longitudes the longitudes of the grid.
+ * @param gridValues the values, row by row: all longitudes of the first latitude, then of the second, and so on.
+ * @throws IllegalArgumentException if there is not exactly one value per cell.
  */
 abstract class RasterGrid(val latitudes: Axis, val longitudes: Axis, gridValues: DoubleArray) {
 
@@ -31,19 +30,12 @@ abstract class RasterGrid(val latitudes: Axis, val longitudes: Axis, gridValues:
     }
 
     /**
-     * Raw value of the cell at the given index coordinates.
-     *
-     * @param latIndex index on the [latitudes] axis.
-     * @param lonIndex index on the [longitudes] axis.
-     * @return the raw value of the cell; a [Double.NaN] denotes a missing/fill value.
+     * The value at the [latIndex]-th latitude and [lonIndex]-th longitude, [Double.NaN] if missing.
      */
     abstract fun valueAt(latIndex: Int, lonIndex: Int): Double
 
     /**
-     * Returns whether the geographic location falls within this grid or not.
-     *
-     * @param position the geographical position to check.
-     * @return `true` if [position] is within the spatial extent of this grid, `false` otherwise.
+     * Whether [position] lies within the grid.
      */
     fun isInBounds(position: GeoPosition): Boolean =
         position.latitude in latitudes.range && position.longitude in longitudes.range

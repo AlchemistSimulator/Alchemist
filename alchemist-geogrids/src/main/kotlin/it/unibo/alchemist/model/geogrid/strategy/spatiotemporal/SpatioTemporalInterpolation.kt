@@ -13,25 +13,13 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 
 /**
- * Strategy interface for performing combined spatio-temporal interpolation.
- *
- * Implementations estimate a value at a target [GeoPosition] and temporal state by combining
- * spatial grid data from two bounding time slices.
- *
- * Missing or invalid data during calculation should be signaled by returning [Double.NaN].
+ * How to compute a value between the nodes of two consecutive [RasterGrid]s.
  */
 fun interface SpatioTemporalInterpolation {
 
     /**
-     * Interpolates a value at the specified geographic [position] and temporal offset.
-     *
-     * @param position the geographic target position to sample.
-     * @param gridBefore the temporal slice at or immediately preceding the target time.
-     * @param gridAfter the temporal slice immediately following the target time.
-     * @param timeWeight normalized temporal factor in the range `[0.0, 1.0]`, where `0.0`
-     * corresponds exactly to [gridBefore] and `1.0` to [gridAfter].
-     * @return the interpolated `Double` value, or [Double.NaN] if the interpolation
-     * produces a missing/fill value.
+     * The value at [position] between [gridBefore] and [gridAfter], at [timeWeight] from 0 (before) to 1 (after);
+     * [Double.NaN] if missing.
      */
     fun interpolate(position: GeoPosition, gridBefore: RasterGrid, gridAfter: RasterGrid, timeWeight: Double): Double
 }

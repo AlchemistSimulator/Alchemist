@@ -10,19 +10,11 @@
 package it.unibo.alchemist.model.geogrid.reading
 
 /**
- * In-memory implementation of [RasterGrid] where only non-missing values
- * are stored in a map keyed by latitude-longitude index pairs.
- *
- * Suited for sparse grids, where most cells hold a missing value.
- *
- * @see RasterGrid
+ * A [RasterGrid] storing only the values that are not missing, suited for sparse grids.
  */
 class MapRasterGrid(latitudes: Axis, longitudes: Axis, gridValues: DoubleArray) :
     RasterGrid(latitudes, longitudes, gridValues) {
 
-    /**
-     * A map that associates each (latIndex, longIndex) pair with the value, if present.
-     */
     private val availableValues: Map<Pair<Int, Int>, Double> = buildMap {
         for (latIndex in 0 until latitudes.size) {
             for (lonIndex in 0 until longitudes.size) {

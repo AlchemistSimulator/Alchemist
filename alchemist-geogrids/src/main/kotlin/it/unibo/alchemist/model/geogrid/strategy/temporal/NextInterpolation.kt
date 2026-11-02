@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.geogrid.strategy.temporal
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
- * [TemporalInterpolation] that always resolves with the value of the next temporal slice.
+ * The value of the next instant.
  */
 class NextInterpolation :
     StatelessStrategy(),

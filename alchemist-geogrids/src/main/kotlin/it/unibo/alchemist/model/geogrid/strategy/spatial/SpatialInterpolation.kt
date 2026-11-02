@@ -13,15 +13,12 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 
 /**
- * Strategy for **spatial interpolation**: given a [RasterGrid] and a position assumed to be *inside*
- * its extent, produces a value by combining nearby cells.
+ * How to compute the value of a [RasterGrid] between its nodes.
  */
 fun interface SpatialInterpolation {
 
     /**
-     * @param grid the slice to sample.
-     * @param position the requested geographical position, assumed to be inside of [grid].
-     * @return the interpolated value, or [Double.NaN] if the interpolation yields a missing value.
+     * The value of [grid] at [position], which lies within it; [Double.NaN] if missing.
      */
     fun valueAt(grid: RasterGrid, position: GeoPosition): Double
 }

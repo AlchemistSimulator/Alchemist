@@ -14,14 +14,7 @@ import it.unibo.alchemist.model.geogrid.strategy.temporal.LinearInterpolation
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
- * A [SpatioTemporalInterpolation] strategy that performs a trilinear interpolation
- * over the 8-point spatio-temporal cube bounding the requested position and time.
- *
- * Trilinear interpolation is separable: it is exactly equivalent to two bilinear spatial
- * interpolations, blended linearly across time.
- *
- * If any of the 8 bounding corners is missing (represented as [Double.NaN]),
- * the interpolation yields [Double.NaN].
+ * Trilinear interpolation of the eight nodes around the position and time, missing if any of them is.
  */
 class TrilinearInterpolation :
     StatelessStrategy(),

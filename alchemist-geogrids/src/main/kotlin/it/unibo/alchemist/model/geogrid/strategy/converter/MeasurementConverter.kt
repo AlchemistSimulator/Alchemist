@@ -10,21 +10,12 @@
 package it.unibo.alchemist.model.geogrid.strategy.converter
 
 /**
- * Converts a raw `Double` value read from a GRIB / NetCDF file, into a value of type [T].
- *
- * Implementations of this interface must handle the conversion logic,
- * taking into account that any missing/fill value is represented by a [Double.NaN].
- *
- * @param T the data type resulting from the conversion.
+ * Converts the values read from the data, [Double.NaN] if missing, into [T]s.
  */
 fun interface MeasurementConverter<T> {
 
     /**
-     * Converts the raw `Double` value to [T].
-     *
-     * @param value the numeric value to be converted.
-     * **Note:** it may be [Double.NaN] if it represents a missing/fill value.
-     * @return the converted value of type [T].
+     * Converts [value], which is [Double.NaN] if missing.
      */
     fun convert(value: Double): T
 }

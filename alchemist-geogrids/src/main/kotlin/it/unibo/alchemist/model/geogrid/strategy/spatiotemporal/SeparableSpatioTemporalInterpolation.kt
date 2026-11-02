@@ -15,26 +15,8 @@ import it.unibo.alchemist.model.geogrid.strategy.spatial.SpatialInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.temporal.TemporalInterpolation
 
 /**
- * A [SpatioTemporalInterpolation] that decouples the interpolation process
- * into two independent steps.
- *
- * This strategy first resolves the spatial dimensions by applying the provided
- * [spatialStrategy] independently to both the `gridBefore` and `gridAfter` slices.
- * Then, it blends the two resulting values across the time dimension using the
- * [temporalStrategy].
- *
- * This approach is modular, allowing any combination of spatial and temporal
- * algorithms.
- *
- * **Warning!** Whether this decoupling preserves an exact mathematical equivalence
- * to a "joint" spatio-temporal formula depends on the strategies plugged in.
- *
- * **Note on missing values:** If the [spatialStrategy] evaluates to [Double.NaN]
- * for one or both grids, those `NaN` values are propagated to the [temporalStrategy],
- * which is then strictly responsible for resolving or propagating the missing data.
- *
- * @property spatialStrategy the strategy used to interpolate the target position within a single time slice.
- * @property temporalStrategy the strategy used to blend the spatially interpolated values across time.
+ * Interpolates each grid with [spatialStrategy], then the two results with [temporalStrategy],
+ * which also decides what to do with missing values.
  */
 class SeparableSpatioTemporalInterpolation(
     private val spatialStrategy: SpatialInterpolation,

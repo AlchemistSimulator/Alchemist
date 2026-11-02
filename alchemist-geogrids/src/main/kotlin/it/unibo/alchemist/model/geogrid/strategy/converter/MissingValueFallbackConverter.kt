@@ -10,24 +10,10 @@
 package it.unibo.alchemist.model.geogrid.strategy.converter
 
 /**
- * A decorator for [MeasurementConverter] that handles missing/fill values,
- * represented as [Double.NaN], by replacing them with a [defaultValue].
- *
- * @param delegate the inner [MeasurementConverter] used for valid numerical values.
- * @param defaultValue the fallback value returned when encountering [Double.NaN].
- * @param T the output type of the measurement conversion.
+ * Converts missing values into [defaultValue], and the others with [delegate].
  */
 class MissingValueFallbackConverter<T>(private val delegate: MeasurementConverter<T>, private val defaultValue: T) :
     MeasurementConverter<T> {
 
-    /**
-     * Converts the given [value].
-     *
-     * Returns [defaultValue] if [value] is [Double.NaN]; otherwise forwards
-     * the conversion to [delegate].
-     *
-     * @param value the raw input value to convert.
-     * @return the converted value of type [T], or [defaultValue] if the input was [Double.NaN].
-     */
     override fun convert(value: Double): T = if (value.isNaN()) defaultValue else delegate.convert(value)
 }

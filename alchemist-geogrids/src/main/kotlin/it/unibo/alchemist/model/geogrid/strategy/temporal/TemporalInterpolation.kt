@@ -10,17 +10,12 @@
 package it.unibo.alchemist.model.geogrid.strategy.temporal
 
 /**
- * Strategy for **temporal interpolation**: given the two **already** spatially resolved values of the
- * slices bracketing the current time, plus a normalized weight, produces the value at the current
- * time.
+ * How to compute a value between two consecutive instants.
  */
 fun interface TemporalInterpolation {
 
     /**
-     * @param valueBefore spatially resolved value of the slice at or immediately before the current time.
-     * @param valueAfter spatially resolved value of the slice immediately after the current time.
-     * @param weight normalized position in `[0.0, 1.0]`: `0.0` coincides with [valueBefore], `1.0` with [valueAfter].
-     * @return the interpolated value.
+     * The value between [valueBefore] and [valueAfter], at [weight] from 0 (before) to 1 (after).
      */
     fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double
 }

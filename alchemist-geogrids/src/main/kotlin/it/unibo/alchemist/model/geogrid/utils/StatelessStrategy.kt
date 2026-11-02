@@ -10,15 +10,7 @@
 package it.unibo.alchemist.model.geogrid.utils
 
 /**
- * Base for spatial/temporal/spatio-temporal strategies that hold **no configuration state**.
- *
- * Provides [equals] and [hashCode] based solely on the type: two instances of the
- * same stateless strategy are always equal, since they behave identically regardless of how
- * or when they were constructed.
- *
- * Only for strategies with **no** primary-constructor parameters. A strategy that carries
- * actual configuration should be a `data class` instead, so equality reflects its configuration,
- * not just its type.
+ * A strategy without parameters, so all its instances are equal.
  */
 open class StatelessStrategy protected constructor() {
 

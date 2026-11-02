@@ -9,15 +9,23 @@
 
 package it.unibo.alchemist.boundary.utils
 
-import java.nio.file.Files
 import java.nio.file.Path
-import java.util.zip.ZipException
-import java.util.zip.ZipFile
+import okio.ByteString.Companion.decodeHex
+import okio.FileSystem
+import okio.Path.Companion.toOkioPath
+import okio.Path.Companion.toPath
+import okio.buffer
+import okio.openZip
+
+/**
+ * Leading bytes of a ZIP archive: a local file header, or the end of central directory record of an empty archive.
+ */
+private val zipSignatures = listOf("504b0304", "504b0506").map { it.decodeHex() }
 
 /**
  * Extract all ZIP files inside of [dir] and deletes them.
  *
- * Each regular file in [dir] that can be opened as a valid ZIP archive is **extracted flat** (each
+ * Each regular file in [dir] starting with a ZIP signature is **extracted flat** (each
  * entry by its basename) into [dir], and the archive itself is then deleted. Files that are not ZIP
  * archives are left untouched.
  *
@@ -28,43 +36,39 @@ import java.util.zip.ZipFile
  * @throws IllegalStateException if two entries in an archive collapse to the same basename.
  */
 internal fun flattenArchives(dir: Path) {
-    val files = Files.list(dir).use {
-        it.filter(Files::isRegularFile).toList()
-    }
-    for (file in files) {
-        // extract the ZIP file (if it is one) and deletes it.
-        if (extractArchive(file, dir)) {
-            Files.delete(file)
+    val directory = dir.toOkioPath()
+    FileSystem.SYSTEM.list(directory)
+        .filter { FileSystem.SYSTEM.metadata(it).isRegularFile && it.isZip() }
+        .forEach { archive ->
+            extractArchive(archive, directory)
+            FileSystem.SYSTEM.delete(archive)
         }
+}
+
+/**
+ * Extracts the ZIP [archive] flat into [dir].
+ *
+ * @throws IllegalStateException on a basename collision between two entries.
+ */
+private fun extractArchive(archive: okio.Path, dir: okio.Path) {
+    FileSystem.SYSTEM.openZip(archive).use { zip ->
+        zip.listRecursively("/".toPath())
+            .filter { zip.metadata(it).isRegularFile }
+            .forEach { entry ->
+                val target = dir / entry.name
+                check(!FileSystem.SYSTEM.exists(target)) {
+                    "Flatten collision on '${target.name}' from '${archive.name}'"
+                }
+                FileSystem.SYSTEM.write(target, mustCreate = true) {
+                    zip.source(entry).use { writeAll(it) }
+                }
+            }
     }
 }
 
 /**
- * Extracts [archive] flat into [dir] if it is a ZIP.
- *
- * @return `true` if [archive] was a valid ZIP (its entries were extracted), `false` if it is not a
- * ZIP and was left untouched.
- * @throws IllegalStateException on a basename collision between two entries.
+ * Whether this file starts with a ZIP signature: detection is by content, not by extension.
  */
-private fun extractArchive(archive: Path, dir: Path): Boolean = try {
-    ZipFile(archive.toFile()).use { zip ->
-        for (entry in zip.entries()) {
-            // nothing to do if the entry is a directory.
-            if (entry.isDirectory) continue
-            // it's a file. Resolves the new path.
-            val target = dir.resolve(Path.of(entry.name).fileName.toString())
-            // a file with the exact same path already exists.
-            check(Files.notExists(target)) {
-                "Flatten collision on '${target.fileName}' from '${archive.fileName}'"
-            }
-            // copies the content in the target path
-            zip.getInputStream(entry).use { source ->
-                Files.copy(source, target)
-            }
-        }
-    }
-    true
-} catch (_: ZipException) {
-    // the file was not a zip archive.
-    false
+private fun okio.Path.isZip(): Boolean = FileSystem.SYSTEM.source(this).buffer().use { source ->
+    zipSignatures.any { source.rangeEquals(0, it) }
 }

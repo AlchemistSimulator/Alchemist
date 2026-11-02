@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.gson)
     implementation(alchemist("observables"))
     implementation(libs.guava)
+    implementation(libs.okio)
     implementation(libs.slf4j)
 
     testImplementation(alchemist("kotlinscript"))

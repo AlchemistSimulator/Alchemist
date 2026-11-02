@@ -7,8 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.utils
+package it.unibo.alchemist.boundary.copernicus
 
+import it.unibo.alchemist.boundary.copernicus.CopernicusDataStoreProvider.Companion.extractAndDeleteAllZipArchives
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipEntry
@@ -64,7 +65,7 @@ class TestArchives {
         val data = dir.resolve(netCdfFileName)
         Files.writeString(data, "I'm not a ZIP!")
         val before = Files.readString(data)
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertTrue(data.exists(), "$data should exist")
         assertEquals(before, Files.readString(data))
         assertEquals(setOf(netCdfFileName), fileNames(dir))
@@ -73,7 +74,7 @@ class TestArchives {
     @Test
     fun `a single-entry zip is extracted flat and the archive is deleted`() {
         val zip = writeZip(dir, zipFileName, mapOf(netCdfFileName to "payload"))
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertFalse(zip.exists(), "$zip should not exist")
         assertTrue(dir.resolve(netCdfFileName).exists(), "$netCdfFileName should exist in $dir")
         assertEquals("payload", Files.readString(dir.resolve(netCdfFileName)))
@@ -84,7 +85,7 @@ class TestArchives {
     fun `multiple archives in the same dir are all extracted and deleted`() {
         writeZip(dir, "part1.zip", mapOf("a.nc" to "A"))
         writeZip(dir, "part2.zip", mapOf("b.nc" to "B"))
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertEquals(setOf("a.nc", "b.nc"), fileNames(dir))
     }
 
@@ -92,14 +93,14 @@ class TestArchives {
     fun `a data file alongside an archive stays while the archive is flattened`() {
         Files.writeString(dir.resolve("already.nc"), "plain")
         writeZip(dir, zipFileName, mapOf("fromzip.nc" to "Z"))
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertEquals(setOf("already.nc", "fromzip.nc"), fileNames(dir))
     }
 
     @Test
     fun `a multi-entry zip extracts every entry`() {
         writeZip(dir, zipFileName, mapOf("a.nc" to "A", "b.nc" to "B"))
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertEquals(setOf("a.nc", "b.nc"), fileNames(dir))
         assertEquals("A", Files.readString(dir.resolve("a.nc")))
         assertEquals("B", Files.readString(dir.resolve("b.nc")))
@@ -108,7 +109,7 @@ class TestArchives {
     @Test
     fun `nested entry paths are flattened to their basename`() {
         writeZip(dir, zipFileName, mapOf("data/2024/06/dis24.nc" to "deep"))
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertTrue(dir.resolve(netCdfFileName).exists(), "$netCdfFileName should exist in $dir")
         assertEquals("deep", Files.readString(dir.resolve(netCdfFileName)))
         assertEquals(setOf(netCdfFileName), fileNames(dir))
@@ -118,7 +119,7 @@ class TestArchives {
     fun `detection is by content not extension so a zip named nc is still extracted`() {
         // the archive itself is named like a data file
         val zip = writeZip(dir, "payload.nc", mapOf(netCdfFileName to "inner"))
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertFalse(zip.exists(), "$zip should not exist")
         assertTrue(dir.resolve(netCdfFileName).exists(), "$netCdfFileName should exist in $dir")
         assertEquals("inner", Files.readString(dir.resolve(netCdfFileName)))
@@ -128,7 +129,7 @@ class TestArchives {
     fun `detection is by content not extension so a non-zip named zip is left untouched`() {
         val fake = dir.resolve("archive.zip")
         Files.writeString(fake, "this is plain text, not a zip")
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertTrue(fake.exists(), "$fake should exist")
         assertEquals("this is plain text, not a zip", Files.readString(fake))
     }
@@ -136,13 +137,13 @@ class TestArchives {
     @Test
     fun `a flatten collision with two entries sharing the same basename throws IllegalStateException`() {
         writeZip(dir, zipFileName, mapOf("regionA/dis24.nc" to "A", "regionB/dis24.nc" to "B"))
-        assertFailsWith<IllegalStateException> { flattenArchives(dir) }
+        assertFailsWith<IllegalStateException> { dir.extractAndDeleteAllZipArchives() }
     }
 
     @Test
     fun `an empty zip with no entries extracts nothing, is deleted, and leaves the dir empty`() {
         val zip = writeZip(dir, zipFileName, emptyMap())
-        flattenArchives(dir)
+        dir.extractAndDeleteAllZipArchives()
         assertFalse(zip.exists(), "$zip should not exist")
         assertEquals(emptySet(), fileNames(dir))
     }

@@ -13,7 +13,6 @@ import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
 import it.unibo.alchemist.boundary.util.MD5Integrity
 import it.unibo.alchemist.boundary.utils.CanonicalJson
 import it.unibo.alchemist.boundary.utils.RemoteAsset
-import it.unibo.alchemist.boundary.utils.flattenArchives
 import it.unibo.alchemist.boundary.utils.parseAsset
 import it.unibo.alchemist.boundary.utils.parseFailureMessage
 import it.unibo.alchemist.boundary.utils.parseMonitorUrl
@@ -34,6 +33,12 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import kotlin.time.toJavaDuration
+import okio.ByteString.Companion.decodeHex
+import okio.FileSystem
+import okio.Path.Companion.toOkioPath
+import okio.Path.Companion.toPath
+import okio.buffer
+import okio.openZip
 import org.slf4j.LoggerFactory
 
 /**
@@ -101,7 +106,7 @@ class CopernicusDataStoreProvider(
         val file = download(asset, target)
         // asset validation and archive flattening.
         MD5Integrity.verify(file, asset.sizeBytes, asset.md5)
-        flattenArchives(target)
+        target.extractAndDeleteAllZipArchives()
         val elapsed = start.elapsedNow().inWholeMilliseconds.milliseconds
         logger.info("Dataset '${key.dataset}' successfully downloaded in $elapsed.")
     }
@@ -365,11 +370,50 @@ class CopernicusDataStoreProvider(
         private val RUNNING_STATUSES = setOf("accepted", "running")
 
         private val logger = LoggerFactory.getLogger(CopernicusDataStoreProvider::class.java)
+
+        /**
+         * Leading bytes of a ZIP archive: a local file header, or the end of central directory record of an empty
+         * archive.
+         */
+        private val zipSignatures = listOf("504b0304", "504b0506").map { it.decodeHex() }
+
+        internal fun Path.extractAndDeleteAllZipArchives() {
+            val directory = toOkioPath()
+            FileSystem.SYSTEM.list(directory)
+                .filter { FileSystem.SYSTEM.metadata(it).isRegularFile && it.isZip() }
+                .forEach { archive ->
+                    archive.extractTo(directory)
+                    FileSystem.SYSTEM.delete(archive)
+                }
+        }
+
+        private fun okio.Path.extractTo(dir: okio.Path) {
+            FileSystem.SYSTEM.openZip(this).use { zip ->
+                zip.listRecursively("/".toPath())
+                    .filter { zip.metadata(it).isRegularFile }
+                    .forEach { entry ->
+                        val target = dir / entry.name
+                        check(!FileSystem.SYSTEM.exists(target)) {
+                            "Flatten collision on '${target.name}' from '$name'"
+                        }
+                        FileSystem.SYSTEM.write(target, mustCreate = true) {
+                            zip.source(entry).use { writeAll(it) }
+                        }
+                    }
+            }
+        }
+
+        /**
+         * Extension property used to check if a response was successful.
+         */
+        private val HttpResponse<*>.isSuccessful: Boolean
+            get() = statusCode() in 200..299
+
+        /**
+         * Whether this file starts with a ZIP signature: detection is by content, not by extension.
+         */
+        private fun okio.Path.isZip(): Boolean = FileSystem.SYSTEM.source(this).buffer().use { source ->
+            zipSignatures.any { source.rangeEquals(0, it) }
+        }
     }
 }
-
-/**
- * Extension property used to check if a response was successful.
- */
-private val HttpResponse<*>.isSuccessful: Boolean
-    get() = statusCode() in 200..299

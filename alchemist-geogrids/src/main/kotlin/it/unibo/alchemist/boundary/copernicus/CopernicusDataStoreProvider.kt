@@ -36,21 +36,13 @@ import okio.openZip
 import org.slf4j.LoggerFactory
 
 /**
- * The **only point of the module that speaks the ECMWF data stores' REST API**.
+ * Downloads data from a Copernicus data store: it submits a job, polls it until done, then downloads its results.
  *
- * Implements the OGC API - Processes flow (submit -> poll -> results -> download) and confines it
- * entirely here.
- *
- * The sole auth asymmetry is the final download GET, which carries **no** token
- * (the asset lives on a public object store on a different host): see [download].
- *
- * @param tokenSupplier supplies the ECMWF token sent as the `PRIVATE-TOKEN` header on the OGC GET/POST calls.
- * @param http HTTP client to use; defaults to the JDK [HttpClient], giving up connecting after 30 seconds.
- * @param pollInterval base interval between two status polls; grows with backoff up to [maxPollInterval].
- * @param maxPollInterval cap on the polling interval. Defaults to 120 seconds, matching the official
- * ECMWF client's duration.
- * @param timeout overall guillotine on the wait for job completion, polls included.
- * Each request to the OGC endpoints is bounded by one minute; the download of the asset is not, as it can be large.
+ * @param http the HTTP client.
+ * @param pollInterval how long to wait before the first poll; it doubles at each poll, up to [maxPollInterval].
+ * @param maxPollInterval the longest wait between polls.
+ * @param timeout how long the job can take, polls included; the download itself has no time limit.
+ * @param tokenSupplier the API token, requested only when downloading.
  */
 class CopernicusDataStoreProvider(
     private val http: HttpClient = HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT.toJavaDuration()).build(),
@@ -66,23 +58,13 @@ class CopernicusDataStoreProvider(
         require(timeout.isPositive()) { "timeout must be positive" }
     }
 
-    /**
-     * read on first use, not at construction: a cache hit must not require credentials,
-     * so the token can be absent.
-     */
     private val token: String by lazy(tokenSupplier)
 
     /**
-     * The full OGC API processes flow, written into [target].
-     * Follows the flow submit -> poll -> results -> download, **blocking by design**.
-     * Downloaded assets are verified against their size and, when advertised, their MD5.
-     * Archives are flattened into single files.
+     * Downloads into [target] the data of [key], checks it, and extracts any ZIP archive.
      *
-     * @param key the [CopernicusRequest] used to initialize the job on ECMWF servers.
-     * @param target the temporary directory where the downloaded assets will be saved.
-     * @throws IllegalArgumentException if [target] does not exist or is not a directory.
-     * @throws IllegalStateException if the assets can't be downloaded, on timeout or if the
-     * asset validation fails.
+     * @throws IllegalArgumentException if [target] is not a directory.
+     * @throws IllegalStateException if the job fails or times out, or the download fails or is corrupted.
      */
     override fun load(key: CopernicusRequest, target: Path) {
         require(target.isDirectory()) {
@@ -106,16 +88,7 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Submits the job and returns the URL from which to monitor its status.
-     *
-     * `POST {endpoint}/retrieve/v1/processes/{dataset}/execution`, with `PRIVATE-TOKEN` and
-     * `Content-Type`/`Accept: application/json`, body `{"inputs": <request.inputs>}` serialized via
-     * [CanonicalJson]. The monitor URL is read from the `rel="monitor"` link of the response
-     * ([parseMonitorUrl]), never rebuilt from a path.
-     *
-     * @param request the [CopernicusRequest] used to initialize the job on ECMWF servers.
-     * @return the absolute job URL to pass to [awaitSuccess].
-     * @throws IllegalStateException on a non-2xx response, enriched with [parseProblemDetail].
+     * Submits the job for [request], returning the URL to monitor it.
      */
     private fun submit(request: CopernicusRequest): String {
         val body = CanonicalJson.encode(mapOf("inputs" to request.inputs))
@@ -140,21 +113,11 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * **Polls** the job status at [monitorUrl] until it becomes `successful`, with exponential
-     * backoff capped at [maxPollInterval] and a [timeout] guillotine.
+     * Polls the job at [monitorUrl] until it succeeds, waiting [interval] before the next poll and logging every
+     * now and then since [lastHeartbeat], returning the URL of its results.
+     * Unknown statuses are taken as still running.
      *
-     * Terminal failure states are listed **explicitly** (`failed`/`rejected`/`dismissed`/`deleted`):
-     * consistently with [parseStatus], any other state (known like `accepted`/`running` or unknown),
-     * is treated as transient and polling continues.
-     *
-     * @param monitorUrl the URL to use to check the job status. See [submit].
-     * @param deadline the last moment to poll for the job status.
-     * @param interval the time to wait before the next poll.
-     * @param lastHeartbeat the last time the user was told that polling is still going on,
-     * so that they do not think the program froze.
-     * @return the result URL (`rel="results"` link, present only once the job is `successful`).
-     * @throws IllegalStateException on a terminal failure state, on [timeout], or if a `successful`
-     * job exposes no `rel="results"` link (inconsistent server response).
+     * @throws IllegalStateException if the job fails, or is still running at [deadline].
      */
     private tailrec fun awaitSuccess(
         monitorUrl: String,
@@ -200,14 +163,7 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Fetches the result metadata. `GET resultUrl` (authenticated).
-     *
-     * Extracts href, size and MD5 via [parseAsset], then resolves the href against [resultsUrl].
-     * ECMWF already serves the asset URI as absolute, so the resolve is a defensive no-op
-     * (tolerates a future relative href).
-     *
-     * @param resultsUrl the results URL from [awaitSuccess] (`rel="results"` link).
-     * @return a [RemoteAsset] with an **absolute** href, expected size, and best-effort checksum.
+     * The file to download, from the results at [resultsUrl].
      */
     private fun fetchAsset(resultsUrl: String): RemoteAsset {
         val asset = parseAsset(get(resultsUrl).body())
@@ -217,17 +173,7 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Streams the asset file into [targetDir].
-     *
-     * `GET asset.href` **without** `PRIVATE-TOKEN`: unlike the OGC GETs (monitor, results), the
-     * href points to an object store on a different host (e.g. `object-store.os-api.cci2.ecmwf.int`)
-     * that serves the resource **publicly, unauthenticated**.
-     *
-     * @param asset result metadata (absolute href, expected size, nullable checksum).
-     * @param targetDir temporary directory to write into.
-     * @return the [Path] of the downloaded asset.
-     * @throws IllegalStateException on a non-2xx response from the object store (it does not
-     * follow RFC 7807, so only the status is reported).
+     * Downloads [asset] into [targetDir]. Assets are public, so the token is not sent.
      */
     private fun download(asset: RemoteAsset, targetDir: Path): Path {
         val uri = URI.create(asset.href)
@@ -246,12 +192,7 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Always throws as [IllegalStateException], enriching the message with the RFC 7807 problem-detail
-     * **when** the body is interpretable.
-     *
-     * @param action the action performed that caused the error.
-     * @param response the [HttpResponse] that caused the error.
-     * @throws IllegalStateException always.
+     * Fails reporting the [response] to [action], with its error report if any.
      */
     private fun failOnHttpError(action: String, response: HttpResponse<String>): Nothing {
         // problem description, if any
@@ -269,18 +210,8 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Always throws for a terminal failure job (HTTP 200 with a `failed`/`rejected`/`dismissed`/`deleted` status).
-     *
-     * **Note**: the status document does **not** carry the cause: ECMWF exposes it only by showing the
-     * `rel="results"` link, which answers 4xx with an RFC 7807 body whose proprietary `traceback`
-     * field holds the backend failure. The OGC `message` field and the raw status body are
-     * the fallbacks, **in that order**.
-     *
-     * @param monitorUrl the poll URL that reported a terminal failure status.
-     * @param status the terminal failure status (`failed`/`rejected`/`dismissed`/`deleted`).
-     * @param body the status document, used to locate the results link and, failing that, as a fallback
-     * message source.
-     * @throws IllegalStateException always.
+     * Fails reporting the cause of the job at [monitorUrl] ending with [status]: the data stores explain it in the
+     * results, otherwise its `message` or the whole status [body] are reported.
      */
     private fun failOnStatus(monitorUrl: String, status: String, body: String): Nothing {
         val cause = parseResultsUrl(body)
@@ -296,12 +227,9 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Authenticated GET (with `PRIVATE-TOKEN` header) to an OGC endpoint.
+     * Gets [url] with the token, waiting at most [responseTimeout].
      *
-     * @param url the request URL.
-     * @param responseTimeout the maximum time to wait for the response.
-     * @return the [HttpResponse] received after the request.
-     * @throws IllegalStateException on a non-2xx response.
+     * @throws IllegalStateException if the response is an error.
      */
     private fun get(url: String, responseTimeout: Duration = REQUEST_TIMEOUT): HttpResponse<String> =
         getRaw(url, responseTimeout).also {
@@ -309,7 +237,7 @@ class CopernicusDataStoreProvider(
         }
 
     /**
-     * Authenticated GET that does **not** check the status code: the caller inspects the body.
+     * Gets [url] with the token, waiting at most [responseTimeout], whatever the response.
      */
     private fun getRaw(url: String, responseTimeout: Duration = REQUEST_TIMEOUT): HttpResponse<String> = http.send(
         HttpRequest.newBuilder()
@@ -324,34 +252,32 @@ class CopernicusDataStoreProvider(
 
     internal companion object {
         /**
-         * Default maximum time allowed to wait for a poll with a ‘successful’ status.
+         * How long a job can take by default.
          */
         val DEFAULT_TIMEOUT = 30.minutes
 
         /**
-         * Default interval between two consecutive polls.
+         * The default wait before the first poll.
          */
         private val DEFAULT_POLL_INTERVAL = 2.seconds
 
         /**
-         * Default max interval between two consecutive polls.
+         * The default longest wait between polls, as in ECMWF's official client.
          */
         private val DEFAULT_MAX_POLL_INTERVAL = 120.seconds
 
         /**
-         * How often to alert the user that the program is still in
-         * polling mode (to prevent them from thinking the program
-         * has frozen).
+         * How often to log that the job is still running.
          */
         private val USER_ALERT_INTERVAL = 30.seconds
 
         /**
-         * Maximum time to wait for a connection to be established.
+         * How long to wait for a connection.
          */
         private val CONNECT_TIMEOUT = 30.seconds
 
         /**
-         * Maximum time to wait for the response to a request to an OGC endpoint.
+         * How long to wait for a response of the API.
          */
         private val REQUEST_TIMEOUT = 1.minutes
 
@@ -368,8 +294,7 @@ class CopernicusDataStoreProvider(
         private val logger = LoggerFactory.getLogger(CopernicusDataStoreProvider::class.java)
 
         /**
-         * Leading bytes of a ZIP archive: a local file header, or the end of central directory record of an empty
-         * archive.
+         * How ZIP archives start, also when empty.
          */
         private val zipSignatures = listOf("504b0304", "504b0506").map { it.decodeHex() }
 
@@ -408,7 +333,7 @@ class CopernicusDataStoreProvider(
         }
 
         /**
-         * Extension property used to check if a response was successful.
+         * Whether the response is not an error.
          */
         private val HttpResponse<*>.isSuccessful: Boolean
             get() = statusCode() in 200..299
@@ -438,7 +363,7 @@ class CopernicusDataStoreProvider(
         }
 
         /**
-         * Whether this file starts with a ZIP signature: detection is by content, not by extension.
+         * Whether this file is a ZIP archive, whatever its extension.
          */
         private fun okio.Path.isZip(): Boolean = FileSystem.SYSTEM.source(this).buffer().use { source ->
             zipSignatures.any { source.rangeEquals(0, it) }

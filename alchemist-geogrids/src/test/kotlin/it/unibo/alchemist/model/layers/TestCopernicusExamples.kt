@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.layers
 
 import it.unibo.alchemist.boundary.LoadAlchemist
+import it.unibo.alchemist.boundary.copernicus.CopernicusData.Companion.readJsonObject
 import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
-import it.unibo.alchemist.boundary.utils.CopernicusInputs
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import java.nio.file.Files
@@ -36,7 +36,7 @@ class TestCopernicusExamples {
         val request = CopernicusRequest(
             endpoint = "https://ewds.climate.copernicus.eu/api",
             dataset = "cems-glofas-historical",
-            inputs = CopernicusInputs.read(resource("copernicus/glofas-request.json")),
+            inputs = resource("copernicus/glofas-request.json").readJsonObject(),
         )
         // the cache already holds the requested data, so neither network nor credentials are needed
         val entry = Path.of("build/copernicus-cache").resolve(request.directoryName)

@@ -7,9 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.utils
+package it.unibo.alchemist.boundary.copernicus
 
 import com.google.gson.JsonSyntaxException
+import it.unibo.alchemist.boundary.copernicus.CopernicusData.Companion.readJsonObject
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.AfterTest
@@ -38,31 +39,31 @@ class TestCopernicusInputs {
                 "variable" to listOf("2m_temperature"),
                 "year" to listOf("2024"),
             ),
-            CopernicusInputs.read(path),
+            path.readJsonObject(),
         )
     }
 
     @Test
     fun `reads a 'type' key without any loader involved`() {
         val path = inputsFile("""{ "type": ["validated_reanalysis"] }""".trimIndent())
-        assertEquals(mapOf("type" to listOf("validated_reanalysis")), CopernicusInputs.read(path))
+        assertEquals(mapOf("type" to listOf("validated_reanalysis")), path.readJsonObject())
     }
 
     @Test
     fun `preserves list order`() {
         val path = inputsFile("""{ "area": [44.0, 11.0, 45.0, 12.0] }""".trimIndent())
-        assertEquals(mapOf("area" to listOf(44.0, 11.0, 45.0, 12.0)), CopernicusInputs.read(path))
+        assertEquals(mapOf("area" to listOf(44.0, 11.0, 45.0, 12.0)), path.readJsonObject())
     }
 
     @Test
     fun `throws JsonSyntaxException when the file holds a JSON array instead of an object`() {
         val path = inputsFile("[1, 2, 3]")
-        assertFailsWith<JsonSyntaxException> { CopernicusInputs.read(path) }
+        assertFailsWith<JsonSyntaxException> { path.readJsonObject() }
     }
 
     @Test
     fun `throws JsonSyntaxException when the file holds a scalar`() {
         val path = inputsFile("\"cmon, this is just a string!\"")
-        assertFailsWith<JsonSyntaxException> { CopernicusInputs.read(path) }
+        assertFailsWith<JsonSyntaxException> { path.readJsonObject() }
     }
 }

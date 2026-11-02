@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.utils
+package it.unibo.alchemist.boundary.copernicus
 
 import it.unibo.alchemist.loadJsonCopernicusResponse
 import kotlin.test.Test

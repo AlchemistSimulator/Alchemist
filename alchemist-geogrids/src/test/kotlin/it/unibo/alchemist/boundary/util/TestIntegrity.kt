@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.utils
+package it.unibo.alchemist.boundary.util
 
 import it.unibo.alchemist.boundary.util.MD5Integrity.md5Hex
 import it.unibo.alchemist.boundary.util.MD5Integrity.verify

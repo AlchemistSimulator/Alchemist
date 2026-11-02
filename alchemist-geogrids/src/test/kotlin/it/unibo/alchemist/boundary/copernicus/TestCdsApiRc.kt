@@ -7,8 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.utils
+package it.unibo.alchemist.boundary.copernicus
 
+import it.unibo.alchemist.boundary.copernicus.CopernicusData.Companion.readToken
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.AfterTest
@@ -48,7 +49,7 @@ class TestCdsApiRc {
             key: $realisticKey
             """.trimIndent(),
         )
-        assertEquals(realisticKey, CdsApiRc.readToken(path))
+        assertEquals(realisticKey, path.readToken())
     }
 
     @Test
@@ -59,14 +60,14 @@ class TestCdsApiRc {
          */
         val futureKey = "aaa:bbb:ccc"
         val path = rcFile("key: $futureKey")
-        assertEquals(futureKey, CdsApiRc.readToken(path))
+        assertEquals(futureKey, path.readToken())
     }
 
     @Test
     fun `trims surrounding whitespace around the token value`() {
         // ECMWF writes a space after the colon in the user-guide
         val path = rcFile("key:    $realisticKey   ")
-        assertEquals(realisticKey, CdsApiRc.readToken(path))
+        assertEquals(realisticKey, path.readToken())
     }
 
     @Test
@@ -79,7 +80,7 @@ class TestCdsApiRc {
             other: another property
             """.trimIndent(),
         )
-        assertEquals(realisticKey, CdsApiRc.readToken(path))
+        assertEquals(realisticKey, path.readToken())
     }
 
     @Test
@@ -91,12 +92,12 @@ class TestCdsApiRc {
             # personal access token above
             """.trimIndent(),
         )
-        assertEquals(realisticKey, CdsApiRc.readToken(path))
+        assertEquals(realisticKey, path.readToken())
     }
 
     @Test
     fun `throws IllegalStateException when no key line is present`() {
         val path = rcFile("url: https://cds.climate.copernicus.eu/api")
-        assertFailsWith<IllegalStateException> { CdsApiRc.readToken(path) }
+        assertFailsWith<IllegalStateException> { path.readToken() }
     }
 }

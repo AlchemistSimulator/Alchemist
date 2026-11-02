@@ -11,14 +11,6 @@ package it.unibo.alchemist.boundary.copernicus
 
 import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
 import it.unibo.alchemist.boundary.util.MD5Integrity
-import it.unibo.alchemist.boundary.utils.CanonicalJson
-import it.unibo.alchemist.boundary.utils.RemoteAsset
-import it.unibo.alchemist.boundary.utils.parseAsset
-import it.unibo.alchemist.boundary.utils.parseFailureMessage
-import it.unibo.alchemist.boundary.utils.parseMonitorUrl
-import it.unibo.alchemist.boundary.utils.parseProblemDetail
-import it.unibo.alchemist.boundary.utils.parseResultsUrl
-import it.unibo.alchemist.boundary.utils.parseStatus
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

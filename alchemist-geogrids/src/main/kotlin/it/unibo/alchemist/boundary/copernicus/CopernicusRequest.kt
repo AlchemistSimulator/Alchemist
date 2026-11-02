@@ -10,7 +10,6 @@
 package it.unibo.alchemist.boundary.copernicus
 
 import it.unibo.alchemist.boundary.filecache.CachedDirectoryKey
-import it.unibo.alchemist.boundary.utils.CanonicalJson
 import java.net.URI
 import java.security.MessageDigest
 

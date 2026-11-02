@@ -12,23 +12,16 @@ package it.unibo.alchemist.model.geogrid.reading
 import kotlin.time.Instant
 
 /**
- * A time-ordered sequence of [RasterGrid] slices backed by geophysical source data.
- *
- * [instants] and [grid] are aligned: the i-th instant is the real-world timestamp of the
- * slice returned by `grid(i)`. [instants] is guaranteed to be strictly ascending with no
- * duplicates. [instants] exposes [Instant] so that callers can convert
- * real-world timestamps to simulation time once at construction.
+ * A sequence of [RasterGrid]s over time: `grid(i)` holds the data at `instants[i]`.
  */
 interface GridSnapshots {
     /**
-     * Real-world timestamps of each slice, strictly ascending, aligned with [grid].
+     * The instants of the grids, strictly ascending.
      */
     val instants: List<Instant>
 
     /**
-     * Returns the spatial slice at [index].
-     *
-     * @param index 0-based, aligned with [instants].
+     * The grid at the instant with the given [index] in [instants].
      */
     fun grid(index: Int): RasterGrid
 }

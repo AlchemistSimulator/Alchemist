@@ -12,11 +12,9 @@ package it.unibo.alchemist.model.geogrid.strategy.temporal
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
- * [TemporalInterpolation] that blends between two adjacent values.
+ * Linear interpolation between the two values, missing if either of them is.
  */
-class LinearInterpolation :
-    StatelessStrategy(),
-    TemporalInterpolation {
+class LinearInterpolation : StatelessStrategy(), TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = when {
         weight == 0.0 -> valueBefore

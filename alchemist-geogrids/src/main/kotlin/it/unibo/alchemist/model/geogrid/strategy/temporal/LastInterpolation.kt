@@ -12,11 +12,9 @@ package it.unibo.alchemist.model.geogrid.strategy.temporal
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
- * [TemporalInterpolation] that always resolves with the value of the last temporal slice.
+ * The value of the last instant.
  */
-class LastInterpolation :
-    StatelessStrategy(),
-    TemporalInterpolation {
+class LastInterpolation : StatelessStrategy(), TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueBefore
 }

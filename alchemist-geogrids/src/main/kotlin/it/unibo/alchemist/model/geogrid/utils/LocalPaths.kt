@@ -14,8 +14,7 @@ import kotlin.io.path.exists
 import org.kaikikm.threadresloader.ResourceLoader
 
 /**
- * Resolves [path] on the file system if it exists there, or among the classpath resources otherwise,
- * as other Alchemist components do for their data files.
+ * Resolves [path] on the file system or, if missing there, among the classpath resources.
  *
  * @throws IllegalArgumentException if [path] is neither an existing path nor a classpath resource.
  */

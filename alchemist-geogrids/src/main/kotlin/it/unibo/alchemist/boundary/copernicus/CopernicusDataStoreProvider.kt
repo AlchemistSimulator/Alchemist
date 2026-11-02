@@ -10,13 +10,13 @@
 package it.unibo.alchemist.boundary.copernicus
 
 import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
-import it.unibo.alchemist.boundary.util.MD5Integrity
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.http.HttpTimeoutException
 import java.nio.file.Path
+import kotlin.io.path.fileSize
 import kotlin.io.path.isDirectory
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -27,8 +27,10 @@ import kotlin.time.TimeSource
 import kotlin.time.toJavaDuration
 import okio.ByteString.Companion.decodeHex
 import okio.FileSystem
+import okio.HashingSource.Companion.md5
 import okio.Path.Companion.toOkioPath
 import okio.Path.Companion.toPath
+import okio.blackholeSink
 import okio.buffer
 import okio.openZip
 import org.slf4j.LoggerFactory
@@ -97,7 +99,7 @@ class CopernicusDataStoreProvider(
         // downloads the asset.
         val file = download(asset, target)
         // asset validation and archive flattening.
-        MD5Integrity.verify(file, asset.sizeBytes, asset.md5)
+        file.verify(asset.sizeBytes, asset.md5)
         target.extractAndDeleteAllZipArchives()
         val elapsed = start.elapsedNow().inWholeMilliseconds.milliseconds
         logger.info("Dataset '${key.dataset}' successfully downloaded in $elapsed.")
@@ -357,6 +359,8 @@ class CopernicusDataStoreProvider(
 
         private const val SUCCESSFUL = "successful"
 
+        private const val MD5_HEX_DIGITS = 32
+
         private val TERMINAL_STATUSES = setOf("failed", "rejected", "dismissed", "deleted")
 
         private val RUNNING_STATUSES = setOf("accepted", "running")
@@ -396,10 +400,42 @@ class CopernicusDataStoreProvider(
         }
 
         /**
+         * The MD5 digest of this file, as 32 lowercase hexadecimal digits.
+         */
+        internal val Path.md5Hex: String get() = md5(FileSystem.SYSTEM.source(toOkioPath())).use { source ->
+                source.buffer().readAll(blackholeSink())
+                source.hash.hex()
+            }
+
+        /**
          * Extension property used to check if a response was successful.
          */
         private val HttpResponse<*>.isSuccessful: Boolean
             get() = statusCode() in 200..299
+
+        /**
+         * Checks that this file has [expectedSizeBytes] bytes and, if [expectedMd5] is given, that digest.
+         * The data store advertises digests without their leading zeros, so [expectedMd5] is padded back before
+         * comparing.
+         *
+         * @throws IllegalStateException on a mismatch, or if [expectedMd5] is not an MD5 digest.
+         */
+        internal fun Path.verify(expectedSizeBytes: Long, expectedMd5: String? = null) {
+            val actualSize = fileSize()
+            check(actualSize == expectedSizeBytes) {
+                "Size mismatch for '$fileName': expected $expectedSizeBytes bytes, got $actualSize"
+            }
+            // no checksum advertised: nothing to verify.
+            val advertised = expectedMd5 ?: return
+            val expected = advertised.lowercase().padStart(MD5_HEX_DIGITS, '0')
+            check(expected.isMd5Hex()) {
+                "Data store advertised an unusable MD5 checksum ($advertised) for '$fileName'"
+            }
+            val actual = md5Hex
+            check(actual == expected) {
+                "MD5 mismatch for '$fileName': expected $expected (advertised as '$advertised'), got $actual"
+            }
+        }
 
         /**
          * Whether this file starts with a ZIP signature: detection is by content, not by extension.
@@ -407,5 +443,7 @@ class CopernicusDataStoreProvider(
         private fun okio.Path.isZip(): Boolean = FileSystem.SYSTEM.source(this).buffer().use { source ->
             zipSignatures.any { source.rangeEquals(0, it) }
         }
+
+        private fun String.isMd5Hex(): Boolean = length == MD5_HEX_DIGITS && all { it in '0'..'9' || it in 'a'..'f' }
     }
 }

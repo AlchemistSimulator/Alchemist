@@ -7,10 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.util
+package it.unibo.alchemist.boundary.copernicus
 
-import it.unibo.alchemist.boundary.util.MD5Integrity.md5Hex
-import it.unibo.alchemist.boundary.util.MD5Integrity.verify
+import it.unibo.alchemist.boundary.copernicus.CopernicusDataStoreProvider.Companion.md5Hex
+import it.unibo.alchemist.boundary.copernicus.CopernicusDataStoreProvider.Companion.verify
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.AfterTest
@@ -34,13 +34,13 @@ class TestIntegrity {
      */
     private fun assertKnownDigest(content: String) {
         Files.writeString(file, content)
-        assertEquals(knownMD5.getValue(content), md5Hex(file))
+        assertEquals(knownMD5.getValue(content), file.md5Hex)
     }
 
     @Test
     fun `md5Hex of empty file matches the known digest`() {
         // file is created empty for each test
-        assertEquals(knownMD5[""], md5Hex(file))
+        assertEquals(knownMD5[""], file.md5Hex)
     }
 
     @Test
@@ -59,7 +59,7 @@ class TestIntegrity {
     fun `md5Hex preserves the leading zero nibbles of a digest`() {
         advertisedUnpadded.keys.forEach { content ->
             Files.writeString(file, content)
-            assertEquals(knownMD5.getValue(content), md5Hex(file), "content: '$content'")
+            assertEquals(knownMD5.getValue(content), file.md5Hex, "content: '$content'")
         }
     }
 
@@ -67,7 +67,7 @@ class TestIntegrity {
     fun `md5Hex is always 32 lowercase hex chars`() {
         knownMD5.keys.forEach { content ->
             Files.writeString(file, content)
-            val hex = md5Hex(file)
+            val hex = file.md5Hex
             assertEquals(32, hex.length, "content: '$content'")
             assertEquals(hex.lowercase(), hex, "content: '$content'")
         }
@@ -77,19 +77,19 @@ class TestIntegrity {
     fun `verify passes when size and MD5 both match`() {
         Files.writeString(file, "abc")
         // 3 bytes, known MD5
-        verify(file, 3, knownMD5.getValue("abc"))
+        file.verify(3, knownMD5.getValue("abc"))
     }
 
     @Test
     fun `verify passes when no MD5 is advertised`() {
         Files.writeString(file, "abc")
-        verify(file, 3)
+        file.verify(3)
     }
 
     @Test
     fun `verify accepts uppercase expected MD5 (case-insensitive)`() {
         Files.writeString(file, "abc")
-        verify(file, 3, knownMD5.getValue("abc").uppercase())
+        file.verify(3, knownMD5.getValue("abc").uppercase())
     }
 
     /*
@@ -99,20 +99,20 @@ class TestIntegrity {
     @Test
     fun `verify accepts an MD5 advertised without its leading zeros`() {
         Files.writeString(file, "a")
-        verify(file, 1, advertisedUnpadded.getValue("a"))
+        file.verify(1, advertisedUnpadded.getValue("a"))
     }
 
     @Test
     fun `verify accepts an MD5 advertised without two leading zeros`() {
         Files.writeString(file, "168")
-        verify(file, 3, advertisedUnpadded.getValue("168"))
+        file.verify(3, advertisedUnpadded.getValue("168"))
     }
 
     @Test
     fun `verify throws on size mismatch`() {
         Files.writeString(file, "abc")
         assertFailsWith<IllegalStateException> {
-            verify(file, 999)
+            file.verify(999)
         }
     }
 
@@ -121,7 +121,7 @@ class TestIntegrity {
         Files.writeString(file, "abc")
         assertFailsWith<IllegalStateException> {
             // correct size (3) but wrong checksum
-            verify(file, 3, "ffffffffffffffffffffffffffffffff")
+            file.verify(3, "ffffffffffffffffffffffffffffffff")
         }
     }
 
@@ -130,7 +130,7 @@ class TestIntegrity {
         Files.writeString(file, "a")
         assertFailsWith<IllegalStateException> {
             // unpadded digest (of "a") with its last character altered
-            verify(file, 1, "cc175b9c0f1b6a831c399e26977266f")
+            file.verify(1, "cc175b9c0f1b6a831c399e26977266f")
         }
     }
 
@@ -138,7 +138,7 @@ class TestIntegrity {
     fun `verify rejects an unusable MD5`() {
         Files.writeString(file, "abc")
         assertFailsWith<IllegalStateException> {
-            verify(file, 3, "sha256:not-a-digest")
+            file.verify(3, "sha256:not-a-digest")
         }
     }
 
@@ -146,7 +146,7 @@ class TestIntegrity {
     fun `verify still enforces the size when the MD5 is unusable`() {
         Files.writeString(file, "abc")
         assertFailsWith<IllegalStateException> {
-            verify(file, 999, "not-a-digest")
+            file.verify(999, "not-a-digest")
         }
     }
 

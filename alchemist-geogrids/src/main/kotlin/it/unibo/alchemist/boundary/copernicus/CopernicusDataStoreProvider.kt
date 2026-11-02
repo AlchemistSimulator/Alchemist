@@ -403,9 +403,9 @@ class CopernicusDataStoreProvider(
          * The MD5 digest of this file, as 32 lowercase hexadecimal digits.
          */
         internal val Path.md5Hex: String get() = md5(FileSystem.SYSTEM.source(toOkioPath())).use { source ->
-                source.buffer().readAll(blackholeSink())
-                source.hash.hex()
-            }
+            source.buffer().readAll(blackholeSink())
+            source.hash.hex()
+        }
 
         /**
          * Extension property used to check if a response was successful.

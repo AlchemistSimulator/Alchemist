@@ -123,6 +123,13 @@ internal sealed class JVMConstructor(val typeName: String) {
     }
 
     private fun <T : Any> newInstance(target: KClass<T>, jirf: Factory): T {
+        // objects have no constructor to call: their only instance is the one to use
+        target.objectInstance?.let { instance ->
+            require(parametersFor(target, jirf).isEmpty()) {
+                "${target.simpleName} is an object, so it takes no parameters"
+            }
+            return instance
+        }
         /*
          * preprocess parameters:
          *

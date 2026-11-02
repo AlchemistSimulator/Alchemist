@@ -1,0 +1,9 @@
+incarnation: protelis
+
+layers:
+  - molecule: shifted
+    type: another.location.ShiftedLayer
+    parameters:
+      - 3
+      - type: another.location.UnitShift
+        parameters: [2]

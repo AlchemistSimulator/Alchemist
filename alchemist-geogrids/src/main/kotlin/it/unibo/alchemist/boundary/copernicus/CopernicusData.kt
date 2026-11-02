@@ -24,31 +24,21 @@ import kotlin.io.path.readText
 import kotlin.time.Duration
 
 /**
- * The data backing a [GriddedGeoLayer], fetched from the Copernicus-family data store (CDS / EWDS / ADS)
- * at [endpoint], authenticating with the token found in [cdsApiRcFile], and cached locally in [cacheDirectory].
+ * The data of a [GriddedGeoLayer], downloaded at construction from a Copernicus data store,
+ * unless already in the local cache.
+ * See [GriddedGeoFiles] for data already available locally.
  *
- * The data is read **synchronously at construction**:
- * on a cache hit no network call and no credential is needed;
- * on a cache miss, this performs blocking network I/O.
- *
- * @param endpoint base URL of the data store (e.g. `"https://ewds.climate.copernicus.eu/api"`).
- * @param dataset dataset identifier (e.g. `"cems-glofas-historical"`).
- * @param inputsFile path, or name among the classpath resources, of a JSON file holding the opaque request map
- * for [dataset] at [endpoint] (variables, dates, area, type, ...), passed verbatim to the data store.
- * It is a file rather than an inline mapping because some datasets need a `type` field,
- * which the Alchemist loader reserves.
- * @param variable variable name inside the downloaded files. Auto-detected when `null`.
- * @param cacheDirectory path of the root of the local cache, by default [DEFAULT_CACHE_DIRECTORY].
- * @param cdsApiRcFile path of a `.cdsapirc`-formatted file holding the API token,
- * by default [DEFAULT_CDSAPIRC_LOCATION].
- * @param providerTimeout how long to wait for the data store to prepare the data, as an ISO-8601 duration,
- * by default 30 minutes.
- * @throws IllegalArgumentException if [providerTimeout] is not a valid positive ISO-8601 duration;
- * if [endpoint] or [dataset] are not valid; if any path is malformed;
- * if [inputsFile] is neither an existing path nor a classpath resource.
- * @throws IllegalStateException if the token cannot be read; if the remote job fails or times out;
- * if the downloaded asset fails its integrity check.
- * @see GriddedGeoFiles for data files already available locally.
+ * @param endpoint the URL of the API of the data store (e.g., `https://ewds.climate.copernicus.eu/api`).
+ * @param dataset the dataset (e.g., `cems-glofas-historical`).
+ * @param inputsFile a JSON file, on the file system or among the classpath resources, with what to download
+ * (variables, dates, area...). It is a file rather than an inline mapping because some datasets need a `type`
+ * field, which the Alchemist loader reserves.
+ * @param variable the name of the variable inside the downloaded files, auto-detected when `null`.
+ * @param cacheDirectory the directory of the cache.
+ * @param cdsApiRcFile the `.cdsapirc` file with the API token, read only when downloading.
+ * @param providerTimeout how long the data store can take to prepare the data, as an ISO-8601 duration.
+ * @throws IllegalArgumentException if a parameter is not valid, or if [inputsFile] does not exist.
+ * @throws IllegalStateException if the token cannot be read, or the download fails.
  */
 class CopernicusData @JvmOverloads constructor(
     endpoint: String,
@@ -73,20 +63,18 @@ class CopernicusData @JvmOverloads constructor(
 ) {
 
     /**
-     * Default locations, and readers of the local files describing the request.
+     * Default locations, and readers of the local files.
      */
     companion object {
         private const val KEY_FIELD = "key"
 
         /**
-         * The default root of the cache of the downloaded data,
-         * in Alchemist's user cache directory (e.g., `~/.cache/alchemist/copernicus` on Linux).
+         * The default directory of the cache (e.g., `~/.cache/alchemist/copernicus` on Linux).
          */
         val DEFAULT_CACHE_DIRECTORY: Path = FileSystemDirectoryCache.DEFAULT_CACHE_DIRECTORY.resolve("copernicus")
 
         /**
-         * The default location of the file holding the data store API token: `.cdsapirc` in the user's home
-         * directory, where ECMWF's official client looks for it.
+         * The default `.cdsapirc` file, in the user's home directory, as for ECMWF's official client.
          */
         val DEFAULT_CDSAPIRC_LOCATION: Path = Path.of(System.getProperty("user.home"), ".cdsapirc")
 
@@ -95,9 +83,7 @@ class CopernicusData @JvmOverloads constructor(
         private val mapType = object : TypeToken<Map<String, Any>>() {}.type
 
         /**
-         * Ensures the data denoted by [request] is present in the local cache rooted at [cacheDirectory],
-         * downloading it on a cache miss, and returns the directory it lives in.
-         * The token is read from [cdsApiRcFile] lazily, so a cache hit needs no credentials.
+         * The directory of the data of [request] in [cacheDirectory], downloading it if missing.
          */
         private fun download(
             request: CopernicusRequest,
@@ -112,16 +98,14 @@ class CopernicusData @JvmOverloads constructor(
         }
 
         /**
-         * Parses this file as a JSON object, with nested objects as [Map]s and arrays as [List]s.
+         * This file as a JSON object, with nested objects as [Map]s and arrays as [List]s.
          *
          * @throws JsonSyntaxException if the file does not hold a JSON object.
          */
         internal fun Path.readJsonObject(): Map<String, Any> = gson.fromJson(readText(), mapType)
 
         /**
-         * Reads the token from the `key:` line of this
-         * [`.cdsapirc`](https://cds.climate.copernicus.eu/how-to-api) file, ignoring its `url:`:
-         * the same token works on every data store, while the endpoint is a parameter.
+         * The token in the `key:` line of this [`.cdsapirc`](https://cds.climate.copernicus.eu/how-to-api) file.
          *
          * @throws IllegalStateException if the file has no `key:` line.
          */

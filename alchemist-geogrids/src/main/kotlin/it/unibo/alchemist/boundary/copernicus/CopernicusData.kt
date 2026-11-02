@@ -13,10 +13,9 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import it.unibo.alchemist.boundary.filecache.FileSystemDirectoryCache
-import it.unibo.alchemist.model.geogrid.reading.EagerGridSnapshots
 import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
+import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
 import it.unibo.alchemist.model.geogrid.utils.pathOrClasspathResource
-import it.unibo.alchemist.model.layers.GriddedGeoFiles
 import it.unibo.alchemist.model.layers.GriddedGeoLayer
 import java.nio.file.Path
 import kotlin.io.path.readLines
@@ -26,7 +25,7 @@ import kotlin.time.Duration
 /**
  * The data of a [GriddedGeoLayer], downloaded at construction from a Copernicus data store,
  * unless already in the local cache.
- * See [GriddedGeoFiles] for data already available locally.
+ * See [GridsFromDirectory] for data already available locally.
  *
  * @param endpoint the URL of the API of the data store (e.g., `https://ewds.climate.copernicus.eu/api`).
  * @param dataset the dataset (e.g., `cems-glofas-historical`).
@@ -48,7 +47,7 @@ class CopernicusData @JvmOverloads constructor(
     cacheDirectory: String = DEFAULT_CACHE_DIRECTORY.toString(),
     cdsApiRcFile: String = DEFAULT_CDSAPIRC_LOCATION.toString(),
     providerTimeout: String = CopernicusDataStoreProvider.DEFAULT_TIMEOUT.toIsoString(),
-) : GridSnapshots by EagerGridSnapshots(
+) : GridSnapshots by GridsFromDirectory(
     download(
         CopernicusRequest(
             endpoint.trim().trimEnd('/'),
@@ -58,7 +57,7 @@ class CopernicusData @JvmOverloads constructor(
         Path.of(cacheDirectory),
         Path.of(cdsApiRcFile),
         Duration.parseIsoString(providerTimeout),
-    ),
+    ).toString(),
     variable,
 ) {
 

@@ -30,7 +30,7 @@ so they require an environment whose positions are
 [map environments](/howtos/simulation/environment/maps/).
 
 The data backing a layer is provided as its `data` parameter:
-a {{% api package="model.layers" class="GriddedGeoFiles" %}} reads it from local files of any provider,
+a {{% api package="model.geogrid.reading" class="GridsFromDirectory" %}} reads it from local files of any provider,
 while a {{% api package="boundary.copernicus" class="CopernicusData" %}} downloads it from a Copernicus data store.
 
 ## Mapping data time to simulation time
@@ -50,7 +50,7 @@ make sure that the data covers the area where nodes move.
 
 If the data files are already available,
 for instance because they were downloaded from the web interface of a data store,
-`GriddedGeoFiles` reads them from the given `directory`,
+`GridsFromDirectory` reads them from the given `directory`,
 with no network access and no credentials.
 All the files in the directory must hold the same variable on the same grid,
 and their time slices get merged in chronological order
@@ -161,8 +161,8 @@ with a temporal one
 to be passed as the `interpolation` parameter.
 
 Grid points with no data (e.g., river discharge far from rivers) are read as `NaN`.
-The `converter` parameter decides how interpolated values become the values of the layer:
-the default {{% api package="model.geogrid.strategy.converter" class="DoubleIdentityWithFallback" %}}
-keeps them as they are, optionally replacing missing values with a fallback.
+{{% api package="model.layers" class="DoubleGriddedGeoLayer" %}} keeps them as they are,
+unless its `missingValue` parameter gives them another value (e.g., `missingValue: 0.0`).
 Layers of other types can be created with {{% api package="model.layers" class="GriddedGeoLayer" %}}
-and a custom {{% api package="model.geogrid.strategy.converter" class="MeasurementConverter" %}}.
+and a {{% api package="model.geogrid.strategy.converter" class="MeasurementConverter" %}}
+turning interpolated values, `NaN` included, into the values of the layer.

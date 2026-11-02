@@ -13,8 +13,8 @@ import it.unibo.alchemist.boundary.copernicus.CopernicusData
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
-import it.unibo.alchemist.model.geogrid.strategy.converter.DoubleIdentityWithFallback
-import it.unibo.alchemist.model.geogrid.strategy.converter.MeasurementConverter
+import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
+import it.unibo.alchemist.model.geogrid.strategy.converter.MissingValueFallbackConverter
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
 
@@ -22,12 +22,12 @@ import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpo
  * A [GriddedGeoLayer] of [Double]s.
  *
  * @param environment the environment, whose simulation provides the time.
- * @param data the data, such as [GriddedGeoFiles] or [CopernicusData].
+ * @param data the data, such as [GridsFromDirectory] or [CopernicusData].
  * @param timeScale the real-world duration of a simulation time unit, as an ISO-8601 duration.
  * @param timeOrigin the real-world instant of simulation time 0, as an ISO-8601 instant;
  * the first instant of [data] when `null`.
  * @param interpolation how to compute values between the nodes and the instants of the data.
- * @param converter how to convert the interpolated values, by default leaving them as they are.
+ * @param missingValue the value where the data is missing.
  */
 class DoubleGriddedGeoLayer @JvmOverloads constructor(
     environment: Environment<*, GeoPosition>,
@@ -35,5 +35,12 @@ class DoubleGriddedGeoLayer @JvmOverloads constructor(
     timeScale: String = DEFAULT_TIME_SCALE.toIsoString(),
     timeOrigin: String? = null,
     interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
-    converter: MeasurementConverter<Double> = DoubleIdentityWithFallback(),
-) : GriddedGeoLayer<Double>(environment, data, converter, timeScale, timeOrigin, interpolation)
+    missingValue: Double = Double.NaN,
+) : GriddedGeoLayer<Double>(
+    environment,
+    data,
+    MissingValueFallbackConverter({ it }, missingValue),
+    timeScale,
+    timeOrigin,
+    interpolation,
+)

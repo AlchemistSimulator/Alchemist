@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.GeoLayer
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.reading.Axis
 import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
+import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 import it.unibo.alchemist.model.geogrid.strategy.converter.MeasurementConverter
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
@@ -34,7 +35,7 @@ import kotlin.time.Instant
  * positions outside the grid have no value.
  *
  * @param environment the environment, whose simulation provides the time.
- * @param data the data, such as [GriddedGeoFiles] or [CopernicusData].
+ * @param data the data, such as [GridsFromDirectory] or [CopernicusData].
  * @param converter how to convert the interpolated values, [Double.NaN] if missing.
  * @param timeScale the real-world duration of a simulation time unit, as an ISO-8601 duration (e.g., `PT6H`).
  * @param timeOrigin the real-world instant of simulation time 0, as an ISO-8601 instant

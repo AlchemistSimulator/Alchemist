@@ -1,11 +1,12 @@
 import it.unibo.alchemist.boundary.kotlindsl.simulationOnMap
+import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
 
 simulationOnMap(ProtelisIncarnation()) {
     environment(oSMEnvironment("maps/cesena.pbf")) {
         layer(
             "river-discharge",
             doubleGriddedGeoLayer(
-                data = GriddedGeoFiles(
+                data = GridsFromDirectory(
                     // A directory of NetCDF or GRIB files sharing the same variable and grid:
                     // a path, or the name of a directory among the classpath resources
                     directory = "copernicus/glofas-cesena",

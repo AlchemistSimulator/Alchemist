@@ -9,14 +9,14 @@
 
 package it.unibo.alchemist.model.geogrid.strategy
 
-import it.unibo.alchemist.model.geogrid.strategy.converter.DoubleIdentityWithFallback
+import it.unibo.alchemist.model.geogrid.strategy.converter.MissingValueFallbackConverter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TestMeasurementConverter {
 
-    private val doubleIdentity = DoubleIdentityWithFallback()
+    private val doubleIdentity = MissingValueFallbackConverter({ it }, Double.NaN)
 
     @Test
     fun `Double identity gets preserved`() {
@@ -35,7 +35,7 @@ class TestMeasurementConverter {
     @Test
     fun `Double identity replaces NaN with a default value`() {
         val defaultValue = -1.0
-        val id = DoubleIdentityWithFallback(defaultValue)
+        val id = MissingValueFallbackConverter({ it }, defaultValue)
         assertEquals(42.0, id.convert(42.0))
         assertEquals(defaultValue, id.convert(Double.NaN))
     }

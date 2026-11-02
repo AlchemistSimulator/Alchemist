@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geogrid.reading.ArrayRasterGrid
 import it.unibo.alchemist.model.geogrid.reading.Axis
 import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
+import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
@@ -31,6 +32,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
@@ -129,6 +131,18 @@ class TestGriddedGeoLayer {
                 data = emptyGrid,
             )
         }
+    }
+
+    @Test
+    fun `missing values are NaN by default`() {
+        val value = DoubleGriddedGeoLayer(envAt(0.0), syntheticGrid(Double.NaN)).currentValueAt(center)
+        assertTrue(value.isNaN(), "expected NaN, but got $value")
+    }
+
+    @Test
+    fun `missing values take the value of missingValue`() {
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), syntheticGrid(Double.NaN), missingValue = 0.0)
+        assertEquals(0.0, layer.currentValueAt(center))
     }
 
     // timeOrigin tests
@@ -284,7 +298,7 @@ class TestGriddedGeoLayer {
             timeHours = doubleArrayOf(0.0, 1.0, 2.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(27) { idx -> ((idx / 9) + 1) * 10.0 })),
         )
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), GriddedGeoFiles(dir.absolutePathString()))
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString()))
         assertEquals(10.0, layer.currentValueAt(center), TOLERANCE, "t=0.0 -> first slice -> all cells = 10.0")
     }
 
@@ -298,7 +312,7 @@ class TestGriddedGeoLayer {
             timeHours = doubleArrayOf(0.0, 1.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 0.0 else 10.0 })),
         )
-        val layer = DoubleGriddedGeoLayer(envAt(0.5), GriddedGeoFiles(dir.absolutePathString()))
+        val layer = DoubleGriddedGeoLayer(envAt(0.5), GridsFromDirectory(dir.absolutePathString()))
         assertEquals(5.0, layer.currentValueAt(center), TOLERANCE, "t=0.5 halfway between 0.0 and 10.0 -> 5.0")
     }
 
@@ -322,7 +336,7 @@ class TestGriddedGeoLayer {
                 ),
             ),
         )
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), GriddedGeoFiles(dir.absolutePathString()))
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString()))
         val lat44: GeoPosition = mockGeoPosition(44.0, 12.0)
         val lat46: GeoPosition = mockGeoPosition(46.0, 12.0)
         assertEquals(
@@ -354,7 +368,7 @@ class TestGriddedGeoLayer {
                 ),
             ),
         )
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), GriddedGeoFiles(dir.absolutePathString(), variable = null))
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString(), variable = null))
         assertEquals(7.0, layer.currentValueAt(center), TOLERANCE, "auto-detected variable; all cells = 7.0")
     }
 
@@ -374,7 +388,7 @@ class TestGriddedGeoLayer {
                 ),
             ),
         )
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), GriddedGeoFiles(dir.absolutePathString(), variable = varName))
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString(), variable = varName))
         assertEquals(42.0, layer.currentValueAt(center), TOLERANCE, "explicit variable '$varName'; all cells = 42.0")
     }
 
@@ -402,7 +416,7 @@ class TestGriddedGeoLayer {
             ),
         )
         val simulationTime = observe(timeAt(0.0))
-        val layer = DoubleGriddedGeoLayer(mutableEnv(simulationTime), GriddedGeoFiles(dir.absolutePathString()))
+        val layer = DoubleGriddedGeoLayer(mutableEnv(simulationTime), GridsFromDirectory(dir.absolutePathString()))
         (0..3).forEach {
             val time = it.toDouble()
             val expectedTime = (it + 1) * 10.0

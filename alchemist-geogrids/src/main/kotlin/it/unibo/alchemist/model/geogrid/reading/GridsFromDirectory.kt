@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.geogrid.utils.buildGrid
 import it.unibo.alchemist.model.geogrid.utils.flattenAscending
 import it.unibo.alchemist.model.geogrid.utils.listDataFiles
 import it.unibo.alchemist.model.geogrid.utils.openNetcdfDataset
+import it.unibo.alchemist.model.geogrid.utils.pathOrClasspathResource
 import it.unibo.alchemist.model.geogrid.utils.readFileAxes
 import it.unibo.alchemist.model.geogrid.utils.readPermutedSlice
 import java.nio.file.Path
@@ -30,17 +31,18 @@ import org.slf4j.LoggerFactory
  * axes stored in descending order are reversed, and missing values become [Double.NaN].
  * When files share an instant, the first file in lexicographic order wins.
  *
- * @param directory the directory holding the data files.
- * @param variableName the name of the variable inside the files (e.g., `dis24`), auto-detected when `null`.
- * @throws IllegalArgumentException if the directory has no data files, if the variable is missing or ambiguous,
- * or if the files disagree on their grid or variable.
+ * @param directory the directory holding the data files, on the file system or among the classpath resources.
+ * @param variable the name of the variable inside the files (e.g., `dis24`), auto-detected when `null`.
+ * @throws IllegalArgumentException if the directory does not exist or has no data files, if the variable is missing
+ * or ambiguous, or if the files disagree on their grid or variable.
  */
-class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSnapshots {
+class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: String? = null) : GridSnapshots {
 
     override val instants: List<Instant>
     private val grids: List<RasterGrid>
 
     init {
+        val directory = pathOrClasspathResource(directory)
         // maps all file time instances to the corresponding RasterGrid, sorting them by Instant
         val map = TreeMap<Instant, RasterGrid>()
         // spatial grid and variable are established by the first file, validated against all the others
@@ -51,7 +53,7 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
              * and expects dimensions to be properly tagged.
              */
             openNetcdfDataset(file).use { ds ->
-                val axes = readFileAxes(ds, variableName, file)
+                val axes = readFileAxes(ds, variable, file)
                 reference = reference?.also { it.requireMatches(axes, file, directory) } ?: ReferenceGrid(axes)
                 readTimestepsFrom(map, axes, directory)
             }
@@ -86,6 +88,6 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
     override fun grid(index: Int): RasterGrid = grids[index]
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(EagerGridSnapshots::class.java)
+        private val logger = LoggerFactory.getLogger(GridsFromDirectory::class.java)
     }
 }

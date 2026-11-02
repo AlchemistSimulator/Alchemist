@@ -22,6 +22,7 @@ import io.mockk.mockk
 import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.writeTestNetcdf
@@ -60,7 +61,7 @@ class TestOsmGriddedGeoCompatibility {
                 timeHours = doubleArrayOf(0.0),
                 variables = listOf(TestVariable(rawValues = DoubleArray(9) { fixedMeasurement })),
             )
-            val layer = DoubleGriddedGeoLayer(environment, GriddedGeoFiles(dir.absolutePathString()))
+            val layer = DoubleGriddedGeoLayer(environment, GridsFromDirectory(dir.absolutePathString()))
             assertEquals(
                 fixedMeasurement,
                 layer.currentValueAt(pharmacyPos),

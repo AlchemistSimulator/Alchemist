@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-class TestEagerGridSnapshots {
+class TestGridsFromDirectory {
 
     /**
      * Creates a NetCDF-3 file with:
@@ -57,7 +57,7 @@ class TestEagerGridSnapshots {
     fun `a single file should be read exposing the correct number of instants`() {
         val dir = Files.createTempDirectory(tempDir, "basic")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0))
-        val gridSnaps = EagerGridSnapshots(dir)
+        val gridSnaps = GridsFromDirectory(dir.toString())
         assertEquals(3, gridSnaps.instants.size)
     }
 
@@ -67,7 +67,7 @@ class TestEagerGridSnapshots {
         // b_file.nc is read second (in alphabetical order) but contains the most recent times
         writeFixedTestNetcdf(dir, "b_file.nc", doubleArrayOf(48.0, 72.0))
         writeFixedTestNetcdf(dir, "a_file.nc", doubleArrayOf(0.0, 24.0))
-        val gridSnaps = EagerGridSnapshots(dir)
+        val gridSnaps = GridsFromDirectory(dir.toString())
         assertEquals(4, gridSnaps.instants.size)
         assertEquals(gridSnaps.instants.sortedWith(compareBy { it }), gridSnaps.instants)
     }
@@ -76,7 +76,7 @@ class TestEagerGridSnapshots {
     fun `the grid should be accessible for every index in instants`() {
         val dir = Files.createTempDirectory(tempDir, "align")
         writeFixedTestNetcdf(dir, "data.nc", doubleArrayOf(0.0, 24.0, 48.0, 72.0, 96.0))
-        val gridSnaps = EagerGridSnapshots(dir)
+        val gridSnaps = GridsFromDirectory(dir.toString())
         // if instants and grids were misaligned, the grid(s) would throw an IndexOutOfBoundsException
         gridSnaps.instants.indices.forEach { i -> assertEquals(3, gridSnaps.grid(i).latitudes.size) }
     }
@@ -91,7 +91,7 @@ class TestEagerGridSnapshots {
             lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0),
             timeHours = doubleArrayOf(0.0),
         )
-        val resultLats = EagerGridSnapshots(dir).grid(0).latitudes.toDoubleArray()
+        val resultLats = GridsFromDirectory(dir.toString()).grid(0).latitudes.toDoubleArray()
         assertContentEquals(doubleArrayOf(10.0, 20.0, 30.0), resultLats)
     }
 
@@ -111,7 +111,7 @@ class TestEagerGridSnapshots {
             variables = listOf(TestVariable(rawValues = doubleArrayOf(100.0, 101.0, 200.0, 201.0))),
         )
         // checks if the rows get reversed
-        val grid = EagerGridSnapshots(dir).grid(0)
+        val grid = GridsFromDirectory(dir.toString()).grid(0)
         assertEquals(200.0, grid.valueAt(0, 0))
         assertEquals(201.0, grid.valueAt(0, 1))
         assertEquals(100.0, grid.valueAt(1, 0))
@@ -135,7 +135,7 @@ class TestEagerGridSnapshots {
                 ),
             ),
         )
-        val grid = EagerGridSnapshots(dir).grid(0)
+        val grid = GridsFromDirectory(dir.toString()).grid(0)
         val filled = grid.valueAt(0, 0)
         assertTrue(filled.isNaN(), "Expected NaN, but got $filled")
         assertEquals(42.0, grid.valueAt(0, 1))
@@ -153,7 +153,7 @@ class TestEagerGridSnapshots {
             // scrambled relative to the canonical (time, latitude, longitude) order
             dimensionOrder = listOf("longitude", "time", "latitude"),
         )
-        val grid = EagerGridSnapshots(dir).grid(0)
+        val grid = GridsFromDirectory(dir.toString()).grid(0)
         assertEquals(0.0, grid.valueAt(0, 0))
         assertEquals(1.0, grid.valueAt(0, 1))
         assertEquals(10.0, grid.valueAt(1, 0))
@@ -164,7 +164,7 @@ class TestEagerGridSnapshots {
     @Test
     fun `an empty directory should raise an IllegalArgumentException`() {
         val emptyDir = Files.createTempDirectory(tempDir, "empty")
-        assertFailsWith<IllegalArgumentException> { EagerGridSnapshots(emptyDir) }
+        assertFailsWith<IllegalArgumentException> { GridsFromDirectory(emptyDir.toString()) }
     }
 
     @Test
@@ -190,7 +190,7 @@ class TestEagerGridSnapshots {
             timeHours = time,
             variables = listOf(TestVariable(rawValues = doubleArrayOf(secondVal))),
         )
-        val gridSnaps = EagerGridSnapshots(dir)
+        val gridSnaps = GridsFromDirectory(dir.toString())
         assertEquals(1, gridSnaps.instants.size)
         assertEquals(firstVal, gridSnaps.grid(0).valueAt(0, 0))
     }
@@ -210,6 +210,6 @@ class TestEagerGridSnapshots {
             doubleArrayOf(5.0, 15.0),
             doubleArrayOf(24.0),
         )
-        assertFailsWith<IllegalArgumentException> { EagerGridSnapshots(dir) }
+        assertFailsWith<IllegalArgumentException> { GridsFromDirectory(dir.toString()) }
     }
 }

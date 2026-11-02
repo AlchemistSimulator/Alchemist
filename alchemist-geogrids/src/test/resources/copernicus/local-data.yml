@@ -9,7 +9,7 @@ layers:
     molecule: river-discharge
     parameters:
       data:
-        type: GriddedGeoFiles
+        type: GridsFromDirectory
         parameters:
           # A directory of NetCDF or GRIB files sharing the same variable and grid:
           # a path, or the name of a directory among the classpath resources

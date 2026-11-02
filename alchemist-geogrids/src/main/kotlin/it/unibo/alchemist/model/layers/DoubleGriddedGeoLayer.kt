@@ -19,18 +19,15 @@ import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalIn
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
 
 /**
- * A [GriddedGeoLayer] yielding `Double` values, which by default are the interpolated values as they are
- * (see [DoubleIdentityWithFallback]).
+ * A [GriddedGeoLayer] of [Double]s.
  *
- * @param environment simulation environment. Used only to observe the simulation time.
- * @param data temporal raster series backing this layer, such as [GriddedGeoFiles] or [CopernicusData].
- * @param timeScale real-world duration of one simulation time unit, as an ISO-8601 duration,
- * by default [GriddedGeoLayer.DEFAULT_TIME_SCALE].
- * @param timeOrigin real-world instant mapping to simulation time `0.0`, as an ISO-8601 instant.
- * The first instant found in [data] is used when `null`.
- * @param interpolation strategy for spatio-temporal evaluation, by default [TrilinearInterpolation].
- * @param converter defines how interpolated values are converted, by default [DoubleIdentityWithFallback].
- * @see GriddedGeoLayer
+ * @param environment the environment, whose simulation provides the time.
+ * @param data the data, such as [GriddedGeoFiles] or [CopernicusData].
+ * @param timeScale the real-world duration of a simulation time unit, as an ISO-8601 duration.
+ * @param timeOrigin the real-world instant of simulation time 0, as an ISO-8601 instant;
+ * the first instant of [data] when `null`.
+ * @param interpolation how to compute values between the nodes and the instants of the data.
+ * @param converter how to convert the interpolated values, by default leaving them as they are.
  */
 class DoubleGriddedGeoLayer @JvmOverloads constructor(
     environment: Environment<*, GeoPosition>,

@@ -14,18 +14,14 @@ import java.net.URI
 import java.security.MessageDigest
 
 /**
- * A request to an ECMWF api-friendly datastore (CDS / EWDS / ADS): carries the request **identity** and **what to
- * download**.
+ * A request of data to a Copernicus data store.
  *
- * @property endpoint the base URL of the API of the data store (e.g. `"https://ewds.climate.copernicus.eu/api"`).
- * @property dataset dataset identifier (e.g. `"cems-glofas-historical"`).
- * @property inputs the **opaque** request map: the selection (variables, dates, area, format, ...)
- * of parameters used for the request to the datastore. It is intentionally untyped because the fields
- * vary widely per dataset.
- * @throws IllegalArgumentException if the [endpoint] is neither the `https` API of a Copernicus data store
- * (`https://<store>.copernicus.eu/api`) nor an address of the loopback interface `127.0.0.1`, or has a query,
- * a fragment, or user information, or if the [dataset] is not a single path segment made of letters, digits,
- * `.`, `_`, and `-`, starting with a letter or a digit.
+ * @property endpoint the URL of the API of the data store (e.g., `https://ewds.climate.copernicus.eu/api`).
+ * @property dataset the dataset (e.g., `cems-glofas-historical`).
+ * @property inputs what to download (variables, dates, area, format...), passed to the data store as it is.
+ * @throws IllegalArgumentException if [endpoint] is not `https://<store>.copernicus.eu/api` or `127.0.0.1`,
+ * or has a query, a fragment, or user information; or if [dataset] is not made of letters, digits, `.`, `_`,
+ * and `-`, starting with a letter or a digit.
  */
 data class CopernicusRequest(val endpoint: String, val dataset: String, val inputs: Map<String, Any>) :
     CachedDirectoryKey {
@@ -54,10 +50,7 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
     }
 
     /**
-     * A deterministic directory name: the [dataset], as a human-readable prefix,
-     * followed by a truncation of the SHA-256 hash of the canonical `(endpoint, dataset, inputs)` triple.
-     * The [endpoint] is part of the hash, so that the same request to different data stores gets a different entry.
-     * The prefix aids the human reading the cache directory; the hash provides collision resistance.
+     * The [dataset], followed by a hash of the whole request.
      */
     override val directoryName: String = run {
         val canonical = CanonicalJson.encode(
@@ -73,8 +66,7 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
     private companion object {
 
         /**
-         * Number of leading hex characters of the SHA-256 digest kept in the folder name.
-         * Used to provide collision-safety for a personal cache while keeping the name short.
+         * How many hexadecimal digits of the hash go in the [directoryName].
          */
         const val HASH_PREFIX_LENGTH = 16
 
@@ -99,10 +91,7 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
         val SAFE_DATASET = Regex("[A-Za-z0-9][A-Za-z0-9._-]*")
 
         /**
-         * Returns the SHA-256 digest of [str] (UTF-8) as a lowercase hex string.
-         *
-         * @param str the UTF-8 string to hash.
-         * @return the digest of SHA-256 over [str].
+         * The SHA-256 digest of [str], in lowercase hexadecimal digits.
          */
         fun sha256Hex(str: String): String = MessageDigest.getInstance("SHA-256")
             .digest(str.toByteArray(Charsets.UTF_8))

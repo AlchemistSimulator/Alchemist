@@ -7,14 +7,16 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.strategy.temporal
+package it.unibo.alchemist.model.geogrid.temporalinterpolations
 
+import it.unibo.alchemist.model.geogrid.TemporalInterpolation
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
- * The value of the last instant.
+ * [TemporalInterpolation] that always returns the value from the closest instant.
  */
-class LastInterpolation : StatelessStrategy(), TemporalInterpolation {
+class ClosestInterpolation : StatelessStrategy(), TemporalInterpolation {
 
-    override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueBefore
+    override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double =
+        if (weight < 0.5) valueBefore else valueAfter
 }

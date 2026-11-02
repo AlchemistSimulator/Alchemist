@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.geogrid.strategy
 import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
 import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
-import it.unibo.alchemist.model.geogrid.strategy.spatial.BilinearInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.spatial.NearestInterpolation
+import it.unibo.alchemist.model.geogrid.spatialinterpolations.BilinearInterpolation
+import it.unibo.alchemist.model.geogrid.spatialinterpolations.NearestInterpolation
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

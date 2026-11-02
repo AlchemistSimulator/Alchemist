@@ -7,10 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.strategy.spatial
+package it.unibo.alchemist.model.geogrid.spatialinterpolations
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.RasterGrid
+import it.unibo.alchemist.model.geogrid.SpatialInterpolation
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**

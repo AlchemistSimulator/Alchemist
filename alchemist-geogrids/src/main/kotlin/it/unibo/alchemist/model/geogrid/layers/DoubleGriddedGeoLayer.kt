@@ -12,12 +12,12 @@ package it.unibo.alchemist.model.geogrid.layers
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.GridSnapshots
+import it.unibo.alchemist.model.geogrid.SpatialInterpolation
+import it.unibo.alchemist.model.geogrid.TemporalInterpolation
 import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData
 import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
-import it.unibo.alchemist.model.geogrid.strategy.spatial.BilinearInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.spatial.SpatialInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.temporal.LinearInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.temporal.TemporalInterpolation
+import it.unibo.alchemist.model.geogrid.spatialinterpolations.BilinearInterpolation
+import it.unibo.alchemist.model.geogrid.temporalinterpolations.LinearInterpolation
 
 /**
  * A [GriddedGeoLayer] of [Double]s.

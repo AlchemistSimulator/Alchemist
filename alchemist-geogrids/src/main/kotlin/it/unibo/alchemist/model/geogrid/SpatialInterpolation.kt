@@ -7,16 +7,17 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.strategy.temporal
+package it.unibo.alchemist.model.geogrid
 
-import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
+import it.unibo.alchemist.model.GeoPosition
 
 /**
- * The value of the next instant.
+ * How to compute the value of a [RasterGrid] between its nodes.
  */
-class NextInterpolation :
-    StatelessStrategy(),
-    TemporalInterpolation {
+fun interface SpatialInterpolation {
 
-    override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueAfter
+    /**
+     * The value of [grid] at [position], which lies within it; [Double.NaN] if missing.
+     */
+    fun valueAt(grid: RasterGrid, position: GeoPosition): Double
 }

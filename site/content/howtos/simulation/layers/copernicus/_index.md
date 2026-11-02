@@ -149,13 +149,13 @@ when using them, all the optional parameters preceding the last one provided mus
 Values are interpolated first in space, within the two grids around the current time,
 then in time, between the two results.
 The `spatialInterpolation` parameter can be
-{{% api package="model.geogrid.strategy.spatial" class="BilinearInterpolation" %}} (the default) or
-{{% api package="model.geogrid.strategy.spatial" class="NearestInterpolation" %}};
+{{% api package="model.geogrid.spatialinterpolations" class="BilinearInterpolation" %}} (the default) or
+{{% api package="model.geogrid.spatialinterpolations" class="NearestInterpolation" %}};
 the `temporalInterpolation` parameter can be
-{{% api package="model.geogrid.strategy.temporal" class="LinearInterpolation" %}} (the default),
-{{% api package="model.geogrid.strategy.temporal" class="ClosestInterpolation" %}},
-{{% api package="model.geogrid.strategy.temporal" class="LastInterpolation" %}}, or
-{{% api package="model.geogrid.strategy.temporal" class="NextInterpolation" %}}.
+{{% api package="model.geogrid.temporalinterpolations" class="LinearInterpolation" %}} (the default),
+{{% api package="model.geogrid.temporalinterpolations" class="ClosestInterpolation" %}},
+{{% api package="model.geogrid.temporalinterpolations" class="LastInterpolation" %}}, or
+{{% api package="model.geogrid.temporalinterpolations" class="NextInterpolation" %}}.
 
 Grid points with no data (e.g., river discharge far from rivers) are read as `NaN`.
 {{% api package="model.geogrid.layers" class="DoubleGriddedGeoLayer" %}} keeps them as they are,

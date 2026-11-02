@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.geogrid.strategy.spatial
 
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
-import it.unibo.alchemist.model.geogrid.strategy.spatial.NearestInterpolation.Companion.nearestIndex
+import it.unibo.alchemist.model.geogrid.spatialinterpolations.NearestInterpolation.Companion.nearestIndex
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

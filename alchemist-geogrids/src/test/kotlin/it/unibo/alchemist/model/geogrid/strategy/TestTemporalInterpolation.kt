@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.geogrid.strategy
 
-import it.unibo.alchemist.model.geogrid.strategy.temporal.ClosestInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.temporal.LastInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.temporal.LinearInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.temporal.NextInterpolation
+import it.unibo.alchemist.model.geogrid.temporalinterpolations.ClosestInterpolation
+import it.unibo.alchemist.model.geogrid.temporalinterpolations.LastInterpolation
+import it.unibo.alchemist.model.geogrid.temporalinterpolations.LinearInterpolation
+import it.unibo.alchemist.model.geogrid.temporalinterpolations.NextInterpolation
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

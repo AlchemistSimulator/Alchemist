@@ -13,6 +13,8 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.test.AlchemistTesting.loadAlchemistFromResource
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.assertTrue
 
 class TestNestedNamedParameters {
     @Test
@@ -23,5 +25,18 @@ class TestNestedNamedParameters {
         val layer = environment.layers.values.single()
         // level (3) times scale (2), plus the default offset (0)
         assertEquals(6.0, layer.currentValueAt(Euclidean2DPosition(0.0, 0.0)))
+    }
+
+    @Test
+    fun `named parameters matching more than one parameter fail suggesting the Kotlin DSL`() {
+        val failure = assertFails {
+            loadAlchemistFromResource("regression/ambiguous-named-parameter.yml")
+                .getDefault<Any, Euclidean2DPosition>()
+        }
+        val messages = generateSequence(failure) { it.cause }.mapNotNull { it.message }.toList()
+        assertTrue(
+            messages.any { "'baseLevel' could be any of [baseLevel, baselevel]" in it && "Kotlin DSL" in it },
+            "Unexpected failure messages: $messages",
+        )
     }
 }

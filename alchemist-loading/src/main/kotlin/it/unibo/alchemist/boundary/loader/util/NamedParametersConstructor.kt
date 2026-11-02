@@ -43,6 +43,23 @@ internal class NamedParametersConstructor(type: String, val parametersMap: Map<*
             target.constructors.map { constructor ->
                 constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }.sortedBy { it.index }
             }
+        // Provided names that could be interpreted as more than one parameter of the same constructor
+        val ambiguousNames: Map<String, Set<String?>> = providedNames.associateWith { providedName ->
+            constructorsWithOrderedParameters.flatMap { parameters ->
+                parameters.filter { it.name.couldBeInterpretedAs(providedName) }.takeIf { it.size > 1 }.orEmpty()
+            }.map { it.name }.toSet()
+        }.filterValues { it.isNotEmpty() }
+        require(ambiguousNames.isEmpty()) {
+            """
+            |Ambiguous named parameters for ${target.simpleName}: ${
+                ambiguousNames.entries.joinToString { (provided, names) -> "'$provided' could be any of $names" }
+            }.
+            |Parameter names are matched ignoring case and word separators (camelCase, snake_case, kebab-case, ...),
+            |so parameters whose names differ only in case or separators cannot be told apart by name.
+            |Either rename the parameters of ${target.qualifiedName} so that their names differ in their words,
+            |or build the simulation with the Kotlin DSL.
+            """.trimMargin()
+        }
         val usableConstructors: Map<OrderedParameters, Map<String, String>> =
             constructorsWithOrderedParameters
                 .mapNotNull { parameters ->

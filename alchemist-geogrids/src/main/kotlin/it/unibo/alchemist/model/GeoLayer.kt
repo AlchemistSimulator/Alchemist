@@ -10,8 +10,6 @@
 package it.unibo.alchemist.model
 
 /**
- * Specialization of [Layer] where spatial positions are represented as [GeoPosition]s.
- *
- * @param T the type of value measuring the substance or molecule at a given geographic point.
+ * A [Layer] over geographic positions.
  */
 fun interface GeoLayer<T> : Layer<T, GeoPosition>

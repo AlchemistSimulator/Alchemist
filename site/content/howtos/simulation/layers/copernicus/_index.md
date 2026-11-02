@@ -146,19 +146,16 @@ delete the corresponding entry from the cache directory.
 Named parameters are supported in both YAML and the Kotlin DSL;
 when using them, all the optional parameters preceding the last one provided must be specified as well.
 
-By default, values are interpolated linearly in space and time with
-{{% api package="model.geogrid.strategy.spatiotemporal" class="TrilinearInterpolation" %}}.
-Other combinations are available through
-{{% api package="model.geogrid.strategy.spatiotemporal" class="SeparableSpatioTemporalInterpolation" %}},
-which combines a spatial strategy
-({{% api package="model.geogrid.strategy.spatial" class="BilinearInterpolation" %}} or
-{{% api package="model.geogrid.strategy.spatial" class="NearestInterpolation" %}})
-with a temporal one
-({{% api package="model.geogrid.strategy.temporal" class="LinearInterpolation" %}},
+Values are interpolated first in space, within the two grids around the current time,
+then in time, between the two results.
+The `spatialInterpolation` parameter can be
+{{% api package="model.geogrid.strategy.spatial" class="BilinearInterpolation" %}} (the default) or
+{{% api package="model.geogrid.strategy.spatial" class="NearestInterpolation" %}};
+the `temporalInterpolation` parameter can be
+{{% api package="model.geogrid.strategy.temporal" class="LinearInterpolation" %}} (the default),
 {{% api package="model.geogrid.strategy.temporal" class="ClosestInterpolation" %}},
 {{% api package="model.geogrid.strategy.temporal" class="LastInterpolation" %}}, or
-{{% api package="model.geogrid.strategy.temporal" class="NextInterpolation" %}}),
-to be passed as the `interpolation` parameter.
+{{% api package="model.geogrid.strategy.temporal" class="NextInterpolation" %}}.
 
 Grid points with no data (e.g., river discharge far from rivers) are read as `NaN`.
 {{% api package="model.geogrid.layers" class="DoubleGriddedGeoLayer" %}} keeps them as they are,

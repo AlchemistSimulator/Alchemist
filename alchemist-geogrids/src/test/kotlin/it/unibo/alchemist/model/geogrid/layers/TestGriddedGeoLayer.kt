@@ -22,6 +22,8 @@ import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
 import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
 import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
+import it.unibo.alchemist.model.geogrid.strategy.spatial.NearestInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.temporal.ClosestInterpolation
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.writeTestNetcdf
@@ -47,6 +49,17 @@ class TestGriddedGeoLayer {
     private val center: GeoPosition = mockGeoPosition(45.0, 12.0)
 
     private val netCdfFileName = "data.nc"
+
+    /*
+     * Default interpolation, bilinear in space and then linear in time, between two 2x2 grids:
+     * the second one has the values of the first plus 1000, to tell time apart from space.
+     * In the middle of the cell, the bilinear values are the averages: 32.5 before, 1032.5 after.
+     */
+    private val cellCenter = mockGeoPosition(44.5, 11.5)
+    private val gridBefore = cornerGrid(0.0, 10.0, 20.0, 100.0)
+    private val gridAfter = cornerGrid(1000.0, 1010.0, 1020.0, 1100.0)
+    private val gridBeforeWithHole = cornerGrid(Double.NaN, 10.0, 20.0, 100.0)
+    private val gridAfterWithHole = cornerGrid(Double.NaN, 1010.0, 1020.0, 1100.0)
 
     /**
      * A [Time] mock at [t].
@@ -102,14 +115,28 @@ class TestGriddedGeoLayer {
         vararg sliceValues: Double,
         base: Instant = Instant.EPOCH,
         step: Duration = 1.hours,
-    ): GridSnapshots {
-        val instants = sliceValues.indices.map { i -> base.plus(step * i) }
-        val grids = sliceValues.map { v -> flatGrid(v) }
-        return object : GridSnapshots {
-            override val instants = instants
-            override fun grid(index: Int): RasterGrid = grids[index]
-        }
+    ): GridSnapshots = snapshotsOf(sliceValues.map { flatGrid(it) }, base, step)
+
+    /**
+     * A [GridSnapshots] made of [grids], spaced [step] apart starting from [base].
+     */
+    private fun snapshotsOf(
+        grids: List<RasterGrid>,
+        base: Instant = Instant.EPOCH,
+        step: Duration = 1.hours,
+    ): GridSnapshots = object : GridSnapshots {
+        override val instants = grids.indices.map { i -> base.plus(step * i) }
+        override fun grid(index: Int): RasterGrid = grids[index]
     }
+
+    /**
+     * A 2x2 grid over latitudes 44 and 45 and longitudes 11 and 12, with the given [values] row by row.
+     */
+    private fun cornerGrid(vararg values: Double): RasterGrid = ArrayRasterGrid(
+        ImmutableAxis(doubleArrayOf(44.0, 45.0)),
+        ImmutableAxis(doubleArrayOf(11.0, 12.0)),
+        values,
+    )
 
     private val tempDir: Path = createTempDirectory("geo-raster-layer-test")
 
@@ -131,6 +158,40 @@ class TestGriddedGeoLayer {
                 data = emptyGrid,
             )
         }
+    }
+
+    private fun defaultInterpolationAt(t: Double, before: RasterGrid = gridBefore, after: RasterGrid = gridAfter) =
+        DoubleGriddedGeoLayer(envAt(t), snapshotsOf(listOf(before, after))).currentValueAt(cellCenter)
+
+    @Test
+    fun `by default, values are interpolated bilinearly in space and then linearly in time`() {
+        assertEquals(32.5, defaultInterpolationAt(0.0), TOLERANCE)
+        assertEquals(532.5, defaultInterpolationAt(0.5), TOLERANCE)
+        assertEquals(1032.5, defaultInterpolationAt(1.0), TOLERANCE)
+    }
+
+    @Test
+    fun `by default, a missing corner makes the value missing`() {
+        val value = defaultInterpolationAt(0.5, before = gridBeforeWithHole)
+        assertTrue(value.isNaN(), "Expected NaN, but got $value")
+    }
+
+    @Test
+    fun `a missing corner in a grid that does not contribute is ignored`() {
+        assertEquals(32.5, defaultInterpolationAt(0.0, after = gridAfterWithHole), TOLERANCE)
+        assertEquals(1032.5, defaultInterpolationAt(1.0, before = gridBeforeWithHole), TOLERANCE)
+    }
+
+    @Test
+    fun `spatial and temporal interpolations can be chosen independently`() {
+        val layer = DoubleGriddedGeoLayer(
+            envAt(0.6),
+            snapshotsOf(listOf(gridBefore, gridAfter)),
+            spatialInterpolation = NearestInterpolation(),
+            temporalInterpolation = ClosestInterpolation(),
+        )
+        // nearest to the south-west corner, closest to the second grid
+        assertEquals(1000.0, layer.currentValueAt(mockGeoPosition(44.1, 11.1)))
     }
 
     @Test

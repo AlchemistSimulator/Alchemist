@@ -18,8 +18,10 @@ import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
 import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData
 import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
-import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.spatial.BilinearInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.spatial.SpatialInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.temporal.LinearInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.temporal.TemporalInterpolation
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
@@ -29,8 +31,8 @@ import kotlin.time.Instant
 
 /**
  * A [GeoLayer] over gridded geographic data changing over time, such as weather or climate data.
- * At each simulation time, the value at a position is interpolated from the [data] with [interpolation],
- * then converted by [converter].
+ * At each simulation time, the value at a position is interpolated with [spatialInterpolation] in the two grids
+ * around that time, then between them with [temporalInterpolation], and finally converted by [converter].
  * Before the first and after the last instant of the data, the first and last grids are used;
  * positions outside the grid have no value.
  *
@@ -40,7 +42,8 @@ import kotlin.time.Instant
  * @param timeScale the real-world duration of a simulation time unit, as an ISO-8601 duration (e.g., `PT6H`).
  * @param timeOrigin the real-world instant of simulation time 0, as an ISO-8601 instant
  * (e.g., `2024-06-10T00:00:00Z`); the first instant of [data] when `null`.
- * @param interpolation how to compute values between the nodes and the instants of the data.
+ * @param spatialInterpolation how to compute values between the nodes of a grid.
+ * @param temporalInterpolation how to compute values between two instants of the data.
  * @throws IllegalArgumentException if [data] is empty, if [timeScale] is not a positive finite ISO-8601 duration,
  * or if [timeOrigin] is not an ISO-8601 instant.
  */
@@ -50,7 +53,8 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
     private val converter: (Double) -> T,
     timeScale: String = DEFAULT_TIME_SCALE.toIsoString(),
     timeOrigin: String? = null,
-    private val interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
+    private val spatialInterpolation: SpatialInterpolation = BilinearInterpolation(),
+    private val temporalInterpolation: TemporalInterpolation = LinearInterpolation(),
 ) : GeoLayer<T> {
 
     init {
@@ -91,10 +95,6 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
             // the time t falls exactly on a slice.
             sampleExactSlice(position, gridIndexBefore)
         } else {
-            /*
-             * the time t lies between two distinct slices.
-             * Applies the spatio-temporal interpolation strategy.
-             */
             sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
         }
     }
@@ -106,7 +106,9 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
         val gridBefore = data.grid(gridBeforeIndex)
         val gridAfter = data.grid(gridAfterIndex)
         require(gridBefore.isInBounds(position)) { outOfBoundsMessage(position, gridBefore) }
-        return converter(interpolation.interpolate(position, gridBefore, gridAfter, timeWeight))
+        val valueBefore = spatialInterpolation.valueAt(gridBefore, position)
+        val valueAfter = spatialInterpolation.valueAt(gridAfter, position)
+        return converter(temporalInterpolation.interpolate(valueBefore, valueAfter, timeWeight))
     }
 
     /**

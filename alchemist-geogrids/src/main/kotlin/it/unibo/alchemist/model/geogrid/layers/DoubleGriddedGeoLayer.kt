@@ -14,8 +14,10 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.GridSnapshots
 import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData
 import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
-import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
-import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.spatial.BilinearInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.spatial.SpatialInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.temporal.LinearInterpolation
+import it.unibo.alchemist.model.geogrid.strategy.temporal.TemporalInterpolation
 
 /**
  * A [GriddedGeoLayer] of [Double]s.
@@ -25,7 +27,8 @@ import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpo
  * @param timeScale the real-world duration of a simulation time unit, as an ISO-8601 duration.
  * @param timeOrigin the real-world instant of simulation time 0, as an ISO-8601 instant;
  * the first instant of [data] when `null`.
- * @param interpolation how to compute values between the nodes and the instants of the data.
+ * @param spatialInterpolation how to compute values between the nodes of a grid.
+ * @param temporalInterpolation how to compute values between two instants of the data.
  * @param missingValue the value where the data is missing.
  */
 class DoubleGriddedGeoLayer @JvmOverloads constructor(
@@ -33,7 +36,8 @@ class DoubleGriddedGeoLayer @JvmOverloads constructor(
     data: GridSnapshots,
     timeScale: String = DEFAULT_TIME_SCALE.toIsoString(),
     timeOrigin: String? = null,
-    interpolation: SpatioTemporalInterpolation = TrilinearInterpolation(),
+    spatialInterpolation: SpatialInterpolation = BilinearInterpolation(),
+    temporalInterpolation: TemporalInterpolation = LinearInterpolation(),
     missingValue: Double = Double.NaN,
 ) : GriddedGeoLayer<Double>(
     environment,
@@ -41,5 +45,6 @@ class DoubleGriddedGeoLayer @JvmOverloads constructor(
     { if (it.isNaN()) missingValue else it },
     timeScale,
     timeOrigin,
-    interpolation,
+    spatialInterpolation,
+    temporalInterpolation,
 )

@@ -24,46 +24,16 @@ import kotlin.time.toKotlinInstant
 import org.slf4j.LoggerFactory
 
 /**
- * Eager [GridSnapshots] implementation. This implementation depends on NetCDF-Java.
+ * [GridSnapshots] read at construction from a [directory] of NetCDF or GRIB files sharing the same variable and
+ * latitude/longitude grid.
+ * Each file must hold a `{time, latitude, longitude}` variable, with its dimensions in any order;
+ * axes stored in descending order are reversed, and missing values become [Double.NaN].
+ * When files share an instant, the first file in lexicographic order wins.
  *
- * Reads a directory of **homogeneous** data files (same variable, same spatial grid)
- * and exposes them as a single time-ordered slice series.
- * All data is loaded into memory at construction time; file handles are closed before
- * the constructor returns.
- * If two files share the same real-world instants, then only the grid associated with the file
- * having the lower lexicographic order will be evaluated.
- *
- * ### Supported datasets
- * Supports datasets readable by NetCDF-Java whose selected variable is a 2D
- * regular latitude/longitude field associated with one temporal dimension and whose
- * coordinate axes are 1D.
- * The dataset does not need to follow a specific convention (e.g, Climate and Forecast),
- * what matters is that the relevant variable exposes the standard geophysical metadata
- * in a format that NetCDF-Java can interpret.
- *
- * ### Grid normalization
- * Latitude and longitude axes are normalized to ascending order regardless of the direction
- * stored in the file. Spatial homogeneity across files is validated eagerly.
- *
- * ### Dimension order
- * The selected variable's three dimensions may appear in **any** order in the files:
- * they are matched by name against the detected time/latitude/longitude axes and reordered
- * internally (via [ucar.ma2.Array.permute]). What is **not** tolerated is a variable with
- * more or fewer than these three dimensions.
- *
- * ### Data representation
- * The floating-point values that are read are represented as [Double] and missing/fill
- * values are replaced by [Double.NaN].
- *
- * The variable to read is selected by [variableName], or auto-detected as the unique
- * `{time, lat, lon}` variable in the file.
- *
- * @param directory directory of spatially homogeneous data files (NetCDFs/GRIBs).
- * @param variableName name of the variable as it appears in the file (e.g. `"dis24"`),
- * NOT the variable name shown in the Copernicus store. If `null`, auto-detected from the file.
- * @throws IllegalArgumentException if the directory is empty; if the variable is missing
- * or ambiguous; if files have mismatched spatial axes; if the variable dimensions are not
- * `{time, lat, lon}`.
+ * @param directory the directory holding the data files.
+ * @param variableName the name of the variable inside the files (e.g., `dis24`), auto-detected when `null`.
+ * @throws IllegalArgumentException if the directory has no data files, if the variable is missing or ambiguous,
+ * or if the files disagree on their grid or variable.
  */
 class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSnapshots {
 
@@ -91,12 +61,7 @@ class EagerGridSnapshots(directory: Path, variableName: String? = null) : GridSn
     }
 
     /**
-     * Reads every real-world instant of [axes] and inserts the resulting [RasterGrid] slices into [map],
-     * keyed by their real-world [Instant].
-     *
-     * @param map the map, **shared** across all files in [directory].
-     * @param axes the schema of the file currently being read.
-     * @param directory the directory of the file (used for error messages).
+     * Adds to [map] the grid of every instant of the file described by [axes], unless [map] already has one.
      */
     private fun readTimestepsFrom(map: TreeMap<Instant, RasterGrid>, axes: FileAxes, directory: Path) {
         val nLat = axes.latitudes.size

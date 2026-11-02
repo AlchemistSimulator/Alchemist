@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.layers
 
+import it.unibo.alchemist.boundary.copernicus.CopernicusData
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.reading.GridSnapshots

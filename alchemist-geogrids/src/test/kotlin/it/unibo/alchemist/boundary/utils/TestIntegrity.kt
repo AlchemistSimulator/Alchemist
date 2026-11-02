@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.utils
 
-import it.unibo.alchemist.boundary.copernicus.MD5Integrity.md5Hex
-import it.unibo.alchemist.boundary.copernicus.MD5Integrity.verify
+import it.unibo.alchemist.boundary.util.MD5Integrity.md5Hex
+import it.unibo.alchemist.boundary.util.MD5Integrity.verify
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.AfterTest

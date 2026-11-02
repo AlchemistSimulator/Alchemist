@@ -7,16 +7,16 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.layers
+package it.unibo.alchemist.boundary.copernicus
 
-import it.unibo.alchemist.boundary.copernicus.CopernicusDataStoreProvider
-import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.boundary.filecache.FileSystemDirectoryCache
 import it.unibo.alchemist.boundary.utils.CdsApiRc
 import it.unibo.alchemist.boundary.utils.CopernicusInputs
 import it.unibo.alchemist.model.geogrid.reading.EagerGridSnapshots
 import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
 import it.unibo.alchemist.model.geogrid.utils.pathOrClasspathResource
+import it.unibo.alchemist.model.layers.GriddedGeoFiles
+import it.unibo.alchemist.model.layers.GriddedGeoLayer
 import java.nio.file.Path
 import kotlin.time.Duration
 

@@ -24,6 +24,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.net.http.HttpTimeoutException
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 import kotlin.time.Duration
@@ -163,12 +164,15 @@ class CopernicusDataStoreProvider(
         lastHeartbeat: TimeMark = TimeSource.Monotonic.markNow(),
     ): String {
         // fails on timeout
+        val timeoutMessage = { "Timeout ($timeout) while waiting for job completion at $monitorUrl" }
         val remaining = -deadline.elapsedNow()
-        check(remaining.isPositive()) {
-            "Timeout ($timeout) while waiting for job completion at $monitorUrl"
+        check(remaining.isPositive(), timeoutMessage)
+        // a stalled poll must not outlive the deadline: if it gets cut by it, the job timed out
+        val body = try {
+            get(monitorUrl, minOf(REQUEST_TIMEOUT, remaining)).body()
+        } catch (timedOut: HttpTimeoutException) {
+            throw if (deadline.hasPassedNow()) IllegalStateException(timeoutMessage(), timedOut) else timedOut
         }
-        // a stalled poll must not outlive the deadline
-        val body = get(monitorUrl, minOf(REQUEST_TIMEOUT, remaining)).body()
         return when (val status = parseStatus(body)) {
             SUCCESSFUL -> {
                 logger.info("Job completed at $monitorUrl")

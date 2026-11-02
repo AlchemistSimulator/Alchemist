@@ -31,7 +31,7 @@ so they require an environment whose positions are
 
 The data backing a layer is provided as its `data` parameter:
 a {{% api package="model.layers" class="GriddedGeoFiles" %}} reads it from local files of any provider,
-while a {{% api package="model.layers" class="CopernicusData" %}} downloads it from a Copernicus data store.
+while a {{% api package="boundary.copernicus" class="CopernicusData" %}} downloads it from a Copernicus data store.
 
 ## Mapping data time to simulation time
 

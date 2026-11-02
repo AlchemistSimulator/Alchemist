@@ -1,3 +1,4 @@
+import it.unibo.alchemist.boundary.copernicus.CopernicusData
 import it.unibo.alchemist.boundary.kotlindsl.simulationOnMap
 
 simulationOnMap(ProtelisIncarnation()) {

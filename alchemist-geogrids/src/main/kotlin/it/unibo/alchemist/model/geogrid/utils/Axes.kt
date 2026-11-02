@@ -22,42 +22,6 @@ import java.util.Arrays
  */
 
 /**
- * Finds the index of the closest coordinate on the [axis] relative to the query [coordinate].
- *
- * If the [coordinate] lies outside the boundaries of the axis, the result is clamped to the edge
- * (`0` if below the first coordinate, `axis.lastIndex` if above the last coordinate).
- * Ties (when the coordinate is exactly halfway between two coordinates) resolve to the lower index.
- *
- * @param axis grid coordinates along one dimension, strictly ascending.
- * @param coordinate the query coordinate in the same unit as [axis].
- * @return a valid index into [axis], guaranteed to be within `0..axis.lastIndex`.
- * @throws IllegalArgumentException if [axis] is empty or [coordinate] is NaN.
- */
-internal fun nearestIndex(axis: DoubleArray, coordinate: Double): Int {
-    require(axis.isNotEmpty()) { "Axis cannot be empty." }
-    require(!coordinate.isNaN()) { "The query coordinate cannot be NaN." }
-    val binarySearchResult = Arrays.binarySearch(axis, coordinate)
-    /*
-     * binarySearch returns -(insertionPoint) - 1 when no match is found. Inverting the formula
-     * yields the insertion point: the index of the first node strictly greater than the coordinate.
-     */
-    val upperIndex = -binarySearchResult - 1
-    return when {
-        // exact match found: the coordinate aligns perfectly with a grid node.
-        binarySearchResult >= 0 -> binarySearchResult
-        upperIndex <= 0 -> 0
-        upperIndex >= axis.size -> axis.lastIndex
-        else -> {
-            // the coordinate is between axis[lowerIndex] and axis[upperIndex]
-            val lowerIndex = upperIndex - 1
-            val distanceToLower = coordinate - axis[lowerIndex]
-            val distanceToUpper = axis[upperIndex] - coordinate
-            if (distanceToLower <= distanceToUpper) lowerIndex else upperIndex
-        }
-    }
-}
-
-/**
  * Finds the pair of indices `(lowerIndex, upperIndex)` that bracket the given [coordinate]
  * on the [axis], such that `axis[lowerIndex] <= coordinate <= axis[upperIndex]`.
  *

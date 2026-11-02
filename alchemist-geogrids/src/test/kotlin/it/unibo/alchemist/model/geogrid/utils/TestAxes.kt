@@ -19,56 +19,6 @@ class TestAxes {
     private val axis = doubleArrayOf(10.0, 20.0, 30.0, 40.0)
     private val singleNode = doubleArrayOf(42.0)
 
-    // nearestIndex tests
-    @Test
-    fun `nearestIndex returns the exact index on a node hit`() {
-        assertEquals(0, nearestIndex(axis, 10.0))
-        assertEquals(1, nearestIndex(axis, 20.0))
-        assertEquals(3, nearestIndex(axis, 40.0))
-    }
-
-    @Test
-    fun `nearestIndex picks the closer node between two nodes`() {
-        // closer to 20
-        assertEquals(1, nearestIndex(axis, 22.0))
-        // closer to 30
-        assertEquals(2, nearestIndex(axis, 28.0))
-    }
-
-    @Test
-    fun `nearestIndex resolves an exact tie to the lower index`() {
-        assertEquals(1, nearestIndex(axis, 25.0))
-    }
-
-    @Test
-    fun `nearestIndex clamps below the first node`() {
-        assertEquals(0, nearestIndex(axis, 5.0))
-        assertEquals(0, nearestIndex(axis, -1000.0))
-    }
-
-    @Test
-    fun `nearestIndex clamps above the last node`() {
-        assertEquals(3, nearestIndex(axis, 50.0))
-        assertEquals(3, nearestIndex(axis, 1000.0))
-    }
-
-    @Test
-    fun `nearestIndex always returns 0 on a single-node axis`() {
-        assertEquals(0, nearestIndex(singleNode, 42.0))
-        assertEquals(0, nearestIndex(singleNode, 0.0))
-        assertEquals(0, nearestIndex(singleNode, 100.0))
-    }
-
-    @Test
-    fun `nearestIndex rejects an empty axis`() {
-        assertFailsWith<IllegalArgumentException> { nearestIndex(DoubleArray(0), 5.0) }
-    }
-
-    @Test
-    fun `nearestIndex rejects a NaN query`() {
-        assertFailsWith<IllegalArgumentException> { nearestIndex(axis, Double.NaN) }
-    }
-
     // bracketIndices tests
     @Test
     fun `bracketIndices returns a degenerate pair on a node hit`() {

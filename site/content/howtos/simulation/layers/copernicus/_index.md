@@ -13,7 +13,7 @@ The [Copernicus](https://www.copernicus.eu/) data stores
 [Early Warning](https://ewds.climate.copernicus.eu/), and
 [Atmosphere](https://ads.atmosphere.copernicus.eu/))
 distribute this kind of data in the [NetCDF](https://www.unidata.ucar.edu/software/netcdf/)
-and [GRIB](https://community.wmo.int/en/activity-areas/wis/grib-edition-1-and-2) formats.
+and [GRIB](https://confluence.ecmwf.int/display/CKB/What+are+GRIB+files+and+how+can+I+read+them) formats.
 
 The `alchemist-geogrids` module turns these files into [layers](/howtos/simulation/layers/):
 {{% api package="model.layers" class="GriddedGeoLayer" %}} exposes, at every position,

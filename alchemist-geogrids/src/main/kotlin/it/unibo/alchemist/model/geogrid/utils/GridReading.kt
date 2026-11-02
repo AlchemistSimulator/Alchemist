@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.geogrid.utils
 
 import it.unibo.alchemist.model.geogrid.reading.ArrayRasterGrid
+import it.unibo.alchemist.model.geogrid.reading.Axis
 import it.unibo.alchemist.model.geogrid.reading.MapRasterGrid
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 import java.nio.file.Files
@@ -140,8 +141,8 @@ internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: P
     }
     return FileAxes(
         timeAxis = timeAxis,
-        latitudes = latitudes,
-        longitudes = longitudes,
+        latitudes = Axis(latitudes),
+        longitudes = Axis(longitudes),
         latDescending = latDescending,
         lonDescending = lonDescending,
         variable = variable,
@@ -217,7 +218,7 @@ internal fun flattenAscending(
  * @param measurements cell values in row-major order; [Double.NaN] denotes missing/fill values.
  * @return the constructed [RasterGrid].
  */
-internal fun buildGrid(latitudes: DoubleArray, longitudes: DoubleArray, measurements: DoubleArray): RasterGrid {
+internal fun buildGrid(latitudes: Axis, longitudes: Axis, measurements: DoubleArray): RasterGrid {
     val density = measurements.count { !it.isNaN() }.toDouble() / measurements.size
     return if (density < SPARSE_DENSITY_THRESHOLD) {
         MapRasterGrid(latitudes, longitudes, measurements)
@@ -281,8 +282,8 @@ internal fun resolveVariable(
  */
 internal class FileAxes(
     val timeAxis: CoordinateAxis1DTime,
-    val latitudes: DoubleArray,
-    val longitudes: DoubleArray,
+    val latitudes: Axis,
+    val longitudes: Axis,
     val latDescending: Boolean,
     val lonDescending: Boolean,
     val variable: Variable,
@@ -312,10 +313,10 @@ internal class ReferenceGrid(axes: FileAxes) {
      */
     fun requireMatches(axes: FileAxes, file: Path, directory: Path) {
         // files following the first one must have the same spatial coordinates
-        require(axes.latitudes.contentEquals(latitudes)) {
+        require(axes.latitudes == latitudes) {
             "Latitude axes differ in $file from the others"
         }
-        require(axes.longitudes.contentEquals(longitudes)) {
+        require(axes.longitudes == longitudes) {
             "Longitude axes differ in $file from the others"
         }
         // subsequent files must resolve to the same variable

@@ -14,12 +14,17 @@ package it.unibo.alchemist.model.geogrid.reading
  *
  * Suited for dense grids, where most cells hold a value.
  *
- * @property gridValues cell values in row-major order respect to [latitudes] x [longitudes];
+ * @param gridValues cell values in row-major order respect to [latitudes] x [longitudes], copied.
  *
  * @see RasterGrid
  */
-class ArrayRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, val gridValues: DoubleArray) :
-    RasterGrid(latitudes, longitudes, gridValues) {
+class ArrayRasterGrid(
+    latitudes: Axis,
+    longitudes: Axis,
+    gridValues: DoubleArray,
+) : RasterGrid(latitudes, longitudes, gridValues) {
+
+    private val gridValues: DoubleArray = gridValues.copyOf()
 
     override fun valueAt(latIndex: Int, lonIndex: Int): Double = gridValues[latIndex * longitudes.size + lonIndex]
 }

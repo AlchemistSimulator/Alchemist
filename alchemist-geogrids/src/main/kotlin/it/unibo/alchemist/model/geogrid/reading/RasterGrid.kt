@@ -14,22 +14,15 @@ import it.unibo.alchemist.model.GeoPosition
 /**
  * A single 2D spatial bounding box, based on a geographic grid (latitude/longitude).
  *
- * @property latitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
- * @property longitudes of grid nodes, in degrees, sorted in **strictly** ascending order.
+ * @property latitudes of grid nodes, in degrees.
+ * @property longitudes of grid nodes, in degrees.
  * @param gridValues cell values in row-major order respect to [latitudes] x [longitudes];
  * [Double.NaN] values represent missing/fill values.
- * @throws IllegalArgumentException if [latitudes]/[longitudes] are not strictly ascending or if
- * [gridValues]' size does not equal `latitudes.size * longitudes.size`.
+ * @throws IllegalArgumentException if [gridValues]' size does not equal `latitudes.size * longitudes.size`.
  */
-abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArray, gridValues: DoubleArray) {
+abstract class RasterGrid(val latitudes: Axis, val longitudes: Axis, gridValues: DoubleArray) {
 
     init {
-        require(latitudes.isStrictlyAscending()) {
-            "latitudes must be strictly ascending, but got ${latitudes.contentToString()}"
-        }
-        require(longitudes.isStrictlyAscending()) {
-            "longitudes must be strictly ascending, but got ${longitudes.contentToString()}"
-        }
         val expectedSize = latitudes.size * longitudes.size
         require(gridValues.size == expectedSize) {
             "Dimension mismatch: expected $expectedSize values " +
@@ -52,19 +45,6 @@ abstract class RasterGrid(val latitudes: DoubleArray, val longitudes: DoubleArra
      * @param position the geographical position to check.
      * @return `true` if [position] is within the spatial extent of this grid, `false` otherwise.
      */
-    fun isInBounds(position: GeoPosition): Boolean = position.latitude in latitudes.first()..latitudes.last() &&
-        position.longitude in longitudes.first()..longitudes.last()
-}
-
-/**
- * @return `true` if this [DoubleArray] is strictly ascending.
- */
-private fun DoubleArray.isStrictlyAscending(): Boolean = when {
-    this.size <= 1 -> true
-    else -> {
-        for (i in 0 until this.size - 1) {
-            if (this[i] >= this[i + 1]) return false
-        }
-        return true
-    }
+    fun isInBounds(position: GeoPosition): Boolean =
+        position.latitude in latitudes.range && position.longitude in longitudes.range
 }

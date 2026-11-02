@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geogrid.reading.ArrayRasterGrid
+import it.unibo.alchemist.model.geogrid.reading.Axis
 import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
@@ -85,8 +86,8 @@ class TestGriddedGeoLayer {
      * A [RasterGrid] where every cell has a fixed [value].
      */
     private fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
-        lats,
-        lons,
+        Axis(lats),
+        Axis(lons),
         DoubleArray(lats.size * lons.size) { value },
     )
 

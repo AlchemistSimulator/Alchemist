@@ -13,12 +13,12 @@ import it.unibo.alchemist.boundary.copernicus.CopernicusData
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoLayer
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.geogrid.reading.Axis
 import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 import it.unibo.alchemist.model.geogrid.strategy.converter.MeasurementConverter
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
-import it.unibo.alchemist.model.geogrid.utils.AxisCell.Companion.enclosingCellOf
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
@@ -78,13 +78,15 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
      * The conversion occurs only during construction and takes into account the `timeOrigin`
      * and the `timeScale`.
      */
-    private val sliceTimes: DoubleArray = run {
+    private val sliceTimes: Axis = run {
         val scale = Duration.parseIsoString(timeScale)
         require(scale.isPositive() && scale.isFinite()) { "timeScale must hold a finite positive value." }
         val origin: Instant = timeOrigin?.let(Instant::parse) ?: data.instants.first()
-        data.instants
-            .map { it.toSimulationTime(origin, scale) }
-            .toDoubleArray()
+        Axis(
+            data.instants
+                .map { it.toSimulationTime(origin, scale) }
+                .toDoubleArray(),
+        )
     }
 
     /**
@@ -102,7 +104,7 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
         }
 
     /**
-     * Finds the time slices adjacent to time [t] using [enclosingCellOf],
+     * Finds the time slices adjacent to time [t] using [Axis.enclosingCellOf],
      * and applies the spatio-temporal [interpolation] strategy.
      * If [t] falls outside the calculated simulation time range,
      * the returned value will refer to the first or last temporal slice.
@@ -172,11 +174,11 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
          * @param grid the grid whose extent was exceeded.
          */
         private fun outOfBoundsMessage(position: GeoPosition, grid: RasterGrid): String {
-            val latitudes = grid.latitudes
-            val longitudes = grid.longitudes
+            val latitudes = grid.latitudes.range
+            val longitudes = grid.longitudes.range
             return "GeoPosition out of bounds: requested (lat: ${position.latitude}, lon: ${position.longitude}) " +
-                "but the bounding box is lat: [${latitudes.first()}, ${latitudes.last()}], " +
-                "lon: [${longitudes.first()}, ${longitudes.last()}]"
+                "but the bounding box is lat: [${latitudes.start}, ${latitudes.endInclusive}], " +
+                "lon: [${longitudes.start}, ${longitudes.endInclusive}]"
         }
     }
 }

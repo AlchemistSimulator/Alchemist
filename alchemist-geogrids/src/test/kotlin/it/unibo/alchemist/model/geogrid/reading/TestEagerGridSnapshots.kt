@@ -91,7 +91,7 @@ class TestEagerGridSnapshots {
             lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0),
             timeHours = doubleArrayOf(0.0),
         )
-        val resultLats = EagerGridSnapshots(dir).grid(0).latitudes
+        val resultLats = EagerGridSnapshots(dir).grid(0).latitudes.toDoubleArray()
         assertContentEquals(doubleArrayOf(10.0, 20.0, 30.0), resultLats)
     }
 

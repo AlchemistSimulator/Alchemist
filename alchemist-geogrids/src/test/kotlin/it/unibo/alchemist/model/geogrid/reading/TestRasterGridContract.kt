@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.geogrid.reading
 
 import it.unibo.alchemist.mockGeoPosition
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
@@ -40,7 +39,7 @@ abstract class RasterGridContract {
     /**
      * Factory of the concrete [RasterGrid] implementation under test.
      */
-    protected abstract val gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid
+    protected abstract val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid
 
     /**
      * 3 latitudes by 4 longitudes.
@@ -49,8 +48,10 @@ abstract class RasterGridContract {
      */
     private val lats = doubleArrayOf(10.0, 20.0, 30.0)
     private val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
+    private val latitudes = Axis(lats)
+    private val longitudes = Axis(lons)
     private val values = DoubleArray(12) { idx -> idx / lons.size * 10.0 + (idx % lons.size) }
-    private val grid: RasterGrid by lazy { gridOf(lats, lons, values) }
+    private val grid: RasterGrid by lazy { gridOf(latitudes, longitudes, values) }
 
     // Value access tests
     @Test
@@ -99,14 +100,14 @@ abstract class RasterGridContract {
     fun `valueAt should return NaN for missing values`() {
         // (iLat=1, iLon=1) is a missing value
         val nanValues = DoubleArray(12) { idx -> if (idx == 5) Double.NaN else idx.toDouble() }
-        val nullGrid = ArrayRasterGrid(lats, lons, nanValues)
+        val nullGrid = ArrayRasterGrid(latitudes, longitudes, nanValues)
         val value = nullGrid.valueAt(1, 1)
         assertTrue(value.isNaN(), "Expected NaN, but got $value")
     }
 
     @Test
     fun `a grid entirely made of NaN should return NaN everywhere`() {
-        val allNan = ArrayRasterGrid(lats, lons, DoubleArray(12) { Double.NaN })
+        val allNan = ArrayRasterGrid(latitudes, longitudes, DoubleArray(12) { Double.NaN })
         cartesian(lats.indices, lons.indices).forEach { (iLat, iLon) ->
             val value = allNan.valueAt(iLat, iLon)
             assertTrue(value.isNaN(), "Expected NaN at ($iLat, $iLon), but got $value")
@@ -116,12 +117,12 @@ abstract class RasterGridContract {
     // Axis tests
     @Test
     fun `latitudes should be accessible and match the constructor argument`() {
-        assertContentEquals(lats, grid.latitudes)
+        assertEquals(latitudes, grid.latitudes)
     }
 
     @Test
     fun `longitudes should be accessible and match the constructor argument`() {
-        assertContentEquals(lons, grid.longitudes)
+        assertEquals(longitudes, grid.longitudes)
     }
 
     // Dimension mismatch
@@ -129,38 +130,28 @@ abstract class RasterGridContract {
     fun `a mismatch between the number of cells and the number of values should raise an exception`() {
         assertFailsWith<IllegalArgumentException> {
             gridOf(
-                lats,
-                lons,
+                latitudes,
+                longitudes,
                 DoubleArray(lats.size * lons.size - 1) { 0.0 },
             )
         }
     }
 
     @Test
-    fun `axes that are not strictly increasing should raise an exception`() {
-        assertFailsWith<IllegalArgumentException> {
-            gridOf(
-                lats.reversedArray(),
-                lons,
-                values,
-            )
-        }
-        assertFailsWith<IllegalArgumentException> {
-            gridOf(
-                lats,
-                lons.reversedArray(),
-                values,
-            )
-        }
+    fun `changing the values after construction does not change the grid`() {
+        val source = values.copyOf()
+        val isolated = gridOf(latitudes, longitudes, source)
+        source.fill(Double.NaN)
+        assertEquals(12.0, isolated.valueAt(1, 2))
     }
 }
 
 // tests the array implementation (suitable for dense grids)
 class TestArrayRasterGrid : RasterGridContract() {
-    override val gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid = ::ArrayRasterGrid
+    override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::ArrayRasterGrid
 }
 
 // tests the map implementation (suitable for sparse grids)
 class TestMapRasterGrid : RasterGridContract() {
-    override val gridOf: (DoubleArray, DoubleArray, DoubleArray) -> RasterGrid = ::MapRasterGrid
+    override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::MapRasterGrid
 }

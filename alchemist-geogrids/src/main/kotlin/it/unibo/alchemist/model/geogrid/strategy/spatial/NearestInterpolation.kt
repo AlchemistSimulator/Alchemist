@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.geogrid.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.geogrid.reading.Axis
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
-import it.unibo.alchemist.model.geogrid.utils.AxisCell.Companion.enclosingCellOf
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
@@ -27,13 +27,13 @@ class NearestInterpolation : StatelessStrategy(), SpatialInterpolation {
 
     internal companion object {
         /**
-         * The index of the value of this ascending axis closest to [coordinate].
+         * The index of the coordinate of this axis closest to [coordinate].
          * Coordinates outside the axis get the index of its nearest end;
          * ties go to the lower index.
          *
-         * @throws IllegalArgumentException if the axis is empty or [coordinate] is NaN.
+         * @throws IllegalArgumentException if [coordinate] is NaN.
          */
-        internal fun DoubleArray.nearestIndex(coordinate: Double): Int =
+        internal fun Axis.nearestIndex(coordinate: Double): Int =
             enclosingCellOf(coordinate).run { if (weight <= 0.5) lower else upper }
     }
 }

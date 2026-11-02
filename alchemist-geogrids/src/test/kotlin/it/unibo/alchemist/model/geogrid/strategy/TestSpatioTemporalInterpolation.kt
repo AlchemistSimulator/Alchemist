@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.geogrid.strategy
 
 import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.geogrid.reading.ArrayRasterGrid
+import it.unibo.alchemist.model.geogrid.reading.Axis
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,8 +27,8 @@ class TestSpatioTemporalInterpolation {
      * gridAfter corners: every value is gridBefore's value + 1000, to keep the time axis
      * easily distinguishable from the space axes.
      */
-    private val latitudes = doubleArrayOf(10.0, 20.0)
-    private val longitudes = doubleArrayOf(100.0, 200.0)
+    private val latitudes = Axis(doubleArrayOf(10.0, 20.0))
+    private val longitudes = Axis(doubleArrayOf(100.0, 200.0))
 
     private val gridBefore = ArrayRasterGrid(
         latitudes = latitudes,

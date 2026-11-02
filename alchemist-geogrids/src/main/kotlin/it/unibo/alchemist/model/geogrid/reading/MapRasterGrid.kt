@@ -17,15 +17,15 @@ package it.unibo.alchemist.model.geogrid.reading
  *
  * @see RasterGrid
  */
-class MapRasterGrid(latitudes: DoubleArray, longitudes: DoubleArray, gridValues: DoubleArray) :
+class MapRasterGrid(latitudes: Axis, longitudes: Axis, gridValues: DoubleArray) :
     RasterGrid(latitudes, longitudes, gridValues) {
 
     /**
      * A map that associates each (latIndex, longIndex) pair with the value, if present.
      */
     private val availableValues: Map<Pair<Int, Int>, Double> = buildMap {
-        for (latIndex in latitudes.indices) {
-            for (lonIndex in longitudes.indices) {
+        for (latIndex in 0 until latitudes.size) {
+            for (lonIndex in 0 until longitudes.size) {
                 val cellValue = gridValues[latIndex * longitudes.size + lonIndex]
                 if (!cellValue.isNaN()) put(latIndex to lonIndex, cellValue)
             }

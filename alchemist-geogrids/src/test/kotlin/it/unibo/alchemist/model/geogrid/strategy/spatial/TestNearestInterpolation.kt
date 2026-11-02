@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.geogrid.strategy.spatial
 
+import it.unibo.alchemist.model.geogrid.reading.Axis
 import it.unibo.alchemist.model.geogrid.strategy.spatial.NearestInterpolation.Companion.nearestIndex
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,8 +18,8 @@ import kotlin.test.assertFailsWith
 class TestNearestInterpolation {
 
     // indices 0..3
-    private val axis = doubleArrayOf(10.0, 20.0, 30.0, 40.0)
-    private val singleNode = doubleArrayOf(42.0)
+    private val axis = Axis(doubleArrayOf(10.0, 20.0, 30.0, 40.0))
+    private val singleNode = Axis(doubleArrayOf(42.0))
 
     @Test
     fun `returns the exact index on a node hit`() {
@@ -57,11 +58,6 @@ class TestNearestInterpolation {
         assertEquals(0, singleNode.nearestIndex(42.0))
         assertEquals(0, singleNode.nearestIndex(0.0))
         assertEquals(0, singleNode.nearestIndex(100.0))
-    }
-
-    @Test
-    fun `rejects an empty axis`() {
-        assertFailsWith<IllegalArgumentException> { DoubleArray(0).nearestIndex(5.0) }
     }
 
     @Test

@@ -108,8 +108,8 @@ class TestGridReading {
                 timeHours = doubleArrayOf(0.0, 24.0, 48.0),
             ),
         )
-        assertContentEquals(doubleArrayOf(10.0, 20.0, 30.0), axes.latitudes)
-        assertContentEquals(doubleArrayOf(5.0, 15.0, 25.0, 35.0), axes.longitudes)
+        assertContentEquals(doubleArrayOf(10.0, 20.0, 30.0), axes.latitudes.toDoubleArray())
+        assertContentEquals(doubleArrayOf(5.0, 15.0, 25.0, 35.0), axes.longitudes.toDoubleArray())
         assertFalse(axes.latDescending)
         assertFalse(axes.lonDescending)
         assertEquals("dis24", axes.variable.shortName)
@@ -123,11 +123,11 @@ class TestGridReading {
     fun `readFileAxes should detect a descending latitude or longitude axis and reverse it`() {
         // lat check
         val latAxes = axesOf(testFile("axes-lat-desc", lats = doubleArrayOf(30.0, 20.0, 10.0)))
-        assertContentEquals(doubleArrayOf(10.0, 20.0, 30.0), latAxes.latitudes)
+        assertContentEquals(doubleArrayOf(10.0, 20.0, 30.0), latAxes.latitudes.toDoubleArray())
         assertTrue(latAxes.latDescending)
         // lon check
         val lonAxes = axesOf(testFile("axes-lon-desc", lons = doubleArrayOf(35.0, 25.0, 15.0, 5.0)))
-        assertContentEquals(doubleArrayOf(5.0, 15.0, 25.0, 35.0), lonAxes.longitudes)
+        assertContentEquals(doubleArrayOf(5.0, 15.0, 25.0, 35.0), lonAxes.longitudes.toDoubleArray())
         assertTrue(lonAxes.lonDescending)
     }
 

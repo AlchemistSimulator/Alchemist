@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.geogrid.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
-import it.unibo.alchemist.model.geogrid.utils.AxisCell.Companion.enclosingCellOf
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**

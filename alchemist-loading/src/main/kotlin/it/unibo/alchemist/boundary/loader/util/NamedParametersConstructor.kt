@@ -128,7 +128,7 @@ internal class NamedParametersConstructor(type: String, val parametersMap: Map<*
 
     /**
      * Named parameters are not aligned with the last ones of the constructor, as trailing optional parameters
-     * can be omitted: the [index]-th provided parameter is the [index]-th one of [constructor] that was named.
+     * can be omitted: the [index]-th provided parameter is the [index]-th one of the constructor that was named.
      * Constructors lacking some of the named parameters receive none of them.
      */
     override fun KFunction<*>.parameterIndexOrNull(provided: List<*>, index: Int): Int? = valueParameters.withIndex()

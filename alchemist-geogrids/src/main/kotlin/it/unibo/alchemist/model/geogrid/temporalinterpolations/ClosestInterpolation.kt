@@ -10,12 +10,11 @@
 package it.unibo.alchemist.model.geogrid.temporalinterpolations
 
 import it.unibo.alchemist.model.geogrid.TemporalInterpolation
-import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
  * [TemporalInterpolation] that always returns the value from the closest instant.
  */
-class ClosestInterpolation : StatelessStrategy(), TemporalInterpolation {
+object ClosestInterpolation : TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double =
         if (weight < 0.5) valueBefore else valueAfter

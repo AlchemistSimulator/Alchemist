@@ -10,14 +10,11 @@
 package it.unibo.alchemist.model.geogrid.temporalinterpolations
 
 import it.unibo.alchemist.model.geogrid.TemporalInterpolation
-import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
  * The value of the next instant.
  */
-class NextInterpolation :
-    StatelessStrategy(),
-    TemporalInterpolation {
+object NextInterpolation : TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueAfter
 }

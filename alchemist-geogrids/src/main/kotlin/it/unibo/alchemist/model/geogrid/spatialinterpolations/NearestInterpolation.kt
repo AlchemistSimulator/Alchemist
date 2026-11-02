@@ -13,12 +13,11 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.Axis
 import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.SpatialInterpolation
-import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
  * The value of the node nearest to the position.
  */
-class NearestInterpolation : StatelessStrategy(), SpatialInterpolation {
+object NearestInterpolation : SpatialInterpolation {
 
     override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
         val nearestLatitudeIndex = grid.latitudes.nearestIndex(position.latitude)
@@ -26,13 +25,11 @@ class NearestInterpolation : StatelessStrategy(), SpatialInterpolation {
         return grid.valueAt(nearestLatitudeIndex, nearestLongitudeIndex)
     }
 
-    internal companion object {
-        /**
-         * The index of the coordinate of this axis closest to [coordinate], the lower one on ties.
-         *
-         * @throws IllegalArgumentException if [coordinate] is NaN.
-         */
-        internal fun Axis.nearestIndex(coordinate: Double): Int =
-            enclosingCellOf(coordinate).run { if (weight <= 0.5) lower else upper }
-    }
+    /**
+     * The index of the coordinate of this axis closest to [coordinate], the lower one on ties.
+     *
+     * @throws IllegalArgumentException if [coordinate] is NaN.
+     */
+    internal fun Axis.nearestIndex(coordinate: Double): Int =
+        enclosingCellOf(coordinate).run { if (weight <= 0.5) lower else upper }
 }

@@ -10,12 +10,11 @@
 package it.unibo.alchemist.model.geogrid.temporalinterpolations
 
 import it.unibo.alchemist.model.geogrid.TemporalInterpolation
-import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
  * Linear interpolation between the two values, missing if either of them is.
  */
-class LinearInterpolation : StatelessStrategy(), TemporalInterpolation {
+object LinearInterpolation : TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = when {
         weight == 0.0 -> valueBefore

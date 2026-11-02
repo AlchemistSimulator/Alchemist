@@ -36,8 +36,8 @@ class DoubleGriddedGeoLayer @JvmOverloads constructor(
     data: GridSnapshots,
     timeScale: String = DEFAULT_TIME_SCALE.toIsoString(),
     timeOrigin: String? = null,
-    spatialInterpolation: SpatialInterpolation = BilinearInterpolation(),
-    temporalInterpolation: TemporalInterpolation = LinearInterpolation(),
+    spatialInterpolation: SpatialInterpolation = BilinearInterpolation,
+    temporalInterpolation: TemporalInterpolation = LinearInterpolation,
     missingValue: Double = Double.NaN,
 ) : GriddedGeoLayer<Double>(
     environment,

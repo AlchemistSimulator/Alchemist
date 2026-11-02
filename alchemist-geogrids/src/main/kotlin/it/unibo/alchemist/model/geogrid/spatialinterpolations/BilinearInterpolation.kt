@@ -12,14 +12,11 @@ package it.unibo.alchemist.model.geogrid.spatialinterpolations
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.SpatialInterpolation
-import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**
  * Bilinear interpolation of the four nodes around the position, missing if any of them is.
  */
-class BilinearInterpolation :
-    StatelessStrategy(),
-    SpatialInterpolation {
+object BilinearInterpolation : SpatialInterpolation {
 
     override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
         val latitude = grid.latitudes.enclosingCellOf(position.latitude)

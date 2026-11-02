@@ -53,8 +53,8 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
     private val converter: (Double) -> T,
     timeScale: String = DEFAULT_TIME_SCALE.toIsoString(),
     timeOrigin: String? = null,
-    private val spatialInterpolation: SpatialInterpolation = BilinearInterpolation(),
-    private val temporalInterpolation: TemporalInterpolation = LinearInterpolation(),
+    private val spatialInterpolation: SpatialInterpolation = BilinearInterpolation,
+    private val temporalInterpolation: TemporalInterpolation = LinearInterpolation,
 ) : GeoLayer<T> {
 
     init {

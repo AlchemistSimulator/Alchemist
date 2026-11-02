@@ -9,10 +9,11 @@
 
 package it.unibo.alchemist.model.geogrid.utils
 
-import it.unibo.alchemist.model.geogrid.reading.ArrayRasterGrid
-import it.unibo.alchemist.model.geogrid.reading.Axis
-import it.unibo.alchemist.model.geogrid.reading.MapRasterGrid
-import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.Axis
+import it.unibo.alchemist.model.geogrid.RasterGrid
+import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
+import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
+import it.unibo.alchemist.model.geogrid.rastergrids.MapRasterGrid
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Formatter
@@ -122,8 +123,8 @@ internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: P
     }
     return FileAxes(
         timeAxis = timeAxis,
-        latitudes = Axis(latitudes),
-        longitudes = Axis(longitudes),
+        latitudes = ImmutableAxis(latitudes),
+        longitudes = ImmutableAxis(longitudes),
         latDescending = latDescending,
         lonDescending = lonDescending,
         variable = variable,

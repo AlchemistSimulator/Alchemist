@@ -7,8 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.reading
+package it.unibo.alchemist.model.geogrid.snapshots
 
+import it.unibo.alchemist.model.geogrid.GridSnapshots
+import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.utils.FileAxes
 import it.unibo.alchemist.model.geogrid.utils.ReferenceGrid
 import it.unibo.alchemist.model.geogrid.utils.buildGrid
@@ -42,20 +44,20 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
     private val grids: List<RasterGrid>
 
     init {
-        val directory = pathOrClasspathResource(directory)
+        val directoryPath = pathOrClasspathResource(directory)
         // maps all file time instances to the corresponding RasterGrid, sorting them by Instant
         val map = TreeMap<Instant, RasterGrid>()
         // spatial grid and variable are established by the first file, validated against all the others
         var reference: ReferenceGrid? = null
-        for (file in listDataFiles(directory)) {
+        for (file in listDataFiles(directoryPath)) {
             /*
              * opens the file in "enhanced mode": all fill values are replaced with NaN
              * and expects dimensions to be properly tagged.
              */
             openNetcdfDataset(file).use { ds ->
                 val axes = readFileAxes(ds, variable, file)
-                reference = reference?.also { it.requireMatches(axes, file, directory) } ?: ReferenceGrid(axes)
-                readTimestepsFrom(map, axes, directory)
+                reference = reference?.also { it.requireMatches(axes, file, directoryPath) } ?: ReferenceGrid(axes)
+                readTimestepsFrom(map, axes, directoryPath)
             }
         }
         instants = map.keys.toList()

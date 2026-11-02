@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.geogrid.strategy.spatiotemporal
 
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.strategy.spatial.SpatialInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.temporal.TemporalInterpolation
 

@@ -7,18 +7,24 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.reading
+package it.unibo.alchemist.model.geogrid.rastergrids
+
+import it.unibo.alchemist.model.geogrid.Axis
+import it.unibo.alchemist.model.geogrid.RasterGrid
 
 /**
  * A [RasterGrid] storing only the values that are not missing, suited for sparse grids.
  */
-class MapRasterGrid(latitudes: Axis, longitudes: Axis, gridValues: DoubleArray) :
-    RasterGrid(latitudes, longitudes, gridValues) {
+class MapRasterGrid(
+    latitudes: Axis,
+    longitudes: Axis,
+    gridValues: DoubleArray,
+) : AbstractRasterGrid(latitudes, longitudes, gridValues) {
 
     private val availableValues: Map<Pair<Int, Int>, Double> = buildMap {
         for (latIndex in 0 until latitudes.size) {
             for (lonIndex in 0 until longitudes.size) {
-                val cellValue = gridValues[latIndex * longitudes.size + lonIndex]
+                val cellValue = valueAtIndex(latIndex * longitudes.size + lonIndex)
                 if (!cellValue.isNaN()) put(latIndex to lonIndex, cellValue)
             }
         }

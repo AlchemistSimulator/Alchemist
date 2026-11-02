@@ -1,5 +1,6 @@
 import it.unibo.alchemist.boundary.kotlindsl.simulationOnMap
-import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
+import it.unibo.alchemist.model.geogrid.layers.doubleGriddedGeoLayer
+import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
 
 simulationOnMap(ProtelisIncarnation()) {
     environment(oSMEnvironment("maps/cesena.pbf")) {

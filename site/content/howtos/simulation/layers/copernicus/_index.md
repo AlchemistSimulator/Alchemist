@@ -16,10 +16,10 @@ distribute this kind of data in the [NetCDF](https://www.unidata.ucar.edu/softwa
 and [GRIB](https://confluence.ecmwf.int/display/CKB/What+are+GRIB+files+and+how+can+I+read+them) formats.
 
 The `alchemist-geogrids` module turns these files into [layers](/howtos/simulation/layers/):
-{{% api package="model.layers" class="GriddedGeoLayer" %}} exposes, at every position,
+{{% api package="model.geogrid.layers" class="GriddedGeoLayer" %}} exposes, at every position,
 the value of the data at the current simulation time,
 interpolated in space between the grid points and in time between the slices.
-Its specialization {{% api package="model.layers" class="DoubleGriddedGeoLayer" %}}
+Its specialization {{% api package="model.geogrid.layers" class="DoubleGriddedGeoLayer" %}}
 yields `Double`s with sensible defaults, and it is what most simulations need.
 Nodes observing the layer are notified whenever its value at their position changes,
 either because they move or because the simulation time advances.
@@ -30,8 +30,8 @@ so they require an environment whose positions are
 [map environments](/howtos/simulation/environment/maps/).
 
 The data backing a layer is provided as its `data` parameter:
-a {{% api package="model.geogrid.reading" class="GridsFromDirectory" %}} reads it from local files of any provider,
-while a {{% api package="boundary.copernicus" class="CopernicusData" %}} downloads it from a Copernicus data store.
+a {{% api package="model.geogrid.snapshots" class="GridsFromDirectory" %}} reads it from local files of any provider,
+while a {{% api package="model.geogrid.snapshots" class="CopernicusData" %}} downloads it from a Copernicus data store.
 
 ## Mapping data time to simulation time
 
@@ -161,8 +161,8 @@ with a temporal one
 to be passed as the `interpolation` parameter.
 
 Grid points with no data (e.g., river discharge far from rivers) are read as `NaN`.
-{{% api package="model.layers" class="DoubleGriddedGeoLayer" %}} keeps them as they are,
+{{% api package="model.geogrid.layers" class="DoubleGriddedGeoLayer" %}} keeps them as they are,
 unless its `missingValue` parameter gives them another value (e.g., `missingValue: 0.0`).
-Layers of other types can be created with {{% api package="model.layers" class="GriddedGeoLayer" %}}
+Layers of other types can be created with {{% api package="model.geogrid.layers" class="GriddedGeoLayer" %}}
 and a {{% api package="model.geogrid.strategy.converter" class="MeasurementConverter" %}}
 turning interpolated values, `NaN` included, into the values of the layer.

@@ -7,13 +7,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.layers
+package it.unibo.alchemist.model.geogrid.layers
 
-import it.unibo.alchemist.boundary.copernicus.CopernicusData
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
-import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
+import it.unibo.alchemist.model.geogrid.GridSnapshots
+import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData
+import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
 import it.unibo.alchemist.model.geogrid.strategy.converter.MissingValueFallbackConverter
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation

@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.geogrid.strategy
 
 import it.unibo.alchemist.mockGeoPosition
-import it.unibo.alchemist.model.geogrid.reading.ArrayRasterGrid
-import it.unibo.alchemist.model.geogrid.reading.Axis
+import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
+import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
 import it.unibo.alchemist.model.geogrid.strategy.spatial.BilinearInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.spatial.NearestInterpolation
 import kotlin.test.Test
@@ -37,8 +37,8 @@ class TestSpatialInterpolation {
     private val northWest = 20.0
     private val northEast = 100.0
     private val grid = ArrayRasterGrid(
-        latitudes = Axis(doubleArrayOf(10.0, 20.0)),
-        longitudes = Axis(doubleArrayOf(100.0, 200.0)),
+        latitudes = ImmutableAxis(doubleArrayOf(10.0, 20.0)),
+        longitudes = ImmutableAxis(doubleArrayOf(100.0, 200.0)),
         // row-major representation
         gridValues = doubleArrayOf(southWest, southEast, northWest, northEast),
     )
@@ -48,8 +48,8 @@ class TestSpatialInterpolation {
      * bilinear reproduces the value exactly, so the expected result is just lat + lon.
      */
     private val affineGrid = ArrayRasterGrid(
-        latitudes = Axis(doubleArrayOf(10.0, 20.0, 30.0)),
-        longitudes = Axis(doubleArrayOf(100.0, 200.0, 300.0)),
+        latitudes = ImmutableAxis(doubleArrayOf(10.0, 20.0, 30.0)),
+        longitudes = ImmutableAxis(doubleArrayOf(100.0, 200.0, 300.0)),
         gridValues = doubleArrayOf(
             110.0, 210.0, 310.0, // lat = 10
             120.0, 220.0, 320.0, // lat = 20
@@ -87,8 +87,8 @@ class TestSpatialInterpolation {
     @Test
     fun `nearest returns NaN when one of the nearest cells is missing`() {
         val gridWithHole = ArrayRasterGrid(
-            latitudes = Axis(doubleArrayOf(10.0, 20.0)),
-            longitudes = Axis(doubleArrayOf(100.0, 200.0)),
+            latitudes = ImmutableAxis(doubleArrayOf(10.0, 20.0)),
+            longitudes = ImmutableAxis(doubleArrayOf(100.0, 200.0)),
             gridValues = doubleArrayOf(Double.NaN, 10.0, 20.0, 100.0), // south-west is missing
         )
         val value = nearest.valueAt(gridWithHole, mockGeoPosition(11.0, 105.0))
@@ -140,8 +140,8 @@ class TestSpatialInterpolation {
             val values = doubleArrayOf(0.0, 10.0, 20.0, 30.0)
             values[i] = Double.NaN
             val gridWithHole = ArrayRasterGrid(
-                latitudes = Axis(doubleArrayOf(10.0, 20.0)),
-                longitudes = Axis(doubleArrayOf(100.0, 200.0)),
+                latitudes = ImmutableAxis(doubleArrayOf(10.0, 20.0)),
+                longitudes = ImmutableAxis(doubleArrayOf(100.0, 200.0)),
                 gridValues = values,
             )
             val value = bilinear.valueAt(gridWithHole, mockGeoPosition(15.0, 150.0))

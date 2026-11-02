@@ -7,8 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.reading
+package it.unibo.alchemist.model.geogrid.axes
 
+import it.unibo.alchemist.model.geogrid.Axis
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -16,8 +17,8 @@ import kotlin.test.assertFailsWith
 class TestAxis {
 
     // indices 0..3
-    private val axis = Axis(doubleArrayOf(10.0, 20.0, 30.0, 40.0))
-    private val singleNode = Axis(doubleArrayOf(42.0))
+    private val axis = ImmutableAxis(doubleArrayOf(10.0, 20.0, 30.0, 40.0))
+    private val singleNode = ImmutableAxis(doubleArrayOf(42.0))
 
     @Test
     fun `a coordinate on a value has a degenerate cell`() {
@@ -55,25 +56,25 @@ class TestAxis {
 
     @Test
     fun `an empty axis is rejected`() {
-        assertFailsWith<IllegalArgumentException> { Axis(DoubleArray(0)) }
+        assertFailsWith<IllegalArgumentException> { ImmutableAxis(DoubleArray(0)) }
     }
 
     @Test
     fun `coordinates that are not strictly ascending are rejected`() {
-        assertFailsWith<IllegalArgumentException> { Axis(doubleArrayOf(30.0, 20.0, 10.0)) }
-        assertFailsWith<IllegalArgumentException> { Axis(doubleArrayOf(10.0, 20.0, 20.0)) }
+        assertFailsWith<IllegalArgumentException> { ImmutableAxis(doubleArrayOf(30.0, 20.0, 10.0)) }
+        assertFailsWith<IllegalArgumentException> { ImmutableAxis(doubleArrayOf(10.0, 20.0, 20.0)) }
     }
 
     @Test
     fun `NaN coordinates are rejected`() {
-        assertFailsWith<IllegalArgumentException> { Axis(doubleArrayOf(10.0, Double.NaN, 30.0)) }
-        assertFailsWith<IllegalArgumentException> { Axis(doubleArrayOf(Double.NaN)) }
+        assertFailsWith<IllegalArgumentException> { ImmutableAxis(doubleArrayOf(10.0, Double.NaN, 30.0)) }
+        assertFailsWith<IllegalArgumentException> { ImmutableAxis(doubleArrayOf(Double.NaN)) }
     }
 
     @Test
     fun `changing the source array does not change the axis`() {
         val source = doubleArrayOf(10.0, 20.0, 30.0)
-        val axis = Axis(source)
+        val axis = ImmutableAxis(source)
         source[0] = 100.0
         assertEquals(10.0, axis[0])
     }

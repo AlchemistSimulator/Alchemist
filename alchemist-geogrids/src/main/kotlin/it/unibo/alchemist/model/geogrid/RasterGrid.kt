@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.reading
+package it.unibo.alchemist.model.geogrid
 
 import it.unibo.alchemist.model.GeoPosition
 
@@ -19,20 +19,14 @@ import it.unibo.alchemist.model.GeoPosition
  * @param gridValues the values, row by row: all longitudes of the first latitude, then of the second, and so on.
  * @throws IllegalArgumentException if there is not exactly one value per cell.
  */
-abstract class RasterGrid(val latitudes: Axis, val longitudes: Axis, gridValues: DoubleArray) {
-
-    init {
-        val expectedSize = latitudes.size * longitudes.size
-        require(gridValues.size == expectedSize) {
-            "Dimension mismatch: expected $expectedSize values " +
-                "(${latitudes.size} lat x ${longitudes.size} lon), but got ${gridValues.size}"
-        }
-    }
+interface RasterGrid {
+    val latitudes: Axis
+    val longitudes: Axis
 
     /**
      * The value at the [latIndex]-th latitude and [lonIndex]-th longitude, [Double.NaN] if missing.
      */
-    abstract fun valueAt(latIndex: Int, lonIndex: Int): Double
+    fun valueAt(latIndex: Int, lonIndex: Int): Double
 
     /**
      * Whether [position] lies within the grid.

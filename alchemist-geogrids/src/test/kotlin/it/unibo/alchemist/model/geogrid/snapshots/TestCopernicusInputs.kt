@@ -7,10 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.copernicus
+package it.unibo.alchemist.model.geogrid.snapshots
 
 import com.google.gson.JsonSyntaxException
-import it.unibo.alchemist.boundary.copernicus.CopernicusData.Companion.readJsonObject
+import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData.Companion.readJsonObject
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.AfterTest

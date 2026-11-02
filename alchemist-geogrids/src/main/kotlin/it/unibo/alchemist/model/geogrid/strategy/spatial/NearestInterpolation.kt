@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.geogrid.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.geogrid.reading.Axis
-import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.Axis
+import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
 
 /**

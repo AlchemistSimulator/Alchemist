@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.reading
+package it.unibo.alchemist.model.geogrid.snapshots
 
 import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.writeTestNetcdf

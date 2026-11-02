@@ -7,18 +7,19 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.reading
+package it.unibo.alchemist.model.geogrid.rastergrids
+
+import it.unibo.alchemist.model.geogrid.Axis
 
 /**
- * A [RasterGrid] storing a copy of all values, suited for dense grids where most cells hold a value.
+ * A [it.unibo.alchemist.model.geogrid.RasterGrid] storing a copy of all values,
+ * suited for dense grids where most cells hold a value.
  */
 class ArrayRasterGrid(
     latitudes: Axis,
     longitudes: Axis,
     gridValues: DoubleArray,
-) : RasterGrid(latitudes, longitudes, gridValues) {
+) : AbstractRasterGrid(latitudes, longitudes, gridValues) {
 
-    private val gridValues: DoubleArray = gridValues.copyOf()
-
-    override fun valueAt(latIndex: Int, lonIndex: Int): Double = gridValues[latIndex * longitudes.size + lonIndex]
+    override fun valueAt(latIndex: Int, lonIndex: Int): Double = valueAtIndex(latIndex * longitudes.size + lonIndex)
 }

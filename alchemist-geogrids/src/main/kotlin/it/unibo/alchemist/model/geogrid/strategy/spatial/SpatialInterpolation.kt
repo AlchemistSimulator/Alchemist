@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.geogrid.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.RasterGrid
 
 /**
  * How to compute the value of a [RasterGrid] between its nodes.

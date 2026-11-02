@@ -7,16 +7,17 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.layers
+package it.unibo.alchemist.model.geogrid.layers
 
-import it.unibo.alchemist.boundary.copernicus.CopernicusData
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoLayer
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.geogrid.reading.Axis
-import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
-import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
-import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.Axis
+import it.unibo.alchemist.model.geogrid.GridSnapshots
+import it.unibo.alchemist.model.geogrid.RasterGrid
+import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
+import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData
+import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
 import it.unibo.alchemist.model.geogrid.strategy.converter.MeasurementConverter
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
@@ -64,7 +65,7 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
         val scale = Duration.parseIsoString(timeScale)
         require(scale.isPositive() && scale.isFinite()) { "timeScale must hold a finite positive value." }
         val origin: Instant = timeOrigin?.let(Instant::parse) ?: data.instants.first()
-        Axis(
+        ImmutableAxis(
             data.instants
                 .map { it.toSimulationTime(origin, scale) }
                 .toDoubleArray(),

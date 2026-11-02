@@ -7,8 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.reading
+package it.unibo.alchemist.model.geogrid.axes
 
+import it.unibo.alchemist.model.geogrid.Axis
 import java.util.Arrays
 
 /**
@@ -17,7 +18,7 @@ import java.util.Arrays
  *
  * @throws IllegalArgumentException if [coordinates] is empty, or not strictly ascending, or contains NaN.
  */
-class Axis(coordinates: DoubleArray) {
+internal class ImmutableAxis(coordinates: DoubleArray) : Axis {
 
     private val coordinates: DoubleArray = coordinates.copyOf()
 
@@ -29,55 +30,34 @@ class Axis(coordinates: DoubleArray) {
         }
     }
 
-    /**
-     * The number of coordinates.
-     */
-    val size: Int get() = coordinates.size
+    override val size: Int get() = coordinates.size
 
-    /**
-     * The interval from the first to the last coordinate.
-     */
-    val range: ClosedFloatingPointRange<Double> get() = coordinates.first()..coordinates.last()
+    override val range: ClosedFloatingPointRange<Double> get() = coordinates.first()..coordinates.last()
 
-    /**
-     * The coordinate at [index].
-     */
-    operator fun get(index: Int): Double = coordinates[index]
+    override operator fun get(index: Int): Double = coordinates[index]
 
-    /**
-     * A copy of the coordinates.
-     */
-    fun toDoubleArray(): DoubleArray = coordinates.copyOf()
+    override fun toDoubleArray(): DoubleArray = coordinates.copyOf()
 
-    override fun equals(other: Any?): Boolean = other is Axis && coordinates.contentEquals(other.coordinates)
+    override fun equals(other: Any?): Boolean = when (other) {
+        is ImmutableAxis -> coordinates.contentEquals(other.coordinates)
+        is Axis -> coordinates.contentEquals(other.toDoubleArray())
+        else -> false
+    }
 
     override fun hashCode(): Int = coordinates.contentHashCode()
 
     override fun toString(): String = "Axis${coordinates.contentToString()}"
 
-    /**
-     * The [Cell] enclosing [coordinate].
-     *
-     * @throws IllegalArgumentException if [coordinate] is NaN.
-     */
-    fun enclosingCellOf(coordinate: Double): Cell {
+    override fun enclosingCellOf(coordinate: Double): Axis.Cell {
         require(!coordinate.isNaN()) { "The query coordinate cannot be NaN." }
         val searchResult = Arrays.binarySearch(coordinates, coordinate)
         // binarySearch returns -(insertion point) - 1 on a miss: the insertion point is the first greater value
         val upper = -searchResult - 1
         return when {
-            searchResult >= 0 -> Cell(searchResult, searchResult, 0.0)
-            upper == 0 -> Cell(0, 0, 0.0)
-            upper == size -> Cell(size - 1, size - 1, 0.0)
-            else -> Cell(upper - 1, upper, (coordinate - this[upper - 1]) / (this[upper] - this[upper - 1]))
+            searchResult >= 0 -> Axis.Cell(searchResult, searchResult, 0.0)
+            upper == 0 -> Axis.Cell(0, 0, 0.0)
+            upper == size -> Axis.Cell(size - 1, size - 1, 0.0)
+            else -> Axis.Cell(upper - 1, upper, (coordinate - this[upper - 1]) / (this[upper] - this[upper - 1]))
         }
     }
-
-    /**
-     * The cell of an axis enclosing a coordinate: the [lower] and [upper] indices of the axis values around it,
-     * and the [weight] of the coordinate between them, 0 at [lower] and 1 at [upper].
-     * A coordinate on a value, or outside the axis, has [lower] equal to [upper] and weight 0.
-     */
-    @ConsistentCopyVisibility
-    data class Cell internal constructor(val lower: Int, val upper: Int, val weight: Double)
 }

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.geogrid.strategy.spatiotemporal
 
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.RasterGrid
 
 /**
  * How to compute a value between the nodes of two consecutive [RasterGrid]s.

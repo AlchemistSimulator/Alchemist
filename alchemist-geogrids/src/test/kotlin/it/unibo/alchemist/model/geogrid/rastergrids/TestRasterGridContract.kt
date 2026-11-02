@@ -7,9 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.reading
+package it.unibo.alchemist.model.geogrid.rastergrids
 
 import it.unibo.alchemist.mockGeoPosition
+import it.unibo.alchemist.model.geogrid.Axis
+import it.unibo.alchemist.model.geogrid.RasterGrid
+import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -31,13 +34,13 @@ private fun linspace(start: Double, stop: Double, steps: Int): List<Double> = (0
 }
 
 /**
- * Contract shared by every [RasterGrid] implementation, verified
+ * Contract shared by every [it.unibo.alchemist.model.geogrid.RasterGrid] implementation, verified
  * once and parameterized by the factory of the concrete implementation under test.
  */
 abstract class RasterGridContract {
 
     /**
-     * Factory of the concrete [RasterGrid] implementation under test.
+     * Factory of the concrete [it.unibo.alchemist.model.geogrid.RasterGrid] implementation under test.
      */
     protected abstract val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid
 
@@ -48,8 +51,8 @@ abstract class RasterGridContract {
      */
     private val lats = doubleArrayOf(10.0, 20.0, 30.0)
     private val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
-    private val latitudes = Axis(lats)
-    private val longitudes = Axis(lons)
+    private val latitudes = ImmutableAxis(lats)
+    private val longitudes = ImmutableAxis(lons)
     private val values = DoubleArray(12) { idx -> idx / lons.size * 10.0 + (idx % lons.size) }
     private val grid: RasterGrid by lazy { gridOf(latitudes, longitudes, values) }
 

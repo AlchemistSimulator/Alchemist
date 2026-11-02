@@ -7,13 +7,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.layers
+package it.unibo.alchemist.model.geogrid.layers
 
 import it.unibo.alchemist.boundary.LoadAlchemist
-import it.unibo.alchemist.boundary.copernicus.CopernicusData.Companion.readJsonObject
 import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData.Companion.readJsonObject
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.Test

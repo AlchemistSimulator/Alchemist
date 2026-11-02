@@ -16,13 +16,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.layers
+package it.unibo.alchemist.model.geogrid.layers
 
 import io.mockk.mockk
 import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
+import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
 import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.writeTestNetcdf

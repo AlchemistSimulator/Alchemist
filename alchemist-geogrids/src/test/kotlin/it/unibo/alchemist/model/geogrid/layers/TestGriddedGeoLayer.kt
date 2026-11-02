@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.layers
+package it.unibo.alchemist.model.geogrid.layers
 
 import io.mockk.every
 import io.mockk.mockk
@@ -17,11 +17,11 @@ import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.geogrid.reading.ArrayRasterGrid
-import it.unibo.alchemist.model.geogrid.reading.Axis
-import it.unibo.alchemist.model.geogrid.reading.GridSnapshots
-import it.unibo.alchemist.model.geogrid.reading.GridsFromDirectory
-import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.GridSnapshots
+import it.unibo.alchemist.model.geogrid.RasterGrid
+import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
+import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
+import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.writeTestNetcdf
@@ -88,8 +88,8 @@ class TestGriddedGeoLayer {
      * A [RasterGrid] where every cell has a fixed [value].
      */
     private fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
-        Axis(lats),
-        Axis(lons),
+        ImmutableAxis(lats),
+        ImmutableAxis(lons),
         DoubleArray(lats.size * lons.size) { value },
     )
 

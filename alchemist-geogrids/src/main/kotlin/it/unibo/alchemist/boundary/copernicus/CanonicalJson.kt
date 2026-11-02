@@ -14,34 +14,24 @@ import com.google.gson.GsonBuilder
 import java.util.TreeMap
 
 /**
- * Deterministic JSON encoding used to derive stable cache keys and submit bodies.
- *
- * "Canonical" here means exactly one normalization: **map keys are sorted recursively** at every
- * nesting level, so a request encodes identically regardless of the key order it was authored in.
- * **List order is preserved**, since in Copernicus requests it is semantic.
+ * Encodes JSON with the keys of every object sorted, so equal requests encode the same way.
+ * Lists keep their order, which matters to the data stores.
  */
 internal object CanonicalJson {
 
     private val gson: Gson = GsonBuilder().serializeNulls().create()
 
     /**
-     * Encodes [value] as canonical JSON.
-     *
-     * @param value a serializable value, typically a nested [Map]/[List].
-     * @return its canonical JSON representation: map keys sorted recursively, list order untouched.
+     * [value], typically nested [Map]s and [List]s, as JSON.
      */
     fun encode(value: Any): String = gson.toJson(canonicalize(value))
 
     /**
-     * Recursively rewrites [value] into a form Gson serializes deterministically: every [Map]
-     * becomes a key-sorted [TreeMap], every [List] keeps its order,
-     * scalars (strings, booleans, numbers, nulls) are left untouched.
+     * [value] with every [Map] in it sorted by key.
      */
     private fun canonicalize(value: Any?): Any? = when (value) {
-        // maintains the keys sorted
         is Map<*, *> -> TreeMap<String, Any?>().apply {
             value.forEach { (key, mapValue) ->
-                // recursively evaluates nested structures
                 put(key.toString(), canonicalize(mapValue))
             }
         }

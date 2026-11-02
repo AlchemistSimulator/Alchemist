@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.loader.util
 
-import kotlin.collections.get
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
@@ -43,6 +43,23 @@ internal class NamedParametersConstructor(type: String, val parametersMap: Map<*
             target.constructors.map { constructor ->
                 constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }.sortedBy { it.index }
             }
+        // Provided names that could be interpreted as more than one parameter of the same constructor
+        val ambiguousNames: Map<String, Set<String?>> = providedNames.associateWith { providedName ->
+            constructorsWithOrderedParameters.flatMap { parameters ->
+                parameters.filter { it.name.couldBeInterpretedAs(providedName) }.takeIf { it.size > 1 }.orEmpty()
+            }.map { it.name }.toSet()
+        }.filterValues { it.isNotEmpty() }
+        require(ambiguousNames.isEmpty()) {
+            """
+            |Ambiguous named parameters for ${target.simpleName}: ${
+                ambiguousNames.entries.joinToString { (provided, names) -> "'$provided' could be any of $names" }
+            }.
+            |Parameter names are matched ignoring case and word separators (camelCase, snake_case, kebab-case, ...),
+            |so parameters whose names differ only in case or separators cannot be told apart by name.
+            |Either rename the parameters of ${target.qualifiedName} so that their names differ in their words,
+            |or build the simulation with the Kotlin DSL.
+            """.trimMargin()
+        }
         val usableConstructors: Map<OrderedParameters, Map<String, String>> =
             constructorsWithOrderedParameters
                 .mapNotNull { parameters ->
@@ -125,6 +142,17 @@ internal class NamedParametersConstructor(type: String, val parametersMap: Map<*
             .filter { parametersMap.containsKey(replacements.getOrDefault(it.name, it.name)) }
             .map { parametersMap[replacements.getOrDefault(it.name, it.name)] }
     }
+
+    /**
+     * Named parameters are not aligned with the last ones of the constructor, as trailing optional parameters
+     * can be omitted: the [index]-th provided parameter is the [index]-th one of the constructor that was named.
+     * Constructors lacking some of the named parameters receive none of them.
+     */
+    override fun KFunction<*>.parameterIndexOrNull(provided: List<*>, index: Int): Int? = valueParameters.withIndex()
+        .filter { (_, parameter) -> parametersMap.keys.any { parameter.name.couldBeInterpretedAs(it.toString()) } }
+        .takeIf { it.size == provided.size }
+        ?.getOrNull(index)
+        ?.index
 
     private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +
         filter { it.name != null }.joinToString {

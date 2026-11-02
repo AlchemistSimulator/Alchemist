@@ -1,0 +1,9 @@
+incarnation: protelis
+
+layers:
+  - molecule: level
+    type: another.location.TwinLevelsLayer
+    parameters:
+      baseLevel:
+        type: another.location.Level
+        parameters: [3]

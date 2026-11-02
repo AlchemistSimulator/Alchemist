@@ -24,38 +24,28 @@ import ucar.nc2.dataset.CoordinateAxis1DTime
 import ucar.nc2.dataset.NetcdfDataset
 import ucar.nc2.dataset.NetcdfDatasets
 
-/*
- * NetCDF/GRIB schema parsing based on NetCDF-Java.
- * These functions know how to read and validate ONE file's grid schema and compare it
- * to other files' schema.
- */
-
 /**
- * Below this fraction of non-missing cells, a grid is considered "sparse" (see [buildGrid]).
+ * The fraction of non-missing values below which [buildGrid] builds a sparse grid.
  */
 private const val SPARSE_DENSITY_THRESHOLD = 0.1
 
 /**
- * Parser needed by netCDF-Java to parse GRIB files.
+ * The system property selecting the XML parser, which must be the JDK's one for netCDF-Java to read GRIB files.
  */
 private const val SAX_PARSER_FACTORY_KEY = "javax.xml.parsers.SAXParserFactory"
 private const val JDK_XERCES_SAX_PARSER_FACTORY = "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl"
 
 /**
- * File types that netCDF-Java uses as indexes for GRIB files.
+ * The suffixes of the index files that netCDF-Java writes next to GRIB files.
  */
 private val netcdfJavaIndexSuffixes = setOf(".gbx9", ".ncx4")
 
 /**
- * Opens [file] as a [NetcdfDataset], temporarily forcing the JDK's built-in
- * [javax.xml.parsers.SAXParserFactory].
+ * Opens [file], with missing values as [Double.NaN], making sure netCDF-Java uses the JDK's XML parser meanwhile.
  *
- * NetCDF-Java's GRIB reader requires this specific factory; if another SAX parser is
- * registered system-wide, GRIB parsing fails.
+ * NetCDF-Java's GRIB reader requires this factory, because if another SAX parser is registered system-wide,
+ * then GRIB parsing fails.
  * The system property is restored to its previous value (or cleared) right after opening.
- *
- * @param file the NetCDF/GRIB file to open.
- * @return the opened, enhanced [NetcdfDataset].
  */
 internal fun openNetcdfDataset(file: Path): NetcdfDataset {
     val previous = System.getProperty(SAX_PARSER_FACTORY_KEY)
@@ -72,12 +62,9 @@ internal fun openNetcdfDataset(file: Path): NetcdfDataset {
 }
 
 /**
- * Lists the data files contained in [directory], ignoring the indexes created by netCDF-Java,
- * sorted for a deterministic processing order.
+ * The data files in [directory], sorted, skipping the indexes written by netCDF-Java.
  *
- * @param directory the directory to scan.
- * @return the sorted list of regular files in [directory].
- * @throws IllegalArgumentException if [directory] contains no regular files.
+ * @throws IllegalArgumentException if there are none.
  */
 internal fun listDataFiles(directory: Path): List<Path> {
     val files = Files.list(directory).use { stream ->
@@ -91,16 +78,10 @@ internal fun listDataFiles(directory: Path): List<Path> {
 }
 
 /**
- * Reads and validates the schema of [file] from the already open [dataset]: locates its time,
- * latitude, and longitude axes, normalizes latitude/longitude to ascending order, and resolves
- * the data [Variable] to read (by [variableName], or by auto-detection, see [resolveVariable]).
+ * The [FileAxes] of [dataset], opened from [file], reading the variable [variableName] (see [resolveVariable]).
  *
- * @param dataset the already open dataset.
- * @param variableName explicit variable name, or `null` for auto-detection.
- * @param file path of the file being read (used for error messages).
- * @return the extracted, normalized [FileAxes].
- * @throws IllegalArgumentException if any axis is missing or not 1D, if the time axis cannot be
- * built, if the variable is missing/ambiguous, or if its dimensions are not `{time, lat, lon}`.
+ * @throws IllegalArgumentException if an axis is missing or not one-dimensional, or if the variable is missing,
+ * ambiguous, or not over time, latitude, and longitude.
  */
 internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: Path): FileAxes {
     // ensures that all {time, lat, lon} axes are present
@@ -154,13 +135,8 @@ internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: P
 }
 
 /**
- * Reads the raw 2D slice at time index [t] from [axes], reordered to (time, lat, lon).
- *
- * @param axes the schema of the file being read.
- * @param t the time index within [axes]'s time axis.
- * @param nLat number of latitude coordinates.
- * @param nLon number of longitude coordinates.
- * @return the rearranged slice of shape (1, [nLat], [nLon]).
+ * The values at the [t]-th instant of the file described by [axes], as they are stored,
+ * with dimensions ordered as time, latitude ([nLat] values), longitude ([nLon] values).
  */
 internal fun readPermutedSlice(axes: FileAxes, t: Int, nLat: Int, nLon: Int): CdmArray {
     // origin/shape are positional relative to the variable's own axis order in the file
@@ -182,15 +158,8 @@ internal fun readPermutedSlice(axes: FileAxes, t: Int, nLat: Int, nLon: Int): Cd
 }
 
 /**
- * Flattens a **(time, lat, lon)-ordered** [slice] of shape (1, [nLat], [nLon]) into a
- * row-major [DoubleArray] with ascending latitude/longitude, reversing axes that are descending.
- *
- * @param slice the reordered slice (see [readPermutedSlice]).
- * @param nLat number of latitude coordinates.
- * @param nLon number of longitude coordinates.
- * @param latDescending `true` if the latitude axis is descending.
- * @param lonDescending `true` if the longitude axis is descending.
- * @return a [DoubleArray] representing the values in row-major order.
+ * The values of [slice] (see [readPermutedSlice]) row by row, as [RasterGrid] expects them,
+ * reversing the latitudes if [latDescending] and the longitudes if [lonDescending].
  */
 internal fun flattenAscending(
     slice: CdmArray,
@@ -209,14 +178,7 @@ internal fun flattenAscending(
 }
 
 /**
- * Chooses the most memory-efficient [RasterGrid] representation for [measurements], based on the
- * fraction of non-missing cells: below [SPARSE_DENSITY_THRESHOLD], a sparse [MapRasterGrid] is
- * used; otherwise, a dense [ArrayRasterGrid].
- *
- * @param latitudes the grid latitudes.
- * @param longitudes the grid longitudes.
- * @param measurements cell values in row-major order; [Double.NaN] denotes missing/fill values.
- * @return the constructed [RasterGrid].
+ * A [RasterGrid] of [measurements]: a [MapRasterGrid] if they are mostly missing, an [ArrayRasterGrid] otherwise.
  */
 internal fun buildGrid(latitudes: Axis, longitudes: Axis, measurements: DoubleArray): RasterGrid {
     val density = measurements.count { !it.isNaN() }.toDouble() / measurements.size
@@ -228,23 +190,9 @@ internal fun buildGrid(latitudes: Axis, longitudes: Axis, measurements: DoubleAr
 }
 
 /**
- * Selects the variable to read from the dataset.
+ * The variable of [ds] named [name] or, when `null`, the only one over [timeDimName], [latDimName], and [lonDimName].
  *
- * If [name] is provided, looks it up by short name (the name as it appears in the file,
- * not the store catalogue name). Otherwise, auto-detects the unique 3D variable
- * whose dimensions match {[timeDimName], [latDimName], [lonDimName]}.
- * Coordinate axis variables (latitude, longitude, time themselves) are 1D and are therefore excluded
- * automatically.
- *
- * @param ds the open enhanced dataset.
- * @param name explicit variable name, or null for auto-detection.
- * @param timeDimName name of the time dimension (from the time axis).
- * @param latDimName name of the latitude dimension (from the latitude axis).
- * @param lonDimName name of the longitude dimension (from the longitude axis).
- * @param file path of the file being read (used for error messages).
- * @return the selected [Variable].
- * @throws IllegalArgumentException if the named [Variable] is not found, or if
- * auto-detection finds zero or more than one candidate.
+ * @throws IllegalArgumentException if there is no such variable, or more than one.
  */
 internal fun resolveVariable(
     ds: NetcdfDataset,
@@ -277,8 +225,8 @@ internal fun resolveVariable(
 }
 
 /**
- * The file schema extracted by [readFileAxes]: the file's time axis, its normalized spatial
- * axes, the resolved data [variable], and the positions of the time/lat/lon dimensions within it.
+ * How a file stores its data: the axes (latitudes and longitudes sorted ascending, whether they were stored
+ * descending), the [variable], and the position of each dimension in it.
  */
 internal class FileAxes(
     val timeAxis: CoordinateAxis1DTime,
@@ -293,10 +241,7 @@ internal class FileAxes(
 )
 
 /**
- * Represents the spatial grid and variable established by the FIRST file of a homogeneous series (of a dataset).
- *
- * Used to validate that every subsequent file is both spatially and semantically consistent with
- * the first one.
+ * The grid and variable of the first file of a directory, which the others must match.
  */
 internal class ReferenceGrid(axes: FileAxes) {
 
@@ -305,11 +250,9 @@ internal class ReferenceGrid(axes: FileAxes) {
     private val variableName = axes.variable.shortName
 
     /**
-     * @param axes the schema extracted from another file.
-     * @param file the path of that file (used for error messages).
-     * @param directory the directory where the file is located (used for error messages).
-     * @throws IllegalArgumentException if [axes] does not share this reference's spatial grid
-     * or resolved variable name.
+     * Checks that [axes], read from [file] in [directory], have the same grid and variable.
+     *
+     * @throws IllegalArgumentException otherwise.
      */
     fun requireMatches(axes: FileAxes, file: Path, directory: Path) {
         // files following the first one must have the same spatial coordinates
@@ -328,8 +271,7 @@ internal class ReferenceGrid(axes: FileAxes) {
 }
 
 /**
- * Returns this array sorted in ascending order, with whether it was originally
- * descending.
+ * This array in ascending order, and whether it was descending.
  */
 private fun DoubleArray.ascendingWithDescendingFlag(): Pair<DoubleArray, Boolean> {
     val descending = first() > last()

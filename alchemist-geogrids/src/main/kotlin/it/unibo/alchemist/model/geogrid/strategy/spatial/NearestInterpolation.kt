@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.geogrid.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.utils.AxisCell.Companion.enclosingCellOf
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
-import it.unibo.alchemist.model.geogrid.utils.bracketIndices
 
 /**
  * Value of the nearest cell to the point.
@@ -35,9 +35,7 @@ class NearestInterpolation :
          *
          * @throws IllegalArgumentException if the axis is empty or [coordinate] is NaN.
          */
-        internal fun DoubleArray.nearestIndex(coordinate: Double): Int {
-            val (lower, upper) = bracketIndices(this, coordinate)
-            return if (coordinate - this[lower] <= this[upper] - coordinate) lower else upper
-        }
+        internal fun DoubleArray.nearestIndex(coordinate: Double): Int =
+            enclosingCellOf(coordinate).run { if (weight <= 0.5) lower else upper }
     }
 }

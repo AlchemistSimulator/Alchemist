@@ -11,9 +11,8 @@ package it.unibo.alchemist.model.geogrid.strategy.spatial
 
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.geogrid.reading.RasterGrid
+import it.unibo.alchemist.model.geogrid.utils.AxisCell.Companion.enclosingCellOf
 import it.unibo.alchemist.model.geogrid.utils.StatelessStrategy
-import it.unibo.alchemist.model.geogrid.utils.bracketIndices
-import it.unibo.alchemist.model.geogrid.utils.weight
 
 /**
  * Bilinear interpolation over the 4 cells surrounding the point. If any of the 4 corners is
@@ -24,22 +23,16 @@ class BilinearInterpolation :
     SpatialInterpolation {
 
     override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
-        val (lowerLatitudeIndex, upperLatitudeIndex) = bracketIndices(
-            grid.latitudes,
-            position.latitude,
-        )
-        val (lowerLongitudeIndex, upperLongitudeIndex) = bracketIndices(
-            grid.longitudes,
-            position.longitude,
-        )
+        val latitude = grid.latitudes.enclosingCellOf(position.latitude)
+        val longitude = grid.longitudes.enclosingCellOf(position.longitude)
         /*
          * axes are sorted in ascending order, so lower latitude index = south,
          * lower longitude index = west.
          */
-        val southWestValue = grid.valueAt(lowerLatitudeIndex, lowerLongitudeIndex)
-        val southEastValue = grid.valueAt(lowerLatitudeIndex, upperLongitudeIndex)
-        val northWestValue = grid.valueAt(upperLatitudeIndex, lowerLongitudeIndex)
-        val northEastValue = grid.valueAt(upperLatitudeIndex, upperLongitudeIndex)
+        val southWestValue = grid.valueAt(latitude.lower, longitude.lower)
+        val southEastValue = grid.valueAt(latitude.lower, longitude.upper)
+        val northWestValue = grid.valueAt(latitude.upper, longitude.lower)
+        val northEastValue = grid.valueAt(latitude.upper, longitude.upper)
         // if any of the four points is missing, returns a missing value
         val anyCornerMissing = southWestValue.isNaN() ||
             southEastValue.isNaN() ||
@@ -48,21 +41,9 @@ class BilinearInterpolation :
         if (anyCornerMissing) {
             return Double.NaN
         }
-        val longitudeWeight = weight(
-            grid.longitudes,
-            lowerLongitudeIndex,
-            upperLongitudeIndex,
-            position.longitude,
-        )
-        val latitudeWeight = weight(
-            grid.latitudes,
-            lowerLatitudeIndex,
-            upperLatitudeIndex,
-            position.latitude,
-        )
         // interpolates along longitude first (one value per latitude row), then along latitude.
-        val southValue = southWestValue + (southEastValue - southWestValue) * longitudeWeight
-        val northValue = northWestValue + (northEastValue - northWestValue) * longitudeWeight
-        return southValue + (northValue - southValue) * latitudeWeight
+        val southValue = southWestValue + (southEastValue - southWestValue) * longitude.weight
+        val northValue = northWestValue + (northEastValue - northWestValue) * longitude.weight
+        return southValue + (northValue - southValue) * latitude.weight
     }
 }

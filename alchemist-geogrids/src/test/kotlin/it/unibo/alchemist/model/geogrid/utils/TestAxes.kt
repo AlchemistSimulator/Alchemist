@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.geogrid.utils
 
+import it.unibo.alchemist.model.geogrid.utils.AxisCell.Companion.enclosingCellOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -19,53 +20,38 @@ class TestAxes {
     private val axis = doubleArrayOf(10.0, 20.0, 30.0, 40.0)
     private val singleNode = doubleArrayOf(42.0)
 
-    // bracketIndices tests
     @Test
-    fun `bracketIndices returns a degenerate pair on a node hit`() {
-        assertEquals(2 to 2, bracketIndices(axis, 30.0))
+    fun `a coordinate on a value has a degenerate cell`() {
+        assertEquals(AxisCell(2, 2, 0.0), axis.enclosingCellOf(30.0))
     }
 
     @Test
-    fun `bracketIndices brackets an interior coordinate`() {
-        assertEquals(1 to 2, bracketIndices(axis, 23.0))
-    }
-
-    @Test
-    fun `bracketIndices clamps outside the boundaries`() {
-        assertEquals(0 to 0, bracketIndices(axis, 5.0))
-        assertEquals(3 to 3, bracketIndices(axis, 50.0))
-    }
-
-    @Test
-    fun `bracketIndices is degenerate on a single-node axis`() {
-        assertEquals(0 to 0, bracketIndices(singleNode, 42.0))
-        assertEquals(0 to 0, bracketIndices(singleNode, 0.0))
-        assertEquals(0 to 0, bracketIndices(singleNode, 100.0))
-    }
-
-    @Test
-    fun `bracketIndices rejects an empty axis and a NaN query`() {
-        assertFailsWith<IllegalArgumentException> { bracketIndices(DoubleArray(0), 5.0) }
-        assertFailsWith<IllegalArgumentException> { bracketIndices(axis, Double.NaN) }
-    }
-
-    // weight tests
-    @Test
-    fun `weight is 0 at the lower node and 1 at the upper node`() {
-        assertEquals(0.0, weight(axis, 1, 2, 20.0))
-        assertEquals(1.0, weight(axis, 1, 2, 30.0))
-    }
-
-    @Test
-    fun `weight is the normalized position within the segment`() {
+    fun `an interior coordinate is weighted by its position in the cell`() {
         // sets a tolerance for the results
         val tolerance = 1e-9
-        assertEquals(0.5, weight(axis, 1, 2, 25.0), tolerance)
-        assertEquals(0.3, weight(axis, 1, 2, 23.0), tolerance)
+        val cell = axis.enclosingCellOf(23.0)
+        assertEquals(1, cell.lower)
+        assertEquals(2, cell.upper)
+        assertEquals(0.3, cell.weight, tolerance)
+        assertEquals(0.5, axis.enclosingCellOf(25.0).weight, tolerance)
     }
 
     @Test
-    fun `weight is 0 on a degenerate bracket`() {
-        assertEquals(0.0, weight(axis, 2, 2, 30.0))
+    fun `coordinates outside the axis clamp to its ends`() {
+        assertEquals(AxisCell(0, 0, 0.0), axis.enclosingCellOf(5.0))
+        assertEquals(AxisCell(3, 3, 0.0), axis.enclosingCellOf(50.0))
+    }
+
+    @Test
+    fun `a single-value axis always has a degenerate cell`() {
+        assertEquals(AxisCell(0, 0, 0.0), singleNode.enclosingCellOf(42.0))
+        assertEquals(AxisCell(0, 0, 0.0), singleNode.enclosingCellOf(0.0))
+        assertEquals(AxisCell(0, 0, 0.0), singleNode.enclosingCellOf(100.0))
+    }
+
+    @Test
+    fun `an empty axis and a NaN query are rejected`() {
+        assertFailsWith<IllegalArgumentException> { DoubleArray(0).enclosingCellOf(5.0) }
+        assertFailsWith<IllegalArgumentException> { axis.enclosingCellOf(Double.NaN) }
     }
 }

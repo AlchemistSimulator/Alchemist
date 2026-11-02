@@ -18,8 +18,7 @@ import it.unibo.alchemist.model.geogrid.reading.RasterGrid
 import it.unibo.alchemist.model.geogrid.strategy.converter.MeasurementConverter
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.SpatioTemporalInterpolation
 import it.unibo.alchemist.model.geogrid.strategy.spatiotemporal.TrilinearInterpolation
-import it.unibo.alchemist.model.geogrid.utils.bracketIndices
-import it.unibo.alchemist.model.geogrid.utils.weight
+import it.unibo.alchemist.model.geogrid.utils.AxisCell.Companion.enclosingCellOf
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observables.util.Observables.switchMap
 import it.unibo.alchemist.model.observation.Observable
@@ -103,14 +102,14 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
         }
 
     /**
-     * Finds the time slices adjacent to time [t] using [bracketIndices],
+     * Finds the time slices adjacent to time [t] using [enclosingCellOf],
      * and applies the spatio-temporal [interpolation] strategy.
      * If [t] falls outside the calculated simulation time range,
      * the returned value will refer to the first or last temporal slice.
      */
     private fun valueAt(position: GeoPosition, t: Double): T {
         // the indices of the spatial slices that enclose time t.
-        val (gridIndexBefore, gridIndexAfter) = bracketIndices(sliceTimes, t)
+        val (gridIndexBefore, gridIndexAfter, timeWeight) = sliceTimes.enclosingCellOf(t)
         return if (gridIndexBefore == gridIndexAfter) {
             // the time t falls exactly on a slice.
             sampleExactSlice(position, gridIndexBefore)
@@ -119,12 +118,6 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
              * the time t lies between two distinct slices.
              * Applies the spatio-temporal interpolation strategy.
              */
-            val timeWeight = weight(
-                sliceTimes,
-                gridIndexBefore,
-                gridIndexAfter,
-                t,
-            )
             sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
         }
     }

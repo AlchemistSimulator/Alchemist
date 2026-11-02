@@ -10,13 +10,7 @@
 package it.unibo.alchemist.model.geogrid.reading
 
 /**
- * In-memory implementation of [RasterGrid] where values are stored in a single flattened row-major array.
- *
- * Suited for dense grids, where most cells hold a value.
- *
- * @param gridValues cell values in row-major order respect to [latitudes] x [longitudes], copied.
- *
- * @see RasterGrid
+ * A [RasterGrid] storing a copy of all values, suited for dense grids where most cells hold a value.
  */
 class ArrayRasterGrid(
     latitudes: Axis,

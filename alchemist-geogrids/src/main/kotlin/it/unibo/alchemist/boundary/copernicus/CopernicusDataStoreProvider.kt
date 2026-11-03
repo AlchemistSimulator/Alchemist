@@ -70,7 +70,6 @@ class CopernicusDataStoreProvider(
         require(target.isDirectory()) {
             "$target is not a directory or does not exist"
         }
-        logger.info("Fetching dataset '${key.dataset}'.")
         val start = TimeSource.Monotonic.markNow()
         // asks ECMWF servers to process the data.
         val monitorUrl = submit(key)
@@ -84,7 +83,7 @@ class CopernicusDataStoreProvider(
         file.verify(asset.sizeBytes, asset.md5)
         target.extractAndDeleteAllZipArchives()
         val elapsed = start.elapsedNow().inWholeMilliseconds.milliseconds
-        logger.info("Dataset '${key.dataset}' successfully downloaded in $elapsed.")
+        logger.info("Dataset '${key.dataset}' downloaded in $elapsed (${asset.sizeBytes} bytes).")
     }
 
     /**
@@ -129,11 +128,8 @@ class CopernicusDataStoreProvider(
         check(deadline.hasNotPassedNow()) { "Timeout ($timeout) while waiting for job completion at $monitorUrl" }
         val job = get(monitorUrl).body().toJsonObject()
         return when (val status = job.status) {
-            SUCCESSFUL -> {
-                logger.info("Job completed at $monitorUrl")
-                job.link("results")
-                    ?: error("Job '$SUCCESSFUL' but no rel='results' link at $monitorUrl: inconsistent response")
-            }
+            SUCCESSFUL -> job.link("results")
+                ?: error("Job '$SUCCESSFUL' but no rel='results' link at $monitorUrl: inconsistent response")
             in TERMINAL_STATUSES -> failOnStatus(monitorUrl, status, job)
             else -> {
                 if (status != previousStatus) {
@@ -156,7 +152,8 @@ class CopernicusDataStoreProvider(
     private fun fetchAsset(resultsUrl: String): RemoteAsset {
         val asset = get(resultsUrl).body().toJsonObject().asset
         val absoluteHref = URI.create(resultsUrl).resolve(asset.href).toString()
-        logger.info("Asset will be downloaded from: $absoluteHref (${asset.sizeBytes} bytes)")
+        // the download can take long, so the user is told when it starts
+        logger.info("Job completed, downloading ${asset.sizeBytes} bytes from $absoluteHref")
         return asset.copy(href = absoluteHref)
     }
 
@@ -168,14 +165,12 @@ class CopernicusDataStoreProvider(
         // extracts the asset name from the uri
         val fileName = uri.path.substringAfterLast('/').ifEmpty { "download" }
         val target = targetDir.resolve(fileName)
-        logger.info("Downloading $fileName...")
         val request = HttpRequest.newBuilder().uri(uri).GET().build() // no PRIVATE-TOKEN needed
         val response = http.send(request, HttpResponse.BodyHandlers.ofFile(target))
         // http error code check
         if (!response.isSuccessful) {
             error("Download failed (HTTP ${response.statusCode()}) from ${asset.href}")
         }
-        logger.info("Downloaded $fileName")
         return response.body()
     }
 

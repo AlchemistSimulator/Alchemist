@@ -102,7 +102,12 @@ internal fun readFileAxes(dataset: NetcdfDataset, variableName: String?, file: P
     val timeAxis = requireNotNull(CoordinateAxis1DTime.factory(dataset, rawTimeAxis, errMsg)) {
         "Cannot build time axis in $file: $errMsg"
     }
+
     // normalizes latitude/longitude to ascending order
+    fun DoubleArray.ascendingWithDescendingFlag(): Pair<DoubleArray, Boolean> {
+        val descending = first() > last()
+        return (if (descending) reversedArray() else this) to descending
+    }
     val (latitudes, latDescending) = latAxis.coordValues.ascendingWithDescendingFlag()
     val (longitudes, lonDescending) = lonAxis.coordValues.ascendingWithDescendingFlag()
     // derives the dimension names needed to find the variable and to validate its shape
@@ -269,12 +274,4 @@ internal class ReferenceGrid(axes: FileAxes) {
                 "in $file. All files in $directory must contain the same variable."
         }
     }
-}
-
-/**
- * This array in ascending order, and whether it was descending.
- */
-private fun DoubleArray.ascendingWithDescendingFlag(): Pair<DoubleArray, Boolean> {
-    val descending = first() > last()
-    return (if (descending) reversedArray() else this) to descending
 }

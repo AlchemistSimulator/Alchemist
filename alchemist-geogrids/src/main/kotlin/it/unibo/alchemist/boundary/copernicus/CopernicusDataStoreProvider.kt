@@ -192,7 +192,7 @@ class CopernicusDataStoreProvider(
      * results, otherwise its `message` or its whole status are reported.
      */
     private fun failOnStatus(monitorUrl: String, status: String, job: JsonObject): Nothing {
-        val cause = job.link("results")?.let { getRaw(it).body().toJsonObjectOrNull()?.problem }
+        val cause = job.link("results")?.let { get(it, acceptErrors = true).body().toJsonObjectOrNull()?.problem }
             ?: job.message?.takeUnless { it.isBlank() }
         error("Job in state '$status' at $monitorUrl${if (cause == null) ". Body: $job" else ": $cause"}")
     }
@@ -200,15 +200,9 @@ class CopernicusDataStoreProvider(
     /**
      * Gets [url] with the token.
      *
-     * @throws IllegalStateException if the response is an error.
+     * @throws IllegalStateException if the response is an error, unless [acceptErrors].
      */
-    private fun get(url: String): HttpResponse<String> =
-        getRaw(url).also { if (!it.isSuccessful) failOnHttpError("GET $url", it) }
-
-    /**
-     * Gets [url] with the token, whatever the response.
-     */
-    private fun getRaw(url: String): HttpResponse<String> = http.send(
+    private fun get(url: String, acceptErrors: Boolean = false): HttpResponse<String> = http.send(
         HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("PRIVATE-TOKEN", token)
@@ -217,7 +211,7 @@ class CopernicusDataStoreProvider(
             .GET()
             .build(),
         HttpResponse.BodyHandlers.ofString(),
-    )
+    ).also { if (!acceptErrors && !it.isSuccessful) failOnHttpError("GET $url", it) }
 
     /**
      * A file to download from [href], with its size in bytes and, if advertised, its MD5 digest

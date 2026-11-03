@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.geogrid.snapshots
 
 import it.unibo.alchemist.TestVariable
+import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Files
 import java.nio.file.Path
@@ -45,6 +46,25 @@ class TestGridsFromDirectory {
      * the directory where the temporary NetCDF files for the tests will be created.
      */
     private val tempDir: Path = Files.createTempDirectory("eagergridsnapshots-test")
+
+    /**
+     * A new directory, named after [label], with a 2-by-2 NetCDF file of [variables].
+     */
+    private fun singleFileDirectory(
+        label: String,
+        lats: DoubleArray = doubleArrayOf(10.0, 20.0),
+        lons: DoubleArray = doubleArrayOf(5.0, 15.0),
+        timeHours: DoubleArray = doubleArrayOf(0.0),
+        variables: List<TestVariable> = listOf(TestVariable("dis24")),
+    ): String {
+        val dir = Files.createTempDirectory(tempDir, label)
+        writeTestNetcdf(dir.resolve("data.nc"), lats, lons, timeHours, variables)
+        return dir.toString()
+    }
+
+    private fun RasterGrid.values(): List<Double> = (0 until latitudes.size).flatMap { latitude ->
+        (0 until longitudes.size).map { longitude -> valueAt(latitude, longitude) }
+    }
 
     // deletes the directory and its files after the tests
     @AfterTest
@@ -211,5 +231,89 @@ class TestGridsFromDirectory {
             doubleArrayOf(24.0),
         )
         assertFailsWith<IllegalArgumentException> { GridsFromDirectory(dir.toString()) }
+    }
+
+    @Test
+    fun `files with mismatched longitudes should raise an IllegalArgumentException`() {
+        val dir = Files.createTempDirectory(tempDir, "lon-mismatch")
+        writeTestNetcdf(dir.resolve("f1.nc"), doubleArrayOf(10.0, 20.0), doubleArrayOf(5.0, 15.0), doubleArrayOf(0.0))
+        writeTestNetcdf(dir.resolve("f2.nc"), doubleArrayOf(10.0, 20.0), doubleArrayOf(6.0, 16.0), doubleArrayOf(24.0))
+        assertFailsWith<IllegalArgumentException> { GridsFromDirectory(dir.toString()) }
+    }
+
+    @Test
+    fun `files with different variables should raise an IllegalArgumentException`() {
+        val dir = Files.createTempDirectory(tempDir, "variable-mismatch")
+        val lats = doubleArrayOf(10.0, 20.0)
+        val lons = doubleArrayOf(5.0, 15.0)
+        writeTestNetcdf(dir.resolve("f1.nc"), lats, lons, doubleArrayOf(0.0), listOf(TestVariable("prima")))
+        writeTestNetcdf(dir.resolve("f2.nc"), lats, lons, doubleArrayOf(24.0), listOf(TestVariable("seconda")))
+        assertFailsWith<IllegalArgumentException> { GridsFromDirectory(dir.toString()) }
+    }
+
+    // Variable selection tests
+    @Test
+    fun `the variable with the given name should be read`() {
+        val dir = singleFileDirectory(
+            "explicit-variable",
+            variables = listOf(
+                TestVariable("first", rawValues = doubleArrayOf(1.0, 2.0, 3.0, 4.0)),
+                TestVariable("second", rawValues = doubleArrayOf(5.0, 6.0, 7.0, 8.0)),
+            ),
+        )
+        assertEquals(listOf(5.0, 6.0, 7.0, 8.0), GridsFromDirectory(dir, variable = "second").grid(0).values())
+    }
+
+    @Test
+    fun `a missing variable should raise an IllegalArgumentException`() {
+        val dir = singleFileDirectory("missing-variable")
+        assertFailsWith<IllegalArgumentException> { GridsFromDirectory(dir, variable = "not_in_the_file") }
+    }
+
+    @Test
+    fun `an ambiguous variable should raise an IllegalArgumentException`() {
+        val dir = singleFileDirectory("ambiguous-variable", variables = listOf(TestVariable("a"), TestVariable("b")))
+        assertFailsWith<IllegalArgumentException> { GridsFromDirectory(dir) }
+    }
+
+    // Values tests
+    @Test
+    fun `each instant should expose the values of its own time slice`() {
+        val dir = singleFileDirectory(
+            "time-slices",
+            timeHours = doubleArrayOf(0.0, 24.0),
+            variables = listOf(
+                TestVariable(rawValues = doubleArrayOf(100.0, 101.0, 102.0, 103.0, 200.0, 201.0, 202.0, 203.0)),
+            ),
+        )
+        val snapshots = GridsFromDirectory(dir)
+        assertEquals(listOf(100.0, 101.0, 102.0, 103.0), snapshots.grid(0).values())
+        assertEquals(listOf(200.0, 201.0, 202.0, 203.0), snapshots.grid(1).values())
+    }
+
+    @Test
+    fun `values should be correctly re-mapped after descending longitude normalization`() {
+        val dir = singleFileDirectory(
+            "lon-remap",
+            lons = doubleArrayOf(15.0, 5.0),
+            variables = listOf(TestVariable(rawValues = doubleArrayOf(1.0, 2.0, 3.0, 4.0))),
+        )
+        val grid = GridsFromDirectory(dir).grid(0)
+        assertContentEquals(doubleArrayOf(5.0, 15.0), grid.longitudes.toDoubleArray())
+        assertEquals(listOf(2.0, 1.0, 4.0, 3.0), grid.values())
+    }
+
+    // GRIB reading test
+    @Test
+    fun `a classpath directory of GRIB files and their indexes should be read`() {
+        /*
+         * real, manually downloaded data from the "reanalysis-era5-single-levels" dataset,
+         * next to the index files of netCDF-Java, which would fail to open as data
+         */
+        val snapshots = GridsFromDirectory("gribs")
+        assertTrue(snapshots.instants.isNotEmpty(), "Expected at least one time instant")
+        val grid = snapshots.grid(0)
+        assertTrue(grid.latitudes.size > 0, "Expected at least one latitude, got ${grid.latitudes.size}")
+        assertTrue(grid.longitudes.size > 0, "Expected at least one longitude, got ${grid.longitudes.size}")
     }
 }

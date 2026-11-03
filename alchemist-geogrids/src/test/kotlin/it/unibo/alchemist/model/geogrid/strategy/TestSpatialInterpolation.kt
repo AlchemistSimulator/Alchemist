@@ -20,8 +20,8 @@ import kotlin.test.assertTrue
 
 class TestSpatialInterpolation {
 
-    private val nearest = NearestInterpolation()
-    private val bilinear = BilinearInterpolation()
+    private val nearest = NearestInterpolation
+    private val bilinear = BilinearInterpolation
 
     private val tolerance = 1e-9
 

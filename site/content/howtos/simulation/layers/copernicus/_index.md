@@ -55,7 +55,7 @@ with no network access and no credentials.
 All the files in the directory must hold the same variable on the same grid,
 and their time slices get merged in chronological order
 (if several files hold the same instant, the slice of the first file is used).
-The directory can be a path on the file system or the name of a directory among the classpath resources.
+The directory is looked up first among the classpath resources, and then as a path on the file system.
 
 {{< code path="alchemist-geogrids/src/test/resources/copernicus/local-data.yml" >}}
 
@@ -65,7 +65,7 @@ The same scenario, written with the Kotlin DSL:
 
 ## Downloading data from a Copernicus data store
 
-Given an `endpoint`, a `dataset`, and an `inputsFile`,
+Given an `endpoint`, a `dataset`, and the `inputs` of the request,
 `CopernicusData` requests the data directly to a data store:
 it submits the request, waits for the data store to prepare the data, downloads it,
 and verifies its integrity before using it.
@@ -86,20 +86,23 @@ The parameters of `CopernicusData` describing the request are:
   or `https://ads.atmosphere.copernicus.eu/api` for the Atmosphere Data Store;
 * `dataset`: the identifier of the dataset, as shown in its page on the data store
   (e.g., `cems-glofas-historical`);
-* `inputsFile`: a JSON file holding the request, passed as is to the data store,
-  either a path on the file system or the name of a file among the classpath resources.
+* `inputs`: the request, passed as is to the data store, written in one of three ways:
+  * as a JSON string, as in the examples above;
+  * as a JSON file, among the classpath resources or, if not there, on the file system;
+  * as a mapping, written in YAML or as a `Map` in the Kotlin DSL.
 
 The easiest way to write the request is to compose it in the *Download* tab of the dataset page,
 and to copy the `request` dictionary shown in the *API request* section at the bottom of the page,
-as in the following example:
+as in the examples above.
 
-{{< code path="alchemist-geogrids/src/test/resources/copernicus/glofas-request.json" >}}
+A string is read as a file if there is a file with that name, and as JSON otherwise.
 
-{{% notice note "Why a separate JSON file?" %}}
+{{% notice note "Requests with a type field" %}}
 Requests of some datasets have a `type` field,
 which would clash with the `type` keyword that Alchemist uses to
 [load classes](/reference/yaml/#arbitrary-class-loading-system),
-so the request cannot be written inline in the YAML file.
+so these requests cannot be written as YAML mappings:
+write them as a JSON string, e.g., in a block scalar (`|`) as in the example above, or in a JSON file.
 {{% /notice %}}
 
 ### Credentials

@@ -10,18 +10,27 @@
 package it.unibo.alchemist.model.geogrid.snapshots
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonNull
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSyntaxException
+import com.google.gson.Strictness
 import com.google.gson.reflect.TypeToken
 import it.unibo.alchemist.boundary.copernicus.CopernicusDataStoreProvider
 import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.boundary.filecache.FileSystemDirectoryCache
 import it.unibo.alchemist.model.geogrid.GridSnapshots
 import it.unibo.alchemist.model.geogrid.layers.GriddedGeoLayer
-import it.unibo.alchemist.model.geogrid.utils.pathOrClasspathResource
+import java.net.URL
+import java.nio.file.InvalidPathException
 import java.nio.file.Path
+import kotlin.io.path.isRegularFile
 import kotlin.io.path.readLines
-import kotlin.io.path.readText
 import kotlin.time.Duration
+import org.kaikikm.threadresloader.ResourceLoader
 
 /**
  * The data of a [GriddedGeoLayer], downloaded at construction from a Copernicus data store,
@@ -30,20 +39,20 @@ import kotlin.time.Duration
  *
  * @param endpoint the URL of the API of the data store (e.g., `https://ewds.climate.copernicus.eu/api`).
  * @param dataset the dataset (e.g., `cems-glofas-historical`).
- * @param inputsFile a JSON file, on the file system or among the classpath resources, with what to download
- * (variables, dates, area...). It is a file rather than an inline mapping because some datasets need a `type`
- * field, which the Alchemist loader reserves.
+ * @param inputs what to download (variables, dates, area...), as a JSON object: either a mapping,
+ * a JSON file (among the classpath resources or, if not there, on the file system), or a JSON string.
+ * Requests with a `type` field need a file or a string, as the Alchemist loader reserves `type` in mappings.
  * @param variable the name of the variable inside the downloaded files, auto-detected when `null`.
  * @param cacheDirectory the directory of the cache.
  * @param cdsApiRcFile the `.cdsapirc` file with the API token, read only when downloading.
  * @param providerTimeout how long the data store can take to prepare the data, as an ISO-8601 duration.
- * @throws IllegalArgumentException if a parameter is not valid, or if [inputsFile] does not exist.
+ * @throws IllegalArgumentException if a parameter is not valid, including [inputs] not holding a JSON object.
  * @throws IllegalStateException if the token cannot be read, or the download fails.
  */
 class CopernicusData @JvmOverloads constructor(
     endpoint: String,
     dataset: String,
-    inputsFile: String,
+    inputs: Any,
     variable: String? = null,
     cacheDirectory: String = DEFAULT_CACHE_DIRECTORY.toString(),
     cdsApiRcFile: String = DEFAULT_CDSAPIRC_LOCATION.toString(),
@@ -53,7 +62,7 @@ class CopernicusData @JvmOverloads constructor(
         CopernicusRequest(
             endpoint.trim().trimEnd('/'),
             dataset,
-            pathOrClasspathResource(inputsFile).readJsonObject(),
+            inputs.toRequestInputs(),
         ),
         Path.of(cacheDirectory),
         Path.of(cdsApiRcFile),
@@ -63,7 +72,7 @@ class CopernicusData @JvmOverloads constructor(
 ) {
 
     /**
-     * Default locations, and readers of the local files.
+     * Default locations, and readers of the inputs and of the token.
      */
     companion object {
         private const val KEY_FIELD = "key"
@@ -79,6 +88,8 @@ class CopernicusData @JvmOverloads constructor(
         val DEFAULT_CDSAPIRC_LOCATION: Path = Path.of(System.getProperty("user.home"), ".cdsapirc")
 
         private val gson = Gson()
+
+        private val strictGson: Gson = GsonBuilder().setStrictness(Strictness.STRICT).create()
 
         private val mapType = object : TypeToken<Map<String, Any>>() {}.type
 
@@ -98,13 +109,6 @@ class CopernicusData @JvmOverloads constructor(
         }
 
         /**
-         * This file as a JSON object, with nested objects as [Map]s and arrays as [List]s.
-         *
-         * @throws JsonSyntaxException if the file does not hold a JSON object.
-         */
-        internal fun Path.readJsonObject(): Map<String, Any> = gson.fromJson(readText(), mapType)
-
-        /**
          * The token in the `key:` line of this [`.cdsapirc`](https://cds.climate.copernicus.eu/how-to-api) file.
          *
          * @throws IllegalStateException if the file has no `key:` line.
@@ -116,5 +120,77 @@ class CopernicusData @JvmOverloads constructor(
                 else -> null
             }
         } ?: error("No 'key:' line in $this")
+
+        /**
+         * These inputs of a request as a JSON object, with nested objects as [Map]s and arrays as [List]s.
+         * They can be a [Map], a JSON file among the classpath resources or on the file system, or a JSON string.
+         *
+         * @throws IllegalArgumentException if these inputs are none of them, or do not hold a JSON object.
+         */
+        internal fun Any.toRequestInputs(): Map<String, Any> {
+            val file = (this as? String)?.toExistingFile()
+            val (source, json) = when {
+                file != null -> "File $file" to file.readText().parseJson { "File $file does not hold valid JSON" }
+                this is String ->
+                    "String '$this', not an existing file," to
+                        parseJson { "'$this' is neither an existing file nor a valid JSON string" }
+                this is Map<*, *> -> "Mapping $this" to toJsonElement("inputs")
+                else -> throw IllegalArgumentException(
+                    "Inputs must be a Map, a JSON file, or a JSON string, but are a ${this::class.simpleName}: $this",
+                )
+            }
+            require(json.isJsonObject) { "$source holds valid JSON, but not a JSON object: $json" }
+            return gson.fromJson(json, mapType)
+        }
+
+        /**
+         * This string as JSON, or a failure with the message [error] if it is not valid JSON.
+         */
+        private inline fun String.parseJson(error: () -> String): JsonElement = try {
+            // an empty string is no JSON at all
+            strictGson.fromJson(this, JsonElement::class.java) ?: throw JsonSyntaxException("no content")
+        } catch (e: JsonSyntaxException) {
+            throw IllegalArgumentException("${error()}: ${e.message}", e)
+        }
+
+        /**
+         * The file among the classpath resources with this name or, if there is none, at this path;
+         * `null` if there is no such file.
+         */
+        private fun String.toExistingFile(): URL? = takeIf { it.isNotBlank() }?.let { name ->
+            ResourceLoader.getResource(name)
+                // directories on the classpath are not files
+                ?.takeUnless { it.protocol == "file" && !Path.of(it.toURI()).isRegularFile() }
+                ?: try {
+                    Path.of(name).takeIf { it.isRegularFile() }?.toUri()?.toURL()
+                } catch (ignored: InvalidPathException) {
+                    // e.g., a JSON string on Windows, where quotes and colons cannot be in paths
+                    null
+                }
+        }
+
+        /**
+         * This value of a mapping found at [path] as JSON.
+         *
+         * @throws IllegalArgumentException if it holds non-string keys, or values with no JSON equivalent.
+         */
+        private fun Any?.toJsonElement(path: String): JsonElement = when (this) {
+            null -> JsonNull.INSTANCE
+            is Boolean -> JsonPrimitive(this)
+            is Number -> JsonPrimitive(this)
+            is String -> JsonPrimitive(this)
+            is Map<*, *> -> JsonObject().also { json ->
+                forEach { (key, value) ->
+                    require(key is String) { "The key $key of $path is not a string, so it is not a valid JSON key" }
+                    json.add(key, value.toJsonElement("$path.$key"))
+                }
+            }
+            is Iterable<*> -> JsonArray().also { json ->
+                forEachIndexed { index, value -> json.add(value.toJsonElement("$path[$index]")) }
+            }
+            else -> throw IllegalArgumentException(
+                "$path is a ${this::class.simpleName} ($this), which has no JSON equivalent",
+            )
+        }
     }
 }

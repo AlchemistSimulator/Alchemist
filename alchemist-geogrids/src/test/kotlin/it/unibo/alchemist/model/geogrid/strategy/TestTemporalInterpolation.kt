@@ -18,10 +18,10 @@ import kotlin.test.assertEquals
 
 class TestTemporalInterpolation {
 
-    private val closest = ClosestInterpolation()
-    private val last = LastInterpolation()
-    private val next = NextInterpolation()
-    private val linear = LinearInterpolation()
+    private val closest = ClosestInterpolation
+    private val last = LastInterpolation
+    private val next = NextInterpolation
+    private val linear = LinearInterpolation
 
     private val tolerance = 1e-9
 

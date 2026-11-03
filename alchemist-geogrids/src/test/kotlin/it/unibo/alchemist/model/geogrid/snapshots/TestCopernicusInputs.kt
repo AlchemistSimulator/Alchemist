@@ -9,12 +9,13 @@
 
 package it.unibo.alchemist.model.geogrid.snapshots
 
-import com.google.gson.JsonSyntaxException
-import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData.Companion.readJsonObject
+import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData.Companion.toRequestInputs
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.LocalDate
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -27,43 +28,82 @@ class TestCopernicusInputs {
         tempDir.toFile().deleteRecursively()
     }
 
-    private fun inputsFile(content: String): Path = Files.createTempFile(tempDir, "inputs", ".json").apply {
+    private fun inputsFile(content: String): String = Files.createTempFile(tempDir, "inputs", ".json").apply {
         Files.writeString(this, content)
+    }.toString()
+
+    private fun assertFailsMentioning(expected: String, inputs: Any) {
+        val error = assertFailsWith<IllegalArgumentException> { inputs.toRequestInputs() }
+        assertContains(error.message.orEmpty(), expected)
     }
 
     @Test
-    fun `reads a flat JSON object into a map of lists`() {
-        val path = inputsFile("""{ "variable": ["2m_temperature"], "year": ["2024"] }""".trimIndent())
+    fun `reads a JSON string`() {
         assertEquals(
-            mapOf(
-                "variable" to listOf("2m_temperature"),
-                "year" to listOf("2024"),
-            ),
-            path.readJsonObject(),
+            mapOf("variable" to listOf("2m_temperature"), "year" to listOf("2024")),
+            """{ "variable": ["2m_temperature"], "year": ["2024"] }""".toRequestInputs(),
         )
     }
 
     @Test
-    fun `reads a 'type' key without any loader involved`() {
-        val path = inputsFile("""{ "type": ["validated_reanalysis"] }""".trimIndent())
-        assertEquals(mapOf("type" to listOf("validated_reanalysis")), path.readJsonObject())
+    fun `reads a JSON file`() {
+        assertEquals(
+            mapOf("type" to listOf("validated_reanalysis")),
+            inputsFile("""{ "type": ["validated_reanalysis"] }""").toRequestInputs(),
+        )
+    }
+
+    @Test
+    fun `reads a JSON file among the classpath resources`() {
+        assertEquals(
+            mapOf("variable" to listOf("2m_temperature"), "year" to listOf("2024")),
+            "copernicus-inputs/request.json".toRequestInputs(),
+        )
+    }
+
+    @Test
+    fun `reads a mapping as the equivalent JSON string`() {
+        val json = """{ "area": [44, 11.5], "data_format": "netcdf", "nested": { "flag": true } }"""
+        val mapping = mapOf("area" to listOf(44, 11.5), "data_format" to "netcdf", "nested" to mapOf("flag" to true))
+        assertEquals(json.toRequestInputs(), mapping.toRequestInputs())
     }
 
     @Test
     fun `preserves list order`() {
-        val path = inputsFile("""{ "area": [44.0, 11.0, 45.0, 12.0] }""".trimIndent())
-        assertEquals(mapOf("area" to listOf(44.0, 11.0, 45.0, 12.0)), path.readJsonObject())
+        assertEquals(
+            mapOf("area" to listOf(44.0, 11.0, 45.0, 12.0)),
+            """{ "area": [44.0, 11.0, 45.0, 12.0] }""".toRequestInputs(),
+        )
     }
 
     @Test
-    fun `throws JsonSyntaxException when the file holds a JSON array instead of an object`() {
-        val path = inputsFile("[1, 2, 3]")
-        assertFailsWith<JsonSyntaxException> { path.readJsonObject() }
+    fun `fails clearly on a string that is neither a file nor JSON`() {
+        assertFailsMentioning("neither an existing file nor a valid JSON string", "missing/request.json")
+        assertFailsMentioning("neither an existing file nor a valid JSON string", """{ "unterminated": [ }""")
+        assertFailsMentioning("neither an existing file nor a valid JSON string", "")
+        // a directory among the classpath resources is not a file
+        assertFailsMentioning("neither an existing file nor a valid JSON string", "copernicus-inputs")
     }
 
     @Test
-    fun `throws JsonSyntaxException when the file holds a scalar`() {
-        val path = inputsFile("\"cmon, this is just a string!\"")
-        assertFailsWith<JsonSyntaxException> { path.readJsonObject() }
+    fun `fails clearly on a file that does not hold JSON`() {
+        assertFailsMentioning("does not hold valid JSON", inputsFile("variable: 2m_temperature"))
+    }
+
+    @Test
+    fun `fails clearly on valid JSON that is not an object`() {
+        assertFailsMentioning("not a JSON object", inputsFile("[1, 2, 3]"))
+        assertFailsMentioning("not a JSON object", "\"cmon, this is just a string!\"")
+    }
+
+    @Test
+    fun `fails clearly on a mapping with no JSON equivalent`() {
+        assertFailsMentioning("is not a string", mapOf("area" to mapOf(1 to 2)))
+        assertFailsMentioning("inputs.hday[0]", mapOf("hday" to listOf(LocalDate.of(2024, 6, 10))))
+    }
+
+    @Test
+    fun `fails clearly on inputs of another type`() {
+        assertFailsMentioning("must be a ", 42)
     }
 }

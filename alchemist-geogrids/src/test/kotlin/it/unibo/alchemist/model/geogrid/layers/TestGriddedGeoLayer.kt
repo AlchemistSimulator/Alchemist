@@ -187,8 +187,8 @@ class TestGriddedGeoLayer {
         val layer = DoubleGriddedGeoLayer(
             envAt(0.6),
             snapshotsOf(listOf(gridBefore, gridAfter)),
-            spatialInterpolation = NearestInterpolation(),
-            temporalInterpolation = ClosestInterpolation(),
+            spatialInterpolation = NearestInterpolation,
+            temporalInterpolation = ClosestInterpolation,
         )
         // nearest to the south-west corner, closest to the second grid
         assertEquals(1000.0, layer.currentValueAt(mockGeoPosition(44.1, 11.1)))

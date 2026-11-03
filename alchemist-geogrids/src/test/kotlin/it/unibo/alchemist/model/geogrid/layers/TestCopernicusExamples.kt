@@ -13,7 +13,7 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData.Companion.readJsonObject
+import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData.Companion.toRequestInputs
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.Test
@@ -32,18 +32,31 @@ class TestCopernicusExamples {
     }
 
     @Test
-    fun `the datastore example reads cached data without accessing the network`() {
+    fun `the datastore example with inline inputs reads cached data without accessing the network`() {
+        fillCache()
+        assertEquivalentExamplesPerceiveFirstSlice("copernicus/datastore")
+    }
+
+    @Test
+    fun `the datastore example with inputs from the classpath reads cached data without accessing the network`() {
+        fillCache()
+        assertEquivalentExamplesPerceiveFirstSlice("copernicus/datastore-classpath")
+    }
+
+    /**
+     * Puts the data of the datastore examples in their cache, so that neither network nor credentials are needed.
+     * Examples whose inputs are not those of `glofas-request.json` miss the cache, and fail trying to download.
+     */
+    private fun fillCache() {
         val request = CopernicusRequest(
             endpoint = "https://ewds.climate.copernicus.eu/api",
             dataset = "cems-glofas-historical",
-            inputs = resource("copernicus/glofas-request.json").readJsonObject(),
+            inputs = "copernicus/glofas-request.json".toRequestInputs(),
         )
-        // the cache already holds the requested data, so neither network nor credentials are needed
         val entry = Path.of("build/copernicus-cache").resolve(request.directoryName)
         entry.toFile().deleteRecursively()
         Files.createDirectories(entry)
         Files.copy(resource("copernicus/glofas-cesena/glofas-cesena.nc"), entry.resolve("glofas-cesena.nc"))
-        assertEquivalentExamplesPerceiveFirstSlice("copernicus/datastore")
     }
 
     private fun assertEquivalentExamplesPerceiveFirstSlice(example: String) {

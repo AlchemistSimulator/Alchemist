@@ -11,9 +11,21 @@ simulationOnMap(ProtelisIncarnation()) {
                     // The datastore API: CDS, EWDS, or ADS
                     endpoint = "https://ewds.climate.copernicus.eu/api",
                     dataset = "cems-glofas-historical",
-                    // The request, as shown by the "API request" section of the dataset download form:
-                    // a path, or the name of a file among the classpath resources
-                    inputsFile = "copernicus/glofas-request.json",
+                    // The request, as shown by the "API request" section of the dataset download form
+                    inputs = """
+                        {
+                          "system_version": ["version_4_0"],
+                          "hydrological_model": ["lisflood"],
+                          "product_type": ["consolidated"],
+                          "variable": ["river_discharge_in_the_last_24_hours"],
+                          "hyear": ["2024"],
+                          "hmonth": ["06"],
+                          "hday": ["10"],
+                          "data_format": "netcdf",
+                          "download_format": "unarchived",
+                          "area": [44.2, 12.2, 44.1, 12.3]
+                        }
+                    """,
                     // Optional: where the downloaded data is cached, by default in the user cache directory
                     cacheDirectory = "build/copernicus-cache",
                 ),

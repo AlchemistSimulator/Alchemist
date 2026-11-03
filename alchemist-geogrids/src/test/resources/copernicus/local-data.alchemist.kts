@@ -9,7 +9,7 @@ simulationOnMap(ProtelisIncarnation()) {
             doubleGriddedGeoLayer(
                 data = GridsFromDirectory(
                     // A directory of NetCDF or GRIB files sharing the same variable and grid:
-                    // a path, or the name of a directory among the classpath resources
+                    // a directory among the classpath resources or, if not there, a path
                     directory = "copernicus/glofas-cesena",
                     // The variable to read, optional if the files hold only one
                     variable = "dis24",

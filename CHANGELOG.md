@@ -1,3 +1,18 @@
+## [49.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/49.1.3...49.2.0) (2026-11-03)
+
+### Features
+
+* **loading:** support Kotlin objects as types in YAML specifications ([#5731](https://github.com/AlchemistSimulator/Alchemist/issues/5731)) ([643dccb](https://github.com/AlchemistSimulator/Alchemist/commit/643dccb6225469387ed7a7d937d60fb58072a6d9))
+
+### Dependency updates
+
+* **deps:** update plugin spotless to v8.11.0 ([#5733](https://github.com/AlchemistSimulator/Alchemist/issues/5733)) ([a275978](https://github.com/AlchemistSimulator/Alchemist/commit/a2759782db90669822c6940deb1aa3ca0ffcb4dc))
+* **deps:** update semantic-release-preconfigured-conventional-commits to 1.1.158 ([14ade47](https://github.com/AlchemistSimulator/Alchemist/commit/14ade47131b19f5c28566cc24439e9280e11776a))
+
+### Build and continuous integration
+
+* **deps:** bump undici from 7.16.0 to 7.30.1 ([79c7d0d](https://github.com/AlchemistSimulator/Alchemist/commit/79c7d0d8035159e1b676a21ea594adeda8a0e3d4))
+
 ## [49.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/49.1.2...49.1.3) (2026-11-02)
 
 ### Bug Fixes

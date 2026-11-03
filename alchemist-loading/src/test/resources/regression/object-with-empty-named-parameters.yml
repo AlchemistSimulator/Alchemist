@@ -1,0 +1,6 @@
+incarnation: protelis
+
+layers:
+  - molecule: zero
+    type: another.location.ZeroLayer
+    parameters: {}

@@ -28,15 +28,25 @@ class TestObjectTypes {
     }
 
     @Test
+    fun `objects accept an empty map of named parameters`() {
+        val environment = loadAlchemistFromResource("regression/object-with-empty-named-parameters.yml")
+            .getDefault<Any, Euclidean2DPosition>()
+            .environment
+        val values = environment.layers.values.map { it.currentValueAt(Euclidean2DPosition(0.0, 0.0)) }
+        assertEquals(listOf(0.0), values)
+    }
+
+    @Test
     fun `objects given parameters fail explaining that they take none`() {
-        val failure = assertFails {
-            loadAlchemistFromResource("regression/object-with-parameters.yml")
-                .getDefault<Any, Euclidean2DPosition>()
+        listOf("object-with-parameters.yml", "object-with-named-parameters.yml").forEach { resource ->
+            val failure = assertFails {
+                loadAlchemistFromResource("regression/$resource").getDefault<Any, Euclidean2DPosition>()
+            }
+            val messages = generateSequence(failure) { it.cause }.mapNotNull { it.message }.toList()
+            assertTrue(
+                messages.any { "UnitShift is an object, so it takes no parameters" in it },
+                "Unexpected failure messages for $resource: $messages",
+            )
         }
-        val messages = generateSequence(failure) { it.cause }.mapNotNull { it.message }.toList()
-        assertTrue(
-            messages.any { "UnitShift is an object, so it takes no parameters" in it },
-            "Unexpected failure messages: $messages",
-        )
     }
 }

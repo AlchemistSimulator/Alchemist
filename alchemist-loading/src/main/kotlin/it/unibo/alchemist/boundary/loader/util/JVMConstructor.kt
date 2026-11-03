@@ -27,6 +27,11 @@ import org.slf4j.LoggerFactory
  */
 internal sealed class JVMConstructor(val typeName: String) {
     /**
+     * Whether any parameter has been provided, regardless of the target type.
+     */
+    protected abstract val hasParameters: Boolean
+
+    /**
      * provided a [target] class, extracts the parameters as an ordered list.
      */
     protected abstract fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*>
@@ -125,7 +130,7 @@ internal sealed class JVMConstructor(val typeName: String) {
     private fun <T : Any> newInstance(target: KClass<T>, jirf: Factory): T {
         // objects have no constructor to call: their only instance is the one to use
         target.objectInstance?.let { instance ->
-            require(parametersFor(target, jirf).isEmpty()) {
+            require(!hasParameters) {
                 "${target.simpleName} is an object, so it takes no parameters"
             }
             return instance

@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory
  */
 internal class NamedParametersConstructor(type: String, val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()) :
     JVMConstructor(type) {
+    override val hasParameters: Boolean = parametersMap.isNotEmpty()
+
     private fun List<OrderedParameters>.description() = joinToString(prefix = "\n- ", separator = "\n- ") {
         it.namedParametersDescriptor()
     }

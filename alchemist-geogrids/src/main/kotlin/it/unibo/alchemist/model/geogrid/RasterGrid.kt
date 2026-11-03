@@ -16,8 +16,6 @@ import it.unibo.alchemist.model.GeoPosition
  *
  * @property latitudes the latitudes of the grid.
  * @property longitudes the longitudes of the grid.
- * @param gridValues the values, row by row: all longitudes of the first latitude, then of the second, and so on.
- * @throws IllegalArgumentException if there is not exactly one value per cell.
  */
 interface RasterGrid {
     val latitudes: Axis

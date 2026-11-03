@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.copernicus
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import it.unibo.alchemist.boundary.copernicus.CopernicusDataStoreProvider.Companion.asset
 import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
 import java.net.URI
 import java.net.http.HttpClient
@@ -198,12 +199,8 @@ class CopernicusDataStoreProvider(
      * Fails reporting the [response] to [action], with its error report if any.
      */
     private fun failOnHttpError(action: String, response: HttpResponse<String>): Nothing {
-        val described = runCatching { response.body().toJsonObject().problemDetail.describe() }.getOrNull()
-        error(
-            "$action failed (HTTP ${response.statusCode()}). ${
-                if (described.isNullOrBlank()) "Body: ${response.body()}" else described
-            }",
-        )
+        val described = response.body().toJsonObjectOrNull()?.problem
+        error("$action failed (HTTP ${response.statusCode()}). ${described ?: "Body: ${response.body()}"}")
     }
 
     /**
@@ -211,11 +208,9 @@ class CopernicusDataStoreProvider(
      * results, otherwise its `message` or its whole status are reported.
      */
     private fun failOnStatus(monitorUrl: String, status: String, job: JsonObject): Nothing {
-        val cause = job.link("results")
-            ?.let { runCatching { getRaw(it).body().toJsonObject().problemDetail.describe() }.getOrNull() }
-            ?.takeUnless { it.isBlank() }
-            ?: job.message
-        error("Job in state '$status' at $monitorUrl${if (cause.isNullOrBlank()) ". Body: $job" else ": $cause"}")
+        val cause = job.link("results")?.let { getRaw(it).body().toJsonObjectOrNull()?.problem }
+            ?: job.message?.takeUnless { it.isBlank() }
+        error("Job in state '$status' at $monitorUrl${if (cause == null) ". Body: $job" else ": $cause"}")
     }
 
     /**
@@ -245,31 +240,6 @@ class CopernicusDataStoreProvider(
      * as the data store wrote it (see [asset]).
      */
     private data class RemoteAsset(val href: String, val sizeBytes: Long, val md5: String?)
-
-    /**
-     * An [RFC 7807](https://www.rfc-editor.org/rfc/rfc7807) error report of the data store, with its trace identifier
-     * and, for a failed job, the [traceback] of the backend, often the only field with the actual cause.
-     */
-    private data class ProblemDetail(
-        val type: String,
-        val title: String?,
-        val detail: String?,
-        val traceId: String?,
-        val traceback: String?,
-    ) {
-        /**
-         * A human-readable description, empty if there is nothing to describe.
-         */
-        fun describe(): String {
-            val core = detail ?: traceback ?: title ?: return ""
-            return buildString {
-                append(core)
-                append(" [type=$type")
-                traceId?.let { append(", trace=$it") }
-                append("]")
-            }
-        }
-    }
 
     internal companion object {
         /**
@@ -349,17 +319,15 @@ class CopernicusDataStoreProvider(
         private val JsonObject.message: String? get() = get("message")?.takeUnless { it.isJsonNull }?.asString
 
         /**
-         * This error report. Its `type` is not always a URI, so it is kept as a plain string.
+         * The description of this [RFC 7807](https://www.rfc-editor.org/rfc/rfc7807) error report, `null` if it has
+         * none: its detail, or, for a failed job, the traceback of the backend, often the only field with the actual
+         * cause, or its title; followed by its type, not always a URI, and its trace identifier.
          */
-        private val JsonObject.problemDetail: ProblemDetail get() {
-            fun field(name: String) = get(name)?.takeIf { it.isJsonPrimitive }?.asJsonPrimitive
-            return ProblemDetail(
-                type = field("type")?.asString ?: "about:blank",
-                title = field("title")?.asString,
-                detail = field("detail")?.asString,
-                traceId = field("trace_id")?.asString,
-                traceback = field("traceback")?.asString,
-            )
+        private val JsonObject.problem: String? get() {
+            fun field(name: String) = get(name)?.takeIf { it.isJsonPrimitive }?.asString?.takeUnless { it.isBlank() }
+            val trace = field("trace_id")?.let { ", trace=$it" }.orEmpty()
+            return (field("detail") ?: field("traceback") ?: field("title"))
+                ?.let { "$it [type=${field("type") ?: "about:blank"}$trace]" }
         }
 
         /**
@@ -380,6 +348,13 @@ class CopernicusDataStoreProvider(
             ?.get("href")?.asString
 
         private fun String.toJsonObject(): JsonObject = JsonParser.parseString(this).asJsonObject
+
+        /**
+         * This string as a JSON object, `null` if it is not one, as error bodies may be plain text.
+         */
+        private fun String.toJsonObjectOrNull(): JsonObject? = runCatching {
+            JsonParser.parseString(this).takeIf { it.isJsonObject }?.asJsonObject
+        }.getOrNull()
 
         /**
          * Extracts in this directory the entries of all its ZIP archives, flattened, and deletes the archives.

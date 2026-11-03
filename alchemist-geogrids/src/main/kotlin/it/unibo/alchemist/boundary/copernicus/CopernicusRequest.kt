@@ -70,24 +70,12 @@ data class CopernicusRequest(val endpoint: String, val dataset: String, val inpu
          */
         const val HASH_PREFIX_LENGTH = 16
 
-        /**
-         * The path of the API of the Copernicus data stores.
-         */
         const val COPERNICUS_API_PATH = "/api"
 
-        /**
-         * How the hosts of the Copernicus data stores end.
-         */
         const val COPERNICUS_HOST_SUFFIX = ".copernicus.eu"
 
-        /**
-         * The loopback address, accepted with any path for testing.
-         */
         const val LOOPBACK_ADDRESS = "127.0.0.1"
 
-        /**
-         * The dataset identifiers accepted, safe as segments of a URL path.
-         */
         val SAFE_DATASET = Regex("[A-Za-z0-9][A-Za-z0-9._-]*")
 
         /**

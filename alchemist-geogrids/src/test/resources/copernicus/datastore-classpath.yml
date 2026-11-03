@@ -17,6 +17,8 @@ layers:
           # The request, as shown by the "API request" section of the dataset download form,
           # in a JSON file among the classpath resources
           inputs: copernicus/glofas-request.json
+          # Named parameters must include the optional ones preceding the last one provided
+          variable: null
           # Optional: where the downloaded data is cached, by default in the user cache directory
           cacheDirectory: build/copernicus-cache
       timeScale: PT1H

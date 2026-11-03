@@ -28,8 +28,6 @@ layers:
               "download_format": "unarchived",
               "area": [44.2, 12.2, 44.1, 12.3]
             }
-          # Named parameters must include the optional ones preceding the last one provided
-          variable: null
           # Optional: where the downloaded data is cached, by default in the user cache directory
           cacheDirectory: build/copernicus-cache
       timeScale: PT1H

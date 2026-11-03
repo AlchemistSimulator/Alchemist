@@ -18,7 +18,7 @@ import java.util.Arrays
  *
  * @throws IllegalArgumentException if [coordinates] is empty, or not strictly ascending, or contains NaN.
  */
-internal class ImmutableAxis(coordinates: DoubleArray) : Axis {
+class ImmutableAxis(coordinates: DoubleArray) : Axis {
 
     private val coordinates: DoubleArray = coordinates.copyOf()
 

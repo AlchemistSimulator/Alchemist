@@ -146,9 +146,6 @@ delete the corresponding entry from the cache directory.
 
 ## Interpolation and conversion
 
-Named parameters are supported in both YAML and the Kotlin DSL;
-when using them, all the optional parameters preceding the last one provided must be specified as well.
-
 Values are interpolated first in space, within the two grids around the current time,
 then in time, between the two results.
 The `spatialInterpolation` parameter can be

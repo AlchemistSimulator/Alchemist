@@ -40,23 +40,21 @@ import org.slf4j.LoggerFactory
 /**
  * Downloads data from a Copernicus data store: it submits a job, polls it until done, then downloads its results.
  *
- * @param http the HTTP client.
- * @param pollInterval how long to wait before the first poll; it doubles at each poll, up to [maxPollInterval].
- * @param maxPollInterval the longest wait between polls.
+ * @param pollInterval how long to wait before the first poll; it doubles at each poll, up to two minutes,
+ * as in ECMWF's official client.
  * @param timeout how long the job can take, polls included; the download itself has no time limit.
  * @param tokenSupplier the API token, requested only when downloading.
  */
 class CopernicusDataStoreProvider(
-    private val http: HttpClient = HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT.toJavaDuration()).build(),
     private val pollInterval: Duration = DEFAULT_POLL_INTERVAL,
-    private val maxPollInterval: Duration = DEFAULT_MAX_POLL_INTERVAL,
     private val timeout: Duration = DEFAULT_TIMEOUT,
     private val tokenSupplier: () -> String,
 ) : CacheableDataLoader<CopernicusRequest> {
 
     init {
-        require(pollInterval.isPositive()) { "pollInterval must be positive" }
-        require(maxPollInterval >= pollInterval) { "maxPollInterval must be >= than pollInterval" }
+        require(pollInterval.isPositive() && pollInterval <= MAX_POLL_INTERVAL) {
+            "pollInterval must be positive and at most $MAX_POLL_INTERVAL"
+        }
         require(timeout.isPositive()) { "timeout must be positive" }
     }
 
@@ -147,7 +145,7 @@ class CopernicusDataStoreProvider(
                 }
                 // never sleeps past the deadline, so that the next poll fails right on time
                 Thread.sleep(minOf(interval, -deadline.elapsedNow()).coerceAtLeast(Duration.ZERO).inWholeMilliseconds)
-                awaitSuccess(monitorUrl, deadline, (interval * 2).coerceAtMost(maxPollInterval), status)
+                awaitSuccess(monitorUrl, deadline, (interval * 2).coerceAtMost(MAX_POLL_INTERVAL), status)
             }
         }
     }
@@ -239,9 +237,9 @@ class CopernicusDataStoreProvider(
         private val DEFAULT_POLL_INTERVAL = 2.seconds
 
         /**
-         * The default longest wait between polls, as in ECMWF's official client.
+         * The longest wait between polls, as in ECMWF's official client.
          */
-        private val DEFAULT_MAX_POLL_INTERVAL = 120.seconds
+        private val MAX_POLL_INTERVAL = 120.seconds
 
         /**
          * How long to wait for a connection.
@@ -252,6 +250,13 @@ class CopernicusDataStoreProvider(
          * How long to wait for a response of the API.
          */
         private val REQUEST_TIMEOUT = 1.minutes
+
+        /**
+         * The HTTP client, shared by all the providers.
+         */
+        private val http: HttpClient by lazy {
+            HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT.toJavaDuration()).build()
+        }
 
         private const val APPLICATION_JSON = "application/json"
 

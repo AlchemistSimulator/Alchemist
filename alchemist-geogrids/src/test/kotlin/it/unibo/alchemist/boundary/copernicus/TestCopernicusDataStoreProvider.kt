@@ -15,6 +15,7 @@ import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.SUCCESSFUL
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.TOKEN
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.TOKEN_HEADER
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.capturedBody
+import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.fastProvider
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.zipOf
 import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
@@ -186,8 +187,7 @@ class TestCopernicusDataStoreProvider {
         FakeDataStore().use { fake ->
             fake.replaySubmit()
             fake.answerStatusForever("""{ "status": "running" }""")
-            val provider = CopernicusDataStoreProvider(timeout = 500.milliseconds) { TOKEN }
-            assertMessageContains(fake.failingDownload(provider = provider), "Timeout")
+            assertMessageContains(fake.failingDownload(provider = fastProvider(timeout = 500.milliseconds)), "Timeout")
         }
     }
 

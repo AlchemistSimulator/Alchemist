@@ -17,6 +17,9 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.createTempDirectory
 import kotlin.test.assertFailsWith
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 import okio.ByteString.Companion.toByteString
 
 /**
@@ -76,17 +79,15 @@ internal class FakeDataStore(val store: CapturedStore = CapturedStore.CDS) : Aut
     /**
      * Downloads, with [provider], the [inputs] of the dataset of the [store] into a new directory, and returns it.
      */
-    fun download(
-        inputs: Map<String, Any> = emptyMap(),
-        provider: CopernicusDataStoreProvider = CopernicusDataStoreProvider { TOKEN },
-    ): Path = createTempDirectory("fake-data-store").also { provider.load(request(inputs), it) }
+    fun download(inputs: Map<String, Any> = emptyMap(), provider: CopernicusDataStoreProvider = fastProvider()): Path =
+        createTempDirectory("fake-data-store").also { provider.load(request(inputs), it) }
 
     /**
      * The failure of a [download] of [inputs] with [provider].
      */
     fun failingDownload(
         inputs: Map<String, Any> = emptyMap(),
-        provider: CopernicusDataStoreProvider = CopernicusDataStoreProvider { TOKEN },
+        provider: CopernicusDataStoreProvider = fastProvider(),
     ): IllegalStateException = assertFailsWith<IllegalStateException> { download(inputs, provider) }
 
     /**
@@ -208,7 +209,7 @@ internal class FakeDataStore(val store: CapturedStore = CapturedStore.CDS) : Aut
 
     companion object {
         /**
-         * The token sent by the providers of [download].
+         * The token sent by the [fastProvider]s.
          */
         const val TOKEN = "test-token"
 
@@ -243,6 +244,12 @@ internal class FakeDataStore(val store: CapturedStore = CapturedStore.CDS) : Aut
          * The captured answer in [fileName], among the `copernicus-responses` resources.
          */
         fun capturedBody(fileName: String): String = loadJsonCopernicusResponse(fileName, FakeDataStore::class.java)
+
+        /**
+         * A provider polling every few milliseconds with the [TOKEN], failing after [timeout].
+         */
+        fun fastProvider(timeout: Duration = 1.minutes) =
+            CopernicusDataStoreProvider(pollInterval = 10.milliseconds, timeout = timeout) { TOKEN }
 
         /**
          * A ZIP archive with the given [entries], from their names to their contents.

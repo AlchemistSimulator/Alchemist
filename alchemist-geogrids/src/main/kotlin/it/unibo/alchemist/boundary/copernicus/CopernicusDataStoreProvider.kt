@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.copernicus
 
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
 import java.net.URI
@@ -108,7 +109,8 @@ class CopernicusDataStoreProvider(
         if (!response.isSuccessful) {
             failOnHttpError("Submit of dataset '${request.dataset}'", response)
         }
-        val monitorUrl = parseMonitorUrl(response.body())
+        val monitorUrl = response.body().toJsonObject().link("monitor")
+            ?: error("No link with rel='monitor' in the submit response")
         logger.info("Job submitted for '${request.dataset}', monitoring at $monitorUrl")
         return monitorUrl
     }
@@ -131,18 +133,18 @@ class CopernicusDataStoreProvider(
         val remaining = -deadline.elapsedNow()
         check(remaining.isPositive(), timeoutMessage)
         // a stalled poll must not outlive the deadline: if it gets cut by it, the job timed out
-        val body = try {
-            get(monitorUrl, minOf(REQUEST_TIMEOUT, remaining)).body()
+        val job = try {
+            get(monitorUrl, minOf(REQUEST_TIMEOUT, remaining)).body().toJsonObject()
         } catch (timedOut: HttpTimeoutException) {
             throw if (deadline.hasPassedNow()) IllegalStateException(timeoutMessage(), timedOut) else timedOut
         }
-        return when (val status = parseStatus(body)) {
+        return when (val status = job.status) {
             SUCCESSFUL -> {
                 logger.info("Job completed at $monitorUrl")
-                parseResultsUrl(body)
+                job.link("results")
                     ?: error("Job '$SUCCESSFUL' but no rel='results' link at $monitorUrl: inconsistent response")
             }
-            in TERMINAL_STATUSES -> failOnStatus(monitorUrl, status, body)
+            in TERMINAL_STATUSES -> failOnStatus(monitorUrl, status, job)
             else -> {
                 val heartbeat = if (status in RUNNING_STATUSES) {
                     logger.debug("Job status '$status' at $monitorUrl")
@@ -167,7 +169,7 @@ class CopernicusDataStoreProvider(
      * The file to download, from the results at [resultsUrl].
      */
     private fun fetchAsset(resultsUrl: String): RemoteAsset {
-        val asset = parseAsset(get(resultsUrl).body())
+        val asset = get(resultsUrl).body().toJsonObject().asset
         val absoluteHref = URI.create(resultsUrl).resolve(asset.href).toString()
         logger.info("Asset will be downloaded from: $absoluteHref (${asset.sizeBytes} bytes)")
         return asset.copy(href = absoluteHref)
@@ -196,35 +198,24 @@ class CopernicusDataStoreProvider(
      * Fails reporting the [response] to [action], with its error report if any.
      */
     private fun failOnHttpError(action: String, response: HttpResponse<String>): Nothing {
-        // problem description, if any
-        val described = runCatching {
-            parseProblemDetail(response.body()).describe()
-        }.getOrNull()
+        val described = runCatching { response.body().toJsonObject().problemDetail.describe() }.getOrNull()
         error(
-            // if no description is available, the whole body is shown
-            if (described.isNullOrBlank()) {
-                "$action failed (HTTP ${response.statusCode()}). Body: ${response.body()}"
-            } else {
-                "$action failed (HTTP ${response.statusCode()}): $described"
-            },
+            "$action failed (HTTP ${response.statusCode()}). ${
+                if (described.isNullOrBlank()) "Body: ${response.body()}" else described
+            }",
         )
     }
 
     /**
-     * Fails reporting the cause of the job at [monitorUrl] ending with [status]: the data stores explain it in the
-     * results, otherwise its `message` or the whole status [body] are reported.
+     * Fails reporting the cause of the [job] at [monitorUrl] ending with [status]: the data stores explain it in the
+     * results, otherwise its `message` or its whole status are reported.
      */
-    private fun failOnStatus(monitorUrl: String, status: String, body: String): Nothing {
-        val cause = parseResultsUrl(body)
-            ?.let { runCatching { parseProblemDetail(getRaw(it).body()).describe() }.getOrNull() }
+    private fun failOnStatus(monitorUrl: String, status: String, job: JsonObject): Nothing {
+        val cause = job.link("results")
+            ?.let { runCatching { getRaw(it).body().toJsonObject().problemDetail.describe() }.getOrNull() }
             ?.takeUnless { it.isBlank() }
-            ?: runCatching { parseFailureMessage(body) }.getOrNull()
-        error(
-            buildString {
-                append("Job in state '$status' at $monitorUrl")
-                if (cause.isNullOrBlank()) append(". Body: $body") else append(": $cause")
-            },
-        )
+            ?: job.message
+        error("Job in state '$status' at $monitorUrl${if (cause.isNullOrBlank()) ". Body: $job" else ": $cause"}")
     }
 
     /**
@@ -233,9 +224,7 @@ class CopernicusDataStoreProvider(
      * @throws IllegalStateException if the response is an error.
      */
     private fun get(url: String, responseTimeout: Duration = REQUEST_TIMEOUT): HttpResponse<String> =
-        getRaw(url, responseTimeout).also {
-            if (!it.isSuccessful) failOnHttpError("GET $url", it)
-        }
+        getRaw(url, responseTimeout).also { if (!it.isSuccessful) failOnHttpError("GET $url", it) }
 
     /**
      * Gets [url] with the token, waiting at most [responseTimeout], whatever the response.
@@ -253,7 +242,7 @@ class CopernicusDataStoreProvider(
 
     /**
      * A file to download from [href], with its size in bytes and, if advertised, its MD5 digest
-     * as the data store wrote it (see [parseAsset]).
+     * as the data store wrote it (see [asset]).
      */
     private data class RemoteAsset(val href: String, val sizeBytes: Long, val md5: String?)
 
@@ -331,28 +320,18 @@ class CopernicusDataStoreProvider(
         private val zipSignatures = listOf("504b0304", "504b0506").map { it.decodeHex() }
 
         /*
-         * Parsers of the JSON bodies of the API of the Copernicus data stores, which follows OGC API - Processes
+         * Readers of the JSON bodies of the API of the Copernicus data stores, which follows OGC API - Processes
          * (https://docs.ogc.org/is/18-062r2/18-062r2.html) loosely: they read only the fields needed.
          */
 
         /**
-         * The `href` of the first entry in the `links` of [json] with the given [rel], if any.
-         */
-        private fun linkHref(json: String, rel: String): String? = JsonParser.parseString(json)
-            .asJsonObject.getAsJsonArray("links")
-            ?.map { it.asJsonObject }
-            ?.firstOrNull { it.get("rel")?.asString == rel }
-            ?.get("href")?.asString
-
-        /**
-         * The file to download, from the results response [json].
+         * The file to download, from this results response.
          * The MD5 digest is kept as written, without the leading zeros the data store drops.
          *
          * @throws IllegalStateException if the URL or the size of the file is missing.
          */
-        private fun parseAsset(json: String): RemoteAsset {
-            val value = JsonParser.parseString(json).asJsonObject
-                .getAsJsonObject("asset")
+        private val JsonObject.asset: RemoteAsset get() {
+            val value = getAsJsonObject("asset")
                 ?.getAsJsonObject("value")
                 ?: error("No 'asset.value' object in the results response")
             fun field(name: String) = value.get(name)?.takeUnless { it.isJsonNull }
@@ -364,27 +343,16 @@ class CopernicusDataStoreProvider(
         }
 
         /**
-         * The `message` of the status response [json], if any.
+         * The `message` of this status response, if any.
          * The data stores currently leave it empty, and explain failures in the results instead.
          */
-        private fun parseFailureMessage(json: String): String? = JsonParser.parseString(json)
-            .asJsonObject.get("message")?.takeUnless { it.isJsonNull }?.asString
+        private val JsonObject.message: String? get() = get("message")?.takeUnless { it.isJsonNull }?.asString
 
         /**
-         * The URL to monitor the job, from the response [json] to its submission.
-         *
-         * @throws IllegalStateException if there is none.
+         * This error report. Its `type` is not always a URI, so it is kept as a plain string.
          */
-        private fun parseMonitorUrl(json: String): String =
-            linkHref(json, "monitor") ?: error("No link with rel='monitor' in the submit response")
-
-        /**
-         * The error report in [json]. Its `type` is not always a URI, so it is kept as a plain string.
-         */
-        private fun parseProblemDetail(json: String): ProblemDetail {
-            val obj = JsonParser.parseString(json).asJsonObject
-
-            fun field(name: String) = obj.get(name)?.takeIf { it.isJsonPrimitive }?.asJsonPrimitive
+        private val JsonObject.problemDetail: ProblemDetail get() {
+            fun field(name: String) = get(name)?.takeIf { it.isJsonPrimitive }?.asJsonPrimitive
             return ProblemDetail(
                 type = field("type")?.asString ?: "about:blank",
                 title = field("title")?.asString,
@@ -395,20 +363,23 @@ class CopernicusDataStoreProvider(
         }
 
         /**
-         * The URL of the results of the job, from the status response [json]; `null` until the job ends.
-         * For a failed job, it answers with an error report (see [parseProblemDetail]) explaining the failure.
-         */
-        private fun parseResultsUrl(json: String): String? = linkHref(json, "results")
-
-        /**
-         * The status of the job in the status response [json], as a string: the data store may add new ones.
+         * The status of the job in this status response, as a string: the data store may add new ones.
          *
          * @throws IllegalStateException if there is none.
          */
-        private fun parseStatus(json: String): String = JsonParser.parseString(json)
-            .asJsonObject.get("status")
-            ?.asString
+        private val JsonObject.status: String get() = get("status")?.asString
             ?: error("No 'status' field in the status response")
+
+        /**
+         * The `href` of the first entry in the `links` of this response with the given [rel], if any:
+         * `monitor` for the job of a submission, `results` for the results of a job that ended.
+         */
+        private fun JsonObject.link(rel: String): String? = getAsJsonArray("links")
+            ?.map { it.asJsonObject }
+            ?.firstOrNull { it.get("rel")?.asString == rel }
+            ?.get("href")?.asString
+
+        private fun String.toJsonObject(): JsonObject = JsonParser.parseString(this).asJsonObject
 
         /**
          * Extracts in this directory the entries of all its ZIP archives, flattened, and deletes the archives.

@@ -17,6 +17,8 @@ import org.danilopianini.jirf.Factory
  */
 internal class OrderedParametersConstructor(type: String, val parameters: List<*> = emptyList<Any?>()) :
     JVMConstructor(type) {
+    override val hasParameters: Boolean = parameters.isNotEmpty()
+
     override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> = parameters
 
     override fun toString(): String = "$typeName${parameters.joinToString(prefix = "(", postfix = ")")}"

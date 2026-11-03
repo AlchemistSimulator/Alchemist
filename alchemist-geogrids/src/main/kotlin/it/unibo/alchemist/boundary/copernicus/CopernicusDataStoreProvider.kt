@@ -17,7 +17,6 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.net.http.HttpTimeoutException
 import java.nio.file.Path
 import kotlin.io.path.fileSize
 import kotlin.io.path.isDirectory
@@ -117,9 +116,9 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Polls the job at [monitorUrl] until it succeeds, waiting [interval] before the next poll and logging every
-     * now and then since [lastHeartbeat], returning the URL of its results.
-     * Unknown statuses are taken as still running.
+     * Polls the job at [monitorUrl] until it succeeds, waiting [interval] before the next poll, and returns the URL of
+     * its results.
+     * Unknown statuses are taken as still running; statuses are logged when they differ from [previousStatus].
      *
      * @throws IllegalStateException if the job fails, or is still running at [deadline].
      */
@@ -127,18 +126,10 @@ class CopernicusDataStoreProvider(
         monitorUrl: String,
         deadline: TimeMark = TimeSource.Monotonic.markNow() + timeout,
         interval: Duration = pollInterval,
-        lastHeartbeat: TimeMark = TimeSource.Monotonic.markNow(),
+        previousStatus: String? = null,
     ): String {
-        // fails on timeout
-        val timeoutMessage = { "Timeout ($timeout) while waiting for job completion at $monitorUrl" }
-        val remaining = -deadline.elapsedNow()
-        check(remaining.isPositive(), timeoutMessage)
-        // a stalled poll must not outlive the deadline: if it gets cut by it, the job timed out
-        val job = try {
-            get(monitorUrl, minOf(REQUEST_TIMEOUT, remaining)).body().toJsonObject()
-        } catch (timedOut: HttpTimeoutException) {
-            throw if (deadline.hasPassedNow()) IllegalStateException(timeoutMessage(), timedOut) else timedOut
-        }
+        check(deadline.hasNotPassedNow()) { "Timeout ($timeout) while waiting for job completion at $monitorUrl" }
+        val job = get(monitorUrl).body().toJsonObject()
         return when (val status = job.status) {
             SUCCESSFUL -> {
                 logger.info("Job completed at $monitorUrl")
@@ -147,21 +138,16 @@ class CopernicusDataStoreProvider(
             }
             in TERMINAL_STATUSES -> failOnStatus(monitorUrl, status, job)
             else -> {
-                val heartbeat = if (status in RUNNING_STATUSES) {
-                    logger.debug("Job status '$status' at $monitorUrl")
-                    // reassures the user that the program is in fact not dead.
-                    lastHeartbeat.takeIf { it.elapsedNow() < USER_ALERT_INTERVAL }
-                        ?: TimeSource.Monotonic.markNow().also {
-                            logger.info("Still waiting for job at $monitorUrl (status: $status)")
-                        }
-                } else {
-                    // warns the user about the new unknown status, but keeps polling.
-                    logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
-                    lastHeartbeat
+                if (status != previousStatus) {
+                    if (status in RUNNING_STATUSES) {
+                        logger.info("Job status '$status' at $monitorUrl")
+                    } else {
+                        logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
+                    }
                 }
                 // never sleeps past the deadline, so that the next poll fails right on time
                 Thread.sleep(minOf(interval, -deadline.elapsedNow()).coerceAtLeast(Duration.ZERO).inWholeMilliseconds)
-                awaitSuccess(monitorUrl, deadline, (interval * 2).coerceAtMost(maxPollInterval), heartbeat)
+                awaitSuccess(monitorUrl, deadline, (interval * 2).coerceAtMost(maxPollInterval), status)
             }
         }
     }
@@ -214,22 +200,22 @@ class CopernicusDataStoreProvider(
     }
 
     /**
-     * Gets [url] with the token, waiting at most [responseTimeout].
+     * Gets [url] with the token.
      *
      * @throws IllegalStateException if the response is an error.
      */
-    private fun get(url: String, responseTimeout: Duration = REQUEST_TIMEOUT): HttpResponse<String> =
-        getRaw(url, responseTimeout).also { if (!it.isSuccessful) failOnHttpError("GET $url", it) }
+    private fun get(url: String): HttpResponse<String> =
+        getRaw(url).also { if (!it.isSuccessful) failOnHttpError("GET $url", it) }
 
     /**
-     * Gets [url] with the token, waiting at most [responseTimeout], whatever the response.
+     * Gets [url] with the token, whatever the response.
      */
-    private fun getRaw(url: String, responseTimeout: Duration = REQUEST_TIMEOUT): HttpResponse<String> = http.send(
+    private fun getRaw(url: String): HttpResponse<String> = http.send(
         HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("PRIVATE-TOKEN", token)
             .header("Accept", APPLICATION_JSON)
-            .timeout(responseTimeout.toJavaDuration())
+            .timeout(REQUEST_TIMEOUT.toJavaDuration())
             .GET()
             .build(),
         HttpResponse.BodyHandlers.ofString(),
@@ -256,11 +242,6 @@ class CopernicusDataStoreProvider(
          * The default longest wait between polls, as in ECMWF's official client.
          */
         private val DEFAULT_MAX_POLL_INTERVAL = 120.seconds
-
-        /**
-         * How often to log that the job is still running.
-         */
-        private val USER_ALERT_INTERVAL = 30.seconds
 
         /**
          * How long to wait for a connection.

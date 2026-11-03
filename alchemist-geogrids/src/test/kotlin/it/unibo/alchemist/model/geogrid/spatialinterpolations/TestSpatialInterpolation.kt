@@ -7,13 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.strategy
+package it.unibo.alchemist.model.geogrid.spatialinterpolations
 
 import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
 import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
-import it.unibo.alchemist.model.geogrid.spatialinterpolations.BilinearInterpolation
-import it.unibo.alchemist.model.geogrid.spatialinterpolations.NearestInterpolation
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -82,6 +80,25 @@ class TestSpatialInterpolation {
     fun `nearest selects the correct cell in a multi-cell grid`() {
         // nearest node to (22, 290) is (20, 300)
         assertEquals(320.0, nearest.valueAt(affineGrid, mockGeoPosition(22.0, 290.0)))
+    }
+
+    @Test
+    fun `nearest clamps positions outside the grid to its closest edge`() {
+        assertEquals(southWest, nearest.valueAt(grid, mockGeoPosition(-80.0, -170.0)))
+        assertEquals(northEast, nearest.valueAt(grid, mockGeoPosition(80.0, 1000.0)))
+        assertEquals(southEast, nearest.valueAt(grid, mockGeoPosition(0.0, 250.0)))
+    }
+
+    @Test
+    fun `nearest always returns the only value of a single-node grid`() {
+        val singleNode = ArrayRasterGrid(
+            latitudes = ImmutableAxis(doubleArrayOf(42.0)),
+            longitudes = ImmutableAxis(doubleArrayOf(12.0)),
+            gridValues = doubleArrayOf(7.0),
+        )
+        listOf(42.0 to 12.0, 0.0 to 0.0, 80.0 to 100.0).forEach { (latitude, longitude) ->
+            assertEquals(7.0, nearest.valueAt(singleNode, mockGeoPosition(latitude, longitude)))
+        }
     }
 
     @Test

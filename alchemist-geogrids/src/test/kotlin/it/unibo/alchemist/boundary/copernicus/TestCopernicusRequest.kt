@@ -58,6 +58,13 @@ class TestCopernicusRequest {
     }
 
     @Test
+    fun `directoryName is stable under key reordering in nested objects`() {
+        val ordered = glofas.copy(inputs = mapOf("outer" to mapOf("a" to "2", "b" to "1")))
+        val reordered = glofas.copy(inputs = mapOf("outer" to mapOf("b" to "1", "a" to "2")))
+        assertEquals(ordered.directoryName, reordered.directoryName)
+    }
+
+    @Test
     fun `a different dataset yields a different name`() {
         assertNotEquals(glofas.directoryName, glofas.copy(dataset = "reanalysis-era5-single-levels").directoryName)
     }

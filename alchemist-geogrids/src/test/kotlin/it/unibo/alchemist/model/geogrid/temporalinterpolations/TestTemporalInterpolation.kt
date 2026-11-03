@@ -7,12 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.geogrid.strategy
+package it.unibo.alchemist.model.geogrid.temporalinterpolations
 
-import it.unibo.alchemist.model.geogrid.temporalinterpolations.ClosestInterpolation
-import it.unibo.alchemist.model.geogrid.temporalinterpolations.LastInterpolation
-import it.unibo.alchemist.model.geogrid.temporalinterpolations.LinearInterpolation
-import it.unibo.alchemist.model.geogrid.temporalinterpolations.NextInterpolation
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -37,20 +33,12 @@ class TestTemporalInterpolation {
     fun `linear returns the endpoints at weight 0 and 1`() {
         assertEquals(
             valueBefore,
-            linear.interpolate(
-                valueBefore,
-                valueAfter,
-                0.0,
-            ),
+            linear.interpolate(valueBefore, valueAfter, 0.0),
             tolerance,
         )
         assertEquals(
             valueAfter,
-            linear.interpolate(
-                valueBefore,
-                valueAfter,
-                1.0,
-            ),
+            linear.interpolate(valueBefore, valueAfter, 1.0),
             tolerance,
         )
     }
@@ -61,11 +49,7 @@ class TestTemporalInterpolation {
             val expected = valueBefore + (valueAfter - valueBefore) * weight
             assertEquals(
                 expected,
-                linear.interpolate(
-                    valueBefore,
-                    valueAfter,
-                    weight,
-                ),
+                linear.interpolate(valueBefore, valueAfter, weight),
                 tolerance,
                 "at weight $weight",
             )

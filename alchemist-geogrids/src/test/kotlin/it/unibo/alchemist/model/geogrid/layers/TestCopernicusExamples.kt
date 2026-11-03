@@ -13,7 +13,6 @@ import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.geogrid.snapshots.CopernicusData.Companion.toRequestInputs
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.Test
@@ -45,13 +44,25 @@ class TestCopernicusExamples {
 
     /**
      * Puts the data of the datastore examples in their cache, so that neither network nor credentials are needed.
-     * Examples whose inputs are not those of `glofas-request.json` miss the cache, and fail trying to download.
+     * Examples whose inputs differ from `glofas-request.json` miss the cache, and fail trying to download.
      */
     private fun fillCache() {
         val request = CopernicusRequest(
             endpoint = "https://ewds.climate.copernicus.eu/api",
             dataset = "cems-glofas-historical",
-            inputs = "copernicus/glofas-request.json".toRequestInputs(),
+            // the content of glofas-request.json, as parsed from JSON
+            inputs = mapOf(
+                "system_version" to listOf("version_4_0"),
+                "hydrological_model" to listOf("lisflood"),
+                "product_type" to listOf("consolidated"),
+                "variable" to listOf("river_discharge_in_the_last_24_hours"),
+                "hyear" to listOf("2024"),
+                "hmonth" to listOf("06"),
+                "hday" to listOf("10"),
+                "data_format" to "netcdf",
+                "download_format" to "unarchived",
+                "area" to listOf(44.2, 12.2, 44.1, 12.3),
+            ),
         )
         val entry = Path.of("build/copernicus-cache").resolve(request.directoryName)
         entry.toFile().deleteRecursively()

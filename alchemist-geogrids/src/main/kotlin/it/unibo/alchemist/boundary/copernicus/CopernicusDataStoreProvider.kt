@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.copernicus
 
+import com.google.gson.JsonParser
 import it.unibo.alchemist.boundary.filecache.CacheableDataLoader
 import java.net.URI
 import java.net.http.HttpClient
@@ -250,6 +251,37 @@ class CopernicusDataStoreProvider(
         HttpResponse.BodyHandlers.ofString(),
     )
 
+    /**
+     * A file to download from [href], with its size in bytes and, if advertised, its MD5 digest
+     * as the data store wrote it (see [parseAsset]).
+     */
+    private data class RemoteAsset(val href: String, val sizeBytes: Long, val md5: String?)
+
+    /**
+     * An [RFC 7807](https://www.rfc-editor.org/rfc/rfc7807) error report of the data store, with its trace identifier
+     * and, for a failed job, the [traceback] of the backend, often the only field with the actual cause.
+     */
+    private data class ProblemDetail(
+        val type: String,
+        val title: String?,
+        val detail: String?,
+        val traceId: String?,
+        val traceback: String?,
+    ) {
+        /**
+         * A human-readable description, empty if there is nothing to describe.
+         */
+        fun describe(): String {
+            val core = detail ?: traceback ?: title ?: return ""
+            return buildString {
+                append(core)
+                append(" [type=$type")
+                traceId?.let { append(", trace=$it") }
+                append("]")
+            }
+        }
+    }
+
     internal companion object {
         /**
          * How long a job can take by default.
@@ -298,7 +330,92 @@ class CopernicusDataStoreProvider(
          */
         private val zipSignatures = listOf("504b0304", "504b0506").map { it.decodeHex() }
 
-        internal fun Path.extractAndDeleteAllZipArchives() {
+        /*
+         * Parsers of the JSON bodies of the API of the Copernicus data stores, which follows OGC API - Processes
+         * (https://docs.ogc.org/is/18-062r2/18-062r2.html) loosely: they read only the fields needed.
+         */
+
+        /**
+         * The `href` of the first entry in the `links` of [json] with the given [rel], if any.
+         */
+        private fun linkHref(json: String, rel: String): String? = JsonParser.parseString(json)
+            .asJsonObject.getAsJsonArray("links")
+            ?.map { it.asJsonObject }
+            ?.firstOrNull { it.get("rel")?.asString == rel }
+            ?.get("href")?.asString
+
+        /**
+         * The file to download, from the results response [json].
+         * The MD5 digest is kept as written, without the leading zeros the data store drops.
+         *
+         * @throws IllegalStateException if the URL or the size of the file is missing.
+         */
+        private fun parseAsset(json: String): RemoteAsset {
+            val value = JsonParser.parseString(json).asJsonObject
+                .getAsJsonObject("asset")
+                ?.getAsJsonObject("value")
+                ?: error("No 'asset.value' object in the results response")
+            fun field(name: String) = value.get(name)?.takeUnless { it.isJsonNull }
+            return RemoteAsset(
+                href = field("href")?.asString ?: error("No 'href' in asset.value"),
+                sizeBytes = field("file:size")?.asLong ?: error("No 'file:size' in asset.value"),
+                md5 = field("file:checksum")?.asString,
+            )
+        }
+
+        /**
+         * The `message` of the status response [json], if any.
+         * The data stores currently leave it empty, and explain failures in the results instead.
+         */
+        private fun parseFailureMessage(json: String): String? = JsonParser.parseString(json)
+            .asJsonObject.get("message")?.takeUnless { it.isJsonNull }?.asString
+
+        /**
+         * The URL to monitor the job, from the response [json] to its submission.
+         *
+         * @throws IllegalStateException if there is none.
+         */
+        private fun parseMonitorUrl(json: String): String =
+            linkHref(json, "monitor") ?: error("No link with rel='monitor' in the submit response")
+
+        /**
+         * The error report in [json]. Its `type` is not always a URI, so it is kept as a plain string.
+         */
+        private fun parseProblemDetail(json: String): ProblemDetail {
+            val obj = JsonParser.parseString(json).asJsonObject
+
+            fun field(name: String) = obj.get(name)?.takeIf { it.isJsonPrimitive }?.asJsonPrimitive
+            return ProblemDetail(
+                type = field("type")?.asString ?: "about:blank",
+                title = field("title")?.asString,
+                detail = field("detail")?.asString,
+                traceId = field("trace_id")?.asString,
+                traceback = field("traceback")?.asString,
+            )
+        }
+
+        /**
+         * The URL of the results of the job, from the status response [json]; `null` until the job ends.
+         * For a failed job, it answers with an error report (see [parseProblemDetail]) explaining the failure.
+         */
+        private fun parseResultsUrl(json: String): String? = linkHref(json, "results")
+
+        /**
+         * The status of the job in the status response [json], as a string: the data store may add new ones.
+         *
+         * @throws IllegalStateException if there is none.
+         */
+        private fun parseStatus(json: String): String = JsonParser.parseString(json)
+            .asJsonObject.get("status")
+            ?.asString
+            ?: error("No 'status' field in the status response")
+
+        /**
+         * Extracts in this directory the entries of all its ZIP archives, flattened, and deletes the archives.
+         *
+         * @throws IllegalStateException if two entries have the same name.
+         */
+        private fun Path.extractAndDeleteAllZipArchives() {
             val directory = toOkioPath()
             FileSystem.SYSTEM.list(directory)
                 .filter { FileSystem.SYSTEM.metadata(it).isRegularFile && it.isZip() }
@@ -327,7 +444,7 @@ class CopernicusDataStoreProvider(
         /**
          * The MD5 digest of this file, as 32 lowercase hexadecimal digits.
          */
-        internal val Path.md5Hex: String get() = md5(FileSystem.SYSTEM.source(toOkioPath())).use { source ->
+        private val Path.md5Hex: String get() = md5(FileSystem.SYSTEM.source(toOkioPath())).use { source ->
             source.buffer().readAll(blackholeSink())
             source.hash.hex()
         }
@@ -345,7 +462,7 @@ class CopernicusDataStoreProvider(
          *
          * @throws IllegalStateException on a mismatch, or if [expectedMd5] is not an MD5 digest.
          */
-        internal fun Path.verify(expectedSizeBytes: Long, expectedMd5: String? = null) {
+        private fun Path.verify(expectedSizeBytes: Long, expectedMd5: String?) {
             val actualSize = fileSize()
             check(actualSize == expectedSizeBytes) {
                 "Size mismatch for '$fileName': expected $expectedSizeBytes bytes, got $actualSize"

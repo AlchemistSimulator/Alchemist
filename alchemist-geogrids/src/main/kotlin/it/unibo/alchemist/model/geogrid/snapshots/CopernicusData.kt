@@ -113,7 +113,7 @@ class CopernicusData @JvmOverloads constructor(
          *
          * @throws IllegalStateException if the file has no `key:` line.
          */
-        internal fun Path.readToken(): String = readLines().firstNotNullOfOrNull { line ->
+        private fun Path.readToken(): String = readLines().firstNotNullOfOrNull { line ->
             val separator = line.indexOf(':')
             when {
                 separator > 0 && line.take(separator).trim() == KEY_FIELD -> line.substring(separator + 1).trim()
@@ -127,7 +127,7 @@ class CopernicusData @JvmOverloads constructor(
          *
          * @throws IllegalArgumentException if these inputs are none of them, or do not hold a JSON object.
          */
-        internal fun Any.toRequestInputs(): Map<String, Any> {
+        private fun Any.toRequestInputs(): Map<String, Any> {
             val file = (this as? String)?.toExistingFile()
             val (source, json) = when {
                 file != null -> "File $file" to file.readText().parseJson { "File $file does not hold valid JSON" }

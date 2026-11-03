@@ -20,16 +20,10 @@ import it.unibo.alchemist.model.geogrid.SpatialInterpolation
 object NearestInterpolation : SpatialInterpolation {
 
     override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
+        fun Axis.nearestIndex(coordinate: Double): Int =
+            enclosingCellOf(coordinate).run { if (weight <= 0.5) lower else upper }
         val nearestLatitudeIndex = grid.latitudes.nearestIndex(position.latitude)
         val nearestLongitudeIndex = grid.longitudes.nearestIndex(position.longitude)
         return grid.valueAt(nearestLatitudeIndex, nearestLongitudeIndex)
     }
-
-    /**
-     * The index of the coordinate of this axis closest to [coordinate], the lower one on ties.
-     *
-     * @throws IllegalArgumentException if [coordinate] is NaN.
-     */
-    internal fun Axis.nearestIndex(coordinate: Double): Int =
-        enclosingCellOf(coordinate).run { if (weight <= 0.5) lower else upper }
 }

@@ -192,7 +192,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:4.5.11"
-spotless = "com.diffplug.spotless:8.10.4"
+spotless = "com.diffplug.spotless:8.11.0"
 shadowJar = "com.gradleup.shadow:9.6.1"
 taskTree = "com.dorongold.task-tree:4.0.2"
 jpackage = "org.panteleyev.jpackageplugin:2.1.0"

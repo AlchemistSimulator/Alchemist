@@ -224,6 +224,11 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
         private val logger = LoggerFactory.getLogger(GridsFromDirectory::class.java)
 
         /**
+         * Guards the [SAX_PARSER_FACTORY_KEY] property, which [openDataset] changes for the whole JVM.
+         */
+        private val saxParserFactoryLock = Any()
+
+        /**
          * The suffixes of the index files that netCDF-Java writes next to GRIB files.
          */
         private val netcdfJavaIndexSuffixes = setOf(".gbx9", ".ncx4")
@@ -261,12 +266,14 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
          * Opens this file, with missing values as [Double.NaN].
          * NetCDF-Java reads GRIB files only with the JDK's XML parser, which is selected meanwhile,
          * and then the previous one is restored.
+         * Files are opened one at a time, so that simulations running in parallel do not restore the parser
+         * while another one is still opening a file.
          */
-        private fun Path.openDataset(): NetcdfDataset {
+        private fun Path.openDataset(): NetcdfDataset = synchronized(saxParserFactoryLock) {
             val previous = System.getProperty(SAX_PARSER_FACTORY_KEY)
             System.setProperty(SAX_PARSER_FACTORY_KEY, JDK_XERCES_SAX_PARSER_FACTORY)
             try {
-                return NetcdfDatasets.openDataset(toString())
+                NetcdfDatasets.openDataset(toString())
             } finally {
                 if (previous == null) {
                     System.clearProperty(SAX_PARSER_FACTORY_KEY)

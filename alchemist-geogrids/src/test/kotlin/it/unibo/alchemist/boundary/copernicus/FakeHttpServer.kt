@@ -13,6 +13,9 @@ import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpServer
 import java.net.InetSocketAddress
 import java.util.TreeMap
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -57,16 +60,17 @@ internal class FakeHttpServer : AutoCloseable {
     /**
      * Associates each method-route with a queue of responses for that pair.
      * Used to simulate responses that change over time (e.g. on polling).
+     * Like the other collections here, it is concurrent: tests fill it while the server thread reads it.
      */
-    private val queues = HashMap<Pair<String, String>, ArrayDeque<Responder>>()
+    private val queues = ConcurrentHashMap<Pair<String, String>, ConcurrentLinkedDeque<Responder>>()
 
     /**
      * Associates each method-route with a constant response for that pair.
      */
-    private val constants = HashMap<Pair<String, String>, Responder>()
+    private val constants = ConcurrentHashMap<Pair<String, String>, Responder>()
 
     // all requests received, in arrival order (for test assertions).
-    val requests = mutableListOf<CapturedRequest>()
+    val requests = CopyOnWriteArrayList<CapturedRequest>()
 
     // base URL to feed into the provider's endpoint.
     val baseUrl: String get() = "http://127.0.0.1:${server.address.port}"
@@ -84,7 +88,7 @@ internal class FakeHttpServer : AutoCloseable {
                 requests += CapturedRequest(ex.requestMethod, ex.requestURI.path, body, headers)
                 val key = ex.requestMethod to ex.requestURI.path
                 // searches in the queues first (consuming the key), fallback on constant responses otherwise
-                val responder = queues[key]?.removeFirstOrNull() ?: constants[key]
+                val responder = queues[key]?.pollFirst() ?: constants[key]
                 // executes the responder if it exists, defaults to a 404 otherwise
                 if (responder != null) responder(ex) else respond(ex, 404, ByteArray(0))
             }
@@ -100,7 +104,7 @@ internal class FakeHttpServer : AutoCloseable {
      * @param responder the response for the next [method]-[route] request.
      */
     fun enqueue(method: String, route: String, responder: Responder) {
-        queues.getOrPut(method to route) { ArrayDeque() }.addLast(responder)
+        queues.computeIfAbsent(method to route) { ConcurrentLinkedDeque() }.addLast(responder)
     }
 
     /**

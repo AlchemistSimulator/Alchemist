@@ -18,6 +18,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSyntaxException
 import com.google.gson.Strictness
+import com.google.gson.ToNumberPolicy
 import com.google.gson.reflect.TypeToken
 import it.unibo.alchemist.boundary.copernicus.CopernicusDataStoreProvider
 import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
@@ -87,7 +88,7 @@ class CopernicusData @JvmOverloads constructor(
          */
         val DEFAULT_CDSAPIRC_LOCATION: Path = Path.of(System.getProperty("user.home"), ".cdsapirc")
 
-        private val gson = Gson()
+        private val gson: Gson = GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
 
         private val strictGson: Gson = GsonBuilder().setStrictness(Strictness.STRICT).create()
 

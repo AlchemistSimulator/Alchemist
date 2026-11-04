@@ -37,9 +37,9 @@ class TestCopernicusData {
     private val dataset = "cems-glofas-historical"
 
     /**
-     * The inputs of the cached request, as parsed from JSON, whose numbers are all [Double]s.
+     * The inputs of the cached request, with integers: if any form turned them into `44.0`, it would miss the cache.
      */
-    private val inputs: Map<String, Any> = mapOf("variable" to listOf("river_discharge"), "area" to listOf(44.0, 12.0))
+    private val inputs: Map<String, Any> = mapOf("variable" to listOf("river_discharge"), "area" to listOf(44, 12))
 
     /**
      * The [inputs] as JSON, also held by the `copernicus-inputs/request.json` resource.

@@ -202,6 +202,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
          * Alchemist's user cache directory, as conventional for the current operating system
          * (e.g., `~/.cache/alchemist` on Linux).
          */
+        @JvmStatic
         val DEFAULT_CACHE_DIRECTORY: Path = Path(
             AppDirsFactory.getInstance().getUserCacheDir("alchemist", null, "it.unibo"),
         )

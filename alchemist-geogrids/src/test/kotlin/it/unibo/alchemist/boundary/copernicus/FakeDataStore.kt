@@ -35,6 +35,11 @@ internal class FakeDataStore(val store: CapturedStore = CapturedStore.CDS) : Aut
     val server = FakeHttpServer()
 
     /**
+     * Where the [download]s go, deleted on [close].
+     */
+    private val downloads: Path = createTempDirectory("fake-data-store")
+
+    /**
      * The endpoint to request data to.
      */
     val endpoint: String get() = server.baseUrl
@@ -78,9 +83,10 @@ internal class FakeDataStore(val store: CapturedStore = CapturedStore.CDS) : Aut
 
     /**
      * Downloads, with [provider], the [inputs] of the dataset of the [store] into a new directory, and returns it.
+     * The directory is deleted on [close].
      */
     fun download(inputs: Map<String, Any> = emptyMap(), provider: CopernicusDataStoreProvider = fastProvider()): Path =
-        createTempDirectory("fake-data-store").also { provider.load(request(inputs), it) }
+        createTempDirectory(downloads, "download").also { provider.load(request(inputs), it) }
 
     /**
      * The failure of a [download] of [inputs] with [provider].
@@ -124,7 +130,10 @@ internal class FakeDataStore(val store: CapturedStore = CapturedStore.CDS) : Aut
         serveAsset(payload)
     }
 
-    override fun close() = server.close()
+    override fun close() {
+        server.close()
+        downloads.toFile().deleteRecursively()
+    }
 
     /**
      * An answer with [json], pointing to this fake data store instead of the real ones, sent with the HTTP [code].

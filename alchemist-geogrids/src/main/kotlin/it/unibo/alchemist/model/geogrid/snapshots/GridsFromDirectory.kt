@@ -36,6 +36,8 @@ import ucar.nc2.dataset.NetcdfDatasets
  * latitude/longitude grid.
  * Each file must hold a `{time, latitude, longitude}` variable, with its dimensions in any order;
  * axes stored in descending order are reversed, and missing values become [Double.NaN].
+ * Files with no time axis are timed by their reference time axis, if any, with a warning:
+ * for forecasts, the reference time precedes the time the data are valid at by their lead time.
  * When files share an instant, the first file in lexicographic order wins.
  *
  * @param directory the directory holding the data files, among the classpath resources or, if not there,
@@ -86,8 +88,13 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
 
         private val location: String = dataset.location
 
-        private val timeAxis: CoordinateAxis = requireNotNull(
-            dataset.findCoordinateAxis(AxisType.Time) ?: dataset.findCoordinateAxis(AxisType.RunTime),
+        private val timeAxis: CoordinateAxis = dataset.findCoordinateAxis(AxisType.Time) ?: requireNotNull(
+            dataset.findCoordinateAxis(AxisType.RunTime)?.also {
+                logger.warn(
+                    "No time axis in $location: timing the data by the reference time axis '${it.shortName}', " +
+                        "which precedes the valid time of forecasts by their lead time",
+                )
+            },
         ) { "No time axis in $location" }
 
         private val latitudeAxis: CoordinateAxis1D = requireNotNull(

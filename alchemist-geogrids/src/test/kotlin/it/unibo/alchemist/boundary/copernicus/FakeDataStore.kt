@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.copernicus
 
-import it.unibo.alchemist.loadJsonCopernicusResponse
 import java.io.ByteArrayOutputStream
 import java.net.URI
 import java.nio.file.Path
@@ -252,7 +251,9 @@ internal class FakeDataStore(val store: CapturedStore = CapturedStore.CDS) : Aut
         /**
          * The captured answer in [fileName], among the `copernicus-responses` resources.
          */
-        fun capturedBody(fileName: String): String = loadJsonCopernicusResponse(fileName, FakeDataStore::class.java)
+        fun capturedBody(fileName: String): String = checkNotNull(
+            FakeDataStore::class.java.getResource("/copernicus-responses/$fileName"),
+        ) { "Missing test fixture: $fileName" }.readText()
 
         /**
          * A provider polling every few milliseconds with the [TOKEN], failing after [timeout].

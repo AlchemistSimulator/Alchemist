@@ -104,18 +104,6 @@ private fun unravel(index: Int, shape: IntArray): IntArray = shape.reversed()
     .toIntArray()
 
 /**
- * Reads the content of the JSON Copernicus responses.
- * JSON files must be placed in `src/test/resources/copernicus-responses/`.
- *
- * @param fileName the name of the file (e.g, "name.json").
- * @param cls the class used to resolve the path to the file.
- * @return the JSON file content as a string.
- */
-internal fun <T> loadJsonCopernicusResponse(fileName: String, cls: Class<T>): String = checkNotNull(
-    cls.getResourceAsStream("/copernicus-responses/$fileName"),
-) { "Missing test fixture: $fileName" }.bufferedReader().use { it.readText() }
-
-/**
  * [GeoPosition] mock used in test cases.
  */
 internal fun mockGeoPosition(lat: Double, long: Double): GeoPosition = mockk {

@@ -84,10 +84,12 @@ class TestCopernicusData {
     }
 
     @Test
-    fun `fails clearly on a file that does not hold JSON`() = assertInvalidInputs(
-        "does not hold valid JSON",
-        tempDir.resolve("inputs.yml").apply { writeText("variable: river_discharge") }.toString(),
-    )
+    fun `fails clearly on a file that does not hold JSON`() {
+        mapOf("inputs.yml" to "variable: river_discharge", "empty.json" to "").forEach { (name, content) ->
+            val file = tempDir.resolve(name).apply { writeText(content) }
+            assertInvalidInputs("does not hold valid JSON", file.toString())
+        }
+    }
 
     @Test
     fun `fails clearly on valid JSON that is not an object`() {

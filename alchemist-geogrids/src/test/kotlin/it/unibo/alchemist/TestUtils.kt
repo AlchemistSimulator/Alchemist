@@ -14,7 +14,6 @@ import io.mockk.mockk
 import it.unibo.alchemist.model.GeoPosition
 import java.nio.file.Path
 import ucar.ma2.Array as UcarArray
-import ucar.ma2.ArrayDouble
 import ucar.ma2.DataType
 import ucar.nc2.Attribute
 import ucar.nc2.write.NetcdfFormatWriter
@@ -77,15 +76,9 @@ internal fun writeTestNetcdf(
     }
     // creates the file and enters write mode
     builder.build().use { writer ->
-        val timeArr = ArrayDouble.D1(timeHours.size)
-        timeHours.forEachIndexed { i, v -> timeArr.set(i, v) }
-        writer.write("time", timeArr)
-        val latArr = ArrayDouble.D1(lats.size)
-        lats.forEachIndexed { i, v -> latArr.set(i, v) }
-        writer.write("latitude", latArr)
-        val lonArr = ArrayDouble.D1(lons.size)
-        lons.forEachIndexed { i, v -> lonArr.set(i, v) }
-        writer.write("longitude", lonArr)
+        mapOf("time" to timeHours, "latitude" to lats, "longitude" to lons).forEach { (axis, values) ->
+            writer.write(axis, UcarArray.factory(DataType.DOUBLE, intArrayOf(values.size), values))
+        }
         val dimSize = mapOf("time" to timeHours.size, "latitude" to lats.size, "longitude" to lons.size)
         val shape = dimensionOrder.map { dimSize.getValue(it) }.toIntArray()
         variables.forEach { variable ->
@@ -104,16 +97,11 @@ internal fun writeTestNetcdf(
 /**
  * Converts a row-major index into the dimension indices for the given [shape].
  */
-private fun unravel(index: Int, shape: IntArray): IntArray {
-    val result = IntArray(shape.size)
-    var remainder = index
-
-    for (dim in shape.indices.reversed()) {
-        result[dim] = remainder % shape[dim]
-        remainder /= shape[dim]
-    }
-    return result
-}
+private fun unravel(index: Int, shape: IntArray): IntArray = shape.reversed()
+    .scan(index) { rest, size -> rest / size }
+    .zip(shape.reversed()) { rest, size -> rest % size }
+    .reversed()
+    .toIntArray()
 
 /**
  * Reads the content of the JSON Copernicus responses.

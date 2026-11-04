@@ -18,6 +18,7 @@ dependencies {
     ksp(alchemist("factories-generator"))
     api(alchemist("api"))
     api(alchemist("file-cache"))
+    implementation(alchemist("implementationbase"))
 
     implementation(libs.cdm.core)
     implementation(libs.cdm.grib)

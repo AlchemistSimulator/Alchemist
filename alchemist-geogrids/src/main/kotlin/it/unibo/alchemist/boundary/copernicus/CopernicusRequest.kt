@@ -21,7 +21,8 @@ import java.security.MessageDigest
  * @property inputs what to download (variables, dates, area, format...), passed to the data store as it is.
  * @throws IllegalArgumentException if [endpoint] is not `https://<store>.copernicus.eu/api` or `127.0.0.1`,
  * or has a query, a fragment, or user information; or if [dataset] is not made of letters, digits, `.`, `_`,
- * and `-`, starting with a letter or a digit.
+ * and `-`, starting with a letter or a digit; or if [inputs] hold keys that are not strings, or values with no JSON
+ * equivalent (anything but `null`, booleans, numbers, strings, maps, iterables, and arrays).
  */
 data class CopernicusRequest(val endpoint: String, val dataset: String, val inputs: Map<String, Any>) :
     CachedDirectoryKey {

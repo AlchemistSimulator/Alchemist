@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.copernicus
 
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
@@ -62,6 +63,31 @@ class TestCopernicusRequest {
         val ordered = glofas.copy(inputs = mapOf("outer" to mapOf("a" to "2", "b" to "1")))
         val reordered = glofas.copy(inputs = mapOf("outer" to mapOf("b" to "1", "a" to "2")))
         assertEquals(ordered.directoryName, reordered.directoryName)
+    }
+
+    @Test
+    fun `sets and arrays yield the same name as the equivalent lists, with their objects sorted too`() {
+        val asList = glofas.copy(inputs = mapOf("outer" to listOf(mapOf("a" to 1, "b" to 2))))
+        val asSet = glofas.copy(inputs = mapOf("outer" to setOf(mapOf("b" to 2, "a" to 1))))
+        val asArray = glofas.copy(inputs = mapOf("outer" to arrayOf(mapOf("b" to 2, "a" to 1))))
+        assertEquals(asList.directoryName, asSet.directoryName)
+        assertEquals(asList.directoryName, asArray.directoryName)
+    }
+
+    @Test
+    fun `inputs with non-string keys are rejected, as they are not valid JSON keys`() {
+        val failure = assertFailsWith<IllegalArgumentException> {
+            glofas.copy(inputs = mapOf("outer" to mapOf(1 to "a", "1" to "b")))
+        }
+        assertContains(failure.message.orEmpty(), "$.inputs.outer")
+    }
+
+    @Test
+    fun `inputs with no JSON equivalent are rejected, reporting where they are`() {
+        val failure = assertFailsWith<IllegalArgumentException> {
+            glofas.copy(inputs = mapOf("hday" to listOf("10", sequenceOf("11"))))
+        }
+        assertContains(failure.message.orEmpty(), "$.inputs.hday[1]")
     }
 
     @Test

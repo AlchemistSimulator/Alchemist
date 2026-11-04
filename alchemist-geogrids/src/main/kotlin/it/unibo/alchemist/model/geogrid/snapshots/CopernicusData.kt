@@ -11,20 +11,18 @@ package it.unibo.alchemist.model.geogrid.snapshots
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
 import com.google.gson.JsonElement
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSyntaxException
 import com.google.gson.Strictness
 import com.google.gson.ToNumberPolicy
 import com.google.gson.reflect.TypeToken
+import it.unibo.alchemist.boundary.copernicus.CanonicalJson
 import it.unibo.alchemist.boundary.copernicus.CopernicusDataStoreProvider
 import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.boundary.filecache.FileSystemDirectoryCache
 import it.unibo.alchemist.model.geogrid.GridSnapshots
 import it.unibo.alchemist.model.geogrid.layers.GriddedGeoLayer
+import it.unibo.alchemist.util.KClasses.nonNullName
 import java.net.URL
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -135,9 +133,9 @@ class CopernicusData @JvmOverloads constructor(
                 this is String ->
                     "String '$this', not an existing file," to
                         parseJson { "'$this' is neither an existing file nor a valid JSON string" }
-                this is Map<*, *> -> "Mapping $this" to toJsonElement("inputs")
+                this is Map<*, *> -> "Mapping $this" to CanonicalJson.toJson(this, "inputs")
                 else -> throw IllegalArgumentException(
-                    "Inputs must be a Map, a JSON file, or a JSON string, but are a ${this::class.simpleName}: $this",
+                    "Inputs must be a Map, a JSON file, or a JSON string, but are a ${this::class.nonNullName}: $this",
                 )
             }
             require(json.isJsonObject) { "$source holds valid JSON, but not a JSON object: $json" }
@@ -168,30 +166,6 @@ class CopernicusData @JvmOverloads constructor(
                     // e.g., a JSON string on Windows, where quotes and colons cannot be in paths
                     null
                 }
-        }
-
-        /**
-         * This value of a mapping found at [path] as JSON.
-         *
-         * @throws IllegalArgumentException if it holds non-string keys, or values with no JSON equivalent.
-         */
-        private fun Any?.toJsonElement(path: String): JsonElement = when (this) {
-            null -> JsonNull.INSTANCE
-            is Boolean -> JsonPrimitive(this)
-            is Number -> JsonPrimitive(this)
-            is String -> JsonPrimitive(this)
-            is Map<*, *> -> JsonObject().also { json ->
-                forEach { (key, value) ->
-                    require(key is String) { "The key $key of $path is not a string, so it is not a valid JSON key" }
-                    json.add(key, value.toJsonElement("$path.$key"))
-                }
-            }
-            is Iterable<*> -> JsonArray().also { json ->
-                forEachIndexed { index, value -> json.add(value.toJsonElement("$path[$index]")) }
-            }
-            else -> throw IllegalArgumentException(
-                "$path is a ${this::class.simpleName} ($this), which has no JSON equivalent",
-            )
         }
     }
 }

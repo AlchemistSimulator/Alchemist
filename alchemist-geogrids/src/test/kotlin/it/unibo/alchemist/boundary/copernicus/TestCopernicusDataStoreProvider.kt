@@ -17,6 +17,7 @@ import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.TOKEN_HEAD
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.capturedBody
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.fastProvider
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.zipOf
+import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -25,6 +26,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -141,6 +143,15 @@ class TestCopernicusDataStoreProvider {
         FakeDataStore().use { fake ->
             val archive = zipOf("first/a.nc" to "1".toByteArray(), "second/a.nc" to "2".toByteArray())
             assertMessageContains(fake.completingWith(archive).failingDownload(), "collision", "a.nc")
+        }
+    }
+
+    @Test
+    fun `fails on a corrupt archive instead of keeping it`() {
+        FakeDataStore().use { fake ->
+            // without its end of central directory record, the archive cannot be read, but still looks like a ZIP
+            val archive = zipOf("a.nc" to "a".toByteArray()).let { it.copyOf(it.size - END_OF_CENTRAL_DIRECTORY_BYTES) }
+            assertFailsWith<IOException> { fake.completingWith(archive).download() }
         }
     }
 
@@ -276,4 +287,9 @@ class TestCopernicusDataStoreProvider {
     """.trimIndent()
 
     private fun Path.fileNames(): Set<String> = listDirectoryEntries().mapTo(mutableSetOf()) { it.name }
+
+    private companion object {
+        // the size of the end of central directory record of a ZIP archive with no comment
+        const val END_OF_CENTRAL_DIRECTORY_BYTES = 22
+    }
 }

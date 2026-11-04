@@ -37,8 +37,8 @@ class TestCopernicusRequest {
     private fun emptyRequest(endpoint: String) = CopernicusRequest(endpoint, "dataset-name", mapOf())
 
     @Test
-    fun `directoryName is deterministic, the same request yields the same name`() {
-        assertEquals(glofas.directoryName, glofas.directoryName)
+    fun `equal requests yield the same name`() {
+        assertEquals(glofas.directoryName, glofas.copy(inputs = glofas.inputs.toMap()).directoryName)
     }
 
     @Test

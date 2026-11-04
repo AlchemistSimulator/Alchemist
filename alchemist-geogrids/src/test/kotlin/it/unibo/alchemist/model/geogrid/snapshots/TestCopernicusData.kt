@@ -129,16 +129,18 @@ class TestCopernicusData {
     }
 
     @Test
-    fun `fails clearly when the cdsapirc file has no key`() {
-        FakeDataStore().use { fake ->
-            val cdsApiRc = tempDir.resolve(".cdsapirc")
-            cdsApiRc.writeText("url: https://cds.climate.copernicus.eu/api")
-            val failure = assertFails { fake.copernicusData(cdsApiRc) }
-            assertTrue(
-                generateSequence(failure) { it.cause }.any { "No 'key:' line" in it.message.orEmpty() },
-                "Expected a missing key to be reported, but got $failure",
-            )
-            assertTrue(fake.server.requests.isEmpty(), "No request can be sent without a token")
+    fun `fails clearly when the cdsapirc file has no key, or an empty one`() {
+        listOf("", "\nkey:", "\nkey:   ").forEach { keyLine ->
+            FakeDataStore().use { fake ->
+                val cdsApiRc = tempDir.resolve(".cdsapirc")
+                cdsApiRc.writeText("url: https://cds.climate.copernicus.eu/api$keyLine")
+                val failure = assertFails { fake.copernicusData(cdsApiRc) }
+                assertTrue(
+                    generateSequence(failure) { it.cause }.any { "No non-empty 'key:' line" in it.message.orEmpty() },
+                    "Expected a missing key to be reported for '$keyLine', but got $failure",
+                )
+                assertTrue(fake.server.requests.isEmpty(), "No request can be sent without a token")
+            }
         }
     }
 

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.geogrid.snapshots
 
 import it.unibo.alchemist.TestVariable
+import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Files
@@ -301,6 +302,25 @@ class TestGridsFromDirectory {
         val grid = GridsFromDirectory(dir).grid(0)
         assertContentEquals(doubleArrayOf(5.0, 15.0), grid.longitudes.toDoubleArray())
         assertEquals(listOf(2.0, 1.0, 4.0, 3.0), grid.values())
+    }
+
+    @Test
+    fun `longitudes stored in 0 to 360 should be moved to -180 to 180, along with their values`() {
+        val dir = singleFileDirectory(
+            "lon-0-360",
+            lons = doubleArrayOf(0.0, 90.0, 180.0, 270.0),
+            variables = listOf(TestVariable(rawValues = doubleArrayOf(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0))),
+        )
+        val grid = GridsFromDirectory(dir).grid(0)
+        assertContentEquals(doubleArrayOf(-90.0, 0.0, 90.0, 180.0), grid.longitudes.toDoubleArray())
+        assertEquals(listOf(4.0, 1.0, 2.0, 3.0, 8.0, 5.0, 6.0, 7.0), grid.values())
+        assertTrue(grid.isInBounds(mockGeoPosition(15.0, -45.0)))
+    }
+
+    @Test
+    fun `longitudes overlapping once moved to -180 to 180 should raise an IllegalArgumentException`() {
+        val dir = singleFileDirectory("lon-overlap", lons = doubleArrayOf(0.0, 360.0))
+        assertFailsWith<IllegalArgumentException> { GridsFromDirectory(dir) }
     }
 
     // GRIB reading test

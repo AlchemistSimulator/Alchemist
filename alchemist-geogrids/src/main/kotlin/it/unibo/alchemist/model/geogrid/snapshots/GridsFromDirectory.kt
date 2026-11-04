@@ -35,7 +35,9 @@ import ucar.nc2.dataset.NetcdfDatasets
  * [GridSnapshots] read at construction from a [directory] of NetCDF or GRIB files sharing the same variable and
  * latitude/longitude grid.
  * Each file must hold a `{time, latitude, longitude}` variable, with its dimensions in any order;
- * axes stored in descending order are reversed, and missing values become [Double.NaN].
+ * axes are sorted ascending, longitudes beyond 180° (e.g., stored in `[0, 360)`) are moved to `[-180, 180]`,
+ * and missing values become [Double.NaN].
+ * Grids crossing the antimeridian are not supported, as they would split into two blocks with a gap in between.
  * Files with no time axis are timed by their reference time axis, if any, with a warning:
  * for forecasts, the reference time precedes the time the data are valid at by their lead time.
  * When files share an instant, the first file in lexicographic order wins.
@@ -105,9 +107,35 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
             dataset.findCoordinateAxis(AxisType.Lon) as? CoordinateAxis1D,
         ) { "No 1D longitude axis in $location" }
 
-        private val latitudesDescending: Boolean = latitudeAxis.coordValues.let { it.first() > it.last() }
+        private val fileLatitudes: DoubleArray = latitudeAxis.coordValues
 
-        private val longitudesDescending: Boolean = longitudeAxis.coordValues.let { it.first() > it.last() }
+        /**
+         * The longitudes in the file, moved to `[-180, 180]`.
+         */
+        private val fileLongitudes: DoubleArray = longitudeAxis.coordValues
+            .map { longitude ->
+                when {
+                    longitude > HALF_TURN -> longitude - FULL_TURN
+                    longitude < -HALF_TURN -> longitude + FULL_TURN
+                    else -> longitude
+                }
+            }
+            .toDoubleArray()
+            .also { longitudes ->
+                require(longitudes.distinct().size == longitudes.size) {
+                    "The longitudes of $location overlap once moved to [-180, 180]: ${longitudes.contentToString()}"
+                }
+            }
+
+        /**
+         * For each latitude, in ascending order, its index in the file.
+         */
+        private val latitudeOrder: IntArray = fileLatitudes.ascendingOrder()
+
+        /**
+         * For each longitude, in ascending order, its index in the file.
+         */
+        private val longitudeOrder: IntArray = fileLongitudes.ascendingOrder()
 
         /**
          * The names of the time, latitude, and longitude dimensions.
@@ -140,16 +168,12 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
         /**
          * The latitudes, sorted ascending.
          */
-        val latitudes: Axis = ImmutableAxis(
-            latitudeAxis.coordValues.let { if (latitudesDescending) it.reversedArray() else it },
-        )
+        val latitudes: Axis = ImmutableAxis(fileLatitudes.sortedArray())
 
         /**
          * The longitudes, sorted ascending.
          */
-        val longitudes: Axis = ImmutableAxis(
-            longitudeAxis.coordValues.let { if (longitudesDescending) it.reversedArray() else it },
-        )
+        val longitudes: Axis = ImmutableAxis(fileLongitudes.sortedArray())
 
         /**
          * The name of the variable.
@@ -170,9 +194,7 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
             val slice = variable.read(origin, shape).permute(positions).copy()
             val (_, nLat, nLon) = sizes
             val values = DoubleArray(nLat * nLon) { index ->
-                val latitude = (index / nLon).let { if (latitudesDescending) nLat - 1 - it else it }
-                val longitude = (index % nLon).let { if (longitudesDescending) nLon - 1 - it else it }
-                slice.getDouble(latitude * nLon + longitude)
+                slice.getDouble(latitudeOrder[index / nLon] * nLon + longitudeOrder[index % nLon])
             }
             val density = values.count { !it.isNaN() }.toDouble() / values.size
             return if (density < SPARSE_DENSITY_THRESHOLD) {
@@ -228,6 +250,10 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
          */
         private const val SPARSE_DENSITY_THRESHOLD = 0.1
 
+        private const val FULL_TURN = 360.0
+
+        private const val HALF_TURN = FULL_TURN / 2
+
         private val logger = LoggerFactory.getLogger(GridsFromDirectory::class.java)
 
         /**
@@ -239,6 +265,11 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
          * The suffixes of the index files that netCDF-Java writes next to GRIB files.
          */
         private val netcdfJavaIndexSuffixes = setOf(".gbx9", ".ncx4")
+
+        /**
+         * The indices of this array, sorted by their values.
+         */
+        private fun DoubleArray.ascendingOrder(): IntArray = indices.sortedBy { this[it] }.toIntArray()
 
         /**
          * The data files in this directory, sorted, skipping the indexes written by netCDF-Java.

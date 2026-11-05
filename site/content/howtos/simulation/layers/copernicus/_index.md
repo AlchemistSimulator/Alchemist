@@ -56,6 +56,7 @@ All the files in the directory must hold the same variable on the same grid,
 and their time slices get merged in chronological order
 (if several files hold the same instant, the slice of the first file is used).
 The directory is looked up first among the classpath resources, and then as a path on the file system.
+Classpath directories must be on the file system, not packaged in a jar, as netCDF-Java reads only files.
 
 {{< code path="alchemist-geogrids/src/test/resources/copernicus/local-data.yml" >}}
 
@@ -66,7 +67,7 @@ The same scenario, written with the Kotlin DSL:
 ## Downloading data from a Copernicus data store
 
 Given an `endpoint`, a `dataset`, and the `inputs` of the request,
-`CopernicusData` requests the data directly to a data store:
+`CopernicusData` requests the data directly from a data store:
 it submits the request, waits for the data store to prepare the data, downloads it,
 and verifies its integrity before using it.
 Downloads get cached on the local file system,
@@ -140,14 +141,14 @@ delete the corresponding entry from the cache directory.
 
 ### Other parameters
 
+Named parameters are supported in both YAML and the Kotlin DSL;
+when using them, all the optional parameters preceding the last one provided must be specified as well.
+
 * `providerTimeout`: how long, in ISO-8601, to wait for the data store to prepare the data
   (by default, `PT30M`).
   Large requests may spend a long time in the data store queue.
 
 ## Interpolation and conversion
-
-Named parameters are supported in both YAML and the Kotlin DSL;
-when using them, all the optional parameters preceding the last one provided must be specified as well.
 
 Values are interpolated first in space, within the two grids around the current time,
 then in time, between the two results.

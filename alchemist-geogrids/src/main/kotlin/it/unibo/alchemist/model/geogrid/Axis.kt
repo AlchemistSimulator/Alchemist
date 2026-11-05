@@ -55,7 +55,16 @@ interface Axis {
      * The cell of an axis enclosing a coordinate: the [lower] and [upper] indices of the axis values around it,
      * and the [weight] of the coordinate between them, 0 at [lower] and 1 at [upper].
      * A coordinate on a value, or outside the axis, has [lower] equal to [upper] and weight 0.
+     *
+     * @throws IllegalArgumentException if [lower] is negative, [upper] is not [lower] or the next index,
+     * or [weight] is not in `[0, 1]` (or is not 0 when [lower] equals [upper]).
      */
-    @ConsistentCopyVisibility
-    data class Cell internal constructor(val lower: Int, val upper: Int, val weight: Double)
+    data class Cell(val lower: Int, val upper: Int, val weight: Double) {
+        init {
+            require(lower >= 0 && upper - lower in 0..1) { "Invalid cell indices: $lower, $upper" }
+            require(weight in 0.0..1.0 && (lower < upper || weight == 0.0)) {
+                "Invalid weight $weight for the cell between $lower and $upper"
+            }
+        }
+    }
 }

@@ -89,4 +89,16 @@ class TestAxis {
     fun `the range goes from the first to the last coordinate`() {
         assertEquals(10.0..40.0, axis.range)
     }
+
+    @Test
+    fun `cells with invalid indices or weights are rejected`() {
+        listOf(
+            { Axis.Cell(-1, 0, 0.0) },
+            { Axis.Cell(1, 0, 0.0) },
+            { Axis.Cell(0, 2, 0.5) },
+            { Axis.Cell(0, 1, 1.5) },
+            { Axis.Cell(0, 1, Double.NaN) },
+            { Axis.Cell(1, 1, 0.5) },
+        ).forEach { cell -> assertFailsWith<IllegalArgumentException> { cell() } }
+    }
 }

@@ -91,13 +91,12 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
         // the indices of the time slices that enclose t: the same one if t falls on a slice or outside them
         val (gridBeforeIndex, gridAfterIndex, timeWeight) = sliceTimes.enclosingCellOf(t)
         val gridBefore = data.grid(gridBeforeIndex)
-        val gridAfter = data.grid(gridAfterIndex)
         require(gridBefore.isInBounds(position)) { outOfBoundsMessage(position, gridBefore) }
         val valueBefore = spatialInterpolation.valueAt(gridBefore, position)
-        // a single grid is interpolated once
+        // a single grid is fetched and interpolated once
         val valueAfter = when {
             gridAfterIndex == gridBeforeIndex -> valueBefore
-            else -> spatialInterpolation.valueAt(gridAfter, position)
+            else -> spatialInterpolation.valueAt(data.grid(gridAfterIndex), position)
         }
         return converter(temporalInterpolation.interpolate(valueBefore, valueAfter, timeWeight))
     }

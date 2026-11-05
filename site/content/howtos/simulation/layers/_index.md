@@ -38,7 +38,7 @@ such a layer observes the environment's `attachedSimulation`,
 which notifies when the simulation becomes available.
 
 Layers can also be built from real-world gridded data, such as climate and weather time series:
-see [Layers from Copernicus data](/howtos/simulation/layers/copernicus/).
+see [Layers from gridded geographic data](/howtos/simulation/layers/copernicus/).
 
 Layers are created with the [`type/parameter` syntax](/reference/yaml/#arbitrary-class-loading-system),
 as in this example:

@@ -54,7 +54,7 @@ for instance because they were downloaded from the web interface of a data store
 with no network access and no credentials.
 All the files in the directory must hold the same variable on the same grid,
 and their time slices get merged in chronological order
-(if several files hold the same instant, the slice of the first file is used).
+(if several files hold the same instant, the slice of the first file in lexicographic order is used).
 The directory is looked up first among the classpath resources, and then as a path on the file system.
 Classpath directories must be on the file system, not packaged in a jar, as netCDF-Java reads only files.
 
@@ -141,9 +141,11 @@ delete the corresponding entry from the cache directory.
 
 ### Other parameters
 
-Named parameters are supported in both YAML and the Kotlin DSL;
-when using them, all the optional parameters preceding the last one provided must be specified as well.
+In YAML, named parameters must include all the optional parameters preceding the last one provided
+(hence `variable: null` in the example above); the Kotlin DSL has no such restriction.
 
+* `variable`: the variable to read in the downloaded files,
+  auto-detected when they hold only one (as in `GridsFromDirectory`);
 * `providerTimeout`: how long, in ISO-8601, to wait for the data store to prepare the data
   (by default, `PT30M`).
   Large requests may spend a long time in the data store queue.

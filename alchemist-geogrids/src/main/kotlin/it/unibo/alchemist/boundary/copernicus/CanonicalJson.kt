@@ -16,7 +16,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import it.unibo.alchemist.util.KClasses.nonNullName
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 import java.util.TreeMap
 
 /**
@@ -57,7 +57,7 @@ internal object CanonicalJson {
         is Iterable<*> -> value.toJsonArray(path)
         is Array<*> -> value.asIterable().toJsonArray(path)
         else -> throw IllegalArgumentException(
-            "$path is a ${value::class.nonNullName} ($value), which has no JSON equivalent",
+            "$path is a ${value::class.nonNullSimpleName} ($value), which has no JSON equivalent",
         )
     }
 

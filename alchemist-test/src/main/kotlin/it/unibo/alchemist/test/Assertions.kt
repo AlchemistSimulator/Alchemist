@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistributedReaction
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
-import it.unibo.alchemist.util.KClasses.nonNullName
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 import java.util.concurrent.CyclicBarrier
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
@@ -111,8 +111,8 @@ infix fun <T, P : Position<P>> Environment<T, P>.shouldEqual(other: Environment<
 
 fun <T, P : Position<P>> Simulation<T, P>.equalsForSteps(other: Simulation<T, P>, steps: Long) {
     assertEquals(other::class, this::class, "Simulation types don't match")
-    outputMonitors.sortedBy { it::class.nonNullName }
-        .ebeEquals(other.outputMonitors.sortedBy { it::class.nonNullName }) { expected, actual ->
+    outputMonitors.sortedBy { it::class.nonNullSimpleName }
+        .ebeEquals(other.outputMonitors.sortedBy { it::class.nonNullSimpleName }) { expected, actual ->
             assertEquals(expected::class, actual::class, "OutputMonitor types don't match")
         }
     val expectedThread = Thread(null, other, "Alchemist-Test-Expected")

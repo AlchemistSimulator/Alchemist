@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.util
 
-import it.unibo.alchemist.util.KTypes.allNonAnySuperKClasses
 import it.unibo.alchemist.util.KTypes.asNonAnyKClass
 import kotlin.reflect.KClass
 
@@ -19,18 +18,12 @@ import kotlin.reflect.KClass
 object KClasses {
 
     /**
-     * A name for this class that is never `null`: its [simple name][KClass.simpleName], or its
-     * [qualified name][KClass.qualifiedName], or, for anonymous classes (e.g., object expressions and lambdas),
-     * `<anonymous Name>`, where `Name` is the name of its closest named supertype other than [Any]
-     * (`<anonymous object>` if there is none).
+     * The [simple name][KClass.simpleName] of this class or, for anonymous classes (e.g., object expressions and
+     * lambdas), which have none, `<anonymous Name>`, where `Name` is the simple name of its closest named supertype
+     * other than [Any] (`<anonymous object>` if there is none).
      */
-    val KClass<*>.nonNullName: String get() = simpleName ?: qualifiedName ?: "<anonymous ${
-        supertypes.asSequence()
-            .mapNotNull { it.asNonAnyKClass() }
-            .plus(supertypes.flatMap { it.allNonAnySuperKClasses() })
-            .firstNotNullOfOrNull { it.simpleName ?: it.qualifiedName }
-            ?: "object"
-    }>"
+    val KClass<*>.nonNullSimpleName: String get() = simpleName
+        ?: "<anonymous ${allNonAnySuperKClasses().firstNotNullOfOrNull { it.simpleName } ?: "object"}>"
 
     /**
      * All the classes and interfaces this class extends or implements, directly or not, except [Any],

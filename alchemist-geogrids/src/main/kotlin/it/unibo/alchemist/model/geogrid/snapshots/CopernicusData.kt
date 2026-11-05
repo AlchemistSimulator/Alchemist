@@ -22,7 +22,7 @@ import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.boundary.filecache.FileSystemDirectoryCache
 import it.unibo.alchemist.model.geogrid.GridSnapshots
 import it.unibo.alchemist.model.geogrid.layers.GriddedGeoLayer
-import it.unibo.alchemist.util.KClasses.nonNullName
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 import java.net.URL
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
@@ -135,7 +135,7 @@ class CopernicusData @JvmOverloads constructor(
                         parseJson { "'$this' is neither an existing file nor a valid JSON string" }
                 this is Map<*, *> -> "Mapping $this" to CanonicalJson.toJson(this, "inputs")
                 else -> throw IllegalArgumentException(
-                    "Inputs must be a Map, a JSON file, or a JSON string, but are a ${this::class.nonNullName}: $this",
+                    "Inputs must be a Map, a JSON file, or a JSON string, but are a ${this::class.nonNullSimpleName}: $this",
                 )
             }
             require(json.isJsonObject) { "$source holds valid JSON, but not a JSON object: $json" }

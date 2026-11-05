@@ -139,8 +139,10 @@ class CopernicusDataStoreProvider(
                         logger.warn("Unrecognized job status '$status' at $monitorUrl, continuing to poll")
                     }
                 }
-                // never sleeps past the deadline, so that the next poll fails right on time
-                Thread.sleep(minOf(interval, -deadline.elapsedNow()).coerceAtLeast(Duration.ZERO).inWholeMilliseconds)
+                // sleeps at most until just past the deadline, so that the next poll fails right on time:
+                // rounded up, as waking up just before the deadline would send one more request
+                val remaining = minOf(interval, -deadline.elapsedNow()).coerceAtLeast(Duration.ZERO)
+                Thread.sleep(remaining.inWholeMilliseconds + 1)
                 awaitSuccess(monitorUrl, deadline, (interval * 2).coerceAtMost(MAX_POLL_INTERVAL), status)
             }
         }

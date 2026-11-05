@@ -157,7 +157,7 @@ The `spatialInterpolation` parameter can be
 the `temporalInterpolation` parameter can be
 {{% api package="model.geogrid.temporalinterpolations" class="LinearInterpolation" %}} (the default),
 {{% api package="model.geogrid.temporalinterpolations" class="ClosestInterpolation" %}},
-{{% api package="model.geogrid.temporalinterpolations" class="LastInterpolation" %}}, or
+{{% api package="model.geogrid.temporalinterpolations" class="PreviousInterpolation" %}}, or
 {{% api package="model.geogrid.temporalinterpolations" class="NextInterpolation" %}}.
 
 Grid points with no data (e.g., river discharge far from rivers) are read as `NaN`.
@@ -166,5 +166,5 @@ unless its `missingValue` parameter gives them another value (e.g., `missingValu
 Layers of other types can be created with {{% api package="model.geogrid.layers" class="GriddedGeoLayer" %}},
 whose `converter` turns interpolated values, `NaN` included, into the values of the layer.
 For categorical data, such as precipitation types or land cover classes,
-use nearest interpolation in space and closest, last, or next in time,
+use nearest interpolation in space and closest, previous, or next in time,
 so that values of different categories never get blended.

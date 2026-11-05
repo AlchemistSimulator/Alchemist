@@ -12,9 +12,9 @@ package it.unibo.alchemist.model.geogrid.temporalinterpolations
 import it.unibo.alchemist.model.geogrid.TemporalInterpolation
 
 /**
- * The value of the last instant.
+ * The value of the instant before, held until the next one.
  */
-object LastInterpolation : TemporalInterpolation {
+object PreviousInterpolation : TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueBefore
 }

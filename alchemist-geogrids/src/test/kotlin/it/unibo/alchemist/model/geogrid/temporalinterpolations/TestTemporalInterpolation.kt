@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 class TestTemporalInterpolation {
 
     private val closest = ClosestInterpolation
-    private val last = LastInterpolation
+    private val previous = PreviousInterpolation
     private val next = NextInterpolation
     private val linear = LinearInterpolation
 
@@ -56,11 +56,11 @@ class TestTemporalInterpolation {
         }
     }
 
-    // Last temporal interpolation strategy test
+    // Previous temporal interpolation strategy test
     @Test
-    fun `last always returns the earlier value regardless of weight`() {
+    fun `previous always returns the earlier value regardless of weight`() {
         for (weight in weights) {
-            assertEquals(valueBefore, last.interpolate(valueBefore, valueAfter, weight), "at weight $weight")
+            assertEquals(valueBefore, previous.interpolate(valueBefore, valueAfter, weight), "at weight $weight")
         }
     }
 

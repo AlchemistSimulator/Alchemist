@@ -13,7 +13,6 @@ import it.unibo.alchemist.boundary.copernicus.CopernicusRequest
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.TOKEN_HEADER
 import it.unibo.alchemist.boundary.copernicus.FakeDataStore.Companion.zipOf
-import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
 import kotlin.io.path.createDirectories
@@ -51,9 +50,8 @@ class TestCopernicusData {
      */
     private val missingCdsApiRc: Path = tempDir.resolve("missing.cdsapirc")
 
-    private val glofas: ByteArray = Files.readAllBytes(
-        Path.of(requireNotNull(javaClass.getResource("/copernicus/glofas-cesena/glofas-cesena.nc")).toURI()),
-    )
+    private val glofas: ByteArray =
+        checkNotNull(javaClass.getResource("/copernicus/glofas-cesena/glofas-cesena.nc")).readBytes()
 
     @AfterTest
     fun deleteTempDir() {

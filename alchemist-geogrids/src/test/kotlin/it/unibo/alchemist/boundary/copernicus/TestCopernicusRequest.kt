@@ -34,8 +34,6 @@ class TestCopernicusRequest {
         ),
     )
 
-    private fun emptyRequest(endpoint: String) = CopernicusRequest(endpoint, "dataset-name", mapOf())
-
     @Test
     fun `equal requests yield the same name`() {
         assertEquals(glofas.directoryName, glofas.copy(inputs = glofas.inputs.toMap()).directoryName)
@@ -111,11 +109,6 @@ class TestCopernicusRequest {
     }
 
     @Test
-    fun `the readable prefix is the dataset`() {
-        assertStartsWith("cems-glofas-historical_", glofas.directoryName)
-    }
-
-    @Test
     fun `dataset ids that are not a safe path segment are rejected`() {
         listOf("", ".", "..", "../x", "weird/name with:chars", ".hidden", "-flag").forEach { dataset ->
             assertFailsWith<IllegalArgumentException>("'$dataset'") { glofas.copy(dataset = dataset) }
@@ -123,28 +116,20 @@ class TestCopernicusRequest {
     }
 
     @Test
-    fun `the name complies with the CachedDirectoryKey contract, a single file-system-safe segment`() {
-        assertMatches(Regex("^[A-Za-z0-9._-]+$"), glofas.directoryName)
-    }
-
-    @Test
     fun `the name is a readable prefix followed by a lowercase-hex hash suffix`() {
-        assertMatches(Regex("^cems-glofas-historical_[0-9a-f]+$"), glofas.directoryName)
+        assertMatches(Regex("^cems-glofas-historical_[0-9a-f]{16}$"), glofas.directoryName)
     }
 
     @Test
     fun `should not throw on actual endpoints`() {
-        val endpoints = setOf(
+        listOf(
             "https://cds.climate.copernicus.eu/api",
             "https://ewds.climate.copernicus.eu/api",
             "https://ads.atmosphere.copernicus.eu/api",
-        )
-        endpoints.forEach { api ->
-            emptyRequest(api)
-        }
-        emptyRequest("https://something.else.copernicus.eu/api")
-        emptyRequest("http://127.0.0.1:8080")
-        emptyRequest("https://127.0.0.1/any/path")
+            "https://something.else.copernicus.eu/api",
+            "http://127.0.0.1:8080",
+            "https://127.0.0.1/any/path",
+        ).forEach(::emptyRequest)
     }
 
     @Test
@@ -170,12 +155,12 @@ class TestCopernicusRequest {
             assertFailsWith<IllegalArgumentException>("'$endpoint'") { emptyRequest(endpoint) }
         }
     }
-}
 
-private fun assertStartsWith(prefix: String, actual: String) {
-    assertTrue(actual.startsWith(prefix), "Expected '$actual' to start with '$prefix'")
-}
+    companion object {
+        private fun assertMatches(regex: Regex, actual: String) {
+            assertTrue(regex.matches(actual), "Expected '$actual' to match $regex")
+        }
 
-private fun assertMatches(regex: Regex, actual: String) {
-    assertTrue(regex.matches(actual), "Expected '$actual' to match $regex")
+        private fun emptyRequest(endpoint: String) = CopernicusRequest(endpoint, "dataset-name", mapOf())
+    }
 }

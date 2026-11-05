@@ -72,15 +72,10 @@ class CopernicusDataStoreProvider(
             "$target is not a directory or does not exist"
         }
         val start = TimeSource.Monotonic.markNow()
-        // asks ECMWF servers to process the data.
         val monitorUrl = submit(key)
-        // polls until the data can be retrieved.
         val resultsUrl = awaitSuccess(monitorUrl)
-        // retrieves the URI to the produced asset.
         val asset = fetchAsset(resultsUrl)
-        // downloads the asset.
         val file = download(asset, target)
-        // asset validation and archive flattening.
         file.verify(asset.sizeBytes, asset.md5)
         target.extractAndDeleteAllZipArchives()
         val elapsed = start.elapsedNow().inWholeMilliseconds.milliseconds
@@ -92,7 +87,6 @@ class CopernicusDataStoreProvider(
      */
     private fun submit(request: CopernicusRequest): String {
         val body = CanonicalJson.encode(mapOf("inputs" to request.inputs))
-        // builds the full POST request
         val httpRequest = HttpRequest.newBuilder()
             .uri(URI.create("${request.endpoint}/retrieve/v1/processes/${request.dataset}/execution"))
             // always needed! A 403 error would be thrown otherwise
@@ -103,7 +97,6 @@ class CopernicusDataStoreProvider(
             .timeout(REQUEST_TIMEOUT.toJavaDuration())
             .build()
         val response = http.send(httpRequest, HttpResponse.BodyHandlers.ofString())
-        // something has gone wrong
         if (!response.isSuccessful) {
             failOnHttpError("Submit of dataset '${request.dataset}'", response)
         }
@@ -165,12 +158,10 @@ class CopernicusDataStoreProvider(
      */
     private fun download(asset: RemoteAsset, targetDir: Path): Path {
         val uri = URI.create(asset.href)
-        // extracts the asset name from the uri
         val fileName = uri.path.substringAfterLast('/').ifEmpty { "download" }
         val target = targetDir.resolve(fileName)
         val request = HttpRequest.newBuilder().uri(uri).GET().build() // no PRIVATE-TOKEN needed
         val response = http.send(request, HttpResponse.BodyHandlers.ofFile(target))
-        // http error code check
         if (!response.isSuccessful) {
             error("Download failed (HTTP ${response.statusCode()}) from ${asset.href}")
         }
@@ -218,6 +209,12 @@ class CopernicusDataStoreProvider(
     private data class RemoteAsset(val href: String, val sizeBytes: Long, val md5: String?)
 
     internal companion object {
+        private const val APPLICATION_JSON = "application/json"
+
+        private const val SUCCESSFUL = "successful"
+
+        private const val MD5_HEX_DIGITS = 32
+
         /**
          * How long a job can take by default.
          */
@@ -249,12 +246,6 @@ class CopernicusDataStoreProvider(
         private val http: HttpClient by lazy {
             HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT.toJavaDuration()).build()
         }
-
-        private const val APPLICATION_JSON = "application/json"
-
-        private const val SUCCESSFUL = "successful"
-
-        private const val MD5_HEX_DIGITS = 32
 
         private val TERMINAL_STATUSES = setOf("failed", "rejected", "dismissed", "deleted")
 
@@ -317,6 +308,20 @@ class CopernicusDataStoreProvider(
             ?: error("No 'status' field in the status response")
 
         /**
+         * The MD5 digest of this file, as 32 lowercase hexadecimal digits.
+         */
+        private val Path.md5Hex: String get() = md5(FileSystem.SYSTEM.source(toOkioPath())).use { source ->
+            source.buffer().readAll(blackholeSink())
+            source.hash.hex()
+        }
+
+        /**
+         * Whether the response is not an error.
+         */
+        private val HttpResponse<*>.isSuccessful: Boolean
+            get() = statusCode() in 200..299
+
+        /**
          * The `href` of the first entry in the `links` of this response with the given [rel], if any:
          * `monitor` for the job of a submission, `results` for the results of a job that ended.
          */
@@ -364,20 +369,6 @@ class CopernicusDataStoreProvider(
                     }
             }
         }
-
-        /**
-         * The MD5 digest of this file, as 32 lowercase hexadecimal digits.
-         */
-        private val Path.md5Hex: String get() = md5(FileSystem.SYSTEM.source(toOkioPath())).use { source ->
-            source.buffer().readAll(blackholeSink())
-            source.hash.hex()
-        }
-
-        /**
-         * Whether the response is not an error.
-         */
-        private val HttpResponse<*>.isSuccessful: Boolean
-            get() = statusCode() in 200..299
 
         /**
          * Checks that this file has [expectedSizeBytes] bytes and, if [expectedMd5] is given, that digest.

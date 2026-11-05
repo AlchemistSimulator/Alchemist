@@ -9,9 +9,6 @@
 
 package it.unibo.alchemist
 
-import io.mockk.every
-import io.mockk.mockk
-import it.unibo.alchemist.model.GeoPosition
 import java.nio.file.Path
 import ucar.ma2.Array as UcarArray
 import ucar.ma2.DataType
@@ -102,14 +99,6 @@ private fun unravel(index: Int, shape: IntArray): IntArray = shape.reversed()
     .zip(shape.reversed()) { rest, size -> rest % size }
     .reversed()
     .toIntArray()
-
-/**
- * [GeoPosition] mock used in test cases.
- */
-internal fun mockGeoPosition(lat: Double, long: Double): GeoPosition = mockk {
-    every { latitude } returns lat
-    every { longitude } returns long
-}
 
 /**
  * A single data variable to write into a test NetCDF file.

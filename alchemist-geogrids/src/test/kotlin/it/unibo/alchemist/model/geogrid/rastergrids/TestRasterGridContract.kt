@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.geogrid.rastergrids
 
-import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.geogrid.Axis
 import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
+import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -79,7 +79,7 @@ abstract class RasterGridContract {
             linspace(lats.first(), lats.last(), steps),
             linspace(lons.first(), lons.last(), steps),
         ).forEach { (lat, lon) ->
-            assertTrue(grid.isInBounds(mockGeoPosition(lat, lon)), "($lat, $lon) should be in bounds")
+            assertTrue(grid.isInBounds(LatLongPosition(lat, lon)), "($lat, $lon) should be in bounds")
         }
     }
 
@@ -94,7 +94,7 @@ abstract class RasterGridContract {
             midLat to lons.first() - offset,
             midLat to lons.last() + offset,
         ).forEach { (lat, lon) ->
-            assertFalse(grid.isInBounds(mockGeoPosition(lat, lon)), "($lat, $lon) should be out of bounds")
+            assertFalse(grid.isInBounds(LatLongPosition(lat, lon)), "($lat, $lon) should be out of bounds")
         }
     }
 

@@ -15,7 +15,6 @@ import it.unibo.alchemist.TestVariable
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.kotlindsl.simulationOnMap
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Reaction
@@ -55,7 +54,7 @@ import kotlin.time.Instant
 private const val TOLERANCE = 1e-9
 
 class TestGriddedGeoLayer {
-    private val center: GeoPosition = mockGeoPosition(45.0, 12.0)
+    private val center: GeoPosition = LatLongPosition(45.0, 12.0)
 
     private val netCdfFileName = "data.nc"
 
@@ -64,7 +63,7 @@ class TestGriddedGeoLayer {
      * the second one has the values of the first plus 1000, to tell time apart from space.
      * In the middle of the cell, the bilinear values are the averages: 32.5 before, 1032.5 after.
      */
-    private val cellCenter = mockGeoPosition(44.5, 11.5)
+    private val cellCenter = LatLongPosition(44.5, 11.5)
     private val gridBefore = cornerGrid(0.0, 10.0, 20.0, 100.0)
     private val gridAfter = cornerGrid(1000.0, 1010.0, 1020.0, 1100.0)
     private val gridBeforeWithHole = cornerGrid(Double.NaN, 10.0, 20.0, 100.0)
@@ -125,7 +124,7 @@ class TestGriddedGeoLayer {
             temporalInterpolation = ClosestInterpolation,
         )
         // nearest to the south-west corner, closest to the second grid
-        assertEquals(1000.0, layer.currentValueAt(mockGeoPosition(44.1, 11.1)))
+        assertEquals(1000.0, layer.currentValueAt(LatLongPosition(44.1, 11.1)))
     }
 
     @Test
@@ -216,7 +215,7 @@ class TestGriddedGeoLayer {
         val gridSnaps = syntheticSnapshots(7.0)
         val layer = DoubleGriddedGeoLayer(envAt(0.0), gridSnaps)
         assertFailsWith<IllegalArgumentException> {
-            layer.currentValueAt(mockGeoPosition(lats.first() - 1, lons.first() - 1))
+            layer.currentValueAt(LatLongPosition(lats.first() - 1, lons.first() - 1))
         }
     }
 
@@ -355,8 +354,8 @@ class TestGriddedGeoLayer {
             ),
         )
         val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString()))
-        val lat44: GeoPosition = mockGeoPosition(44.0, 12.0)
-        val lat46: GeoPosition = mockGeoPosition(46.0, 12.0)
+        val lat44: GeoPosition = LatLongPosition(44.0, 12.0)
+        val lat46: GeoPosition = LatLongPosition(46.0, 12.0)
         assertEquals(
             3.0,
             layer.currentValueAt(lat44),

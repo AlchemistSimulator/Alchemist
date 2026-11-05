@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.geogrid.snapshots
 
 import it.unibo.alchemist.TestVariable
-import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.geogrid.RasterGrid
+import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Files
 import java.nio.file.Path
@@ -284,7 +284,7 @@ class TestGridsFromDirectory {
         val grid = GridsFromDirectory(dir).grid(0)
         assertContentEquals(doubleArrayOf(-90.0, 0.0, 90.0, 180.0), grid.longitudes.toDoubleArray())
         assertEquals(listOf(4.0, 1.0, 2.0, 3.0, 8.0, 5.0, 6.0, 7.0), grid.values())
-        assertTrue(grid.isInBounds(mockGeoPosition(15.0, -45.0)))
+        assertTrue(grid.isInBounds(LatLongPosition(15.0, -45.0)))
     }
 
     @Test

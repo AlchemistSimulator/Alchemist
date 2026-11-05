@@ -20,24 +20,10 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * Cartesian product of [first] and [second], in row-major order.
- */
-private fun <A, B> cartesian(first: Iterable<A>, second: Iterable<B>): List<Pair<A, B>> =
-    first.flatMap { a -> second.map { b -> a to b } }
-
-/**
- * Returns from [start] to [stop] in [steps] intervals.
- */
-private fun linspace(start: Double, stop: Double, steps: Int): List<Double> = (0..steps).map { i ->
-    val t = i.toDouble() / steps
-    (1 - t) * start + t * stop
-}
-
-/**
  * Contract shared by every [it.unibo.alchemist.model.geogrid.RasterGrid] implementation, verified
  * once and parameterized by the factory of the concrete implementation under test.
  */
-abstract class RasterGridContract {
+abstract class TestRasterGridContract {
 
     /**
      * Factory of the concrete [it.unibo.alchemist.model.geogrid.RasterGrid] implementation under test.
@@ -51,9 +37,10 @@ abstract class RasterGridContract {
      */
     private val lats = doubleArrayOf(10.0, 20.0, 30.0)
     private val lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0)
+    private val cells = lats.size * lons.size
     private val latitudes = ImmutableAxis(lats)
     private val longitudes = ImmutableAxis(lons)
-    private val values = DoubleArray(12) { idx -> idx / lons.size * 10.0 + (idx % lons.size) }
+    private val values = DoubleArray(cells) { idx -> idx / lons.size * 10.0 + (idx % lons.size) }
     private val grid: RasterGrid by lazy { gridOf(latitudes, longitudes, values) }
 
     // Value access tests
@@ -102,7 +89,7 @@ abstract class RasterGridContract {
     @Test
     fun `valueAt should return NaN for missing values`() {
         // (iLat=1, iLon=1) is a missing value
-        val nanValues = DoubleArray(12) { idx -> if (idx == 5) Double.NaN else idx.toDouble() }
+        val nanValues = DoubleArray(cells) { idx -> if (idx == 1 * lons.size + 1) Double.NaN else idx.toDouble() }
         val nullGrid = gridOf(latitudes, longitudes, nanValues)
         val value = nullGrid.valueAt(1, 1)
         assertTrue(value.isNaN(), "Expected NaN, but got $value")
@@ -110,7 +97,7 @@ abstract class RasterGridContract {
 
     @Test
     fun `a grid entirely made of NaN should return NaN everywhere`() {
-        val allNan = gridOf(latitudes, longitudes, DoubleArray(12) { Double.NaN })
+        val allNan = gridOf(latitudes, longitudes, DoubleArray(cells) { Double.NaN })
         cartesian(lats.indices, lons.indices).forEach { (iLat, iLon) ->
             val value = allNan.valueAt(iLat, iLon)
             assertTrue(value.isNaN(), "Expected NaN at ($iLat, $iLon), but got $value")
@@ -120,7 +107,7 @@ abstract class RasterGridContract {
     @Test
     fun `a mostly missing grid should return its few values, and NaN elsewhere`() {
         val present = mapOf(0 to 1.0, 6 to 2.0, 11 to 3.0)
-        val sparse = gridOf(latitudes, longitudes, DoubleArray(12) { present[it] ?: Double.NaN })
+        val sparse = gridOf(latitudes, longitudes, DoubleArray(cells) { present[it] ?: Double.NaN })
         cartesian(lats.indices, lons.indices).forEach { (iLat, iLon) ->
             val value = sparse.valueAt(iLat, iLon)
             val expected = present[iLat * lons.size + iLon]
@@ -159,7 +146,7 @@ abstract class RasterGridContract {
             gridOf(
                 latitudes,
                 longitudes,
-                DoubleArray(lats.size * lons.size - 1) { 0.0 },
+                DoubleArray(cells - 1) { 0.0 },
             )
         }
     }
@@ -171,14 +158,30 @@ abstract class RasterGridContract {
         source.fill(Double.NaN)
         assertEquals(12.0, isolated.valueAt(1, 2))
     }
-}
 
-// tests the array implementation (suitable for dense grids)
-class TestArrayRasterGrid : RasterGridContract() {
-    override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::ArrayRasterGrid
-}
+    companion object {
+        /**
+         * Cartesian product of [first] and [second], in row-major order.
+         */
+        private fun <A, B> cartesian(first: Iterable<A>, second: Iterable<B>): List<Pair<A, B>> =
+            first.flatMap { a -> second.map { b -> a to b } }
 
-// tests the map implementation (suitable for sparse grids)
-class TestMapRasterGrid : RasterGridContract() {
-    override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::MapRasterGrid
+        /**
+         * Returns from [start] to [stop] in [steps] intervals.
+         */
+        private fun linspace(start: Double, stop: Double, steps: Int): List<Double> = (0..steps).map { i ->
+            val t = i.toDouble() / steps
+            (1 - t) * start + t * stop
+        }
+    }
+
+    // tests the array implementation (suitable for dense grids)
+    class TestArrayRasterGrid : TestRasterGridContract() {
+        override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::ArrayRasterGrid
+    }
+
+    // tests the map implementation (suitable for sparse grids)
+    class TestMapRasterGrid : TestRasterGridContract() {
+        override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::MapRasterGrid
+    }
 }

@@ -32,28 +32,15 @@ class TestTemporalInterpolation {
     // Linear temporal interpolation strategy tests
     @Test
     fun `linear returns the endpoints at weight 0 and 1`() {
-        assertEquals(
-            valueBefore,
-            linear.interpolate(valueBefore, valueAfter, 0.0),
-            tolerance,
-        )
-        assertEquals(
-            valueAfter,
-            linear.interpolate(valueBefore, valueAfter, 1.0),
-            tolerance,
-        )
+        assertEquals(valueBefore, linear.interpolate(valueBefore, valueAfter, 0.0), tolerance)
+        assertEquals(valueAfter, linear.interpolate(valueBefore, valueAfter, 1.0), tolerance)
     }
 
     @Test
     fun `linear blends proportionally to the weight`() {
-        for (weight in weights) {
-            val expected = valueBefore + (valueAfter - valueBefore) * weight
-            assertEquals(
-                expected,
-                linear.interpolate(valueBefore, valueAfter, weight),
-                tolerance,
-                "at weight $weight",
-            )
+        // between 10 and 30
+        mapOf(0.25 to 15.0, 0.5 to 20.0, 0.75 to 25.0).forEach { (weight, expected) ->
+            assertEquals(expected, linear.interpolate(valueBefore, valueAfter, weight), tolerance, "at weight $weight")
         }
     }
 
@@ -94,10 +81,5 @@ class TestTemporalInterpolation {
         for (weight in listOf(0.5, 0.75, 1.0)) {
             assertEquals(valueAfter, closest.interpolate(valueBefore, valueAfter, weight), "at weight $weight")
         }
-    }
-
-    @Test
-    fun `closest resolves the exact one half tie to the later value`() {
-        assertEquals(valueAfter, closest.interpolate(valueBefore, valueAfter, 0.5))
     }
 }

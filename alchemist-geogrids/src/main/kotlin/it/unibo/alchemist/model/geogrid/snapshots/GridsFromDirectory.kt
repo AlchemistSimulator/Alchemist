@@ -292,15 +292,21 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
         /**
          * The directory among the classpath resources with this name or, if there is none, at this path.
          *
-         * @throws IllegalArgumentException if the resource is not a directory on the file system, e.g., inside a jar,
-         * as netCDF-Java reads only files.
+         * @throws IllegalArgumentException if there is no such directory, or if the resource is not on the
+         * file system, e.g., inside a jar, as netCDF-Java reads only files.
          */
-        private fun String.toDirectory(): Path = ResourceLoader.getResource(this)?.let { resource ->
-            require(resource.protocol == "file") {
-                "The classpath resource '$this' is at $resource, but data files must be on the file system"
+        private fun String.toDirectory(): Path {
+            val directory = ResourceLoader.getResource(this)?.let { resource ->
+                require(resource.protocol == "file") {
+                    "The classpath resource '$this' is at $resource, but data files must be on the file system"
+                }
+                Path.of(resource.toURI())
+            } ?: Path.of(this)
+            require(Files.isDirectory(directory)) {
+                "'$this' is not a directory, neither among the classpath resources nor on the file system"
             }
-            Path.of(resource.toURI())
-        } ?: Path.of(this)
+            return directory
+        }
 
         /**
          * Opens this file, with missing values as [Double.NaN].

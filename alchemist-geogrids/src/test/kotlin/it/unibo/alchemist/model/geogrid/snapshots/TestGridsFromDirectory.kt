@@ -145,6 +145,14 @@ class TestGridsFromDirectory {
 
     // Configuration errors tests
     @Test
+    fun `a missing directory, or a file, should raise an IllegalArgumentException`() {
+        val file = Files.createTempFile(tempDir, "not-a-directory", ".nc")
+        listOf(tempDir.resolve("missing"), file).forEach { path ->
+            assertFailsWith<IllegalArgumentException>("$path") { GridsFromDirectory(path.toString()) }
+        }
+    }
+
+    @Test
     fun `an empty directory should raise an IllegalArgumentException`() {
         val emptyDir = Files.createTempDirectory(tempDir, "empty")
         assertFailsWith<IllegalArgumentException> { GridsFromDirectory(emptyDir.toString()) }

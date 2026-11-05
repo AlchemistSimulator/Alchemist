@@ -1,0 +1,173 @@
++++
+title = "Layers from gridded geographic data"
+weight = 5
+tags = ["layer", "layers", "data", "copernicus", "climate", "weather", "netcdf", "grib", "geo-spatial data"]
+summary = "Feed real-world, time-varying gridded data (e.g., from Copernicus) into the simulation as layers"
++++
+
+Real-world environmental data, such as river discharge, precipitation, temperature, or air quality,
+is commonly distributed as *gridded time series*:
+a sequence of time slices, each one holding the values of a variable on a latitude/longitude grid.
+The [Copernicus](https://www.copernicus.eu/) data stores
+([Climate](https://cds.climate.copernicus.eu/),
+[Early Warning](https://ewds.climate.copernicus.eu/), and
+[Atmosphere](https://ads.atmosphere.copernicus.eu/))
+distribute this kind of data in the [NetCDF](https://www.unidata.ucar.edu/software/netcdf/)
+and [GRIB](https://confluence.ecmwf.int/display/CKB/What+are+GRIB+files+and+how+can+I+read+them) formats.
+
+The `alchemist-geogrids` module turns these files into [layers](/howtos/simulation/layers/):
+{{% api package="model.geogrid.layers" class="GriddedGeoLayer" %}} exposes, at every position,
+the value of the data at the current simulation time,
+interpolated in space between the grid points and in time between the slices.
+Its specialization {{% api package="model.geogrid.layers" class="DoubleGriddedGeoLayer" %}}
+yields `Double`s with sensible defaults, and it is what most simulations need.
+Nodes observing the layer are notified whenever its value at their position changes,
+either because they move or because the simulation time advances.
+
+These layers live on geographic coordinates,
+so they require an environment whose positions are
+{{% api class="GeoPosition" %}}s, such as the
+[map environments](/howtos/simulation/environment/maps/).
+
+The data backing a layer is provided as its `data` parameter:
+a {{% api package="model.geogrid.snapshots" class="GridsFromDirectory" %}} reads it from local files of any provider,
+while a {{% api package="model.geogrid.snapshots" class="CopernicusData" %}} downloads it from a Copernicus data store.
+
+## Mapping data time to simulation time
+
+Data slices are timestamped with real-world instants, while simulations advance in simulation time units.
+Two parameters, both written in ISO-8601, connect them:
+
+* `timeScale` is the real-world duration of one simulation time unit (by default, `PT1H`: one hour);
+* `timeOrigin` is the real-world instant corresponding to simulation time zero
+  (by default, the first instant found in the data).
+
+Before the first slice and after the last one, the layer holds the values of the first and of the last slice.
+Outside the spatial extent of the grid, instead, no value is extrapolated, and querying the layer fails:
+make sure that the data covers the area where nodes move.
+
+## Reading local data files
+
+If the data files are already available,
+for instance because they were downloaded from the web interface of a data store,
+`GridsFromDirectory` reads them from the given `directory`,
+with no network access and no credentials.
+All the files in the directory must hold the same variable on the same grid,
+and their time slices get merged in chronological order
+(if several files hold the same instant, the slice of the first file in lexicographic order is used).
+The directory is looked up first among the classpath resources, and then as a path on the file system.
+Classpath directories must be on the file system, not packaged in a jar, as netCDF-Java reads only files.
+
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/local-data.yml" >}}
+
+The same scenario, written with the Kotlin DSL:
+
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/local-data.alchemist.kts" >}}
+
+## Downloading data from a Copernicus data store
+
+Given an `endpoint`, a `dataset`, and the `inputs` of the request,
+`CopernicusData` requests the data directly from a data store:
+it submits the request, waits for the data store to prepare the data, downloads it,
+and verifies its integrity before using it.
+Downloads get cached on the local file system,
+so that the data is downloaded only once and is then shared by all the simulations
+(even running in parallel) requesting it.
+
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/datastore.yml" >}}
+
+The same scenario, written with the Kotlin DSL:
+
+{{< code path="alchemist-geogrids/src/test/resources/copernicus/datastore.alchemist.kts" >}}
+
+The parameters of `CopernicusData` describing the request are:
+
+* `endpoint`: the base URL of the data store API, e.g., `https://cds.climate.copernicus.eu/api`
+  for the Climate Data Store, `https://ewds.climate.copernicus.eu/api` for the Early Warning Data Store,
+  or `https://ads.atmosphere.copernicus.eu/api` for the Atmosphere Data Store;
+* `dataset`: the identifier of the dataset, as shown in its page on the data store
+  (e.g., `cems-glofas-historical`);
+* `inputs`: the request, passed as is to the data store, written in one of three ways:
+  * as a JSON string, as in the examples above;
+  * as a JSON file, among the classpath resources or, if not there, on the file system;
+  * as a mapping, written in YAML or as a `Map` in the Kotlin DSL.
+
+The easiest way to write the request is to compose it in the *Download* tab of the dataset page,
+and to copy the `request` dictionary shown in the *API request* section at the bottom of the page,
+as in the examples above.
+
+A string is read as a file if there is a file with that name, and as JSON otherwise.
+
+{{% notice note "Requests with a type field" %}}
+Requests of some datasets have a `type` field,
+which would clash with the `type` keyword that Alchemist uses to
+[load classes](/reference/yaml/#arbitrary-class-loading-system),
+so these requests cannot be written as YAML mappings:
+write them as a JSON string, e.g., in a block scalar (`|`) as in the example above, or in a JSON file.
+{{% /notice %}}
+
+### Credentials
+
+Data stores require an account and the acceptance of the dataset license.
+`CopernicusData` reads the API token from a `.cdsapirc` file,
+the same used by the [official ECMWF client](https://cds.climate.copernicus.eu/how-to-api),
+by default in the user's home directory:
+
+```text
+url: https://cds.climate.copernicus.eu/api
+key: <your-personal-access-token>
+```
+
+Only the `key` line is read, as the data store is selected by the `endpoint` parameter:
+the same token is valid on all the Copernicus data stores.
+A different file can be selected with the `cdsApiRcFile` parameter.
+The token is read only when the data must be downloaded:
+simulations finding their data in cache need no credentials.
+
+### Caching
+
+Each request is cached in its own directory, named after the dataset and a hash of the whole request,
+so that changing any detail of the request (dates, area, variables, ...) produces a different entry.
+By default, the cache is in the user's cache directory
+(e.g., `~/.cache/alchemist/copernicus` on Linux),
+and the `cacheDirectory` parameter selects a different one.
+Entries appear only once their data is complete:
+an interrupted download leaves no entry behind,
+and simulations running in parallel wait for each other instead of downloading the same data twice.
+
+Cached entries are never refreshed:
+to download the data again, for instance because the data store published a revised version,
+delete the corresponding entry from the cache directory.
+
+### Other parameters
+
+In YAML, named parameters must include all the optional parameters preceding the last one provided
+(hence `variable: null` in the example above); the Kotlin DSL has no such restriction.
+
+* `variable`: the variable to read in the downloaded files,
+  auto-detected when they hold only one (as in `GridsFromDirectory`);
+* `providerTimeout`: how long, in ISO-8601, to wait for the data store to prepare the data
+  (by default, `PT30M`).
+  Large requests may spend a long time in the data store queue.
+
+## Interpolation and conversion
+
+Values are interpolated first in space, within the two grids around the current time,
+then in time, between the two results.
+The `spatialInterpolation` parameter can be
+{{% api package="model.geogrid.spatialinterpolations" class="BilinearInterpolation" %}} (the default) or
+{{% api package="model.geogrid.spatialinterpolations" class="NearestInterpolation" %}};
+the `temporalInterpolation` parameter can be
+{{% api package="model.geogrid.temporalinterpolations" class="LinearInterpolation" %}} (the default),
+{{% api package="model.geogrid.temporalinterpolations" class="ClosestInterpolation" %}},
+{{% api package="model.geogrid.temporalinterpolations" class="PreviousInterpolation" %}}, or
+{{% api package="model.geogrid.temporalinterpolations" class="NextInterpolation" %}}.
+
+Grid points with no data (e.g., river discharge far from rivers) are read as `NaN`.
+{{% api package="model.geogrid.layers" class="DoubleGriddedGeoLayer" %}} keeps them as they are,
+unless its `missingValue` parameter gives them another value (e.g., `missingValue: 0.0`).
+Layers of other types can be created with {{% api package="model.geogrid.layers" class="GriddedGeoLayer" %}},
+whose `converter` turns interpolated values, `NaN` included, into the values of the layer.
+For categorical data, such as precipitation types or land cover classes,
+use nearest interpolation in space and closest, previous, or next in time,
+so that values of different categories never get blended.

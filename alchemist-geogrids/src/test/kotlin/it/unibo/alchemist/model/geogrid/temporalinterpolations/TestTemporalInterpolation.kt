@@ -1,0 +1,85 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.model.geogrid.temporalinterpolations
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class TestTemporalInterpolation {
+
+    private val closest = ClosestInterpolation
+    private val previous = PreviousInterpolation
+    private val next = NextInterpolation
+    private val linear = LinearInterpolation
+
+    private val tolerance = 1e-9
+
+    private val valueBefore = 10.0
+    private val valueAfter = 30.0
+
+    // weights spanning in [0, 1]
+    private val steps = 20
+    private val weights = (0..steps).map { it.toDouble() / steps }
+
+    // Linear temporal interpolation strategy tests
+    @Test
+    fun `linear returns the endpoints at weight 0 and 1`() {
+        assertEquals(valueBefore, linear.interpolate(valueBefore, valueAfter, 0.0), tolerance)
+        assertEquals(valueAfter, linear.interpolate(valueBefore, valueAfter, 1.0), tolerance)
+    }
+
+    @Test
+    fun `linear blends proportionally to the weight`() {
+        // between 10 and 30
+        mapOf(0.25 to 15.0, 0.5 to 20.0, 0.75 to 25.0).forEach { (weight, expected) ->
+            assertEquals(expected, linear.interpolate(valueBefore, valueAfter, weight), tolerance, "at weight $weight")
+        }
+    }
+
+    @Test
+    fun `linear is missing if either value is, unless the weight falls exactly on the other one`() {
+        listOf(linear.interpolate(valueBefore, Double.NaN, 0.5), linear.interpolate(Double.NaN, valueAfter, 0.5))
+            .forEach { assertTrue(it.isNaN(), "Expected NaN, but got $it") }
+        assertEquals(valueBefore, linear.interpolate(valueBefore, Double.NaN, 0.0))
+        assertEquals(valueAfter, linear.interpolate(Double.NaN, valueAfter, 1.0))
+    }
+
+    // Previous temporal interpolation strategy test
+    @Test
+    fun `previous always returns the earlier value regardless of weight`() {
+        for (weight in weights) {
+            assertEquals(valueBefore, previous.interpolate(valueBefore, valueAfter, weight), "at weight $weight")
+        }
+    }
+
+    // Next temporal interpolation strategy test
+    @Test
+    fun `next always returns the later value regardless of weight`() {
+        for (weight in weights) {
+            assertEquals(valueAfter, next.interpolate(valueBefore, valueAfter, weight), "at weight $weight")
+        }
+    }
+
+    // Closest temporal interpolation strategy tests
+    @Test
+    fun `closest returns the earlier value when the weight is below one half`() {
+        for (weight in listOf(0.0, 0.25, 0.499)) {
+            assertEquals(valueBefore, closest.interpolate(valueBefore, valueAfter, weight), "at weight $weight")
+        }
+    }
+
+    @Test
+    fun `closest returns the later value when the weight is at or above one half`() {
+        for (weight in listOf(0.5, 0.75, 1.0)) {
+            assertEquals(valueAfter, closest.interpolate(valueBefore, valueAfter, weight), "at weight $weight")
+        }
+    }
+}

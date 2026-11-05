@@ -1,0 +1,114 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist
+
+import java.nio.file.Path
+import ucar.ma2.Array as UcarArray
+import ucar.ma2.DataType
+import ucar.nc2.Attribute
+import ucar.nc2.write.NetcdfFormatWriter
+
+/**
+ * Writes a simple NetCDF file that is CF compliant.
+ *
+ * The file contains:
+ * - a `time` axis with units "hours since [timeEpoch]" and values [timeHours].
+ * - a `latitude` axis (CF axis Y) with values [lats].
+ * - a `longitude` axis (CF axis X) with values [lons].
+ * - one data variable for every entry in [variables], all sharing the dimensions declared in
+ * [dimensionOrder], each with its own values and `_FillValue`.
+ *
+ * @param path destination file (the parent directory must already exist).
+ * @param lats latitude values in degrees, stored in the file as-is.
+ * @param lons longitude values in degrees, stored in the file as-is.
+ * @param timeHours time offsets in hours from [timeEpoch], one value per time step.
+ * @param variables list of data variables to write. Defaults to a single variable named `"dis24"`.
+ * @param timeEpoch reference date for the CF `units` attribute, in the format
+ * `"yyyy-MM-dd HH:mm"` (e.g. `"2024-01-01 00:00"`). Values in [timeHours] are interpreted
+ * as hours elapsed since this date.
+ * @param dimensionOrder order of the data variables' three dimensions, using the
+ * names `"time"`, `"latitude"`, `"longitude"`. Default to this specific order.
+ * @throws IllegalArgumentException if [variables] is empty.
+ */
+internal fun writeTestNetcdf(
+    path: Path,
+    lats: DoubleArray,
+    lons: DoubleArray,
+    timeHours: DoubleArray,
+    variables: List<TestVariable> = listOf(TestVariable("dis24")),
+    timeEpoch: String = "2024-01-01 00:00",
+    dimensionOrder: List<String> = listOf("time", "latitude", "longitude"),
+) {
+    require(variables.isNotEmpty()) { "variables must not be empty" }
+    val axes = mapOf("time" to timeHours, "latitude" to lats, "longitude" to lons)
+    // defines the schema on the builder
+    val builder = NetcdfFormatWriter.createNewNetcdf3(path.toString())
+    axes.forEach { (name, values) -> builder.addDimension(name, values.size) }
+    // CF compliant axis
+    builder.addVariable("time", DataType.DOUBLE, "time").apply {
+        addAttribute(Attribute("units", "hours since $timeEpoch"))
+        addAttribute(Attribute("calendar", "standard"))
+        addAttribute(Attribute("axis", "T"))
+    }
+    builder.addVariable("latitude", DataType.DOUBLE, "latitude").apply {
+        addAttribute(Attribute("units", "degrees_north"))
+        addAttribute(Attribute("axis", "Y"))
+    }
+    builder.addVariable("longitude", DataType.DOUBLE, "longitude").apply {
+        addAttribute(Attribute("units", "degrees_east"))
+        addAttribute(Attribute("axis", "X"))
+    }
+    // each data variable's dimensions must follow the same order
+    variables.forEach { variable ->
+        builder.addVariable(variable.name, DataType.DOUBLE, dimensionOrder.joinToString(" "))
+            .addAttribute(Attribute("_FillValue", variable.fillValue))
+    }
+    // creates the file and enters write mode
+    builder.build().use { writer ->
+        axes.forEach { (name, values) ->
+            writer.write(name, UcarArray.factory(DataType.DOUBLE, intArrayOf(values.size), values))
+        }
+        val shape = dimensionOrder.map { axes.getValue(it).size }.toIntArray()
+        variables.forEach { variable ->
+            val arr = variable.rawValues ?: DoubleArray(timeHours.size * lats.size * lons.size) { idx ->
+                val dimCoord = dimensionOrder.zip(unravel(idx, shape).toList()).toMap()
+                val iLat = dimCoord.getValue("latitude")
+                val iLon = dimCoord.getValue("longitude")
+                // default cell value if not specified
+                (iLat * 10 + iLon).toDouble()
+            }
+            writer.write(variable.name, UcarArray.factory(DataType.DOUBLE, shape, arr))
+        }
+    }
+}
+
+/**
+ * Converts a row-major index into the dimension indices for the given [shape].
+ */
+private fun unravel(index: Int, shape: IntArray): IntArray = shape.reversed()
+    .scan(index) { rest, size -> rest / size }
+    .zip(shape.reversed()) { rest, size -> rest % size }
+    .reversed()
+    .toIntArray()
+
+/**
+ * A single data variable to write into a test NetCDF file.
+ *
+ * @param name short name of the variable as it appears in the file. Defaults to "var".
+ * @param rawValues flat array in row-major order representing the cell values, or
+ * `null` to use the default pattern `iLat * 10 + iLon` (independent of time). Its
+ * size must equal `timeHours.size * lats.size * lons.size` (if provided).
+ * @param fillValue this variable's `_FillValue` attribute encoded value.
+ */
+internal class TestVariable(
+    val name: String = "var",
+    val rawValues: DoubleArray? = null,
+    val fillValue: Double = -9999.0,
+)

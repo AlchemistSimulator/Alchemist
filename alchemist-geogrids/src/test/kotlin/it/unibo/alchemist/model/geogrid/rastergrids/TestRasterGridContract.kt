@@ -103,17 +103,41 @@ abstract class RasterGridContract {
     fun `valueAt should return NaN for missing values`() {
         // (iLat=1, iLon=1) is a missing value
         val nanValues = DoubleArray(12) { idx -> if (idx == 5) Double.NaN else idx.toDouble() }
-        val nullGrid = ArrayRasterGrid(latitudes, longitudes, nanValues)
+        val nullGrid = gridOf(latitudes, longitudes, nanValues)
         val value = nullGrid.valueAt(1, 1)
         assertTrue(value.isNaN(), "Expected NaN, but got $value")
     }
 
     @Test
     fun `a grid entirely made of NaN should return NaN everywhere`() {
-        val allNan = ArrayRasterGrid(latitudes, longitudes, DoubleArray(12) { Double.NaN })
+        val allNan = gridOf(latitudes, longitudes, DoubleArray(12) { Double.NaN })
         cartesian(lats.indices, lons.indices).forEach { (iLat, iLon) ->
             val value = allNan.valueAt(iLat, iLon)
             assertTrue(value.isNaN(), "Expected NaN at ($iLat, $iLon), but got $value")
+        }
+    }
+
+    @Test
+    fun `a mostly missing grid should return its few values, and NaN elsewhere`() {
+        val present = mapOf(0 to 1.0, 6 to 2.0, 11 to 3.0)
+        val sparse = gridOf(latitudes, longitudes, DoubleArray(12) { present[it] ?: Double.NaN })
+        cartesian(lats.indices, lons.indices).forEach { (iLat, iLon) ->
+            val value = sparse.valueAt(iLat, iLon)
+            val expected = present[iLat * lons.size + iLon]
+            when (expected) {
+                null -> assertTrue(value.isNaN(), "Expected NaN at ($iLat, $iLon), but got $value")
+                else -> assertEquals(expected, value)
+            }
+        }
+    }
+
+    // Out of range indices
+    @Test
+    fun `valueAt should raise an IndexOutOfBoundsException outside the grid`() {
+        listOf(-1 to 0, lats.size to 0, 0 to -1, 0 to lons.size).forEach { (iLat, iLon) ->
+            assertFailsWith<IndexOutOfBoundsException>("($iLat, $iLon) should be out of range") {
+                grid.valueAt(iLat, iLon)
+            }
         }
     }
 

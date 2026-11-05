@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.geogrid.axes
 
 import it.unibo.alchemist.model.geogrid.Axis
-import java.util.Arrays
 
 /**
  * The coordinates of the nodes of a grid along one dimension, strictly ascending.
@@ -50,7 +49,7 @@ class ImmutableAxis(coordinates: DoubleArray) : Axis {
 
     override fun enclosingCellOf(coordinate: Double): Axis.Cell {
         require(!coordinate.isNaN()) { "The query coordinate cannot be NaN." }
-        val searchResult = Arrays.binarySearch(coordinates, coordinate)
+        val searchResult = coordinates.binarySearch(coordinate)
         // binarySearch returns -(insertion point) - 1 on a miss: the insertion point is the first greater value
         val upper = -searchResult - 1
         return when {

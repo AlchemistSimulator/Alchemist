@@ -10,16 +10,30 @@
 package it.unibo.alchemist.model.geogrid.rastergrids
 
 import it.unibo.alchemist.model.geogrid.Axis
+import it.unibo.alchemist.model.geogrid.RasterGrid
+import it.unibo.alchemist.model.geogrid.util.RasterGrids.flatIndexOf
+import it.unibo.alchemist.model.geogrid.util.RasterGrids.requireOneValuePerCell
 
 /**
- * A [it.unibo.alchemist.model.geogrid.RasterGrid] storing a copy of all values,
- * suited for dense grids where most cells hold a value.
+ * A [RasterGrid] storing a copy of all values, suited for dense grids where most cells hold a value.
+ *
+ * @param gridValues the values, row by row: all longitudes of the first latitude, then of the second, and so on.
+ * @throws IllegalArgumentException if there is not exactly one value per cell.
  */
 class ArrayRasterGrid(
-    latitudes: Axis,
-    longitudes: Axis,
+    override val latitudes: Axis,
+    override val longitudes: Axis,
     gridValues: DoubleArray,
-) : AbstractRasterGrid(latitudes, longitudes, gridValues) {
+) : RasterGrid {
 
-    override fun valueAt(latIndex: Int, lonIndex: Int): Double = valueAtIndex(latIndex * longitudes.size + lonIndex)
+    private val values: DoubleArray = gridValues.copyOf()
+
+    init {
+        requireOneValuePerCell(latitudes, longitudes, values)
+    }
+
+    /**
+     * @throws IndexOutOfBoundsException if [latIndex] or [lonIndex] is outside its axis.
+     */
+    override fun valueAt(latIndex: Int, lonIndex: Int): Double = values[flatIndexOf(latIndex, lonIndex)]
 }

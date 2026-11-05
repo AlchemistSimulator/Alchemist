@@ -247,6 +247,8 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
 
         /**
          * The fraction of non-missing values below which [DataFile.gridAt] builds a sparse grid.
+         * Sparse grids take less memory up to two thirds, but look values up by binary search:
+         * below this threshold, they save most of the memory.
          */
         private const val SPARSE_DENSITY_THRESHOLD = 0.1
 

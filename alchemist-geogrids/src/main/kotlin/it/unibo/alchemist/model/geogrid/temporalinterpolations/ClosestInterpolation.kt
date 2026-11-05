@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.geogrid.TemporalInterpolation
 /**
  * [TemporalInterpolation] that always returns the value from the closest instant.
  */
-object ClosestInterpolation : TemporalInterpolation {
+data object ClosestInterpolation : TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double =
         if (weight < 0.5) valueBefore else valueAfter

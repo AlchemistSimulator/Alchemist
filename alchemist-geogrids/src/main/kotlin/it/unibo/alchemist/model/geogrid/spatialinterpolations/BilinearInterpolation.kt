@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.geogrid.SpatialInterpolation
 /**
  * Bilinear interpolation of the four nodes around the position, missing if any of them is.
  */
-object BilinearInterpolation : SpatialInterpolation {
+data object BilinearInterpolation : SpatialInterpolation {
 
     override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
         val latitude = grid.latitudes.enclosingCellOf(position.latitude)

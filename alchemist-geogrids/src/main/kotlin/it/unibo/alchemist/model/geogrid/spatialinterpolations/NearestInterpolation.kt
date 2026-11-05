@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.geogrid.SpatialInterpolation
 /**
  * The value of the node nearest to the position.
  */
-object NearestInterpolation : SpatialInterpolation {
+data object NearestInterpolation : SpatialInterpolation {
 
     override fun valueAt(grid: RasterGrid, position: GeoPosition): Double {
         fun Axis.nearestIndex(coordinate: Double): Int =

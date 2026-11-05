@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.geogrid.TemporalInterpolation
 /**
  * The value of the next instant.
  */
-object NextInterpolation : TemporalInterpolation {
+data object NextInterpolation : TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = valueAfter
 }

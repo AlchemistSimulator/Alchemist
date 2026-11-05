@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.geogrid.TemporalInterpolation
 /**
  * Linear interpolation between the two values, missing if either of them is.
  */
-object LinearInterpolation : TemporalInterpolation {
+data object LinearInterpolation : TemporalInterpolation {
 
     override fun interpolate(valueBefore: Double, valueAfter: Double, weight: Double): Double = when {
         weight == 0.0 -> valueBefore

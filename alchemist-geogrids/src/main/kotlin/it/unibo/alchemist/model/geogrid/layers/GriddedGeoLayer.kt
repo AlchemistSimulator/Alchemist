@@ -96,10 +96,9 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
         require(gridBefore.isInBounds(position)) { outOfBoundsMessage(position, gridBefore) }
         val valueBefore = spatialInterpolation.valueAt(gridBefore, position)
         // a single grid is interpolated once
-        val valueAfter = if (gridAfterIndex == gridBeforeIndex) {
-            valueBefore
-        } else {
-            spatialInterpolation.valueAt(gridAfter, position)
+        val valueAfter = when {
+            gridAfterIndex == gridBeforeIndex -> valueBefore
+            else -> spatialInterpolation.valueAt(gridAfter, position)
         }
         return converter(temporalInterpolation.interpolate(valueBefore, valueAfter, timeWeight))
     }

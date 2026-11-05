@@ -89,15 +89,8 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
      * The value at [position] at simulation time [t].
      */
     private fun valueAt(position: GeoPosition, t: Double): T {
-        // the indices of the spatial slices that enclose time t: the same one if t falls on a slice or outside them
-        val (gridIndexBefore, gridIndexAfter, timeWeight) = sliceTimes.enclosingCellOf(t)
-        return sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
-    }
-
-    /**
-     * The converted value at [position] between the grids with the given indices, at [timeWeight] between them.
-     */
-    private fun sample(position: GeoPosition, gridBeforeIndex: Int, gridAfterIndex: Int, timeWeight: Double): T {
+        // the indices of the time slices that enclose t: the same one if t falls on a slice or outside them
+        val (gridBeforeIndex, gridAfterIndex, timeWeight) = sliceTimes.enclosingCellOf(t)
         val gridBefore = data.grid(gridBeforeIndex)
         val gridAfter = data.grid(gridAfterIndex)
         require(gridBefore.isInBounds(position)) { outOfBoundsMessage(position, gridBefore) }

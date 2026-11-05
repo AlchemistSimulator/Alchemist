@@ -98,12 +98,12 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
         }
         // cache hit: the directory already exists
         if (resolvedDirectory.isDirectory()) {
-            logger.info("Cache hit for '$directoryName': using $resolvedDirectory")
+            logger.info("Cache hit for '{}': using {}", directoryName, resolvedDirectory)
             return resolvedDirectory
         }
         // one monitor per entry path
         val monitor = entryLocks.computeIfAbsent(resolvedDirectory) { Any() }
-        logger.debug("Cache miss for '$directoryName': acquiring its monitor")
+        logger.debug("Cache miss for '{}': acquiring its monitor", directoryName)
         /*
          * The monitor comes first: a JVM cannot hold overlapping locks of the same file,
          * so threads of the same JVM must not compete for the file lock.
@@ -157,7 +157,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      */
     @OptIn(ExperimentalPathApi::class)
     private fun load(key: K, directoryName: String, finalDir: Path): Path {
-        logger.info("Cache miss for '$directoryName': loading data")
+        logger.info("Cache miss for '{}': loading data", directoryName)
         // also creates the root directory if it does not exist
         temporaryRoot.createDirectories()
         val temp = createTempDirectory(temporaryRoot, directoryName)
@@ -166,13 +166,13 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
             loader.load(key, temp)
             check(hasData(temp)) { "The loader produced no files for '$directoryName'" }
             runCatching { temp.moveTo(finalDir, StandardCopyOption.ATOMIC_MOVE) }
-                .onSuccess { logger.info("Data cached in $finalDir") }
+                .onSuccess { logger.info("Data cached in {}", finalDir) }
                 .onFailure {
                     // If the failure is not due to another process publishing before us, we throw it
                     if (it.isNotDueToAnotherProcessPublishingBeforeUs(finalDir)) {
                         throw it
                     }
-                    logger.info("Another process has already cached the data in $finalDir")
+                    logger.info("Another process has already cached the data in {}", finalDir)
                 }
             return finalDir
         } finally {
@@ -181,7 +181,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
                 logger.debug("Discarding the temporary directory {}", temp)
                 // a failure here must not replace the one that brought here, if any
                 runCatching { temp.deleteRecursively() }
-                    .onFailure { logger.warn("Could not fully delete the temporary directory $temp", it) }
+                    .onFailure { logger.warn("Could not fully delete the temporary directory {}", temp, it) }
             }
         }
     }

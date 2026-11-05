@@ -60,55 +60,9 @@ class TestGriddedGeoLayer {
     private val gridAfterWithHole = cornerGrid(Double.NaN, 1010.0, 1020.0, 1100.0)
 
     /**
-     * A [Time] mock at [t].
-     */
-    private fun timeAt(t: Double): Time = mockk { every { toDouble() } returns t }
-
-    /**
-     * A [Simulation] mock whose time is [simulationTime].
-     */
-    private fun simulationAt(simulationTime: Observable<Time>): Simulation<Any?, GeoPosition> = mockk {
-        every { time } returns simulationTime
-    }
-
-    /**
-     * Environment mock attached to the simulation observed by [simulation].
-     */
-    private fun envWith(simulation: Observable<Simulation<Any?, GeoPosition>?>): Environment<Any?, GeoPosition> =
-        mockk {
-            every { attachedSimulation } returns simulation
-        }
-
-    /**
-     * Environment mock with the simulation fixed at time [t].
-     */
-    private fun envAt(t: Double): Environment<Any?, GeoPosition> = envWith(observe(simulationAt(observe(timeAt(t)))))
-
-    /**
-     * Environment mock whose simulation time is [simulationTime].
-     */
-    private fun mutableEnv(simulationTime: Observable<Time>): Environment<Any?, GeoPosition> =
-        envWith(observe(simulationAt(simulationTime)))
-
-    /**
      * Environment mock where the simulation has not started yet.
      */
     private val envNoSim: Environment<Any?, GeoPosition> = envWith(observe(null))
-
-    /**
-     * A 2x2 grid over latitudes 44 and 45 and longitudes 11 and 12, with the given [values] row by row.
-     */
-    private fun cornerGrid(vararg values: Double): RasterGrid = ArrayRasterGrid(
-        ImmutableAxis(doubleArrayOf(44.0, 45.0)),
-        ImmutableAxis(doubleArrayOf(11.0, 12.0)),
-        values,
-    )
-
-    /**
-     * A layer over [shiftedData] at simulation time [t], with the origin on its second instant.
-     */
-    private fun shiftedOriginLayerAt(t: Double) =
-        DoubleGriddedGeoLayer(envAt(t), shiftedData, timeOrigin = shiftedOrigin)
 
     private val tempDir: Path = createTempDirectory("geo-raster-layer-test")
 
@@ -131,9 +85,6 @@ class TestGriddedGeoLayer {
             )
         }
     }
-
-    private fun defaultInterpolationAt(t: Double, before: RasterGrid = gridBefore, after: RasterGrid = gridAfter) =
-        DoubleGriddedGeoLayer(envAt(t), snapshotsOf(listOf(before, after))).currentValueAt(cellCenter)
 
     @Test
     fun `by default, values are interpolated bilinearly in space and then linearly in time`() {
@@ -445,6 +396,55 @@ class TestGriddedGeoLayer {
             "t=1.5 crosses file boundary. LINEAR blend of 20.0 and 30.0 = 25.0",
         )
     }
+
+    /**
+     * A [Time] mock at [t].
+     */
+    private fun timeAt(t: Double): Time = mockk { every { toDouble() } returns t }
+
+    /**
+     * A [Simulation] mock whose time is [simulationTime].
+     */
+    private fun simulationAt(simulationTime: Observable<Time>): Simulation<Any?, GeoPosition> = mockk {
+        every { time } returns simulationTime
+    }
+
+    /**
+     * Environment mock attached to the simulation observed by [simulation].
+     */
+    private fun envWith(simulation: Observable<Simulation<Any?, GeoPosition>?>): Environment<Any?, GeoPosition> =
+        mockk {
+            every { attachedSimulation } returns simulation
+        }
+
+    /**
+     * Environment mock with the simulation fixed at time [t].
+     */
+    private fun envAt(t: Double): Environment<Any?, GeoPosition> = envWith(observe(simulationAt(observe(timeAt(t)))))
+
+    /**
+     * Environment mock whose simulation time is [simulationTime].
+     */
+    private fun mutableEnv(simulationTime: Observable<Time>): Environment<Any?, GeoPosition> =
+        envWith(observe(simulationAt(simulationTime)))
+
+    /**
+     * A 2x2 grid over latitudes 44 and 45 and longitudes 11 and 12, with the given [values] row by row.
+     */
+    private fun cornerGrid(vararg values: Double): RasterGrid = ArrayRasterGrid(
+        ImmutableAxis(doubleArrayOf(44.0, 45.0)),
+        ImmutableAxis(doubleArrayOf(11.0, 12.0)),
+        values,
+    )
+
+    /**
+     * A layer over [shiftedData] at simulation time [t], with the origin on its second instant.
+     */
+    private fun shiftedOriginLayerAt(t: Double) =
+        DoubleGriddedGeoLayer(envAt(t), shiftedData, timeOrigin = shiftedOrigin)
+
+    private fun defaultInterpolationAt(t: Double, before: RasterGrid = gridBefore, after: RasterGrid = gridAfter) =
+        DoubleGriddedGeoLayer(envAt(t), snapshotsOf(listOf(before, after))).currentValueAt(cellCenter)
 
     private companion object {
         // fixed spatial grid

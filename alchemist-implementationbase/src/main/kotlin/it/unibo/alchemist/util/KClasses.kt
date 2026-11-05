@@ -25,9 +25,9 @@ object KClasses {
      * (`<anonymous object>` if there is none).
      */
     val KClass<*>.nonNullName: String get() = simpleName ?: qualifiedName ?: "<anonymous ${
-            supertypes.asSequence()
-                .mapNotNull { it.asNonAnyKClass() }
-                .plus(supertypes.flatMap { it.allNonAnySuperKClasses() })
+        supertypes.asSequence()
+            .mapNotNull { it.asNonAnyKClass() }
+            .plus(supertypes.flatMap { it.allNonAnySuperKClasses() })
             .firstNotNullOfOrNull { it.simpleName ?: it.qualifiedName }
             ?: "object"
     }>"

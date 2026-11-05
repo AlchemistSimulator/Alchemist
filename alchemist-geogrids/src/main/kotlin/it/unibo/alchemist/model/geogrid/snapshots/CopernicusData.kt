@@ -86,9 +86,11 @@ class CopernicusData @JvmOverloads constructor(
          */
         val DEFAULT_CDSAPIRC_LOCATION: Path = Path.of(System.getProperty("user.home"), ".cdsapirc")
 
-        private val gson: Gson = GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
-
-        private val strictGson: Gson = GsonBuilder().setStrictness(Strictness.STRICT).create()
+        // strict when reading text, and keeping integers integral when building the request
+        private val gson: Gson = GsonBuilder()
+            .setStrictness(Strictness.STRICT)
+            .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+            .create()
 
         private val mapType = object : TypeToken<Map<String, Any>>() {}.type
 
@@ -148,14 +150,13 @@ class CopernicusData @JvmOverloads constructor(
         }
 
         /**
-         * This string as JSON, or a failure with the message [error] if it is not valid JSON.
+         * This string as JSON, or a failure with the message [failure] if it is not valid JSON.
          */
-        private inline fun String.parseJson(error: () -> String): JsonElement = try {
-            // an empty string is no JSON at all
-            strictGson.fromJson(this, JsonElement::class.java) ?: throw JsonSyntaxException("no content")
+        private inline fun String.parseJson(failure: () -> String): JsonElement = try {
+            gson.fromJson(this, JsonElement::class.java)
         } catch (e: JsonSyntaxException) {
-            throw IllegalArgumentException("${error()}: ${e.message}", e)
-        }
+            throw IllegalArgumentException("${failure()}: ${e.message}", e)
+        }.also { checkNotNull(it) { "${failure()}: no content" } }
 
         /**
          * The file among the classpath resources with this name or, if there is none, at this path;

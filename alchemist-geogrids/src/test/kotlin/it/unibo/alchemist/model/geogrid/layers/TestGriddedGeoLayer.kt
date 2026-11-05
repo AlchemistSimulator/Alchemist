@@ -12,10 +12,13 @@ package it.unibo.alchemist.model.geogrid.layers
 import io.mockk.every
 import io.mockk.mockk
 import it.unibo.alchemist.TestVariable
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.boundary.kotlindsl.simulationOnMap
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.mockGeoPosition
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geogrid.GridSnapshots
 import it.unibo.alchemist.model.geogrid.RasterGrid
@@ -25,8 +28,16 @@ import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
 import it.unibo.alchemist.model.geogrid.spatialinterpolations.BilinearInterpolation
 import it.unibo.alchemist.model.geogrid.spatialinterpolations.NearestInterpolation
 import it.unibo.alchemist.model.geogrid.temporalinterpolations.ClosestInterpolation
+import it.unibo.alchemist.model.incarnations.ProtelisIncarnation
+import it.unibo.alchemist.model.maps.environments.oSMEnvironment
+import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
 import it.unibo.alchemist.model.observation.Observable
+import it.unibo.alchemist.model.terminators.AfterTime
+import it.unibo.alchemist.model.timedistributions.DiracComb
+import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.test.AlchemistTesting.runInCurrentThread
+import it.unibo.alchemist.test.environmentTestReaction
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -248,16 +259,50 @@ class TestGriddedGeoLayer {
     @Test
     fun `the observed value follows the simulation time once the simulation is attached`() {
         val simulation = observe<Simulation<Any?, GeoPosition>?>(null)
-        val simulationTime = observe(timeAt(1.0))
+        val simulationTime = observe(DoubleTime(1.0))
         val layer = DoubleGriddedGeoLayer(envWith(simulation), syntheticSnapshots(42.0, 84.0))
         val observed = mutableListOf<Double>()
         layer.valueAt(center).onChange { observed += it }
         simulation.current = simulationAt(simulationTime)
-        simulationTime.current = timeAt(0.5)
+        simulationTime.current = DoubleTime(0.5)
         assertEquals(
             listOf(42.0, 84.0, 63.0),
             observed,
             "t=0.0 before attachment, then t=1.0 at attachment, then t=0.5",
+        )
+    }
+
+    @Test
+    fun `the value follows the time of a running simulation`() {
+        val position = LatLongPosition(44.14, 12.24)
+        val valuesAt = mutableMapOf<Double, Double>()
+        val simulation = simulationOnMap(ProtelisIncarnation()) {
+            environment(oSMEnvironment("maps/cesena.pbf")) {
+                // slices of 10, 20, and 30, one hour apart
+                val riverDischarge = doubleGriddedGeoLayer(GridsFromDirectory("copernicus/glofas-cesena"), "PT1H")
+                layer("river-discharge", riverDischarge)
+                // with no nodes, this program makes time advance, every half hour of the data
+                globalProgram(DiracComb(2.0), environmentTestReaction(DiracComb(2.0)))
+                terminator(AfterTime(DoubleTime(2.5)))
+                monitor(
+                    object : OutputMonitor<Any, GeoPosition> {
+                        override fun stepDone(
+                            environment: Environment<Any, GeoPosition>,
+                            reaction: Reaction<Any>?,
+                            time: Time,
+                            step: Long,
+                        ) {
+                            valuesAt[time.toDouble()] = riverDischarge.currentValueAt(position)
+                        }
+                    },
+                )
+            }
+        }.getDefault<Any, GeoPosition>().runInCurrentThread()
+        simulation.error.onSome { throw it }
+        // interpolated linearly between the slices
+        assertEquals(
+            mapOf(0.0 to 10.0, 0.5 to 15.0, 1.0 to 20.0, 1.5 to 25.0, 2.0 to 30.0),
+            valuesAt.filterKeys { it <= 2.0 },
         )
     }
 
@@ -374,12 +419,12 @@ class TestGriddedGeoLayer {
             timeHours = doubleArrayOf(2.0, 3.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 30.0 else 40.0 })),
         )
-        val simulationTime = observe(timeAt(0.0))
+        val simulationTime = observe(DoubleTime(0.0))
         val layer = DoubleGriddedGeoLayer(mutableEnv(simulationTime), GridsFromDirectory(dir.absolutePathString()))
         (0..3).forEach {
             val time = it.toDouble()
             val expectedValue = (it + 1) * 10.0
-            simulationTime.current = timeAt(time)
+            simulationTime.current = DoubleTime(time)
             assertEquals(
                 expectedValue,
                 layer.currentValueAt(center),
@@ -388,7 +433,7 @@ class TestGriddedGeoLayer {
             )
         }
         // interpolation across the file boundary: t=1.5 should return the mean with linear interpolation
-        simulationTime.current = timeAt(1.5)
+        simulationTime.current = DoubleTime(1.5)
         assertEquals(
             25.0,
             layer.currentValueAt(center),
@@ -396,11 +441,6 @@ class TestGriddedGeoLayer {
             "t=1.5 crosses file boundary. LINEAR blend of 20.0 and 30.0 = 25.0",
         )
     }
-
-    /**
-     * A [Time] mock at [t].
-     */
-    private fun timeAt(t: Double): Time = mockk { every { toDouble() } returns t }
 
     /**
      * A [Simulation] mock whose time is [simulationTime].
@@ -420,7 +460,8 @@ class TestGriddedGeoLayer {
     /**
      * Environment mock with the simulation fixed at time [t].
      */
-    private fun envAt(t: Double): Environment<Any?, GeoPosition> = envWith(observe(simulationAt(observe(timeAt(t)))))
+    private fun envAt(t: Double): Environment<Any?, GeoPosition> =
+        envWith(observe(simulationAt(observe(DoubleTime(t)))))
 
     /**
      * Environment mock whose simulation time is [simulationTime].

@@ -31,7 +31,7 @@ dependencies {
     testImplementation(alchemist("kotlinscript"))
     testImplementation(alchemist("maps"))
     testImplementation(alchemist("test"))
-    testRuntimeOnly(incarnation("protelis"))
+    testImplementation(incarnation("protelis"))
 }
 
 publishing.publications {

@@ -140,7 +140,7 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
     /**
      * Fills [finalDir] with the data denoted by [key].
      *
-     * The [loader] runs into a temporary directory, its non-emptiness is validated, and it is
+     * The [loader] runs into a temporary directory, which is checked to hold at least one regular file, and is
      * then promoted to the final location with an atomic move operation. If a concurrent process
      * loaded the same entry in the meantime, that one is used and the local work is discarded.
      * If, for any reason, the [loader] fails, the temporary directory is removed (no "poisoned"

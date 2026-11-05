@@ -25,47 +25,9 @@ import kotlin.test.assertTrue
 class TestGridsFromDirectory {
 
     /**
-     * Creates a NetCDF-3 file with:
-     * - latitudes: (10°, 20°, 30°).
-     * - longitudes: (5°, 15°, 25°, 35°).
-     * - the provided hours offset from `2024-01-01 00:00`.
-     *
-     * @param dir the directory where the file will be created (must exist).
-     * @param fileName the name of the file.
-     * @param timeHours hours offsets from `2024-01-01 00:00`.
-     */
-    private fun writeFixedTestNetcdf(dir: Path, fileName: String, timeHours: DoubleArray) {
-        writeTestNetcdf(
-            path = dir.resolve(fileName),
-            lats = doubleArrayOf(10.0, 20.0, 30.0),
-            lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0),
-            timeHours = timeHours,
-        )
-    }
-
-    /**
      * the directory where the temporary NetCDF files for the tests will be created.
      */
     private val tempDir: Path = Files.createTempDirectory("eagergridsnapshots-test")
-
-    /**
-     * A new directory, named after [label], with a 2-by-2 NetCDF file of [variables].
-     */
-    private fun singleFileDirectory(
-        label: String,
-        lats: DoubleArray = doubleArrayOf(10.0, 20.0),
-        lons: DoubleArray = doubleArrayOf(5.0, 15.0),
-        timeHours: DoubleArray = doubleArrayOf(0.0),
-        variables: List<TestVariable> = listOf(TestVariable("dis24")),
-    ): String {
-        val dir = Files.createTempDirectory(tempDir, label)
-        writeTestNetcdf(dir.resolve("data.nc"), lats, lons, timeHours, variables)
-        return dir.toString()
-    }
-
-    private fun RasterGrid.values(): List<Double> = (0 until latitudes.size).flatMap { latitude ->
-        (0 until longitudes.size).map { longitude -> valueAt(latitude, longitude) }
-    }
 
     // deletes the directory and its files after the tests
     @AfterTest
@@ -90,7 +52,7 @@ class TestGridsFromDirectory {
         writeFixedTestNetcdf(dir, "a_file.nc", doubleArrayOf(0.0, 24.0))
         val gridSnaps = GridsFromDirectory(dir.toString())
         assertEquals(4, gridSnaps.instants.size)
-        assertEquals(gridSnaps.instants.sortedWith(compareBy { it }), gridSnaps.instants)
+        assertEquals(gridSnaps.instants.sorted(), gridSnaps.instants)
     }
 
     @Test
@@ -335,5 +297,43 @@ class TestGridsFromDirectory {
         val grid = snapshots.grid(0)
         assertTrue(grid.latitudes.size > 0, "Expected at least one latitude, got ${grid.latitudes.size}")
         assertTrue(grid.longitudes.size > 0, "Expected at least one longitude, got ${grid.longitudes.size}")
+    }
+
+    /**
+     * Creates a NetCDF-3 file with:
+     * - latitudes: (10°, 20°, 30°).
+     * - longitudes: (5°, 15°, 25°, 35°).
+     * - the provided hours offset from `2024-01-01 00:00`.
+     *
+     * @param dir the directory where the file will be created (must exist).
+     * @param fileName the name of the file.
+     * @param timeHours hours offsets from `2024-01-01 00:00`.
+     */
+    private fun writeFixedTestNetcdf(dir: Path, fileName: String, timeHours: DoubleArray) {
+        writeTestNetcdf(
+            path = dir.resolve(fileName),
+            lats = doubleArrayOf(10.0, 20.0, 30.0),
+            lons = doubleArrayOf(5.0, 15.0, 25.0, 35.0),
+            timeHours = timeHours,
+        )
+    }
+
+    /**
+     * A new directory, named after [label], with a 2-by-2 NetCDF file of [variables].
+     */
+    private fun singleFileDirectory(
+        label: String,
+        lats: DoubleArray = doubleArrayOf(10.0, 20.0),
+        lons: DoubleArray = doubleArrayOf(5.0, 15.0),
+        timeHours: DoubleArray = doubleArrayOf(0.0),
+        variables: List<TestVariable> = listOf(TestVariable("dis24")),
+    ): String {
+        val dir = Files.createTempDirectory(tempDir, label)
+        writeTestNetcdf(dir.resolve("data.nc"), lats, lons, timeHours, variables)
+        return dir.toString()
+    }
+
+    private fun RasterGrid.values(): List<Double> = (0 until latitudes.size).flatMap { latitude ->
+        (0 until longitudes.size).map { longitude -> valueAt(latitude, longitude) }
     }
 }

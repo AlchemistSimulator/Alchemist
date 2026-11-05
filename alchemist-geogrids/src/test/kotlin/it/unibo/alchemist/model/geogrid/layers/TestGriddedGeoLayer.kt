@@ -43,10 +43,6 @@ import kotlin.time.Instant
 private const val TOLERANCE = 1e-9
 
 class TestGriddedGeoLayer {
-    // fixed spatial grid
-    private val lats = doubleArrayOf(44.0, 45.0, 46.0)
-    private val lons = doubleArrayOf(11.0, 12.0, 13.0)
-
     private val center: GeoPosition = mockGeoPosition(45.0, 12.0)
 
     private val netCdfFileName = "data.nc"
@@ -99,38 +95,6 @@ class TestGriddedGeoLayer {
     private val envNoSim: Environment<Any?, GeoPosition> = envWith(observe(null))
 
     /**
-     * A [RasterGrid] where every cell has a fixed [value].
-     */
-    private fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
-        ImmutableAxis(lats),
-        ImmutableAxis(lons),
-        DoubleArray(lats.size * lons.size) { value },
-    )
-
-    /**
-     * Returns a [GridSnapshots] made of flat slices.
-     * THe i-th slice has all cells equal to `sliceValue[i]`.
-     * Time steps are spaced [step] apart starting from [base].
-     */
-    private fun syntheticGrid(
-        vararg sliceValues: Double,
-        base: Instant = Instant.EPOCH,
-        step: Duration = 1.hours,
-    ): GridSnapshots = snapshotsOf(sliceValues.map { flatGrid(it) }, base, step)
-
-    /**
-     * A [GridSnapshots] made of [grids], spaced [step] apart starting from [base].
-     */
-    private fun snapshotsOf(
-        grids: List<RasterGrid>,
-        base: Instant = Instant.EPOCH,
-        step: Duration = 1.hours,
-    ): GridSnapshots = object : GridSnapshots {
-        override val instants = grids.indices.map { i -> base.plus(step * i) }
-        override fun grid(index: Int): RasterGrid = grids[index]
-    }
-
-    /**
      * A 2x2 grid over latitudes 44 and 45 and longitudes 11 and 12, with the given [values] row by row.
      */
     private fun cornerGrid(vararg values: Double): RasterGrid = ArrayRasterGrid(
@@ -138,6 +102,12 @@ class TestGriddedGeoLayer {
         ImmutableAxis(doubleArrayOf(11.0, 12.0)),
         values,
     )
+
+    /**
+     * A layer over [shiftedData] at simulation time [t], with the origin on its second instant.
+     */
+    private fun shiftedOriginLayerAt(t: Double) =
+        DoubleGriddedGeoLayer(envAt(t), shiftedData, timeOrigin = shiftedOrigin)
 
     private val tempDir: Path = createTempDirectory("geo-raster-layer-test")
 
@@ -221,48 +191,29 @@ class TestGriddedGeoLayer {
             environment = envAt(0.0),
             data = gridSnaps,
         )
-        gridSnaps.instants.indices.forEach { _ ->
-            assertEquals(7.0, layer.currentValueAt(center), "t=0.0 should hit the first slice exactly")
-        }
+        assertEquals(7.0, layer.currentValueAt(center), "t=0.0 should hit the first slice exactly")
     }
 
     @Test
     fun `explicit timeOrigin shifts the temporal origin`() {
-        val layer = DoubleGriddedGeoLayer(
-            envAt(0.0),
-            syntheticGrid(10.0, 20.0, 30.0),
-            // instants: EPOCH, EPOCH+1h, EPOCH+2h
-            timeOrigin = (Instant.EPOCH + 1.hours).toString(),
-        )
+        val layer = shiftedOriginLayerAt(0.0)
         assertEquals(20.0, layer.currentValueAt(center), "t=0.0 with shifted origin maps to the second slice = 20.0")
     }
 
     @Test
-    fun `with an explicit timeOrigin, times outside the shifted range extrapolate with the first or last time slice`() {
-        // computed simulation times: -1.0, 0.0, 1.0; t=-2.0 and 2 are out of range
-        var layer = DoubleGriddedGeoLayer(
-            envAt(-2.0),
-            syntheticGrid(10.0, 20.0, 30.0),
-            timeOrigin = (Instant.EPOCH + 1.hours).toString(),
-        )
-        assertEquals(
-            10.0,
-            layer.currentValueAt(center),
-            "t=-2.0 < sliceTimes.first()=-1.0, extrapolates to first slice: 10.0",
-        )
-        layer = DoubleGriddedGeoLayer(
-            envAt(2.0),
-            syntheticGrid(10.0, 20.0, 30.0),
-            timeOrigin = (Instant.EPOCH + 1.hours).toString(),
-        )
-        assertEquals(
-            30.0,
-            layer.currentValueAt(center),
-            "t=2.0 > sliceTimes.last()=1.0, extrapolates to last slice: 30.0",
-        )
+    fun `with an explicit timeOrigin, times before the first slice take the first one`() {
+        // computed simulation times: -1.0, 0.0, 1.0
+        val layer = shiftedOriginLayerAt(-2.0)
+        assertEquals(10.0, layer.currentValueAt(center), "t=-2.0 is before the first slice, at -1.0")
     }
 
-    // timescale tests
+    @Test
+    fun `with an explicit timeOrigin, times after the last slice take the last one`() {
+        // computed simulation times: -1.0, 0.0, 1.0
+        val layer = shiftedOriginLayerAt(2.0)
+        assertEquals(30.0, layer.currentValueAt(center), "t=2.0 is after the last slice, at 1.0")
+    }
+
     @Test
     fun `with timeScale PT30M one real hour maps to time two`() {
         /*
@@ -300,10 +251,7 @@ class TestGriddedGeoLayer {
     @Test
     fun `currentValueAt should raise an exception when an out-of-bounds position is passed`() {
         val gridSnaps = syntheticGrid(7.0)
-        val layer = DoubleGriddedGeoLayer(
-            environment = envAt(0.0),
-            data = gridSnaps,
-        )
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), gridSnaps)
         assertFailsWith<IllegalArgumentException> {
             layer.currentValueAt(mockGeoPosition(lats.first() - 1, lons.first() - 1))
         }
@@ -341,10 +289,7 @@ class TestGriddedGeoLayer {
     // no simulation test
     @Test
     fun `no attached simulation falls back to time zero and reads the first slice`() {
-        val layer = DoubleGriddedGeoLayer(
-            envNoSim,
-            syntheticGrid(42.0, 84.0),
-        )
+        val layer = DoubleGriddedGeoLayer(envNoSim, syntheticGrid(42.0, 84.0))
         assertEquals(42.0, layer.currentValueAt(center), "null simulation: t=0.0, first slice = 42.0")
     }
 
@@ -408,15 +353,8 @@ class TestGriddedGeoLayer {
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),
             variables = listOf(
-                TestVariable(
-                    rawValues = DoubleArray(9) { idx ->
-                        when (idx / 3) {
-                            0 -> 1.0
-                            1 -> 2.0
-                            else -> 3.0
-                        }
-                    },
-                ),
+                // each file row holds its number: 1, 2, and 3
+                TestVariable(rawValues = DoubleArray(9) { idx -> idx / 3 + 1.0 }),
             ),
         )
         val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString()))
@@ -444,12 +382,7 @@ class TestGriddedGeoLayer {
             lats = doubleArrayOf(44.0, 45.0, 46.0),
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),
-            variables = listOf(
-                TestVariable(
-                    "wonderfulvariablename",
-                    DoubleArray(9) { 7.0 },
-                ),
-            ),
+            variables = listOf(TestVariable("wonderfulvariablename", DoubleArray(9) { 7.0 })),
         )
         val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString(), variable = null))
         assertEquals(7.0, layer.currentValueAt(center), TOLERANCE, "auto-detected variable; all cells = 7.0")
@@ -464,12 +397,7 @@ class TestGriddedGeoLayer {
             lats = doubleArrayOf(44.0, 45.0, 46.0),
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0),
-            variables = listOf(
-                TestVariable(
-                    varName,
-                    DoubleArray(9) { 42.0 },
-                ),
-            ),
+            variables = listOf(TestVariable(varName, DoubleArray(9) { 42.0 })),
         )
         val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString(), variable = varName))
         assertEquals(42.0, layer.currentValueAt(center), TOLERANCE, "explicit variable '$varName'; all cells = 42.0")
@@ -484,9 +412,7 @@ class TestGriddedGeoLayer {
             lats = doubleArrayOf(44.0, 45.0, 46.0),
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(0.0, 1.0),
-            variables = listOf(
-                TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 10.0 else 20.0 }),
-            ),
+            variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 10.0 else 20.0 })),
         )
         // file 2: t=2h (all values=30.0) and t=3h (all values=40.0)
         writeTestNetcdf(
@@ -494,9 +420,7 @@ class TestGriddedGeoLayer {
             lats = doubleArrayOf(44.0, 45.0, 46.0),
             lons = doubleArrayOf(11.0, 12.0, 13.0),
             timeHours = doubleArrayOf(2.0, 3.0),
-            variables = listOf(
-                TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 30.0 else 40.0 }),
-            ),
+            variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 30.0 else 40.0 })),
         )
         val simulationTime = observe(timeAt(0.0))
         val layer = DoubleGriddedGeoLayer(mutableEnv(simulationTime), GridsFromDirectory(dir.absolutePathString()))
@@ -504,7 +428,6 @@ class TestGriddedGeoLayer {
             val time = it.toDouble()
             val expectedTime = (it + 1) * 10.0
             simulationTime.current = timeAt(time)
-
             assertEquals(
                 expectedTime,
                 layer.currentValueAt(center),
@@ -521,10 +444,57 @@ class TestGriddedGeoLayer {
             "t=1.5 crosses file boundary. LINEAR blend of 20.0 and 30.0 = 25.0",
         )
     }
-}
 
-/**
- * Shorthand for EPOCH time.
- */
-private val Instant.Companion.EPOCH: Instant
-    get() = Instant.fromEpochMilliseconds(0)
+    private companion object {
+        // fixed spatial grid
+        val lats = doubleArrayOf(44.0, 45.0, 46.0)
+        val lons = doubleArrayOf(11.0, 12.0, 13.0)
+
+        /**
+         * Three flat slices, valued 10, 20, and 30, one hour apart from [Instant.EPOCH].
+         */
+        val shiftedData: GridSnapshots = syntheticGrid(10.0, 20.0, 30.0)
+
+        /**
+         * The second instant of [shiftedData], so that its simulation times are -1, 0, and 1.
+         */
+        val shiftedOrigin: String = (Instant.EPOCH + 1.hours).toString()
+
+        /**
+         * A [RasterGrid] where every cell has a fixed [value].
+         */
+        fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
+            ImmutableAxis(lats),
+            ImmutableAxis(lons),
+            DoubleArray(lats.size * lons.size) { value },
+        )
+
+        /**
+         * A [GridSnapshots] made of [grids], spaced [step] apart starting from [base].
+         */
+        fun snapshotsOf(
+            grids: List<RasterGrid>,
+            base: Instant = Instant.EPOCH,
+            step: Duration = 1.hours,
+        ): GridSnapshots = object : GridSnapshots {
+            override val instants = grids.indices.map { i -> base.plus(step * i) }
+            override fun grid(index: Int): RasterGrid = grids[index]
+        }
+
+        /**
+         * A [GridSnapshots] made of flat slices: the i-th one has all cells equal to `sliceValues[i]`.
+         * Time steps are spaced [step] apart starting from [base].
+         */
+        fun syntheticGrid(
+            vararg sliceValues: Double,
+            base: Instant = Instant.EPOCH,
+            step: Duration = 1.hours,
+        ): GridSnapshots = snapshotsOf(sliceValues.map { flatGrid(it) }, base, step)
+
+        /**
+         * Shorthand for EPOCH time.
+         */
+        private val Instant.Companion.EPOCH: Instant
+            get() = Instant.fromEpochMilliseconds(0)
+    }
+}

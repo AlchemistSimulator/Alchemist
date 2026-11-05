@@ -73,30 +73,6 @@ class TestFileSystemDirectoryCache {
         tempDir.deleteRecursively()
     }
 
-    private fun writeOneFile(dir: Path) {
-        dir.resolve(DATA_FILE).writeText("payload")
-    }
-
-    private fun Path.content(): String = resolve(DATA_FILE).readText()
-
-    /**
-     * Runs every task on its own thread, releases them all at once, waits for all of them,
-     * and rethrows the first failure, if any.
-     */
-    private fun concurrently(tasks: List<() -> Unit>) {
-        val gate = CountDownLatch(1)
-        val failures = ConcurrentLinkedQueue<Throwable>()
-        val threads = tasks.map { task ->
-            thread {
-                gate.await()
-                runCatching { task() }.onFailure { failures.add(it) }
-            }
-        }
-        gate.countDown()
-        threads.forEach(Thread::join)
-        failures.firstOrNull()?.let { throw it }
-    }
-
     @Test
     fun `on a miss, the loader runs exactly once and its files are promoted`() {
         val loader = FakeLoader { _, dir -> writeOneFile(dir) }
@@ -270,6 +246,30 @@ class TestFileSystemDirectoryCache {
             otherProcess.destroyForcibly()
         }
     }
+
+    /**
+     * Runs every task on its own thread, releases them all at once, waits for all of them,
+     * and rethrows the first failure, if any.
+     */
+    private fun concurrently(tasks: List<() -> Unit>) {
+        val gate = CountDownLatch(1)
+        val failures = ConcurrentLinkedQueue<Throwable>()
+        val threads = tasks.map { task ->
+            thread {
+                gate.await()
+                runCatching { task() }.onFailure { failures.add(it) }
+            }
+        }
+        gate.countDown()
+        threads.forEach(Thread::join)
+        failures.firstOrNull()?.let { throw it }
+    }
+
+    private fun writeOneFile(dir: Path) {
+        dir.resolve(DATA_FILE).writeText("payload")
+    }
+
+    private fun Path.content(): String = resolve(DATA_FILE).readText()
 
     private companion object {
         const val ENTRY_LOADING_PROCESS = "it.unibo.alchemist.boundary.filecache.EntryLoadingProcessKt"

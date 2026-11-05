@@ -138,6 +138,8 @@ constructor(
      * Default values for GraphHopper.
      */
     companion object {
+        private const val HASH_PREFIX_LENGTH = 32
+
         /**
          * See [GraphHopperOptions.defaultOptions].
          */
@@ -147,8 +149,6 @@ constructor(
          * The default root of the cache of the routing graphs.
          */
         val DEFAULT_CACHE_DIRECTORY: Path = FileSystemDirectoryCache.DEFAULT_CACHE_DIRECTORY.resolve("graphhopper")
-
-        private const val HASH_PREFIX_LENGTH = 32
 
         private val UNSAFE_FILE_NAME_CHARACTERS = Regex("[^A-Za-z0-9._-]")
 

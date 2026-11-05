@@ -197,6 +197,9 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
      * Conventional locations and internal constants for the filesystem cache.
      */
     companion object {
+        private const val LOCKS_SUBDIR = ".locks"
+        private const val TEMP_SUBDIR = ".tmp"
+
         /**
          * Conventional root under which callers are expected to place their own cache subdirectory:
          * Alchemist's user cache directory, as conventional for the current operating system
@@ -213,8 +216,6 @@ class FileSystemDirectoryCache<in K : CachedDirectoryKey>(private val loader: Ca
          * but not when loading fails, as callers still waiting on it would otherwise compete with new ones.
          */
         private val entryLocks = ConcurrentHashMap<Path, Any>()
-        private const val TEMP_SUBDIR = ".tmp"
-        private const val LOCKS_SUBDIR = ".locks"
         private val logger = LoggerFactory.getLogger(FileSystemDirectoryCache::class.java)
 
         private val Path.readyOrNull: Path? get() = takeIf { it.isDirectory() }

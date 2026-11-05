@@ -29,9 +29,10 @@ class ImmutableAxis(coordinates: DoubleArray) : Axis {
         }
     }
 
-    override val size: Int get() = coordinates.size
+    // after the checks, so that an empty axis fails with their message
+    override val range: ClosedFloatingPointRange<Double> = this.coordinates.first()..this.coordinates.last()
 
-    override val range: ClosedFloatingPointRange<Double> get() = coordinates.first()..coordinates.last()
+    override val size: Int get() = coordinates.size
 
     override operator fun get(index: Int): Double = coordinates[index]
 

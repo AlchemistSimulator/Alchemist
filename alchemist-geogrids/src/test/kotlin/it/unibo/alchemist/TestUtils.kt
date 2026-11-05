@@ -47,11 +47,10 @@ internal fun writeTestNetcdf(
     dimensionOrder: List<String> = listOf("time", "latitude", "longitude"),
 ) {
     require(variables.isNotEmpty()) { "variables must not be empty" }
+    val axes = mapOf("time" to timeHours, "latitude" to lats, "longitude" to lons)
     // defines the schema on the builder
     val builder = NetcdfFormatWriter.createNewNetcdf3(path.toString())
-    builder.addDimension("time", timeHours.size)
-    builder.addDimension("latitude", lats.size)
-    builder.addDimension("longitude", lons.size)
+    axes.forEach { (name, values) -> builder.addDimension(name, values.size) }
     // CF compliant axis
     builder.addVariable("time", DataType.DOUBLE, "time").apply {
         addAttribute(Attribute("units", "hours since $timeEpoch"))
@@ -73,11 +72,10 @@ internal fun writeTestNetcdf(
     }
     // creates the file and enters write mode
     builder.build().use { writer ->
-        mapOf("time" to timeHours, "latitude" to lats, "longitude" to lons).forEach { (axis, values) ->
-            writer.write(axis, UcarArray.factory(DataType.DOUBLE, intArrayOf(values.size), values))
+        axes.forEach { (name, values) ->
+            writer.write(name, UcarArray.factory(DataType.DOUBLE, intArrayOf(values.size), values))
         }
-        val dimSize = mapOf("time" to timeHours.size, "latitude" to lats.size, "longitude" to lons.size)
-        val shape = dimensionOrder.map { dimSize.getValue(it) }.toIntArray()
+        val shape = dimensionOrder.map { axes.getValue(it).size }.toIntArray()
         variables.forEach { variable ->
             val arr = variable.rawValues ?: DoubleArray(timeHours.size * lats.size * lons.size) { idx ->
                 val dimCoord = dimensionOrder.zip(unravel(idx, shape).toList()).toMap()

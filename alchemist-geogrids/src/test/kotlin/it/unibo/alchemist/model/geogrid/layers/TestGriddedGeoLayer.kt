@@ -427,13 +427,13 @@ class TestGriddedGeoLayer {
         val layer = DoubleGriddedGeoLayer(mutableEnv(simulationTime), GridsFromDirectory(dir.absolutePathString()))
         (0..3).forEach {
             val time = it.toDouble()
-            val expectedTime = (it + 1) * 10.0
+            val expectedValue = (it + 1) * 10.0
             simulationTime.current = timeAt(time)
             assertEquals(
-                expectedTime,
+                expectedValue,
                 layer.currentValueAt(center),
                 TOLERANCE,
-                "t=$time. Exact hit on merged series = $expectedTime",
+                "t=$time. Exact hit on merged series = $expectedValue",
             )
         }
         // interpolation across the file boundary: t=1.5 should return the mean with linear interpolation

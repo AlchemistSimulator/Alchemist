@@ -33,8 +33,8 @@ import kotlin.time.Instant
  * A [GeoLayer] over gridded geographic data changing over time, such as weather or climate data.
  * At each simulation time, the value at a position is interpolated with [spatialInterpolation] in the two grids
  * around that time, then between them with [temporalInterpolation], and finally converted by [converter].
- * Before the first and after the last instant of the data, the first and last grids are used;
- * positions outside the grid have no value.
+ * Before the first and after the last instant of the data, the first and last grids are used.
+ * Positions outside the grid fail as soon as they are sampled.
  *
  * @param environment the environment, whose simulation provides the time.
  * @param data the data, such as [GridsFromDirectory] or [CopernicusData].
@@ -44,8 +44,8 @@ import kotlin.time.Instant
  * (e.g., `2024-06-10T00:00:00Z`); the first instant of [data] when `null`.
  * @param spatialInterpolation how to compute values between the nodes of a grid.
  * @param temporalInterpolation how to compute values between two instants of the data.
- * @throws IllegalArgumentException if [data] is empty, if [timeScale] is not a positive finite ISO-8601 duration,
- * or if [timeOrigin] is not an ISO-8601 instant.
+ * @throws IllegalArgumentException if [data] is empty, if its instants are not strictly ascending,
+ * if [timeScale] is not a positive finite ISO-8601 duration, or if [timeOrigin] is not an ISO-8601 instant.
  */
 open class GriddedGeoLayer<T> @JvmOverloads constructor(
     private val environment: Environment<*, GeoPosition>,

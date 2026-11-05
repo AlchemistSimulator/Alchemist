@@ -89,14 +89,9 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
      * The value at [position] at simulation time [t].
      */
     private fun valueAt(position: GeoPosition, t: Double): T {
-        // the indices of the spatial slices that enclose time t.
+        // the indices of the spatial slices that enclose time t: the same one if t falls on a slice or outside them
         val (gridIndexBefore, gridIndexAfter, timeWeight) = sliceTimes.enclosingCellOf(t)
-        return if (gridIndexBefore == gridIndexAfter) {
-            // the time t falls exactly on a slice.
-            sampleExactSlice(position, gridIndexBefore)
-        } else {
-            sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
-        }
+        return sample(position, gridIndexBefore, gridIndexAfter, timeWeight)
     }
 
     /**
@@ -107,19 +102,14 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
         val gridAfter = data.grid(gridAfterIndex)
         require(gridBefore.isInBounds(position)) { outOfBoundsMessage(position, gridBefore) }
         val valueBefore = spatialInterpolation.valueAt(gridBefore, position)
-        val valueAfter = spatialInterpolation.valueAt(gridAfter, position)
+        // a single grid is interpolated once
+        val valueAfter = if (gridAfterIndex == gridBeforeIndex) {
+            valueBefore
+        } else {
+            spatialInterpolation.valueAt(gridAfter, position)
+        }
         return converter(temporalInterpolation.interpolate(valueBefore, valueAfter, timeWeight))
     }
-
-    /**
-     * The converted value at [position] in the grid with index [gridIndex].
-     */
-    private fun sampleExactSlice(position: GeoPosition, gridIndex: Int): T = sample(
-        position,
-        gridIndex,
-        gridIndex,
-        0.0,
-    )
 
     /**
      * Defaults of the layer.

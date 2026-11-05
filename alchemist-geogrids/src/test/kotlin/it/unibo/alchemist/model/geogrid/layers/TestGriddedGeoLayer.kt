@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
 import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
 import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
+import it.unibo.alchemist.model.geogrid.spatialinterpolations.BilinearInterpolation
 import it.unibo.alchemist.model.geogrid.spatialinterpolations.NearestInterpolation
 import it.unibo.alchemist.model.geogrid.temporalinterpolations.ClosestInterpolation
 import it.unibo.alchemist.model.observables.util.MutableObservables.observe
@@ -320,6 +321,21 @@ class TestGriddedGeoLayer {
             )
             assertEquals(sliceValues[i], layer.currentValueAt(center), "t=$time hits slice $i = ${sliceValues[i]}")
         }
+    }
+
+    @Test
+    fun `exact hits on slices interpolate the slice once`() {
+        val interpolatedGrids = mutableListOf<RasterGrid>()
+        val layer = DoubleGriddedGeoLayer(
+            envAt(1.0),
+            snapshotsOf(listOf(gridBefore, gridAfter)),
+            spatialInterpolation = { grid, position ->
+                interpolatedGrids += grid
+                BilinearInterpolation.valueAt(grid, position)
+            },
+        )
+        assertEquals(1032.5, layer.currentValueAt(cellCenter), TOLERANCE)
+        assertEquals(listOf(gridAfter), interpolatedGrids)
     }
 
     // no simulation test

@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.geogrid.util.RasterGrids.requireOneValuePerCell
  * @param gridValues the values, row by row: all longitudes of the first latitude, then of the second, and so on.
  * @throws IllegalArgumentException if there is not exactly one value per cell.
  */
-class ArrayRasterGrid(
+class DenseRasterGrid(
     override val latitudes: Axis,
     override val longitudes: Axis,
     gridValues: DoubleArray,

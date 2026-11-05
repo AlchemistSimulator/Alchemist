@@ -13,8 +13,8 @@ import it.unibo.alchemist.model.geogrid.Axis
 import it.unibo.alchemist.model.geogrid.GridSnapshots
 import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
-import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
-import it.unibo.alchemist.model.geogrid.rastergrids.MapRasterGrid
+import it.unibo.alchemist.model.geogrid.rastergrids.DenseRasterGrid
+import it.unibo.alchemist.model.geogrid.rastergrids.SparseRasterGrid
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Formatter
@@ -181,8 +181,8 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
         val variableName: String = variable.shortName
 
         /**
-         * The grid at the [t]-th instant: a [MapRasterGrid] if its values are mostly missing,
-         * an [ArrayRasterGrid] otherwise.
+         * The grid at the [t]-th instant: a [SparseRasterGrid] if its values are mostly missing,
+         * an [DenseRasterGrid] otherwise.
          */
         fun gridAt(t: Int): RasterGrid {
             val sizes = intArrayOf(1, latitudes.size, longitudes.size)
@@ -198,9 +198,9 @@ class GridsFromDirectory @JvmOverloads constructor(directory: String, variable: 
             }
             val density = values.count { !it.isNaN() }.toDouble() / values.size
             return if (density < SPARSE_DENSITY_THRESHOLD) {
-                MapRasterGrid(latitudes, longitudes, values)
+                SparseRasterGrid(latitudes, longitudes, values)
             } else {
-                ArrayRasterGrid(latitudes, longitudes, values)
+                DenseRasterGrid(latitudes, longitudes, values)
             }
         }
 

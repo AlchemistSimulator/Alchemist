@@ -175,13 +175,11 @@ abstract class TestRasterGridContract {
         }
     }
 
-    // tests the array implementation (suitable for dense grids)
-    class TestArrayRasterGrid : TestRasterGridContract() {
-        override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::ArrayRasterGrid
+    class TestDenseRasterGrid : TestRasterGridContract() {
+        override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::DenseRasterGrid
     }
 
-    // tests the map implementation (suitable for sparse grids)
-    class TestMapRasterGrid : TestRasterGridContract() {
-        override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::MapRasterGrid
+    class TestSparseRasterGrid : TestRasterGridContract() {
+        override val gridOf: (Axis, Axis, DoubleArray) -> RasterGrid = ::SparseRasterGrid
     }
 }

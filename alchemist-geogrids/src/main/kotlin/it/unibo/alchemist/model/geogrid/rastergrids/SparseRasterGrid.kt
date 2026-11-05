@@ -16,13 +16,13 @@ import it.unibo.alchemist.model.geogrid.util.RasterGrids.requireOneValuePerCell
 
 /**
  * A [RasterGrid] storing only the values that are not missing, suited for sparse grids.
- * Each value takes 12 bytes (its index and itself), against the 8 bytes per cell of [ArrayRasterGrid],
+ * Each value takes 12 bytes (its index and itself), against the 8 bytes per cell of [DenseRasterGrid],
  * so it takes less memory when fewer than two thirds of the cells hold a value.
  *
  * @param gridValues the values, row by row: all longitudes of the first latitude, then of the second, and so on.
  * @throws IllegalArgumentException if there is not exactly one value per cell.
  */
-class MapRasterGrid(
+class SparseRasterGrid(
     override val latitudes: Axis,
     override val longitudes: Axis,
     gridValues: DoubleArray,

@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.geogrid.GridSnapshots
 import it.unibo.alchemist.model.geogrid.RasterGrid
 import it.unibo.alchemist.model.geogrid.axes.ImmutableAxis
-import it.unibo.alchemist.model.geogrid.rastergrids.ArrayRasterGrid
+import it.unibo.alchemist.model.geogrid.rastergrids.DenseRasterGrid
 import it.unibo.alchemist.model.geogrid.snapshots.GridsFromDirectory
 import it.unibo.alchemist.model.geogrid.spatialinterpolations.BilinearInterpolation
 import it.unibo.alchemist.model.geogrid.spatialinterpolations.NearestInterpolation
@@ -370,7 +370,7 @@ class TestGriddedGeoLayer {
     /**
      * A 2x2 grid over latitudes 44 and 45 and longitudes 11 and 12, with the given [values] row by row.
      */
-    private fun cornerGrid(vararg values: Double): RasterGrid = ArrayRasterGrid(
+    private fun cornerGrid(vararg values: Double): RasterGrid = DenseRasterGrid(
         ImmutableAxis(doubleArrayOf(44.0, 45.0)),
         ImmutableAxis(doubleArrayOf(11.0, 12.0)),
         values,
@@ -403,7 +403,7 @@ class TestGriddedGeoLayer {
         /**
          * A [RasterGrid] where every cell has a fixed [value].
          */
-        fun flatGrid(value: Double): RasterGrid = ArrayRasterGrid(
+        fun flatGrid(value: Double): RasterGrid = DenseRasterGrid(
             ImmutableAxis(lats),
             ImmutableAxis(lons),
             DoubleArray(lats.size * lons.size) { value },

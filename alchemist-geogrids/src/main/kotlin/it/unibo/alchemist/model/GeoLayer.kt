@@ -12,4 +12,4 @@ package it.unibo.alchemist.model
 /**
  * A [Layer] over geographic positions.
  */
-fun interface GeoLayer<T> : Layer<T, GeoPosition>
+fun interface GeoLayer<out T> : Layer<T, GeoPosition>

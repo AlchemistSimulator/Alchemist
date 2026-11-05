@@ -30,6 +30,7 @@ import it.unibo.alchemist.model.observation.Observable
 import it.unibo.alchemist.writeTestNetcdf
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -167,26 +168,26 @@ class TestGriddedGeoLayer {
 
     @Test
     fun `the converter turns the interpolated values into the values of the layer`() {
-        val layer = GriddedGeoLayer(envAt(0.0), syntheticGrid(5.0), { value: Double -> "level ${value.toInt()}" })
+        val layer = GriddedGeoLayer(envAt(0.0), syntheticSnapshots(5.0), { value: Double -> "level ${value.toInt()}" })
         assertEquals("level 5", layer.currentValueAt(center))
     }
 
     @Test
     fun `missing values are NaN by default`() {
-        val value = DoubleGriddedGeoLayer(envAt(0.0), syntheticGrid(Double.NaN)).currentValueAt(center)
+        val value = DoubleGriddedGeoLayer(envAt(0.0), syntheticSnapshots(Double.NaN)).currentValueAt(center)
         assertTrue(value.isNaN(), "expected NaN, but got $value")
     }
 
     @Test
     fun `missing values take the value of missingValue`() {
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), syntheticGrid(Double.NaN), missingValue = 0.0)
+        val layer = DoubleGriddedGeoLayer(envAt(0.0), syntheticSnapshots(Double.NaN), missingValue = 0.0)
         assertEquals(0.0, layer.currentValueAt(center))
     }
 
     // timeOrigin tests
     @Test
     fun `default timeOrigin maps the first instant to time zero`() {
-        val gridSnaps = syntheticGrid(7.0, 14.0)
+        val gridSnaps = syntheticSnapshots(7.0, 14.0)
         val layer = DoubleGriddedGeoLayer(
             environment = envAt(0.0),
             data = gridSnaps,
@@ -222,7 +223,7 @@ class TestGriddedGeoLayer {
          */
         val layer = DoubleGriddedGeoLayer(
             envAt(1.0),
-            syntheticGrid(0.0, 10.0),
+            syntheticSnapshots(0.0, 10.0),
             timeScale = "PT30M",
         )
         assertEquals(
@@ -241,7 +242,7 @@ class TestGriddedGeoLayer {
          */
         val layer = DoubleGriddedGeoLayer(
             envAt(0.5),
-            syntheticGrid(0.0, 12.0, step = 6.hours),
+            syntheticSnapshots(0.0, 12.0, step = 6.hours),
             timeScale = "PT6H",
         )
         assertEquals(6.0, layer.currentValueAt(center), TOLERANCE, "t=0.5 halfway, LINEAR blending should return 6.0")
@@ -250,7 +251,7 @@ class TestGriddedGeoLayer {
     // out of bound test
     @Test
     fun `currentValueAt should raise an exception when an out-of-bounds position is passed`() {
-        val gridSnaps = syntheticGrid(7.0)
+        val gridSnaps = syntheticSnapshots(7.0)
         val layer = DoubleGriddedGeoLayer(envAt(0.0), gridSnaps)
         assertFailsWith<IllegalArgumentException> {
             layer.currentValueAt(mockGeoPosition(lats.first() - 1, lons.first() - 1))
@@ -265,7 +266,7 @@ class TestGriddedGeoLayer {
             val time = i.toDouble()
             val layer = DoubleGriddedGeoLayer(
                 envAt(time),
-                syntheticGrid(*sliceValues),
+                syntheticSnapshots(*sliceValues),
             )
             assertEquals(sliceValues[i], layer.currentValueAt(center), "t=$time hits slice $i = ${sliceValues[i]}")
         }
@@ -289,7 +290,7 @@ class TestGriddedGeoLayer {
     // no simulation test
     @Test
     fun `no attached simulation falls back to time zero and reads the first slice`() {
-        val layer = DoubleGriddedGeoLayer(envNoSim, syntheticGrid(42.0, 84.0))
+        val layer = DoubleGriddedGeoLayer(envNoSim, syntheticSnapshots(42.0, 84.0))
         assertEquals(42.0, layer.currentValueAt(center), "null simulation: t=0.0, first slice = 42.0")
     }
 
@@ -297,7 +298,7 @@ class TestGriddedGeoLayer {
     fun `the observed value follows the simulation time once the simulation is attached`() {
         val simulation = observe<Simulation<Any?, GeoPosition>?>(null)
         val simulationTime = observe(timeAt(1.0))
-        val layer = DoubleGriddedGeoLayer(envWith(simulation), syntheticGrid(42.0, 84.0))
+        val layer = DoubleGriddedGeoLayer(envWith(simulation), syntheticSnapshots(42.0, 84.0))
         val observed = mutableListOf<Double>()
         layer.valueAt(center).onChange { observed += it }
         simulation.current = simulationAt(simulationTime)
@@ -312,7 +313,7 @@ class TestGriddedGeoLayer {
     // directory constructor with real NetCDF files tests
     @Test
     fun `directory constructor with a single file hits exactly at time zero with the default timeOrigin`() {
-        val dir = tempDir.resolve("single").also { it.toFile().mkdirs() }
+        val dir = tempDir.resolve("single").createDirectories()
         /*
          * slice values:
          * slice 0: all 10.0
@@ -332,7 +333,7 @@ class TestGriddedGeoLayer {
 
     @Test
     fun `directory constructor interpolates linearly between two slices in a file`() {
-        val dir = tempDir.resolve("interp").also { it.toFile().mkdirs() }
+        val dir = tempDir.resolve("interp").createDirectories()
         writeTestNetcdf(
             path = dir.resolve(netCdfFileName),
             lats = doubleArrayOf(44.0, 45.0, 46.0),
@@ -346,7 +347,7 @@ class TestGriddedGeoLayer {
 
     @Test
     fun `directory constructor normalises a descending latitude axis to ascending`() {
-        val dir = tempDir.resolve("desc-lat").also { it.toFile().mkdirs() }
+        val dir = tempDir.resolve("desc-lat").createDirectories()
         writeTestNetcdf(
             path = dir.resolve(netCdfFileName),
             lats = doubleArrayOf(46.0, 45.0, 44.0), // lats descending
@@ -376,7 +377,7 @@ class TestGriddedGeoLayer {
 
     @Test
     fun `directory constructor auto-detects the variable when variableName is null`() {
-        val dir = tempDir.resolve("auto-detect").also { it.toFile().mkdirs() }
+        val dir = tempDir.resolve("auto-detect").createDirectories()
         writeTestNetcdf(
             path = dir.resolve(netCdfFileName),
             lats = doubleArrayOf(44.0, 45.0, 46.0),
@@ -390,7 +391,7 @@ class TestGriddedGeoLayer {
 
     @Test
     fun `directory constructor uses an explicit variable name correctly`() {
-        val dir = tempDir.resolve("explicit-var").also { it.toFile().mkdirs() }
+        val dir = tempDir.resolve("explicit-var").createDirectories()
         val varName = "temperature"
         writeTestNetcdf(
             path = dir.resolve(netCdfFileName),
@@ -405,7 +406,7 @@ class TestGriddedGeoLayer {
 
     @Test
     fun `directory constructor merges two different files into a single ordered time series`() {
-        val dir = tempDir.resolve("two-files").also { it.toFile().mkdirs() }
+        val dir = tempDir.resolve("two-files").createDirectories()
         // file 1: t=0h (all values=10.0) and t=1h (all values=20.0)
         writeTestNetcdf(
             path = dir.resolve("part1.nc"),
@@ -453,7 +454,7 @@ class TestGriddedGeoLayer {
         /**
          * Three flat slices, valued 10, 20, and 30, one hour apart from [Instant.EPOCH].
          */
-        val shiftedData: GridSnapshots = syntheticGrid(10.0, 20.0, 30.0)
+        val shiftedData: GridSnapshots = syntheticSnapshots(10.0, 20.0, 30.0)
 
         /**
          * The second instant of [shiftedData], so that its simulation times are -1, 0, and 1.
@@ -477,7 +478,7 @@ class TestGriddedGeoLayer {
             base: Instant = Instant.EPOCH,
             step: Duration = 1.hours,
         ): GridSnapshots = object : GridSnapshots {
-            override val instants = grids.indices.map { i -> base.plus(step * i) }
+            override val instants = grids.indices.map { i -> base + step * i }
             override fun grid(index: Int): RasterGrid = grids[index]
         }
 
@@ -485,11 +486,11 @@ class TestGriddedGeoLayer {
          * A [GridSnapshots] made of flat slices: the i-th one has all cells equal to `sliceValues[i]`.
          * Time steps are spaced [step] apart starting from [base].
          */
-        fun syntheticGrid(
+        fun syntheticSnapshots(
             vararg sliceValues: Double,
             base: Instant = Instant.EPOCH,
             step: Duration = 1.hours,
-        ): GridSnapshots = snapshotsOf(sliceValues.map { flatGrid(it) }, base, step)
+        ): GridSnapshots = snapshotsOf(sliceValues.map(::flatGrid), base, step)
 
         /**
          * Shorthand for EPOCH time.

@@ -135,7 +135,9 @@ class CopernicusData @JvmOverloads constructor(
                         parseJson { "'$this' is neither an existing file nor a valid JSON string" }
                 this is Map<*, *> -> "Mapping $this" to CanonicalJson.toJson(this, "inputs")
                 else -> throw IllegalArgumentException(
-                    "Inputs must be a Map, a JSON file, or a JSON string, but are a ${this::class.nonNullSimpleName}: $this",
+                    "Inputs must be a Map, a JSON file, or a JSON string, but are a ${
+                        this::class.nonNullSimpleName
+                    }: $this",
                 )
             }
             require(json.isJsonObject) { "$source holds valid JSON, but not a JSON object: $json" }

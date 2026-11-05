@@ -1,3 +1,25 @@
+## [50.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/49.2.0...50.0.0) (2026-11-05)
+
+### ⚠ BREAKING CHANGES
+
+* add support for real-world climate data and on-disk caching (#5556)
+
+### Features
+
+* add support for real-world climate data and on-disk caching ([#5556](https://github.com/AlchemistSimulator/Alchemist/issues/5556)) ([d3df8e9](https://github.com/AlchemistSimulator/Alchemist/commit/d3df8e99d6a2b6596a5efdb76ec701c35930f866))
+
+### Dependency updates
+
+* **deps:** update dependency org.eclipse.jgit:org.eclipse.jgit to v7.8.1.202611041320-r ([34f0e5d](https://github.com/AlchemistSimulator/Alchemist/commit/34f0e5df8f8756b56f2c6edeedde9e03b3ab71ea))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.51 ([#5735](https://github.com/AlchemistSimulator/Alchemist/issues/5735)) ([15306c1](https://github.com/AlchemistSimulator/Alchemist/commit/15306c1ed1a14d052bb61b72e90884d4d7b5d209))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([0d85ce3](https://github.com/AlchemistSimulator/Alchemist/commit/0d85ce34601711b49d02fed4eb6d13afeb542d9e))
+
 ## [49.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/49.1.3...49.2.0) (2026-11-03)
 
 ### Features

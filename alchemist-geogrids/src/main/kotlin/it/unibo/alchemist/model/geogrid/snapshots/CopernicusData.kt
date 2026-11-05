@@ -153,10 +153,11 @@ class CopernicusData @JvmOverloads constructor(
          * This string as JSON, or a failure with the message [failure] if it is not valid JSON.
          */
         private inline fun String.parseJson(failure: () -> String): JsonElement = try {
+            // null for an empty string, which is no JSON at all
             gson.fromJson(this, JsonElement::class.java)
         } catch (e: JsonSyntaxException) {
             throw IllegalArgumentException("${failure()}: ${e.message}", e)
-        }.also { checkNotNull(it) { "${failure()}: no content" } }
+        }.let { requireNotNull(it) { "${failure()}: no content" } }
 
         /**
          * The file among the classpath resources with this name or, if there is none, at this path;

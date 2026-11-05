@@ -31,6 +31,9 @@ interface Axis {
      */
     fun enclosingCellOf(coordinate: Double): Cell
 
+    /**
+     * Two axes are equal when they have the same coordinates, in the same order.
+     */
     override fun equals(other: Any?): Boolean
 
     /**
@@ -38,6 +41,9 @@ interface Axis {
      */
     operator fun get(index: Int): Double
 
+    /**
+     * The [DoubleArray.contentHashCode] of the coordinates, consistently with [equals].
+     */
     override fun hashCode(): Int
 
     /**

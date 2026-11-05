@@ -13,6 +13,7 @@ import kotlin.time.Instant
 
 /**
  * A sequence of [RasterGrid]s over time: `grid(i)` holds the data at `instants[i]`.
+ * All the grids share the same latitudes and longitudes.
  */
 interface GridSnapshots {
     /**

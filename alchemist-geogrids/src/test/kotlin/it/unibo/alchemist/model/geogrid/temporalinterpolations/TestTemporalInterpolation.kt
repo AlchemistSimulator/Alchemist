@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.geogrid.temporalinterpolations
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TestTemporalInterpolation {
 
@@ -54,6 +55,14 @@ class TestTemporalInterpolation {
                 "at weight $weight",
             )
         }
+    }
+
+    @Test
+    fun `linear is missing if either value is, unless the weight falls exactly on the other one`() {
+        listOf(linear.interpolate(valueBefore, Double.NaN, 0.5), linear.interpolate(Double.NaN, valueAfter, 0.5))
+            .forEach { assertTrue(it.isNaN(), "Expected NaN, but got $it") }
+        assertEquals(valueBefore, linear.interpolate(valueBefore, Double.NaN, 0.0))
+        assertEquals(valueAfter, linear.interpolate(Double.NaN, valueAfter, 1.0))
     }
 
     // Previous temporal interpolation strategy test

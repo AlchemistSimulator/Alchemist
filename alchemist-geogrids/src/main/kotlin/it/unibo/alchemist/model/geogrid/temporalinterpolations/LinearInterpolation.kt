@@ -12,7 +12,8 @@ package it.unibo.alchemist.model.geogrid.temporalinterpolations
 import it.unibo.alchemist.model.geogrid.TemporalInterpolation
 
 /**
- * Linear interpolation between the two values, missing if either of them is.
+ * Linear interpolation between the two values, missing if either of them is,
+ * unless the weight falls exactly on the other one (0 for the value before, 1 for the value after).
  */
 data object LinearInterpolation : TemporalInterpolation {
 

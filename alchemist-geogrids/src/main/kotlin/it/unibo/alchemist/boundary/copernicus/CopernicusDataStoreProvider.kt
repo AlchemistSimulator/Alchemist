@@ -65,6 +65,7 @@ class CopernicusDataStoreProvider(
      *
      * @throws IllegalArgumentException if [target] is not a directory.
      * @throws IllegalStateException if the job fails or times out, or the download fails or is corrupted.
+     * @throws java.io.IOException if the connection fails or times out, or a downloaded archive cannot be read.
      */
     override fun load(key: CopernicusRequest, target: Path) {
         require(target.isDirectory()) {

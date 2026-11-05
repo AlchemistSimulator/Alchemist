@@ -77,8 +77,7 @@ open class GriddedGeoLayer<T> @JvmOverloads constructor(
 
     /**
      * The value at [position], following the time of the simulation, or time 0 until there is one.
-     *
-     * @throws IllegalArgumentException if [position] is outside the grid.
+     * Reading or observing it fails with an [IllegalArgumentException] if [position] is outside the grid.
      */
     override fun valueAt(position: GeoPosition): Observable<T> =
         environment.attachedSimulation.switchMap { simulation ->

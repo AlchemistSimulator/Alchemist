@@ -131,6 +131,15 @@ class TestCopernicusData {
     }
 
     @Test
+    fun `fails clearly when the cdsapirc file is missing`() {
+        FakeDataStore().use { fake ->
+            val failure = assertFailsWith<IllegalStateException> { fake.copernicusData(missingCdsApiRc) }
+            assertContains(failure.message.orEmpty(), "No .cdsapirc file at $missingCdsApiRc")
+            assertTrue(fake.server.requests.isEmpty(), "No request can be sent without a token")
+        }
+    }
+
+    @Test
     fun `fails clearly when the cdsapirc file has no key, or an empty one`() {
         listOf("", "\nkey:", "\nkey:   ").forEach { keyLine ->
             FakeDataStore().use { fake ->

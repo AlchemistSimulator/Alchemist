@@ -110,15 +110,18 @@ class CopernicusData @JvmOverloads constructor(
         /**
          * The token in the `key:` line of this [`.cdsapirc`](https://cds.climate.copernicus.eu/how-to-api) file.
          *
-         * @throws IllegalStateException if the file has no `key:` line, or its key is empty.
+         * @throws IllegalStateException if the file does not exist, has no `key:` line, or its key is empty.
          */
-        private fun Path.readToken(): String = readLines()
-            .map { it.split(':', limit = 2) }
-            .firstOrNull { it.size == 2 && it[0].trim() == KEY_FIELD }
-            ?.get(1)
-            ?.trim()
-            ?.takeIf { it.isNotEmpty() }
-            ?: error("No non-empty 'key:' line in $this")
+        private fun Path.readToken(): String {
+            check(isRegularFile()) { "No .cdsapirc file at $this: create one with the API key of your account" }
+            return readLines()
+                .map { it.split(':', limit = 2) }
+                .firstOrNull { it.size == 2 && it[0].trim() == KEY_FIELD }
+                ?.get(1)
+                ?.trim()
+                ?.takeIf { it.isNotEmpty() }
+                ?: error("No non-empty 'key:' line in $this")
+        }
 
         /**
          * These inputs of a request as a JSON object, with nested objects as [Map]s and arrays as [List]s.

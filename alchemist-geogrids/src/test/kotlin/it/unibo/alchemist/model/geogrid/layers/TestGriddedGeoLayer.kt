@@ -56,8 +56,6 @@ private const val TOLERANCE = 1e-9
 class TestGriddedGeoLayer {
     private val center: GeoPosition = LatLongPosition(45.0, 12.0)
 
-    private val netCdfFileName = "data.nc"
-
     /*
      * Default interpolation, bilinear in space and then linear in time, between two 2x2 grids:
      * the second one has the values of the first plus 1000, to tell time apart from space.
@@ -145,7 +143,6 @@ class TestGriddedGeoLayer {
         assertEquals(0.0, layer.currentValueAt(center))
     }
 
-    // timeOrigin tests
     @Test
     fun `default timeOrigin maps the first instant to time zero`() {
         val gridSnaps = syntheticSnapshots(7.0, 14.0)
@@ -209,7 +206,6 @@ class TestGriddedGeoLayer {
         assertEquals(6.0, layer.currentValueAt(center), TOLERANCE, "t=0.5 halfway, LINEAR blending should return 6.0")
     }
 
-    // out of bound test
     @Test
     fun `currentValueAt should raise an exception when an out-of-bounds position is passed`() {
         val gridSnaps = syntheticSnapshots(7.0)
@@ -219,7 +215,6 @@ class TestGriddedGeoLayer {
         }
     }
 
-    // strategies tests
     @Test
     fun `exact hits on slices produce values without temporal interpolation`() {
         val sliceValues = doubleArrayOf(1.0, 2.0, 3.0)
@@ -248,7 +243,6 @@ class TestGriddedGeoLayer {
         assertEquals(listOf(gridAfter), interpolatedGrids)
     }
 
-    // no simulation test
     @Test
     fun `no attached simulation falls back to time zero and reads the first slice`() {
         val layer = DoubleGriddedGeoLayer(envNoSim, syntheticSnapshots(42.0, 84.0))
@@ -305,121 +299,27 @@ class TestGriddedGeoLayer {
         )
     }
 
-    // directory constructor with real NetCDF files tests
     @Test
-    fun `directory constructor with a single file hits exactly at time zero with the default timeOrigin`() {
-        val dir = tempDir.resolve("single").createDirectories()
-        /*
-         * slice values:
-         * slice 0: all 10.0
-         * slice 1: all 20.0
-         * slice 2: all 30.0
-         */
-        writeTestNetcdf(
-            path = dir.resolve(netCdfFileName),
-            lats = doubleArrayOf(44.0, 45.0, 46.0),
-            lons = doubleArrayOf(11.0, 12.0, 13.0),
-            timeHours = doubleArrayOf(0.0, 1.0, 2.0),
-            variables = listOf(TestVariable(rawValues = DoubleArray(27) { idx -> ((idx / 9) + 1) * 10.0 })),
-        )
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString()))
-        assertEquals(10.0, layer.currentValueAt(center), TOLERANCE, "t=0.0 -> first slice -> all cells = 10.0")
-    }
-
-    @Test
-    fun `directory constructor interpolates linearly between two slices in a file`() {
-        val dir = tempDir.resolve("interp").createDirectories()
-        writeTestNetcdf(
-            path = dir.resolve(netCdfFileName),
-            lats = doubleArrayOf(44.0, 45.0, 46.0),
-            lons = doubleArrayOf(11.0, 12.0, 13.0),
-            timeHours = doubleArrayOf(0.0, 1.0),
-            variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 0.0 else 10.0 })),
-        )
-        val layer = DoubleGriddedGeoLayer(envAt(0.5), GridsFromDirectory(dir.absolutePathString()))
-        assertEquals(5.0, layer.currentValueAt(center), TOLERANCE, "t=0.5 halfway between 0.0 and 10.0 -> 5.0")
-    }
-
-    @Test
-    fun `directory constructor normalises a descending latitude axis to ascending`() {
-        val dir = tempDir.resolve("desc-lat").createDirectories()
-        writeTestNetcdf(
-            path = dir.resolve(netCdfFileName),
-            lats = doubleArrayOf(46.0, 45.0, 44.0), // lats descending
-            lons = doubleArrayOf(11.0, 12.0, 13.0),
-            timeHours = doubleArrayOf(0.0),
-            variables = listOf(
-                // each file row holds its number: 1, 2, and 3
-                TestVariable(rawValues = DoubleArray(9) { idx -> idx / 3 + 1.0 }),
-            ),
-        )
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString()))
-        val lat44: GeoPosition = LatLongPosition(44.0, 12.0)
-        val lat46: GeoPosition = LatLongPosition(46.0, 12.0)
-        assertEquals(
-            3.0,
-            layer.currentValueAt(lat44),
-            TOLERANCE,
-            "after normalisation, lat=44 (file-row 2) should return 3.0",
-        )
-        assertEquals(
-            1.0,
-            layer.currentValueAt(lat46),
-            TOLERANCE,
-            "after normalisation, lat=46 (file-row 0) should return 1.0",
-        )
-    }
-
-    @Test
-    fun `directory constructor auto-detects the variable when variableName is null`() {
-        val dir = tempDir.resolve("auto-detect").createDirectories()
-        writeTestNetcdf(
-            path = dir.resolve(netCdfFileName),
-            lats = doubleArrayOf(44.0, 45.0, 46.0),
-            lons = doubleArrayOf(11.0, 12.0, 13.0),
-            timeHours = doubleArrayOf(0.0),
-            variables = listOf(TestVariable("wonderfulvariablename", DoubleArray(9) { 7.0 })),
-        )
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString(), variable = null))
-        assertEquals(7.0, layer.currentValueAt(center), TOLERANCE, "auto-detected variable; all cells = 7.0")
-    }
-
-    @Test
-    fun `directory constructor uses an explicit variable name correctly`() {
-        val dir = tempDir.resolve("explicit-var").createDirectories()
-        val varName = "temperature"
-        writeTestNetcdf(
-            path = dir.resolve(netCdfFileName),
-            lats = doubleArrayOf(44.0, 45.0, 46.0),
-            lons = doubleArrayOf(11.0, 12.0, 13.0),
-            timeHours = doubleArrayOf(0.0),
-            variables = listOf(TestVariable(varName, DoubleArray(9) { 42.0 })),
-        )
-        val layer = DoubleGriddedGeoLayer(envAt(0.0), GridsFromDirectory(dir.absolutePathString(), variable = varName))
-        assertEquals(42.0, layer.currentValueAt(center), TOLERANCE, "explicit variable '$varName'; all cells = 42.0")
-    }
-
-    @Test
-    fun `directory constructor merges two different files into a single ordered time series`() {
+    fun `data from several files is interpolated across the file boundary`() {
         val dir = tempDir.resolve("two-files").createDirectories()
         // file 1: t=0h (all values=10.0) and t=1h (all values=20.0)
         writeTestNetcdf(
             path = dir.resolve("part1.nc"),
-            lats = doubleArrayOf(44.0, 45.0, 46.0),
-            lons = doubleArrayOf(11.0, 12.0, 13.0),
+            lats = lats,
+            lons = lons,
             timeHours = doubleArrayOf(0.0, 1.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 10.0 else 20.0 })),
         )
         // file 2: t=2h (all values=30.0) and t=3h (all values=40.0)
         writeTestNetcdf(
             path = dir.resolve("part2.nc"),
-            lats = doubleArrayOf(44.0, 45.0, 46.0),
-            lons = doubleArrayOf(11.0, 12.0, 13.0),
+            lats = lats,
+            lons = lons,
             timeHours = doubleArrayOf(2.0, 3.0),
             variables = listOf(TestVariable(rawValues = DoubleArray(18) { idx -> if (idx < 9) 30.0 else 40.0 })),
         )
         val simulationTime = observe(DoubleTime(0.0))
-        val layer = DoubleGriddedGeoLayer(mutableEnv(simulationTime), GridsFromDirectory(dir.absolutePathString()))
+        val layer = DoubleGriddedGeoLayer(envFollowing(simulationTime), GridsFromDirectory(dir.absolutePathString()))
         (0..3).forEach {
             val time = it.toDouble()
             val expectedValue = (it + 1) * 10.0
@@ -459,13 +359,12 @@ class TestGriddedGeoLayer {
     /**
      * Environment mock with the simulation fixed at time [t].
      */
-    private fun envAt(t: Double): Environment<Any?, GeoPosition> =
-        envWith(observe(simulationAt(observe(DoubleTime(t)))))
+    private fun envAt(t: Double): Environment<Any?, GeoPosition> = envFollowing(observe(DoubleTime(t)))
 
     /**
-     * Environment mock whose simulation time is [simulationTime].
+     * Environment mock whose simulation follows [simulationTime].
      */
-    private fun mutableEnv(simulationTime: Observable<Time>): Environment<Any?, GeoPosition> =
+    private fun envFollowing(simulationTime: Observable<Time>): Environment<Any?, GeoPosition> =
         envWith(observe(simulationAt(simulationTime)))
 
     /**

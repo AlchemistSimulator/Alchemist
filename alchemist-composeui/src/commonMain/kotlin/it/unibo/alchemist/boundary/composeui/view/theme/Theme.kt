@@ -35,15 +35,15 @@ internal val TextSecondary = Color(0xFF495057)
 internal val TextMuted = Color(0xFF6C757D)
 internal val Danger = Color(0xFFDC3545)
 internal val InspectorScrim = Color(0x66050A11)
-internal const val ZoomStep = 1.12f
-internal const val NodeHitRadius = 22f
-internal const val SelectedNodeRadius = 18f
-internal const val SelectedNodeInnerRadius = 12f
-internal const val NodeRadius = 7f
-internal const val LinkStrokeWidth = 1.5f
+internal const val ZOOM_STEP = 1.12f
+internal const val NODE_HIT_RADIUS = 22f
+internal const val SELECTED_NODE_RADIUS = 18f
+internal const val SELECTED_NODE_INNER_RADIUS = 12f
+internal const val NODE_RADIUS = 7f
+internal const val LINK_STROKE_WIDTH = 1.5f
 internal val StatusPillWidth = 132.dp
-internal const val GridVerticalDivisions = 8
-internal const val GridHorizontalDivisions = 6
+internal const val GRID_VERTICAL_DIVISIONS = 8
+internal const val GRID_HORIZONTAL_DIVISIONS = 6
 internal fun lerp(start: Color, end: Color, amount: Float): Color {
     val clamped = min(1f, max(0f, amount))
     return Color(

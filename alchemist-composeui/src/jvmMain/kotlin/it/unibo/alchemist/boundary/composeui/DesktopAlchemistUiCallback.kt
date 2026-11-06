@@ -17,15 +17,18 @@ import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
 import it.unibo.alchemist.boundary.composeui.model.NodePositionUpdate
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.core.SimulationState
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.times.DoubleTime
+import kotlin.math.roundToInt
+import kotlin.runCatching
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withContext
-import kotlin.math.roundToInt
-import kotlin.runCatching
 
+/**
+ * UI callbacks that drive a [simulation] running in the same JVM and publish the resulting UI state to [store].
+ */
 class DesktopAlchemistUiCallback<T, P : Position<P>>(
     private val simulation: Simulation<T, P>,
     private val store: ComposeUiStateStore,
@@ -62,12 +65,14 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
         val currentState = store.state.controls
         val target = currentState.toTimeInput.toDoubleOrNull()
             ?: return showDialog("Invalid time", "Insert a valid numeric time.")
-        val currentTime = simulation.time.toDouble()
-        val wasRunning = simulation.status == Status.RUNNING
+        val currentTime = simulation.currentTime.toDouble()
+        val wasRunning = simulation.state == SimulationState.RUNNING
         if (target < currentTime) {
             return showDialog(
                 title = "Invalid time",
-                message = "Target time $target cannot be lower than current time ${currentTime.formatFixed(DISPLAYED_TIME_DECIMALS)}.",
+                message = "Target time $target cannot be lower than current time ${currentTime.formatFixed(
+                    DISPLAYED_TIME_DECIMALS,
+                )}.",
             )
         }
         if (target > currentTime) {
@@ -91,7 +96,7 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
         val currentState = store.state.controls
         val target = currentState.toStepInput.toLongOrNull()
             ?: return showDialog("Invalid step", "Insert a valid integer step.")
-        val wasRunning = simulation.status == Status.RUNNING
+        val wasRunning = simulation.state == SimulationState.RUNNING
         if (target < simulation.step) {
             return showDialog(
                 title = "Invalid step",
@@ -151,9 +156,9 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
         simulation.schedule {
             runCatching {
                 nodePositions.forEach { nodePosition ->
-                    val node = environment.getNodeByID(nodePosition.nodeId)
+                    val node = environment.nodeWithId(nodePosition.nodeId)
                     val newPosition = environment.makePosition(nodePosition.coordinates)
-                    environment.moveNodeToPosition(node, newPosition)
+                    environment.moveNodeTo(node, newPosition)
                 }
             }.onSuccess {
                 completion.complete(Unit)
@@ -206,7 +211,7 @@ class DesktopAlchemistUiCallback<T, P : Position<P>>(
                 scene = nextScene,
                 controls = it.controls.copy(
                     status = simulation.toSimulationStatus(),
-                    timeLabel = simulation.time.toDouble().formatFixed(DISPLAYED_TIME_DECIMALS),
+                    timeLabel = simulation.currentTime.toDouble().formatFixed(DISPLAYED_TIME_DECIMALS),
                     step = simulation.step,
                     dialog = null,
                 ),

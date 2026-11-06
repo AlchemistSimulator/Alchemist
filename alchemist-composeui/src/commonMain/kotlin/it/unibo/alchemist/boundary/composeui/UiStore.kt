@@ -19,8 +19,8 @@ import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
 import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
 import it.unibo.alchemist.boundary.composeui.model.InfoField
 import it.unibo.alchemist.boundary.composeui.model.InspectorState
-import it.unibo.alchemist.boundary.composeui.model.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.model.NodeInspectorState
+import it.unibo.alchemist.boundary.composeui.model.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationProgress
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
@@ -28,7 +28,7 @@ import it.unibo.alchemist.boundary.composeui.model.ViewportBackdrop
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
-import it.unibo.alchemist.boundary.composeui.model.ViewportWorldBounds
+import it.unibo.alchemist.boundary.composeui.util.ViewportNodes.toWorldBounds
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 import kotlinx.collections.immutable.ImmutableList
@@ -348,10 +348,10 @@ internal fun SimulationControlsState.withUiFps(target: Int): SimulationControlsS
     )
 }
 
-//internal fun SimulationControlsState.withEventRateSliderValue(target: Int): SimulationControlsState = copy(
+// internal fun SimulationControlsState.withEventRateSliderValue(target: Int): SimulationControlsState = copy(
 //    eventRateSliderValue = target.coerceIn(MIN_SIMULATION_EVENTS_PER_SECOND, simulationEventThrottling.value),
 //    dialog = null,
-//)
+// )
 
 internal fun AlchemistUiState.withSelection(nodeIds: List<Int>): AlchemistUiState {
     val selectedIds = scene.sanitizeSelection(nodeIds)
@@ -439,38 +439,6 @@ internal fun ViewportNode.withCoordinates(newCoordinates: List<Double>): Viewpor
     copy(coordinates = newCoordinates.toImmutableList())
 
 internal fun ViewportNode.toPositionUpdate(): NodePositionUpdate = NodePositionUpdate(id, coordinates)
-
-private fun ImmutableList<ViewportNode>.toWorldBounds(): ViewportWorldBounds? {
-    if (isEmpty()) {
-        return null
-    }
-    var minX = Double.POSITIVE_INFINITY
-    var maxX = Double.NEGATIVE_INFINITY
-    var minY = Double.POSITIVE_INFINITY
-    var maxY = Double.NEGATIVE_INFINITY
-    forEach { node ->
-        val x = node.coordinates[0]
-        val y = node.coordinates[1]
-        if (x < minX) {
-            minX = x
-        }
-        if (x > maxX) {
-            maxX = x
-        }
-        if (y < minY) {
-            minY = y
-        }
-        if (y > maxY) {
-            maxY = y
-        }
-    }
-    return ViewportWorldBounds(
-        minX = minX,
-        maxX = maxX,
-        minY = minY,
-        maxY = maxY,
-    )
-}
 
 internal fun List<ViewportNode>.toGroupInspectorState(): GroupInspectorState {
     val xs = map { it.coordinates[0] }

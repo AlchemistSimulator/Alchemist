@@ -8,6 +8,7 @@
  */
 
 import Libs.alchemist
+import Libs.incarnation
 import it.unibo.alchemist.build.devServer
 import it.unibo.alchemist.build.webCommonConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -33,11 +34,18 @@ kotlin {
                 implementation(libs.kotlinx.collections.immutable)
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 implementation(alchemist("euclidean-geometry"))
                 implementation(compose.desktop.currentOs)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
+                implementation(libs.kotlin.coroutines.swing)
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation(alchemist("loading"))
+                implementation(alchemist("test"))
+                implementation(incarnation("protelis"))
             }
         }
     }

@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.boundary.composeui.adapter
 
-import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.LinkRenderMode
-import it.unibo.alchemist.boundary.composeui.view.viewport.FullEdgeRenderLimit
-import it.unibo.alchemist.boundary.composeui.view.viewport.MaxDrawnEdgesPerFrame
-import it.unibo.alchemist.boundary.composeui.view.viewport.SampledEdgeRenderLimit
+import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
+import it.unibo.alchemist.boundary.composeui.view.viewport.FULL_EDGE_RENDER_LIMIT
+import it.unibo.alchemist.boundary.composeui.view.viewport.MAX_DRAWN_EDGES_PER_FRAME
+import it.unibo.alchemist.boundary.composeui.view.viewport.SAMPLED_EDGE_RENDER_LIMIT
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -40,26 +40,26 @@ class AlchemistNodeAdapterTest {
     @Test
     fun `edge snapshot samples medium-sized graphs`() {
         val snapshot = collectEdgeSnapshot(
-            edgePairs = (1..(FullEdgeRenderLimit + 50)).asSequence().map { edgeId ->
+            edgePairs = (1..(FULL_EDGE_RENDER_LIMIT + 50)).asSequence().map { edgeId ->
                 edgeId to (edgeId + 1)
             },
         )
 
         assertEquals(LinkRenderMode.SAMPLED, snapshot.renderMode)
-        assertEquals(FullEdgeRenderLimit + 50, snapshot.edgeCount)
-        assertEquals(MaxDrawnEdgesPerFrame, snapshot.edges.size)
+        assertEquals(FULL_EDGE_RENDER_LIMIT + 50, snapshot.edgeCount)
+        assertEquals(MAX_DRAWN_EDGES_PER_FRAME, snapshot.edges.size)
     }
 
     @Test
     fun `edge snapshot hides very large graphs`() {
         val snapshot = collectEdgeSnapshot(
-            edgePairs = (1..(SampledEdgeRenderLimit + 1)).asSequence().map { edgeId ->
+            edgePairs = (1..(SAMPLED_EDGE_RENDER_LIMIT + 1)).asSequence().map { edgeId ->
                 edgeId to (edgeId + 1)
             },
         )
 
         assertEquals(LinkRenderMode.HIDDEN, snapshot.renderMode)
         assertTrue(snapshot.edges.isEmpty())
-        assertTrue(snapshot.edgeCount > SampledEdgeRenderLimit)
+        assertTrue(snapshot.edgeCount > SAMPLED_EDGE_RENDER_LIMIT)
     }
 }

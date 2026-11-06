@@ -76,6 +76,18 @@ internal fun ControlDock(
     modifier: Modifier = Modifier,
 ) {
     val validation = controls.validationMessages()
+    val actions = DockActions(
+        onPlay = onPlay,
+        onPause = onPause,
+        onStep = onStep,
+        onToTimeInputChanged = onToTimeInputChanged,
+        onToTimeSubmit = onToTimeSubmit,
+        onToStepInputChanged = onToStepInputChanged,
+        onToStepSubmit = onToStepSubmit,
+        onFpsInputChanged = onFpsInputChanged,
+        onFpsSubmit = onFpsSubmit,
+        onEventRateChanged = onEventRateChanged,
+    )
     Surface(
         modifier = modifier,
         color = SurfaceStrong,
@@ -83,35 +95,9 @@ internal fun ControlDock(
         elevation = 0.dp,
     ) {
         if (compact) {
-            CompactDockContent(
-                controls = controls,
-                validation = validation,
-                onPlay = onPlay,
-                onPause = onPause,
-                onStep = onStep,
-                onToTimeInputChanged = onToTimeInputChanged,
-                onToTimeSubmit = onToTimeSubmit,
-                onToStepInputChanged = onToStepInputChanged,
-                onToStepSubmit = onToStepSubmit,
-                onFpsInputChanged = onFpsInputChanged,
-                onFpsSubmit = onFpsSubmit,
-                onEventRateChanged = onEventRateChanged,
-            )
+            CompactDockContent(controls, validation, actions)
         } else {
-            WideDockContent(
-                controls = controls,
-                validation = validation,
-                onPlay = onPlay,
-                onPause = onPause,
-                onStep = onStep,
-                onToTimeInputChanged = onToTimeInputChanged,
-                onToTimeSubmit = onToTimeSubmit,
-                onToStepInputChanged = onToStepInputChanged,
-                onToStepSubmit = onToStepSubmit,
-                onFpsInputChanged = onFpsInputChanged,
-                onFpsSubmit = onFpsSubmit,
-                onEventRateChanged = onEventRateChanged,
-            )
+            WideDockContent(controls, validation, actions)
         }
     }
 }
@@ -120,16 +106,7 @@ internal fun ControlDock(
 private fun WideDockContent(
     controls: SimulationControlsState,
     validation: DockValidationMessages,
-    onPlay: () -> Unit,
-    onPause: () -> Unit,
-    onStep: () -> Unit,
-    onToTimeInputChanged: (String) -> Unit,
-    onToTimeSubmit: () -> Unit,
-    onToStepInputChanged: (String) -> Unit,
-    onToStepSubmit: () -> Unit,
-    onFpsInputChanged: (String) -> Unit,
-    onFpsSubmit: () -> Unit,
-    onEventRateChanged: (Float) -> Unit,
+    actions: DockActions,
 ) {
     Row(
         modifier = Modifier
@@ -138,23 +115,10 @@ private fun WideDockContent(
         horizontalArrangement = Arrangement.spacedBy(dockSectionSpacing),
         verticalAlignment = Alignment.Top,
     ) {
-        TransportSection(controls, onPlay, onPause, onStep)
+        TransportSection(controls, actions)
         MetricsSection(controls)
-        JumpSection(
-            controls = controls,
-            validation = validation,
-            onToTimeInputChanged = onToTimeInputChanged,
-            onToTimeSubmit = onToTimeSubmit,
-            onToStepInputChanged = onToStepInputChanged,
-            onToStepSubmit = onToStepSubmit,
-        )
-        PacingSection(
-            controls = controls,
-            validation = validation,
-            onFpsInputChanged = onFpsInputChanged,
-            onFpsSubmit = onFpsSubmit,
-            onEventRateChanged = onEventRateChanged,
-        )
+        JumpSection(controls, validation, actions)
+        PacingSection(controls, validation, actions)
     }
 }
 
@@ -162,16 +126,7 @@ private fun WideDockContent(
 private fun CompactDockContent(
     controls: SimulationControlsState,
     validation: DockValidationMessages,
-    onPlay: () -> Unit,
-    onPause: () -> Unit,
-    onStep: () -> Unit,
-    onToTimeInputChanged: (String) -> Unit,
-    onToTimeSubmit: () -> Unit,
-    onToStepInputChanged: (String) -> Unit,
-    onToStepSubmit: () -> Unit,
-    onFpsInputChanged: (String) -> Unit,
-    onFpsSubmit: () -> Unit,
-    onEventRateChanged: (Float) -> Unit,
+    actions: DockActions,
 ) {
     Column(
         modifier = Modifier
@@ -180,25 +135,12 @@ private fun CompactDockContent(
         verticalArrangement = Arrangement.spacedBy(dockSectionSpacing),
     ) {
         CompactDockRow {
-            TransportSection(controls, onPlay, onPause, onStep)
+            TransportSection(controls, actions)
             MetricsSection(controls)
         }
         CompactDockRow {
-            JumpSection(
-                controls = controls,
-                validation = validation,
-                onToTimeInputChanged = onToTimeInputChanged,
-                onToTimeSubmit = onToTimeSubmit,
-                onToStepInputChanged = onToStepInputChanged,
-                onToStepSubmit = onToStepSubmit,
-            )
-            PacingSection(
-                controls = controls,
-                validation = validation,
-                onFpsInputChanged = onFpsInputChanged,
-                onFpsSubmit = onFpsSubmit,
-                onEventRateChanged = onEventRateChanged,
-            )
+            JumpSection(controls, validation, actions)
+            PacingSection(controls, validation, actions)
         }
     }
 }
@@ -215,19 +157,14 @@ private fun CompactDockRow(content: @Composable () -> Unit) {
 }
 
 @Composable
-private fun TransportSection(
-    controls: SimulationControlsState,
-    onPlay: () -> Unit,
-    onPause: () -> Unit,
-    onStep: () -> Unit,
-) {
+private fun TransportSection(controls: SimulationControlsState, actions: DockActions) {
     DockSection(title = "Transport") {
         Row(
             horizontalArrangement = Arrangement.spacedBy(sectionItemSpacing),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             StatusPill(controls)
-            transportActions(controls, onPlay, onPause, onStep).forEach { action ->
+            transportActions(controls, actions).forEach { action ->
                 TransportButton(
                     label = action.label,
                     enabled = action.enabled,
@@ -254,14 +191,7 @@ private fun MetricsSection(controls: SimulationControlsState) {
 }
 
 @Composable
-private fun JumpSection(
-    controls: SimulationControlsState,
-    validation: DockValidationMessages,
-    onToTimeInputChanged: (String) -> Unit,
-    onToTimeSubmit: () -> Unit,
-    onToStepInputChanged: (String) -> Unit,
-    onToStepSubmit: () -> Unit,
-) {
+private fun JumpSection(controls: SimulationControlsState, validation: DockValidationMessages, actions: DockActions) {
     DockSection(title = "Jump") {
         Row(
             horizontalArrangement = Arrangement.spacedBy(sectionItemSpacing),
@@ -272,29 +202,23 @@ private fun JumpSection(
                 value = controls.toTimeInput,
                 caption = validation.toTime ?: "Enter to jump",
                 isError = validation.toTime != null,
-                onValueChange = onToTimeInputChanged,
-                onSubmit = onToTimeSubmit,
+                onValueChange = actions.onToTimeInputChanged,
+                onSubmit = actions.onToTimeSubmit,
             )
             DockTextField(
                 label = "To Step",
                 value = controls.toStepInput,
                 caption = validation.toStep ?: "Enter to jump",
                 isError = validation.toStep != null,
-                onValueChange = onToStepInputChanged,
-                onSubmit = onToStepSubmit,
+                onValueChange = actions.onToStepInputChanged,
+                onSubmit = actions.onToStepSubmit,
             )
         }
     }
 }
 
 @Composable
-private fun PacingSection(
-    controls: SimulationControlsState,
-    validation: DockValidationMessages,
-    onFpsInputChanged: (String) -> Unit,
-    onFpsSubmit: () -> Unit,
-    onEventRateChanged: (Float) -> Unit,
-) {
+private fun PacingSection(controls: SimulationControlsState, validation: DockValidationMessages, actions: DockActions) {
     DockSection(title = "Pacing") {
         Row(
             horizontalArrangement = Arrangement.spacedBy(sectionItemSpacing),
@@ -305,12 +229,12 @@ private fun PacingSection(
                 value = controls.fpsInput,
                 caption = validation.fps ?: controls.fpsRangeLabel,
                 isError = validation.fps != null,
-                onValueChange = onFpsInputChanged,
-                onSubmit = onFpsSubmit,
+                onValueChange = actions.onFpsInputChanged,
+                onSubmit = actions.onFpsSubmit,
             )
             EventRateSlider(
                 controls = controls,
-                onValueChange = onEventRateChanged,
+                onValueChange = actions.onEventRateChanged,
             )
         }
     }
@@ -319,9 +243,9 @@ private fun PacingSection(
 @Composable
 private fun DockSection(title: String, content: @Composable () -> Unit) {
     Surface(
-        color = SurfaceColor.copy(alpha = dockSectionSurfaceAlpha),
+        color = SurfaceColor.copy(alpha = DOCK_SECTION_SURFACE_ALPHA),
         shape = RoundedCornerShape(dockSectionCornerRadius),
-        border = BorderStroke(dockSectionBorderWidth, Outline.copy(alpha = dockSectionBorderAlpha)),
+        border = BorderStroke(dockSectionBorderWidth, Outline.copy(alpha = DOCK_SECTION_BORDER_ALPHA)),
         elevation = 0.dp,
     ) {
         Column(
@@ -409,7 +333,7 @@ private fun EventRateSlider(controls: SimulationControlsState, onValueChange: (F
             value = controls.eventRateSliderValue,
             onValueChange = onValueChange,
             valueRange =
-                MIN_SIMULATION_EVENTS_PER_SECOND.toFloat()..MAX_SIMULATION_EVENTS_PER_SECOND.toFloat(),
+            MIN_SIMULATION_EVENTS_PER_SECOND.toFloat()..MAX_SIMULATION_EVENTS_PER_SECOND.toFloat(),
             steps = MAX_SIMULATION_EVENTS_PER_SECOND - MIN_SIMULATION_EVENTS_PER_SECOND - 1,
             colors = SliderDefaults.colors(
                 thumbColor = PrimaryAccent,
@@ -454,17 +378,28 @@ private val dockSectionHorizontalPadding = 14.dp
 private val dockSectionVerticalPadding = 12.dp
 private val dockSectionContentSpacing = 10.dp
 private val sectionItemSpacing = 12.dp
-private const val dockSectionSurfaceAlpha = 0.78f
-private const val dockSectionBorderAlpha = 0.7f
+private const val DOCK_SECTION_SURFACE_ALPHA = 0.78f
+private const val DOCK_SECTION_BORDER_ALPHA = 0.7f
 
-private data class TransportAction(
-    val label: String,
-    val enabled: Boolean,
-    val accent: Color,
-    val onClick: () -> Unit,
-)
+private data class TransportAction(val label: String, val enabled: Boolean, val accent: Color, val onClick: () -> Unit)
 
 private data class MetricValue(val label: String, val value: String)
+
+/**
+ * The callbacks triggered by the controls of the dock.
+ */
+private class DockActions(
+    val onPlay: () -> Unit,
+    val onPause: () -> Unit,
+    val onStep: () -> Unit,
+    val onToTimeInputChanged: (String) -> Unit,
+    val onToTimeSubmit: () -> Unit,
+    val onToStepInputChanged: (String) -> Unit,
+    val onToStepSubmit: () -> Unit,
+    val onFpsInputChanged: (String) -> Unit,
+    val onFpsSubmit: () -> Unit,
+    val onEventRateChanged: (Float) -> Unit,
+)
 
 private data class DockValidationMessages(
     val toTime: String? = null,
@@ -472,15 +407,10 @@ private data class DockValidationMessages(
     val fps: String? = null,
 )
 
-private fun transportActions(
-    controls: SimulationControlsState,
-    onPlay: () -> Unit,
-    onPause: () -> Unit,
-    onStep: () -> Unit,
-): List<TransportAction> = listOf(
-    TransportAction(label = "Play", enabled = controls.canPlay, accent = Positive, onClick = onPlay),
-    TransportAction(label = "Pause", enabled = controls.canPause, accent = Danger, onClick = onPause),
-    TransportAction(label = "Step", enabled = controls.canStep, accent = PrimaryAccent, onClick = onStep),
+private fun transportActions(controls: SimulationControlsState, actions: DockActions): List<TransportAction> = listOf(
+    TransportAction(label = "Play", enabled = controls.canPlay, accent = Positive, onClick = actions.onPlay),
+    TransportAction(label = "Pause", enabled = controls.canPause, accent = Danger, onClick = actions.onPause),
+    TransportAction(label = "Step", enabled = controls.canStep, accent = PrimaryAccent, onClick = actions.onStep),
 )
 
 private fun metrics(controls: SimulationControlsState): List<MetricValue> = listOf(

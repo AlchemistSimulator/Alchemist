@@ -55,28 +55,28 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.formatFixed
-import it.unibo.alchemist.boundary.composeui.toPositionUpdate
-import it.unibo.alchemist.boundary.composeui.translateSelectedNodes
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.toPositionUpdate
+import it.unibo.alchemist.boundary.composeui.translateSelectedNodes
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundVariant
-import it.unibo.alchemist.boundary.composeui.view.theme.GridHorizontalDivisions
-import it.unibo.alchemist.boundary.composeui.view.theme.GridVerticalDivisions
-import it.unibo.alchemist.boundary.composeui.view.theme.LinkStrokeWidth
-import it.unibo.alchemist.boundary.composeui.view.theme.NodeHitRadius
-import it.unibo.alchemist.boundary.composeui.view.theme.NodeRadius
+import it.unibo.alchemist.boundary.composeui.view.theme.GRID_HORIZONTAL_DIVISIONS
+import it.unibo.alchemist.boundary.composeui.view.theme.GRID_VERTICAL_DIVISIONS
+import it.unibo.alchemist.boundary.composeui.view.theme.LINK_STROKE_WIDTH
+import it.unibo.alchemist.boundary.composeui.view.theme.NODE_HIT_RADIUS
+import it.unibo.alchemist.boundary.composeui.view.theme.NODE_RADIUS
 import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
+import it.unibo.alchemist.boundary.composeui.view.theme.SELECTED_NODE_INNER_RADIUS
+import it.unibo.alchemist.boundary.composeui.view.theme.SELECTED_NODE_RADIUS
 import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
-import it.unibo.alchemist.boundary.composeui.view.theme.SelectedNodeInnerRadius
-import it.unibo.alchemist.boundary.composeui.view.theme.SelectedNodeRadius
 import it.unibo.alchemist.boundary.composeui.view.theme.Surface
 import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
@@ -122,7 +122,7 @@ internal fun ViewportSurface(
         current - anchor
     } ?: Offset.Zero
     val density = androidx.compose.ui.platform.LocalDensity.current
-    val tapThresholdPx = with(density) { NodeHitRadius.dp.toPx() }
+    val tapThresholdPx = with(density) { NODE_HIT_RADIUS.dp.toPx() }
     val dragThresholdPx = with(density) { 6.dp.toPx() }
     val selectionRect = selectionDragAnchor?.let { anchor ->
         val current = selectionDragCurrent ?: anchor
@@ -393,7 +393,7 @@ internal fun ViewportSurface(
                             color = Outline.copy(alpha = 0.42f),
                             start = start,
                             end = end,
-                            strokeWidth = LinkStrokeWidth.dp.toPx(),
+                            strokeWidth = LINK_STROKE_WIDTH.dp.toPx(),
                             cap = StrokeCap.Round,
                         )
                     }
@@ -403,9 +403,9 @@ internal fun ViewportSurface(
                     val center = shiftedCenter(nodeIndex) ?: return@forEach
                     val isSelected = node.id in selectedNodeIdSet
                     val nodeColor = lerp(SecondaryAccent, PrimaryAccent, node.accent)
-                    val screenRadius = NodeRadius.dp.toPx() * currentCamera.zoom
-                    val screenSelectedRadius = SelectedNodeRadius.dp.toPx() * currentCamera.zoom
-                    val screenSelectedInnerRadius = SelectedNodeInnerRadius.dp.toPx() * currentCamera.zoom
+                    val screenRadius = NODE_RADIUS.dp.toPx() * currentCamera.zoom
+                    val screenSelectedRadius = SELECTED_NODE_RADIUS.dp.toPx() * currentCamera.zoom
+                    val screenSelectedInnerRadius = SELECTED_NODE_INNER_RADIUS.dp.toPx() * currentCamera.zoom
 
                     if (isSelected) {
                         drawCircle(
@@ -460,8 +460,8 @@ internal fun ViewportSurface(
             val gridLegend = remember(viewportSize, camera.zoom, projection) {
                 if (viewportSize.width == 0 || viewportSize.height == 0 || projection == null) return@remember null
                 val baseStep = min(
-                    viewportSize.width / GridVerticalDivisions.toFloat(),
-                    viewportSize.height / GridHorizontalDivisions.toFloat(),
+                    viewportSize.width / GRID_VERTICAL_DIVISIONS.toFloat(),
+                    viewportSize.height / GRID_HORIZONTAL_DIVISIONS.toFloat(),
                 )
                 var step = baseStep * camera.zoom
                 var s = 1.0
@@ -489,11 +489,7 @@ internal fun ViewportSurface(
 }
 
 @Composable
-private fun ViewportChrome(
-    scene: ViewportScene,
-    onToggleLinks: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun ViewportChrome(scene: ViewportScene, onToggleLinks: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -596,8 +592,8 @@ internal fun DrawScope.drawGrid(canvasSize: Size, camera: ViewportCameraState) {
     val origin = center + camera.pan
 
     val baseStep = min(
-        canvasSize.width / GridVerticalDivisions.toFloat(),
-        canvasSize.height / GridHorizontalDivisions.toFloat(),
+        canvasSize.width / GRID_VERTICAL_DIVISIONS.toFloat(),
+        canvasSize.height / GRID_HORIZONTAL_DIVISIONS.toFloat(),
     )
     var step = baseStep * camera.zoom
 
@@ -657,19 +653,16 @@ internal fun DrawScope.drawGrid(canvasSize: Size, camera: ViewportCameraState) {
 
 private data class GridLegendData(val worldX: Double, val worldY: Double, val stepX: Float, val stepY: Float)
 
-private fun viewportContentDescription(
-    nodeCount: Int,
-    selectedNodeCount: Int,
-    showLinks: Boolean,
-): String = buildString {
-    append("Simulation viewport with ")
-    append(nodeCount)
-    append(if (nodeCount == 1) " node" else " nodes")
-    append(". ")
-    append(selectedNodeCount)
-    append(if (selectedNodeCount == 1) " node selected. " else " nodes selected. ")
-    append(if (showLinks) "Links are visible." else "Links are hidden.")
-}
+private fun viewportContentDescription(nodeCount: Int, selectedNodeCount: Int, showLinks: Boolean): String =
+    buildString {
+        append("Simulation viewport with ")
+        append(nodeCount)
+        append(if (nodeCount == 1) " node" else " nodes")
+        append(". ")
+        append(selectedNodeCount)
+        append(if (selectedNodeCount == 1) " node selected. " else " nodes selected. ")
+        append(if (showLinks) "Links are visible." else "Links are hidden.")
+    }
 
 private fun viewportStateDescription(camera: ViewportCameraState, selectedNodeCount: Int): String =
     "Zoom ${camera.zoom.toDouble().formatFixed(2)}, $selectedNodeCount selected"
@@ -737,9 +730,9 @@ private fun screenDeltaToWorldDelta(
     val baseDelta = currentInBaseSpace - anchorInBaseSpace
     return (
         baseDelta.x / projection.pixelsPerUnit
-    ).toDouble() to (
+        ).toDouble() to (
         -baseDelta.y / projection.pixelsPerUnit
-    ).toDouble()
+        ).toDouble()
 }
 
 private const val KEYBOARD_PAN_STEP_PX = 48f

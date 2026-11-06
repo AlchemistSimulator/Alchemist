@@ -57,19 +57,19 @@ class ViewportRenderingPolicyTest {
                 ViewportNode(id = 1, coordinates = persistentListOf(0.0, 0.0)),
                 ViewportNode(id = 2, coordinates = persistentListOf(1.0, 1.0)),
             ).toImmutableList(),
-            edges = List(MaxDrawnEdgesPerFrame + 12) { ViewportEdge(1, 2) }.toImmutableList(),
+            edges = List(MAX_DRAWN_EDGES_PER_FRAME + 12) { ViewportEdge(1, 2) }.toImmutableList(),
             showLinks = true,
             linkRenderMode = LinkRenderMode.SAMPLED,
         )
         val cache = ViewportSceneCache(
             scene = scene,
             baseCenters = persistentListOf(Offset(20f, 20f), Offset(80f, 80f)),
-            indexedEdges = List(MaxDrawnEdgesPerFrame + 12) { IndexedEdge(fromIndex = 0, toIndex = 1) }
+            indexedEdges = List(MAX_DRAWN_EDGES_PER_FRAME + 12) { IndexedEdge(fromIndex = 0, toIndex = 1) }
                 .toImmutableList(),
         )
 
         val frame = buildViewportFrame(cache, IntSize(120, 120), ViewportCameraState())
 
-        assertEquals(MaxDrawnEdgesPerFrame, frame.visibleEdges.size)
+        assertEquals(MAX_DRAWN_EDGES_PER_FRAME, frame.visibleEdges.size)
     }
 }

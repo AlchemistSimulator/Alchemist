@@ -39,14 +39,14 @@ internal fun ViewportScene.createViewportProjection(viewportSize: IntSize): View
     val maxX = bounds.maxX
     val minY = bounds.minY
     val maxY = bounds.maxY
-    val xSpan = max(MinWorldSpan, maxX - minX)
-    val ySpan = max(MinWorldSpan, maxY - minY)
+    val xSpan = max(MIN_WORLD_SPAN, maxX - minX)
+    val ySpan = max(MIN_WORLD_SPAN, maxY - minY)
     val safeWidth = viewportSize.width.toFloat()
     val safeHeight = viewportSize.height.toFloat()
-    val availableWidth = safeWidth * (1f - ViewportHorizontalMargin * 2)
-    val availableHeight = safeHeight * (1f - ViewportVerticalMargin * 2)
+    val availableWidth = safeWidth * (1f - VIEWPORT_HORIZONTAL_MARGIN * 2)
+    val availableHeight = safeHeight * (1f - VIEWPORT_VERTICAL_MARGIN * 2)
     val pixelsPerUnit = min(availableWidth / xSpan.toFloat(), availableHeight / ySpan.toFloat())
-        .coerceAtLeast(MinPixelsPerUnit)
+        .coerceAtLeast(MIN_PIXELS_PER_UNIT)
     return ViewportProjection(
         worldCenterX = (minX + maxX) / 2,
         worldCenterY = (minY + maxY) / 2,
@@ -62,7 +62,7 @@ internal fun ViewportNode.toViewportPosition(viewportSize: IntSize, projection: 
     )
 }
 
-private const val ViewportHorizontalMargin = 0.12f
-private const val ViewportVerticalMargin = 0.14f
-private const val MinWorldSpan = 1.0
-private const val MinPixelsPerUnit = 1f
+private const val VIEWPORT_HORIZONTAL_MARGIN = 0.12f
+private const val VIEWPORT_VERTICAL_MARGIN = 0.14f
+private const val MIN_WORLD_SPAN = 1.0
+private const val MIN_PIXELS_PER_UNIT = 1f

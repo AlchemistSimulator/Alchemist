@@ -15,6 +15,7 @@ import androidx.compose.runtime.Immutable
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_UI_FPS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
+import it.unibo.alchemist.boundary.composeui.util.ViewportNodes.toWorldBounds
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -89,12 +90,7 @@ data class ViewportEdge(val fromNodeId: Int, val toNodeId: Int) {
  * The world-space bounds of the viewport scene.
  */
 @Immutable
-data class ViewportWorldBounds(
-    val minX: Double,
-    val maxX: Double,
-    val minY: Double,
-    val maxY: Double,
-)
+data class ViewportWorldBounds(val minX: Double, val maxX: Double, val minY: Double, val maxY: Double)
 
 /**
  * Effective link rendering strategy used for the current scene snapshot.
@@ -180,6 +176,7 @@ data class SimulationControlsState(
     val canStep: Boolean = status == SimulationStatus.READY || status == SimulationStatus.PAUSED
     val statusLabel: String = status.name.lowercase().replaceFirstChar(Char::uppercaseChar)
     val isFullThrottle: Boolean = simulationEventThrottling is FullThrottle
+
 //    val effectiveEventsPerSecond: Int? = eventRateSliderValue.takeUnless { isFullThrottle }
 //    val eventRateLabel: String =
 //        effectiveEventsPerSecond?.let { "$it evt/s" } ?: "∞"
@@ -231,38 +228,6 @@ data class AlchemistUiState(
     val selectedNodeIds: ImmutableList<Int> = persistentListOf(),
     val inspector: InspectorState? = null,
 )
-
-private fun ImmutableList<ViewportNode>.toWorldBounds(): ViewportWorldBounds? {
-    if (isEmpty()) {
-        return null
-    }
-    var minX = Double.POSITIVE_INFINITY
-    var maxX = Double.NEGATIVE_INFINITY
-    var minY = Double.POSITIVE_INFINITY
-    var maxY = Double.NEGATIVE_INFINITY
-    forEach { node ->
-        val x = node.coordinates[0]
-        val y = node.coordinates[1]
-        if (x < minX) {
-            minX = x
-        }
-        if (x > maxX) {
-            maxX = x
-        }
-        if (y < minY) {
-            minY = y
-        }
-        if (y > maxY) {
-            maxY = y
-        }
-    }
-    return ViewportWorldBounds(
-        minX = minX,
-        maxX = maxX,
-        minY = minY,
-        maxY = maxY,
-    )
-}
 
 /**
  * Interaction contract expected by the common Compose UI.

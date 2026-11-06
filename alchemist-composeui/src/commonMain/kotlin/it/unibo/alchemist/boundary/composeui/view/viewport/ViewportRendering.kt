@@ -19,19 +19,19 @@ import it.unibo.alchemist.boundary.composeui.model.LinkRenderMode
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
-import it.unibo.alchemist.boundary.composeui.view.theme.NodeHitRadius
-import it.unibo.alchemist.boundary.composeui.view.theme.ZoomStep
+import it.unibo.alchemist.boundary.composeui.view.theme.NODE_HIT_RADIUS
+import it.unibo.alchemist.boundary.composeui.view.theme.ZOOM_STEP
 import kotlin.math.floor
 import kotlin.math.sqrt
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-internal const val FullEdgeRenderLimit = 20_000
-internal const val SampledEdgeRenderLimit = 200_000
-internal const val MaxDrawnEdgesPerFrame = 5_000
-private const val SpatialIndexThreshold = 2_000
-private const val SpatialIndexCellSize = 64f
+internal const val FULL_EDGE_RENDER_LIMIT = 20_000
+internal const val SAMPLED_EDGE_RENDER_LIMIT = 200_000
+internal const val MAX_DRAWN_EDGES_PER_FRAME = 5_000
+private const val SPATIAL_INDEX_THRESHOLD = 2_000
+private const val SPATIAL_INDEX_CELL_SIZE = 64f
 
 internal fun buildViewportSceneCache(
     scene: ViewportScene,
@@ -48,7 +48,7 @@ internal fun buildViewportSceneCache(
         val toIndex = nodeIndexById[edge.toNodeId] ?: return@mapNotNull null
         IndexedEdge(fromIndex = fromIndex, toIndex = toIndex)
     }.toImmutableList()
-    val spatialIndex = if (scene.nodes.size >= SpatialIndexThreshold) {
+    val spatialIndex = if (scene.nodes.size >= SPATIAL_INDEX_THRESHOLD) {
         NodeSpatialIndex(baseCenters)
     } else {
         null
@@ -71,7 +71,7 @@ internal fun buildViewportFrame(
     }
     val visibleBaseRect = viewportSize
         .toBaseRect(camera)
-        .inflate(NodeHitRadius / camera.zoom.coerceAtLeast(1e-6f))
+        .inflate(NODE_HIT_RADIUS / camera.zoom.coerceAtLeast(1e-6f))
     val visibleNodeIndices = cache.queryNodeIndices(visibleBaseRect)
     val mutableScreenPositions = MutableList<Offset?>(cache.baseCenters.size) { null }
     visibleNodeIndices.forEach { nodeIndex ->
@@ -83,7 +83,7 @@ internal fun buildViewportFrame(
     } else {
         val edgeBudget = when (cache.scene.linkRenderMode) {
             LinkRenderMode.FULL -> cache.indexedEdges.size
-            LinkRenderMode.SAMPLED -> MaxDrawnEdgesPerFrame
+            LinkRenderMode.SAMPLED -> MAX_DRAWN_EDGES_PER_FRAME
             LinkRenderMode.HIDDEN -> 0
         }
         buildList(minOf(cache.indexedEdges.size, edgeBudget)) {
@@ -186,10 +186,10 @@ internal class NodeSpatialIndex(positions: List<Offset>) {
         if (rect.isEmpty) {
             return persistentListOf()
         }
-        val minCellX = floor(rect.left / SpatialIndexCellSize).toInt()
-        val maxCellX = floor(rect.right / SpatialIndexCellSize).toInt()
-        val minCellY = floor(rect.top / SpatialIndexCellSize).toInt()
-        val maxCellY = floor(rect.bottom / SpatialIndexCellSize).toInt()
+        val minCellX = floor(rect.left / SPATIAL_INDEX_CELL_SIZE).toInt()
+        val maxCellX = floor(rect.right / SPATIAL_INDEX_CELL_SIZE).toInt()
+        val minCellY = floor(rect.top / SPATIAL_INDEX_CELL_SIZE).toInt()
+        val maxCellY = floor(rect.bottom / SPATIAL_INDEX_CELL_SIZE).toInt()
         val matches = mutableListOf<Int>()
         for (cellX in minCellX..maxCellX) {
             for (cellY in minCellY..maxCellY) {
@@ -199,14 +199,12 @@ internal class NodeSpatialIndex(positions: List<Offset>) {
         return matches.toImmutableList()
     }
 
-    private fun cellKey(position: Offset): Long =
-        cellKey(
-            floor(position.x / SpatialIndexCellSize).toInt(),
-            floor(position.y / SpatialIndexCellSize).toInt(),
-        )
+    private fun cellKey(position: Offset): Long = cellKey(
+        floor(position.x / SPATIAL_INDEX_CELL_SIZE).toInt(),
+        floor(position.y / SPATIAL_INDEX_CELL_SIZE).toInt(),
+    )
 
-    private fun cellKey(cellX: Int, cellY: Int): Long =
-        (cellX.toLong() shl 32) xor (cellY.toLong() and 0xffffffffL)
+    private fun cellKey(cellX: Int, cellY: Int): Long = (cellX.toLong() shl Int.SIZE_BITS) or cellY.toUInt().toLong()
 }
 
 @Immutable
@@ -231,8 +229,8 @@ internal fun ViewportCameraState.zoomBy(
     scrollDelta: Float,
 ): ViewportCameraState {
     val zoomFactor = when {
-        scrollDelta < 0f -> ZoomStep
-        scrollDelta > 0f -> 1f / ZoomStep
+        scrollDelta < 0f -> ZOOM_STEP
+        scrollDelta > 0f -> 1f / ZOOM_STEP
         else -> 1f
     }
     val targetZoom = applyInfiniteZoomFactor(zoom, zoomFactor)

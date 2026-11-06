@@ -22,9 +22,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.InfoField
 import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
@@ -43,52 +44,21 @@ internal fun SummaryRail(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         summary.forEach { item ->
-            Surface(
-                color = SurfaceStrong.copy(alpha = 0.82f),
-                shape = RoundedCornerShape(999.dp),
-                elevation = 0.dp,
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = item.label.uppercase(),
-                        style = MaterialTheme.typography.caption,
-                        color = TextSecondary,
-                    )
-                    Text(
-                        text = item.value,
-                        style = MaterialTheme.typography.subtitle1,
-                    )
-                }
-            }
+            SummaryChip(label = item.label.uppercase(), value = item.value)
         }
         linkRenderNotice?.let { notice ->
-            Surface(
-                color = SecondaryAccent.copy(alpha = 0.12f),
-                shape = RoundedCornerShape(999.dp),
-                elevation = 0.dp,
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "ADAPTIVE",
-                        style = MaterialTheme.typography.caption,
-                        color = SecondaryAccent,
-                    )
-                    Text(
-                        text = notice,
-                        style = MaterialTheme.typography.subtitle1,
-                    )
-                }
-            }
+            SummaryChip(
+                label = "ADAPTIVE",
+                value = notice,
+                background = SecondaryAccent.copy(alpha = 0.12f),
+                labelColor = SecondaryAccent,
+            )
         }
-        Surface(
+        SummaryChip(
+            label = "LINKS",
+            value = if (showLinks) "ON" else "OFF",
+            background = if (showLinks) SecondaryAccent.copy(alpha = 0.2f) else SurfaceStrong.copy(alpha = 0.82f),
+            labelColor = if (showLinks) SecondaryAccent else TextSecondary,
             modifier = Modifier
                 .toggleable(
                     value = showLinks,
@@ -98,25 +68,38 @@ internal fun SummaryRail(
                 .semantics {
                     stateDescription = if (showLinks) "Links visible" else "Links hidden"
                 },
-            color = if (showLinks) SecondaryAccent.copy(alpha = 0.2f) else SurfaceStrong.copy(alpha = 0.82f),
-            shape = RoundedCornerShape(999.dp),
-            elevation = 0.dp,
+        )
+    }
+}
+
+@Composable
+private fun SummaryChip(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    background: Color = SurfaceStrong.copy(alpha = 0.82f),
+    labelColor: Color = TextSecondary,
+) {
+    Surface(
+        modifier = modifier,
+        color = background,
+        shape = RoundedCornerShape(999.dp),
+        elevation = 0.dp,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "LINKS",
-                    style = MaterialTheme.typography.caption,
-                    color = if (showLinks) SecondaryAccent else TextSecondary,
-                )
-                Text(
-                    text = if (showLinks) "ON" else "OFF",
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
+            Text(
+                text = label,
+                style = MaterialTheme.typography.caption,
+                color = labelColor,
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.subtitle1,
+            )
         }
     }
 }

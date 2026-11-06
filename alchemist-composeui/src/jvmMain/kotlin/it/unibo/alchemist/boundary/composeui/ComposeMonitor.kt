@@ -17,22 +17,22 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
-import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.adapter.toViewport
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.FullThrottle
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.view.app
-import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.max
 import kotlin.math.roundToLong
 
@@ -74,7 +74,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
     private var lastUpdate: Long = 0L
     private var nextEventReleaseNs: Long = 0L
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val now = System.currentTimeMillis()
         if (now - lastUpdate >= uiThrottleMs()) {
             lastUpdate = now
@@ -103,10 +103,9 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
         }
     }
 
-    private fun uiThrottleMs(): Long =
-        (1000.0 / currentUiState.state.controls.uiFps.coerceIn(MIN_UI_FPS, maxUiFps))
-            .roundToLong()
-            .coerceAtLeast(1L)
+    private fun uiThrottleMs(): Long = (1000.0 / currentUiState.state.controls.uiFps.coerceIn(MIN_UI_FPS, maxUiFps))
+        .roundToLong()
+        .coerceAtLeast(1L)
 
     private fun throttleSimulation() {
         val controls = currentUiState.state.controls

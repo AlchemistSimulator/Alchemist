@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.boundary.composeui.view.root
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally

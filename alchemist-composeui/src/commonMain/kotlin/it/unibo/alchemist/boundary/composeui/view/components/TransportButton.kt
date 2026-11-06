@@ -44,13 +44,12 @@ internal fun TransportButton(label: String, enabled: Boolean, accent: Color, onC
 
 private data class TransportButtonPalette(val background: Color, val content: Color)
 
-private fun Color.toTransportButtonColors(enabled: Boolean): TransportButtonPalette =
-    TransportButtonPalette(
-        background = copy(alpha = if (enabled) EnabledButtonAlpha else DisabledButtonAlpha),
-        content = if (luminance() > ACCENT_LUMINANCE_THRESHOLD) TextPrimary else Surface,
-    )
+private fun Color.toTransportButtonColors(enabled: Boolean): TransportButtonPalette = TransportButtonPalette(
+    background = copy(alpha = if (enabled) ENABLED_BUTTON_ALPHA else DISABLED_BUTTON_ALPHA),
+    content = if (luminance() > ACCENT_LUMINANCE_THRESHOLD) TextPrimary else Surface,
+)
 
 private const val ACCENT_LUMINANCE_THRESHOLD = 0.35f
-private const val EnabledButtonAlpha = 0.92f
-private const val DisabledButtonAlpha = 0.28f
+private const val ENABLED_BUTTON_ALPHA = 0.92f
+private const val DISABLED_BUTTON_ALPHA = 0.28f
 private val transportButtonPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)

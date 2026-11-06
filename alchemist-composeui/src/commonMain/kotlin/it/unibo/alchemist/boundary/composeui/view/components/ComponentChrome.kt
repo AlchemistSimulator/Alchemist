@@ -21,7 +21,7 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Surface as SurfaceColor
 
 @Composable
 internal fun ComponentSurface(
-    color: Color = SurfaceColor.copy(alpha = componentSurfaceAlpha),
+    color: Color = SurfaceColor.copy(alpha = COMPONENT_SURFACE_ALPHA),
     modifier: Modifier = Modifier,
     shape: Shape = componentShape,
     content: @Composable () -> Unit,
@@ -40,4 +40,4 @@ internal val componentShape = RoundedCornerShape(8.dp)
 internal val pillShape = RoundedCornerShape(999.dp)
 internal val componentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
 
-private const val componentSurfaceAlpha = 0.78f
+private const val COMPONENT_SURFACE_ALPHA = 0.78f

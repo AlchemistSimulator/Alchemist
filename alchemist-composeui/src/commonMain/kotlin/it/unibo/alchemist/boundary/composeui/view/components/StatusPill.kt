@@ -39,7 +39,7 @@ internal fun StatusPill(controls: SimulationControlsState) {
     val presentation = controls.toStatusPillPresentation()
     ComponentSurface(
         modifier = Modifier.width(StatusPillWidth),
-        color = presentation.color.copy(alpha = StatusPillAlpha),
+        color = presentation.color.copy(alpha = STATUS_PILL_ALPHA),
         shape = pillShape,
     ) {
         Row(
@@ -65,17 +65,16 @@ internal fun StatusPill(controls: SimulationControlsState) {
 
 private data class StatusPillPresentation(val label: String, val color: Color)
 
-private fun SimulationControlsState.toStatusPillPresentation(): StatusPillPresentation =
-    StatusPillPresentation(
-        label = statusLabel,
-        color =
-            when (status) {
-                SimulationStatus.RUNNING -> Positive
-                SimulationStatus.PAUSED -> PrimaryAccent
-                SimulationStatus.TERMINATED -> Danger
-                else -> SecondaryAccent
-            },
-    )
+private fun SimulationControlsState.toStatusPillPresentation(): StatusPillPresentation = StatusPillPresentation(
+    label = statusLabel,
+    color =
+    when (status) {
+        SimulationStatus.RUNNING -> Positive
+        SimulationStatus.PAUSED -> PrimaryAccent
+        SimulationStatus.TERMINATED -> Danger
+        else -> SecondaryAccent
+    },
+)
 
-private const val StatusPillAlpha = 0.14f
+private const val STATUS_PILL_ALPHA = 0.14f
 private val statusIndicatorSpacing = 10.dp

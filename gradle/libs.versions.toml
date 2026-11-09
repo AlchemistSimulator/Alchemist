@@ -5,6 +5,7 @@ ais-lib = "2.8.8"
 apollo = "5.2.0"
 arrow = "2.3.0"
 cdm = "5.10.1-dev01+cd8efd17cc"
+collektive = "28.3.5"
 compose-multiplatform = "1.12.2"
 dokka = "2.2.0"
 graphql = "11.0.0"
@@ -43,6 +44,9 @@ caffeine = "com.github.ben-manes.caffeine:caffeine:3.3.1"
 cdm-core = { module = "org.danilopianini:cdm-core", version.ref = "cdm" }
 cdm-grib = { module = "org.danilopianini:grib", version.ref = "cdm" }
 classgraph = "io.github.classgraph:classgraph:4.8.200"
+collektive-compiler-embeddable = { module = "it.unibo.collektive:collektive-compiler-embeddable", version.ref = "collektive" }
+collektive-dsl = { module = "it.unibo.collektive:collektive-dsl", version.ref = "collektive" }
+collektive-stdlib = { module = "it.unibo.collektive:collektive-stdlib", version.ref = "collektive" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
 compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose-multiplatform" }
@@ -148,6 +152,11 @@ svgsalamander = "guru.nidi.com.kitfox:svgSalamander:1.1.3"
 trove4j = "net.sf.trove4j:trove4j:3.0.3"
 
 [bundles]
+collektive = [
+    "collektive-compiler-embeddable",
+    "collektive-dsl",
+    "collektive-stdlib"
+]
 compose = [
     "compose-components-resources",
     "compose-foundation",
@@ -186,6 +195,7 @@ testing-compile = [
 testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
+collektive = { id = "it.unibo.collektive.collektive-plugin", version.ref = "collektive" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:7.3.0"

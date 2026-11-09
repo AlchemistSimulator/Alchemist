@@ -1,3 +1,17 @@
+## [50.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.0...50.0.1) (2026-11-09)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.11.1-19.3.1 ([2c3105d](https://github.com/AlchemistSimulator/Alchemist/commit/2c3105d21bb0328d368d368c4d0ac0c32b2d1fdc))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.200 ([8ab9823](https://github.com/AlchemistSimulator/Alchemist/commit/8ab9823d97a7ad35126121a6e4f889a7f474f391))
+* **deps:** update dependency io.mockk:mockk to v1.14.12 ([#5741](https://github.com/AlchemistSimulator/Alchemist/issues/5741)) ([842cb0c](https://github.com/AlchemistSimulator/Alchemist/commit/842cb0cba76ff55bb0cd60281940ed092143172e))
+* **deps:** update dependency org.danilopianini:kotlin-symmetric-matrix to v2.0.4 ([#5742](https://github.com/AlchemistSimulator/Alchemist/issues/5742)) ([5947e91](https://github.com/AlchemistSimulator/Alchemist/commit/5947e916438bb5a869b51c8d81af118040b3134a))
+* **deps:** update gradle to v9.9.0 ([1d4651d](https://github.com/AlchemistSimulator/Alchemist/commit/1d4651def85ad955a5e19480fb172e9e7eb7cc8f))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f776949](https://github.com/AlchemistSimulator/Alchemist/commit/f7769490a50d6321cf0ea3d41e1825be5b6e27b5))
+
 ## [50.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/49.2.0...50.0.0) (2026-11-05)
 
 ### ⚠ BREAKING CHANGES

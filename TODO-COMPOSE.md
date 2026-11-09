@@ -18,7 +18,7 @@ Make the module consistent with the rest of the repository before building on it
 
 ### Repository hygiene
 
-- [ ] Remove `SPEC.md` from the repository root.
+- [x] Remove `SPEC.md` from the repository root.
 - [ ] Remove `alchemist-composeui/AI_CONTEXT.md`, which is out of date and lists files at old paths. Keep its still-valid invariants by moving them into KDoc or a short module README.
 - [ ] Remove commented-out code: the event-rate slider leftovers in `model/UiModel.kt` and `UiStore.kt`.
 - [ ] Fix the 4 CodeFactor issues and the Sonar "new issues" on the PR.

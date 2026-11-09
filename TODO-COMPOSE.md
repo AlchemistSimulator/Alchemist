@@ -25,7 +25,7 @@ Make the module consistent with the rest of the repository before building on it
 
 ### Code conventions
 
-- [ ] Remove `break`/`continue`:
+- [x] Remove `break`/`continue`:
   - `adapter/AlchemistNodeAdapter.kt`, `collectEdgeSnapshot`
   - `view/viewport/ViewportRendering.kt`
   - Use pipelines or `tailrec` instead.

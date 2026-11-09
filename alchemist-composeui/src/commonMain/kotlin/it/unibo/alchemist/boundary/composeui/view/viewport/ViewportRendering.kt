@@ -85,16 +85,11 @@ internal fun buildViewportFrame(
             LinkRenderMode.SAMPLED -> MAX_DRAWN_EDGES_PER_FRAME
             LinkRenderMode.HIDDEN -> 0
         }
-        buildList(minOf(cache.indexedEdges.size, edgeBudget)) {
-            for (edge in cache.indexedEdges) {
-                if (size >= edgeBudget) {
-                    break
-                }
-                if (screenPositions[edge.fromIndex] != null && screenPositions[edge.toIndex] != null) {
-                    add(edge)
-                }
-            }
-        }.toImmutableList()
+        cache.indexedEdges
+            .asSequence()
+            .filter { edge -> screenPositions[edge.fromIndex] != null && screenPositions[edge.toIndex] != null }
+            .take(edgeBudget)
+            .toImmutableList()
     }
     return ViewportFrame(
         screenPositions = screenPositions,

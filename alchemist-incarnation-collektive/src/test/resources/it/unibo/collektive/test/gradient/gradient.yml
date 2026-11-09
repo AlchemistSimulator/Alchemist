@@ -1,0 +1,32 @@
+network-model:
+  type: ConnectWithinDistance
+  parameters: [ 5 ]
+
+incarnation: collektive
+
+_pool: &program
+  - time-distribution: 1
+    program:
+      name: Gradient
+      source-sets:
+        - src/test/resources/it/unibo/collektive/test/kotlin
+      code: |
+        import my.test.*
+        import it.unibo.collektive.alchemist.device.sensors.EnvironmentVariables
+      entrypoint: gradient(device, device.get("source"))
+
+deployments:
+  - type: Point
+    parameters: [ -1, -1 ]
+    programs:
+      - *program
+    contents:
+      - molecule: source
+        concentration: true
+  - type: Grid
+    parameters: [ 0, 0, 3, 3, 1, 1 ]
+    programs:
+      - *program
+    contents:
+      - molecule: source
+        concentration: false

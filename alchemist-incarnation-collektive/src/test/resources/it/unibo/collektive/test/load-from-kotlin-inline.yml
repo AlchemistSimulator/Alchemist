@@ -1,0 +1,49 @@
+network-model:
+  type: ConnectWithinDistance
+  parameters: [ 5 ]
+
+incarnation: collektive
+
+_pool: &program
+  - time-distribution: 1
+    program:
+      name: Gradient
+      code: |
+        package my.test
+        
+        import it.unibo.alchemist.collektive.device.CollektiveDevice
+        import it.unibo.collektive.aggregate.api.Aggregate
+        import it.unibo.collektive.aggregate.api.share
+        import it.unibo.collektive.aggregate.api.mapNeighborhood
+        import it.unibo.collektive.aggregate.*
+        import it.unibo.collektive.stdlib.collapse.*
+        import it.unibo.collektive.stdlib.doubles.FieldedDoubles.plus
+        import kotlin.Double.Companion.POSITIVE_INFINITY
+        
+        fun Aggregate<Int>.gradient(distanceSensor: CollektiveDevice<*>, source: Boolean): Double =
+            share(POSITIVE_INFINITY) {
+                val dist = distanceSensor.run { distances() }
+                val throughNeighbor = (it + dist).neighbors.values.min()
+                when {
+                    source -> 0.0
+                    else -> throughNeighbor
+                }
+            }
+
+      entrypoint: gradient(device, localId == 0)
+
+deployments:
+  - type: Rectangle
+    parameters: [ 200, 0, 0, 20, 20 ]
+    programs:
+      - *program
+    contents:
+      - molecule: source
+        concentration: false
+  - type: Point
+    parameters: [ 2, 2 ]
+    programs:
+      - *program
+    contents:
+      - molecule: source
+        concentration: true

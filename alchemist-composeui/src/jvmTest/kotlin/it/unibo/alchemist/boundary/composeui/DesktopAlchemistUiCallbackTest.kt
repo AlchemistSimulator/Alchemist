@@ -38,9 +38,9 @@ class DesktopAlchemistUiCallbackTest {
             store.update { it.copy(controls = it.controls.copy(toStepInput = "5")) }
             runBlocking { callback.onToStepSubmit() }
             assertEquals(SimulationState.PAUSED, simulation.state)
-            assertTrue(simulation.step >= 5L)
+            assertEquals(5L, simulation.step)
             assertEquals(SimulationStatus.PAUSED, store.state.controls.status)
-            assertEquals(simulation.step, store.state.controls.step)
+            assertEquals(5L, store.state.controls.step)
         }
     }
 

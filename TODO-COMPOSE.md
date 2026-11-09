@@ -19,7 +19,7 @@ Make the module consistent with the rest of the repository before building on it
 ### Repository hygiene
 
 - [x] Remove `SPEC.md` from the repository root.
-- [ ] Remove `alchemist-composeui/AI_CONTEXT.md`, which is out of date and lists files at old paths. Keep its still-valid invariants by moving them into KDoc or a short module README.
+- [x] Remove `alchemist-composeui/AI_CONTEXT.md`, which is out of date and lists files at old paths. Keep its still-valid invariants by moving them into KDoc or a short module README.
 - [ ] Remove commented-out code: the event-rate slider leftovers in `model/UiModel.kt` and `UiStore.kt`.
 - [ ] Fix the 4 CodeFactor issues and the Sonar "new issues" on the PR.
 
@@ -96,7 +96,7 @@ A way to look at the UI while developing, for both the developer and the agent.
 Separate what the simulation produces from how it is shown, so the same UI can run in-process or remotely.
 
 - [ ] **Frame model** in `commonMain`, `@Serializable`: a `SceneFrame` holding
-  - time, step, status;
+  - time, step, status (mirrored as `SimulationStatus` until Phase 9);
   - nodes: id, position, and only the values requested by active effects;
   - links;
   - environment-level primitives: polygons, polylines, raster grids, markers;
@@ -131,6 +131,7 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 - [ ] `ComposeMonitor` parameter `effects: <path or classpath resource>`, mirroring `SwingGUI`'s `graphics`.
 - [ ] Inline definition in the simulation YAML / Kotlin DSL under the monitor's parameters.
 - [ ] Default configuration when none is given: one group, "Nodes", with a plain node effect, plus a "Links" group that is off by default.
+- [ ] Once links are an effect, remove the ad-hoc link state from the UI model: `LinkRenderMode`, `ViewportScene.showLinks`, `linkRenderMode`, `linkRenderNotice`, and the summary-bar links toggle.
 - [ ] Legacy import (JVM): read Swing effect JSON (`DrawShape` and friends) and convert it to the new format, so existing `effects/*.json` (e.g. in `external-resources/learning-scafi-alchemist`) keep working.
 
 ### UI
@@ -236,6 +237,22 @@ One step per effect: extractor (JVM), renderer (common), descriptor, snapshot sc
 - [ ] Write the "swing-effects" how-to that is currently a stub, as a Compose effects how-to, including conversion of legacy effect files.
 - [ ] Switch site examples and `src/test/resources/*.alchemist.kts` samples to `ComposeMonitor` where appropriate.
 - [ ] Decide when `SwingGUI` is removed. It is already `@Deprecated`.
+
+---
+
+## Phase 9: Multiplatform simulation core
+
+Use the simulation primitives directly in the UI instead of mirroring them: `SimulationState` instead of `SimulationStatus`, and then `Time`, positions, and the other types that `SceneFrame` copies.
+This requires `alchemist-api` and `alchemist-engine` to be Kotlin Multiplatform (pure Kotlin, no JVM-only API in `commonMain`).
+It is a change to the core of the simulator, independent of the Compose work, and can be developed in parallel.
+
+- [ ] Convert `alchemist-api` to Kotlin Multiplatform. Today it has no Java sources, but it uses JVM-only API:
+  - `java.util` and `java.util.concurrent` (`CompletableFuture` in `Simulation`), to be replaced with common types (e.g. coroutines `Deferred`, or a minimal common future);
+  - `apache-commons-math3` and `jool` as `api` dependencies, to be moved out of the public API or replaced;
+  - `kotlin-reflect` and `kotlinx-collections-immutable-jvm` (switch to the multiplatform artifact).
+- [ ] Convert `alchemist-engine` to Kotlin Multiplatform. Its JVM-only parts are the threading model in `AbstractEngine` (locks, `BlockingQueue`, `Thread`, `@Synchronized`), `slf4j`, `guava`, `trove4j`, and `jgrapht`. The thread-based runner can stay in `jvmMain`, behind a common engine core.
+- [ ] Make `alchemist-observables` multiplatform (it is JVM-only today). `alchemist-maintenance-tooling` and `arrow-core` already are.
+- [ ] Depend on `alchemist-api` from `alchemist-composeui` `commonMain`, then remove `SimulationStatus` and the other mirrored types, serialising the core types directly in `SceneFrame`.
 
 ---
 

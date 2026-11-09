@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.composeui.model
+package it.unibo.alchemist.boundary.composeui.model.throttling
 
 /**
  * Limit on how many simulation events per second the simulation thread may execute.
@@ -62,13 +62,3 @@ sealed class SimulationEventThrottling(val value: Int) {
         is EventsPerSecond -> "$value"
     }
 }
-
-/**
- * Throttling that limits the simulation to [eventsPerSecond] events per second.
- */
-class EventsPerSecond(eventsPerSecond: Int) : SimulationEventThrottling(eventsPerSecond)
-
-/**
- * No throttling: the simulation runs as fast as possible.
- */
-data object FullThrottle : SimulationEventThrottling(Int.MAX_VALUE)

@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
+import it.unibo.alchemist.boundary.composeui.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.view.controls.ControlDock

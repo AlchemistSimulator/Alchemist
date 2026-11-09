@@ -60,8 +60,8 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import it.unibo.alchemist.boundary.composeui.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.formatFixed
-import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.toPositionUpdate
 import it.unibo.alchemist.boundary.composeui.translateSelectedNodes

@@ -22,6 +22,10 @@ import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Maps world coordinates to pixels.
+ * The viewport keeps the first valid one, so the mapping never changes under the user.
+ */
 internal data class ViewportProjection(val worldCenterX: Double, val worldCenterY: Double, val pixelsPerUnit: Float) {
     init {
         require(pixelsPerUnit > 0f) {

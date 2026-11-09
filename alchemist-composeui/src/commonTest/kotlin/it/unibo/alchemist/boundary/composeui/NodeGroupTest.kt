@@ -10,9 +10,9 @@
 package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
-import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
-import it.unibo.alchemist.boundary.composeui.model.InfoField
-import it.unibo.alchemist.boundary.composeui.model.NodeInspectorState
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
+import it.unibo.alchemist.boundary.composeui.model.Labeled
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import kotlin.test.Test
@@ -22,7 +22,7 @@ import kotlin.test.assertNull
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-class GroupInspectorStateTest {
+class NodeGroupTest {
     @Test
     fun `group inspector aggregates bounds and concentrations`() {
         val scene = ViewportScene(
@@ -31,30 +31,30 @@ class GroupInspectorStateTest {
                     id = 10,
                     coordinates = persistentListOf(-2.0, 5.0),
                     concentrations = persistentListOf(
-                        InfoField("shared", "1"),
-                        InfoField("variant", "A"),
+                        Labeled("shared", 1),
+                        Labeled("variant", "A"),
                     ),
                 ),
                 ViewportNode(
                     id = 20,
                     coordinates = persistentListOf(4.0, -1.0),
                     concentrations = persistentListOf(
-                        InfoField("shared", "1"),
-                        InfoField("variant", "B"),
-                        InfoField("partial", "yes"),
+                        Labeled("shared", 1),
+                        Labeled("variant", "B"),
+                        Labeled("partial", "yes"),
                     ),
                 ),
             ).toImmutableList(),
         )
 
-        val inspector = assertIs<GroupInspectorState>(scene.toInspectorState(listOf(10, 20)))
+        val inspector = assertIs<NodeGroup>(scene.toInspectorState(listOf(10, 20)))
 
         assertEquals(listOf(10, 20), inspector.nodeIds)
-        assertEquals("-2.000", inspector.position.first { it.label == "Min X" }.value)
-        assertEquals("4.000", inspector.position.first { it.label == "Max X" }.value)
-        assertEquals("-1.000", inspector.position.first { it.label == "Min Y" }.value)
-        assertEquals("5.000", inspector.position.first { it.label == "Max Y" }.value)
-        assertEquals("1", inspector.concentrations.first { it.label == "shared" }.value)
+        assertEquals(-2.0, inspector.position.first { it.label == "Min X" }.value)
+        assertEquals(4.0, inspector.position.first { it.label == "Max X" }.value)
+        assertEquals(-1.0, inspector.position.first { it.label == "Min Y" }.value)
+        assertEquals(5.0, inspector.position.first { it.label == "Max Y" }.value)
+        assertEquals(1, inspector.concentrations.first { it.label == "shared" }.value)
         assertEquals(MIXED_CONCENTRATION_PLACEHOLDER, inspector.concentrations.first { it.label == "variant" }.value)
         assertEquals(MIXED_CONCENTRATION_PLACEHOLDER, inspector.concentrations.first { it.label == "partial" }.value)
     }
@@ -66,7 +66,7 @@ class GroupInspectorStateTest {
                 nodes = persistentListOf(ViewportNode(id = 1, coordinates = persistentListOf(0.0, 0.0))),
             ),
             selectedNodeIds = persistentListOf(1),
-            inspector = NodeInspectorState(
+            inspector = SingleNode(
                 nodeId = 1,
                 subtitle = "Live node snapshot",
                 position = persistentListOf(),

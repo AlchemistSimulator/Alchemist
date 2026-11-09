@@ -10,10 +10,10 @@
 package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
-import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
-import it.unibo.alchemist.boundary.composeui.model.NodePositionUpdate
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -71,12 +71,12 @@ class ViewportNodeMovementTest {
             .copy(scene = state.scene.translateSelectedNodes(state.selectedNodeIds, deltaX = 2.0, deltaY = -1.5))
             .withSelection(state.selectedNodeIds)
 
-        val inspector = assertIs<GroupInspectorState>(moved.inspector)
+        val inspector = assertIs<NodeGroup>(moved.inspector)
         assertEquals(listOf(1, 2), moved.selectedNodeIds)
-        assertEquals("2.000", inspector.position.first { it.label == "Min X" }.value)
-        assertEquals("6.000", inspector.position.first { it.label == "Max X" }.value)
-        assertEquals("-0.500", inspector.position.first { it.label == "Min Y" }.value)
-        assertEquals("1.500", inspector.position.first { it.label == "Max Y" }.value)
+        assertEquals(2.0, inspector.position.first { it.label == "Min X" }.value)
+        assertEquals(6.0, inspector.position.first { it.label == "Max X" }.value)
+        assertEquals(-0.5, inspector.position.first { it.label == "Min Y" }.value)
+        assertEquals(1.5, inspector.position.first { it.label == "Max Y" }.value)
     }
 
     @Test

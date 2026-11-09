@@ -24,10 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
-import it.unibo.alchemist.boundary.composeui.model.InfoField
 import it.unibo.alchemist.boundary.composeui.model.InspectorState
-import it.unibo.alchemist.boundary.composeui.model.NodeInspectorState
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
+import it.unibo.alchemist.boundary.composeui.model.Labeled
 import it.unibo.alchemist.boundary.composeui.view.components.TransportButton
 import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
@@ -56,8 +56,8 @@ internal fun NodeInspector(inspector: InspectorState, onDismiss: () -> Unit, mod
                 onDismiss = onDismiss,
             )
             when (inspector) {
-                is NodeInspectorState -> SingleNodeInspector(inspector)
-                is GroupInspectorState -> GroupNodeInspector(inspector)
+                is SingleNode -> SingleNodeInspector(inspector)
+                is NodeGroup -> GroupNodeInspector(inspector)
             }
         }
     }
@@ -91,7 +91,7 @@ private fun InspectorHeader(title: String, subtitle: String, onDismiss: () -> Un
 }
 
 @Composable
-private fun SingleNodeInspector(inspector: NodeInspectorState) {
+private fun SingleNodeInspector(inspector: SingleNode) {
     InspectorSection(
         title = "Position",
         description = "Coordinates in simulator space.",
@@ -101,20 +101,20 @@ private fun SingleNodeInspector(inspector: NodeInspectorState) {
         title = "Concentrations",
         description = "Live contents currently stored in the selected node.",
         fields = inspector.concentrations.ifEmpty {
-            listOf(InfoField("No molecules", "This node exposes no concentrations"))
+            listOf(Labeled("No molecules", "This node exposes no concentrations"))
         },
     )
     InspectorSection(
         title = "Metadata",
         description = "Simulator-provided details exposed by the current adapter.",
         fields = inspector.metadata.ifEmpty {
-            listOf(InfoField("Unavailable", "No extra metadata available"))
+            listOf(Labeled("Unavailable", "No extra metadata available"))
         },
     )
 }
 
 @Composable
-private fun GroupNodeInspector(inspector: GroupInspectorState) {
+private fun GroupNodeInspector(inspector: NodeGroup) {
     InspectorSection(
         title = "Position",
         description = "Group bounds in simulator space.",
@@ -123,13 +123,13 @@ private fun GroupNodeInspector(inspector: GroupInspectorState) {
     InspectorSection(
         title = "Selected Nodes",
         description = "IDs currently captured by the selection box.",
-        fields = listOf(InfoField("IDs", inspector.nodeIds.joinToString(", "))),
+        fields = listOf(Labeled("IDs", inspector.nodeIds.joinToString(", "))),
     )
     InspectorSection(
         title = "Concentrations",
         description = "Shared molecule values across the selected nodes. Mixed means values differ or are missing.",
         fields = inspector.concentrations.ifEmpty {
-            listOf(InfoField("No molecules", "The selected nodes expose no concentrations"))
+            listOf(Labeled("No molecules", "The selected nodes expose no concentrations"))
         },
     )
 }
@@ -137,13 +137,13 @@ private fun GroupNodeInspector(inspector: GroupInspectorState) {
 private val InspectorState.title: String
     get() =
         when (this) {
-            is GroupInspectorState -> title
-            is NodeInspectorState -> title
+            is NodeGroup -> title
+            is SingleNode -> title
         }
 
 private val InspectorState.subtitle: String
     get() =
         when (this) {
-            is GroupInspectorState -> subtitle
-            is NodeInspectorState -> subtitle
+            is NodeGroup -> subtitle
+            is SingleNode -> subtitle
         }

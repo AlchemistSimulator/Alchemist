@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025, Danilo Pianini and contributors
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -22,8 +22,8 @@ import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.adapter.toViewport
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
-import it.unibo.alchemist.boundary.composeui.model.FullThrottle
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
 import it.unibo.alchemist.boundary.composeui.view.app
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position

@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui.adapter
 
-import it.unibo.alchemist.boundary.composeui.model.InfoField
+import it.unibo.alchemist.boundary.composeui.model.Labeled
 import it.unibo.alchemist.boundary.composeui.model.LinkRenderMode
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
@@ -35,7 +35,9 @@ import kotlinx.collections.immutable.toImmutableList
 fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): ViewportNode = ViewportNode(
     id = id,
     coordinates = environment.currentPositionOf(this).coordinates.toList().toImmutableList(),
-    concentrations = this.contents.current.map { InfoField(it.key.toString(), it.value.toString()) }.toImmutableList(),
+    concentrations = contents.current
+        .map { (molecule, concentration) -> Labeled(molecule.toString(), concentration) }
+        .toImmutableList(),
 )
 
 /**

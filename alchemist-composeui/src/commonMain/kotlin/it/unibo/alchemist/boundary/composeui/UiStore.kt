@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2026, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 @file:Suppress("MagicNumber", "UndocumentedPublicProperty")
 
 /*
@@ -13,21 +22,20 @@ package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
-import it.unibo.alchemist.boundary.composeui.model.AlchemistUiCallbacks
+import it.unibo.alchemist.boundary.composeui.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
-import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
-import it.unibo.alchemist.boundary.composeui.model.InfoField
 import it.unibo.alchemist.boundary.composeui.model.InspectorState
-import it.unibo.alchemist.boundary.composeui.model.NodeInspectorState
-import it.unibo.alchemist.boundary.composeui.model.NodePositionUpdate
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
+import it.unibo.alchemist.boundary.composeui.model.Labeled
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationProgress
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
-import it.unibo.alchemist.boundary.composeui.model.ViewportBackdrop
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.util.ViewportNodes.toWorldBounds
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -40,7 +48,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 /**
- * Thread-safe holder for the UI state observed by Compose.
+ * Holds the UI state; safe to use from any thread.
+ * The UI reads [stateFlow]; all changes go through [set] or [update].
  */
 class ComposeUiStateStore(initialState: AlchemistUiState) {
     private val mutableState = MutableStateFlow(initialState)
@@ -219,13 +228,13 @@ private fun sampleUiState(): AlchemistUiState {
             coordinates = persistentListOf(-3.5, 1.7),
             accent = 0.15f,
             metadata = persistentListOf(
-                InfoField("Neighbors", "4"),
-                InfoField("Reactions", "3"),
-                InfoField("Properties", "2"),
+                Labeled("Neighbors", "4"),
+                Labeled("Reactions", "3"),
+                Labeled("Properties", "2"),
             ),
             concentrations = persistentListOf(
-                InfoField("signal", "0.91"),
-                InfoField("gradient", "0.42"),
+                Labeled("signal", "0.91"),
+                Labeled("gradient", "0.42"),
             ),
         ),
         ViewportNode(
@@ -233,13 +242,13 @@ private fun sampleUiState(): AlchemistUiState {
             coordinates = persistentListOf(-1.2, 0.3),
             accent = 0.33f,
             metadata = persistentListOf(
-                InfoField("Neighbors", "5"),
-                InfoField("Reactions", "2"),
-                InfoField("Properties", "1"),
+                Labeled("Neighbors", "5"),
+                Labeled("Reactions", "2"),
+                Labeled("Properties", "1"),
             ),
             concentrations = persistentListOf(
-                InfoField("source", "true"),
-                InfoField("gradient", "0.68"),
+                Labeled("source", "true"),
+                Labeled("gradient", "0.68"),
             ),
         ),
         ViewportNode(
@@ -247,13 +256,13 @@ private fun sampleUiState(): AlchemistUiState {
             coordinates = persistentListOf(0.8, 2.2),
             accent = 0.55f,
             metadata = persistentListOf(
-                InfoField("Neighbors", "3"),
-                InfoField("Reactions", "4"),
-                InfoField("Properties", "2"),
+                Labeled("Neighbors", "3"),
+                Labeled("Reactions", "4"),
+                Labeled("Properties", "2"),
             ),
             concentrations = persistentListOf(
-                InfoField("signal", "0.77"),
-                InfoField("temperature", "296 K"),
+                Labeled("signal", "0.77"),
+                Labeled("temperature", "296 K"),
             ),
         ),
         ViewportNode(
@@ -261,13 +270,13 @@ private fun sampleUiState(): AlchemistUiState {
             coordinates = persistentListOf(2.1, -0.8),
             accent = 0.74f,
             metadata = persistentListOf(
-                InfoField("Neighbors", "6"),
-                InfoField("Reactions", "2"),
-                InfoField("Properties", "3"),
+                Labeled("Neighbors", "6"),
+                Labeled("Reactions", "2"),
+                Labeled("Properties", "3"),
             ),
             concentrations = persistentListOf(
-                InfoField("gradient", "0.18"),
-                InfoField("payload", "ready"),
+                Labeled("gradient", "0.18"),
+                Labeled("payload", "ready"),
             ),
         ),
         ViewportNode(
@@ -275,13 +284,13 @@ private fun sampleUiState(): AlchemistUiState {
             coordinates = persistentListOf(3.9, 1.4),
             accent = 0.92f,
             metadata = persistentListOf(
-                InfoField("Neighbors", "2"),
-                InfoField("Reactions", "1"),
-                InfoField("Properties", "1"),
+                Labeled("Neighbors", "2"),
+                Labeled("Reactions", "1"),
+                Labeled("Properties", "1"),
             ),
             concentrations = persistentListOf(
-                InfoField("goal", "true"),
-                InfoField("signal", "0.12"),
+                Labeled("goal", "true"),
+                Labeled("signal", "0.12"),
             ),
         ),
     )
@@ -296,11 +305,9 @@ private fun sampleUiState(): AlchemistUiState {
                 ViewportEdge(1, 3),
             ),
             dimensions = 2,
-            backdrop = ViewportBackdrop.SPACE,
             summary = persistentListOf(
-                InfoField("Nodes", nodes.size.toString()),
-                InfoField("Dimensions", "2D"),
-                InfoField("Backdrop", "Procedural field"),
+                Labeled("Nodes", nodes.size),
+                Labeled("Dimensions", "2D"),
             ),
             message = "Attach a simulation monitor to replace this demo scenario.",
         ),
@@ -415,11 +422,11 @@ internal fun ViewportScene.toInspectorState(selectedNodeIds: List<Int>): Inspect
     }
 }
 
-internal fun ViewportNode.toInspectorState(): NodeInspectorState = NodeInspectorState(
+internal fun ViewportNode.toInspectorState(): SingleNode = SingleNode(
     nodeId = id,
     subtitle = "Live node snapshot",
     position = coordinates.take(2).mapIndexed { index, coordinate ->
-        InfoField(if (index == 0) "X" else "Y", coordinate.formatFixed(3))
+        Labeled(if (index == 0) "X" else "Y", coordinate)
     }.toImmutableList(),
     concentrations = concentrations,
     metadata = metadata,
@@ -440,24 +447,24 @@ internal fun ViewportNode.withCoordinates(newCoordinates: List<Double>): Viewpor
 
 internal fun ViewportNode.toPositionUpdate(): NodePositionUpdate = NodePositionUpdate(id, coordinates)
 
-internal fun List<ViewportNode>.toGroupInspectorState(): GroupInspectorState {
+internal fun List<ViewportNode>.toGroupInspectorState(): NodeGroup {
     val xs = map { it.coordinates[0] }
     val ys = map { it.coordinates[1] }
-    val moleculeNames = flatMap { node -> node.concentrations.map(InfoField::label) }.distinct().sorted()
+    val moleculeNames = flatMap { node -> node.concentrations.map(Labeled<Any?>::label) }.distinct().sorted()
     val concentrations = moleculeNames.map { molecule ->
         val values = map { node -> node.concentrations.firstOrNull { it.label == molecule }?.value }
         val sharedValue = values.firstOrNull()?.takeIf { firstValue ->
             values.all { it == firstValue }
         }
-        InfoField(molecule, sharedValue ?: MIXED_CONCENTRATION_PLACEHOLDER)
+        Labeled(molecule, sharedValue ?: MIXED_CONCENTRATION_PLACEHOLDER)
     }.toImmutableList()
-    return GroupInspectorState(
+    return NodeGroup(
         nodeIds = map(ViewportNode::id).toImmutableList(),
         position = persistentListOf(
-            InfoField("Min X", xs.minOrNull()?.formatFixed(3).orEmpty()),
-            InfoField("Max X", xs.maxOrNull()?.formatFixed(3).orEmpty()),
-            InfoField("Min Y", ys.minOrNull()?.formatFixed(3).orEmpty()),
-            InfoField("Max Y", ys.maxOrNull()?.formatFixed(3).orEmpty()),
+            Labeled("Min X", xs.min()),
+            Labeled("Max X", xs.max()),
+            Labeled("Min Y", ys.min()),
+            Labeled("Max Y", ys.max()),
         ),
         concentrations = concentrations,
     )

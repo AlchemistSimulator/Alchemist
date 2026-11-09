@@ -26,14 +26,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import it.unibo.alchemist.boundary.composeui.model.InfoField
+import it.unibo.alchemist.boundary.composeui.model.Labeled
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.toDisplayString
 import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 import it.unibo.alchemist.boundary.composeui.view.theme.Surface
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
 @Composable
-internal fun InspectorSection(title: String, description: String, fields: List<InfoField>) {
+internal fun InspectorSection(title: String, description: String, fields: List<Labeled<*>>) {
     Surface(
         color = Surface.copy(alpha = 0.72f),
         contentColor = TextPrimary,
@@ -70,7 +71,7 @@ internal fun InspectorSection(title: String, description: String, fields: List<I
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = field.value,
+                        text = field.value.toDisplayString(),
                         style = MaterialTheme.typography.subtitle1.copy(fontFamily = FontFamily.Monospace),
                     )
                 }

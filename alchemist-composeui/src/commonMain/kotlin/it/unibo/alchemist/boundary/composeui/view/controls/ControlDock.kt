@@ -41,11 +41,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
-import it.unibo.alchemist.boundary.composeui.model.EventsPerSecond
-import it.unibo.alchemist.boundary.composeui.model.FullThrottle
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
-import it.unibo.alchemist.boundary.composeui.model.SimulationEventThrottling.Companion.MAX_SIMULATION_EVENTS_PER_SECOND
-import it.unibo.alchemist.boundary.composeui.model.SimulationEventThrottling.Companion.MIN_SIMULATION_EVENTS_PER_SECOND
+import it.unibo.alchemist.boundary.composeui.model.throttling.EventsPerSecond
+import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
+import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.MAX_SIMULATION_EVENTS_PER_SECOND
+import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.MIN_SIMULATION_EVENTS_PER_SECOND
 import it.unibo.alchemist.boundary.composeui.view.components.MetricBlock
 import it.unibo.alchemist.boundary.composeui.view.components.StatusPill
 import it.unibo.alchemist.boundary.composeui.view.components.TransportButton

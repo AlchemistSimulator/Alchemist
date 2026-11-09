@@ -27,14 +27,15 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
-import it.unibo.alchemist.boundary.composeui.model.InfoField
+import it.unibo.alchemist.boundary.composeui.model.Labeled
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.toDisplayString
 import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
 import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
 @Composable
 internal fun SummaryRail(
-    summary: List<InfoField>,
+    summary: List<Labeled<*>>,
     showLinks: Boolean,
     onToggleLinks: () -> Unit,
     linkRenderNotice: String? = null,
@@ -44,7 +45,7 @@ internal fun SummaryRail(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         summary.forEach { item ->
-            SummaryChip(label = item.label.uppercase(), value = item.value)
+            SummaryChip(label = item.label.uppercase(), value = item.value.toDisplayString())
         }
         linkRenderNotice?.let { notice ->
             SummaryChip(

@@ -11,11 +11,11 @@ package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
-import it.unibo.alchemist.boundary.composeui.model.FullThrottle
-import it.unibo.alchemist.boundary.composeui.model.GroupInspectorState
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
@@ -23,7 +23,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class SimulationControlsStateTest {
@@ -147,7 +146,7 @@ class SimulationControlsStateTest {
         }
 
         assertEquals(listOf(1, 3), controller.store.state.selectedNodeIds)
-        val inspector = controller.store.state.inspector as GroupInspectorState
+        val inspector = controller.store.state.inspector as NodeGroup
         assertEquals(listOf(1, 3), inspector.nodeIds)
         assertEquals("Mixed", inspector.concentrations.first { it.label == "signal" }.value)
     }

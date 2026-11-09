@@ -41,8 +41,6 @@ data class SimulationControlsState(
     val uiFps: Int = SimulationControlsConfig.DEFAULT_UI_FPS,
     val maxUiFps: Int = SimulationControlsConfig.DEFAULT_MAX_UI_FPS,
     val simulationEventThrottling: SimulationEventThrottling = FullThrottle,
-//    val eventRateSliderValue: Int = MIN_SIMULATION_EVENTS_PER_SECOND,
-//    val maxEventRateSliderValue: Int = MAX_SIMULATION_EVENTS_PER_SECOND,
     val dialog: ControlDialogState? = null,
 ) {
     init {
@@ -52,12 +50,6 @@ data class SimulationControlsState(
         require(uiFps in SimulationControlsConfig.MIN_UI_FPS..maxUiFps) {
             "UI fps must remain within [${SimulationControlsConfig.MIN_UI_FPS}, $maxUiFps]."
         }
-//        require(eventRateSliderValue in MIN_SIMULATION_EVENTS_PER_SECOND..maxEventRateSliderValue) {
-//            "Slider value must remain within [${MIN_SIMULATION_EVENTS_PER_SECOND}, $maxEventRateSliderValue]."
-//        }
-//        require(maxEventRateSliderValue > MIN_SIMULATION_EVENTS_PER_SECOND) {
-//            "Maximum slider value must exceed the minimum event rate."
-//        }
     }
 
     /** Whether Play is enabled. */
@@ -74,10 +66,6 @@ data class SimulationControlsState(
 
     /** Whether the simulation runs at full speed. */
     val isFullThrottle: Boolean = simulationEventThrottling is FullThrottle
-
-//    val effectiveEventsPerSecond: Int? = eventRateSliderValue.takeUnless { isFullThrottle }
-//    val eventRateLabel: String =
-//        effectiveEventsPerSecond?.let { "$it evt/s" } ?: "∞"
 
     /** The allowed frame rates, as text. */
     val fpsRangeLabel: String = "${SimulationControlsConfig.MIN_UI_FPS}-$maxUiFps FPS"

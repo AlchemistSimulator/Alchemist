@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.composeui.callbacks
+package it.unibo.alchemist.boundary.composeui.model.callbacks
 
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 

@@ -22,7 +22,6 @@ package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
-import it.unibo.alchemist.boundary.composeui.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
 import it.unibo.alchemist.boundary.composeui.model.InspectorState
@@ -35,6 +34,7 @@ import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.util.ViewportNodes.toWorldBounds
 import kotlin.math.ceil
@@ -354,11 +354,6 @@ internal fun SimulationControlsState.withUiFps(target: Int): SimulationControlsS
         dialog = null,
     )
 }
-
-// internal fun SimulationControlsState.withEventRateSliderValue(target: Int): SimulationControlsState = copy(
-//    eventRateSliderValue = target.coerceIn(MIN_SIMULATION_EVENTS_PER_SECOND, simulationEventThrottling.value),
-//    dialog = null,
-// )
 
 internal fun AlchemistUiState.withSelection(nodeIds: List<Int>): AlchemistUiState {
     val selectedIds = scene.sanitizeSelection(nodeIds)

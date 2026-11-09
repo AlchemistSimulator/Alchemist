@@ -43,8 +43,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import it.unibo.alchemist.boundary.composeui.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.view.inspector.NodeInspector
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundGradientEnd

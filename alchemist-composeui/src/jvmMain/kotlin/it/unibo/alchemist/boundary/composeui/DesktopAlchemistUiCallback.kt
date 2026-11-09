@@ -12,9 +12,9 @@ package it.unibo.alchemist.boundary.composeui
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.adapter.toViewport
-import it.unibo.alchemist.boundary.composeui.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
+import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.SimulationState

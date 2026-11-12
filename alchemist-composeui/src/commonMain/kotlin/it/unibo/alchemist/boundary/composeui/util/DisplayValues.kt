@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.boundary.composeui.util
 
-import it.unibo.alchemist.boundary.composeui.formatFixed
-
 /**
  * Turns values into text for the UI.
  */
@@ -25,5 +23,23 @@ internal object DisplayValues {
         is Double -> formatFixed(DISPLAYED_DECIMALS)
         is Float -> toDouble().formatFixed(DISPLAYED_DECIMALS)
         else -> toString()
+    }
+
+    /**
+     * Formats this number with exactly [decimals] digits after the point.
+     */
+    fun Double.formatFixed(decimals: Int): String {
+        val safeDecimals = decimals.coerceAtLeast(0)
+        val factor = (1..safeDecimals).fold(1.0) { acc, _ -> acc * 10.0 }
+        val rounded = kotlin.math.round(this * factor) / factor
+        val raw = rounded.toString()
+        return when {
+            safeDecimals == 0 -> raw.substringBefore('.')
+            '.' !in raw -> raw + "." + "0".repeat(safeDecimals)
+            else -> {
+                val fractional = raw.substringAfter('.')
+                raw + "0".repeat((safeDecimals - fractional.length).coerceAtLeast(0))
+            }
+        }
     }
 }

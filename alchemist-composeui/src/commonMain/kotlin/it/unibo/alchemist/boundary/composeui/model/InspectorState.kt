@@ -11,6 +11,8 @@ package it.unibo.alchemist.boundary.composeui.model
 
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 /**
  * State for the right-side inspector panel.
@@ -54,5 +56,36 @@ sealed interface InspectorState {
         val subtitle: String = "${nodeIds.size} nodes selected",
         val position: ImmutableList<Labeled<Double>>,
         val concentrations: ImmutableList<Labeled<Any?>>,
-    ) : InspectorState
+    ) : InspectorState {
+        internal companion object {
+            /** Shown for a molecule whose value differs across the group. */
+            const val MIXED_CONCENTRATION_PLACEHOLDER = "Mixed"
+
+            /** The inspector for [nodes]. */
+            fun of(nodes: List<ViewportNode>): NodeGroup {
+                val xs = nodes.map { it.coordinates[0] }
+                val ys = nodes.map { it.coordinates[1] }
+                val concentrations = nodes
+                    .flatMap { node -> node.concentrations.map(Labeled<Any?>::label) }
+                    .distinct()
+                    .sorted()
+                    .map { molecule ->
+                        val values = nodes.map { node ->
+                            node.concentrations.firstOrNull { it.label == molecule }?.value
+                        }
+                        Labeled(molecule, values.distinct().singleOrNull() ?: MIXED_CONCENTRATION_PLACEHOLDER)
+                    }
+                return NodeGroup(
+                    nodeIds = nodes.map(ViewportNode::id).toImmutableList(),
+                    position = persistentListOf(
+                        Labeled("Min X", xs.min()),
+                        Labeled("Max X", xs.max()),
+                        Labeled("Min Y", ys.min()),
+                        Labeled("Max Y", ys.max()),
+                    ),
+                    concentrations = concentrations.toImmutableList(),
+                )
+            }
+        }
+    }
 }

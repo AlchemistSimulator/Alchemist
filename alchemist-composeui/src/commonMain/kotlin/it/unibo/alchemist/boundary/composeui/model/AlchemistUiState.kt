@@ -27,4 +27,15 @@ data class AlchemistUiState(
     val controls: SimulationControlsState = SimulationControlsState(),
     val selectedNodeIds: ImmutableList<Int> = persistentListOf(),
     val inspector: InspectorState? = null,
-)
+) {
+    /** This state, showing a dialog. */
+    internal fun withDialog(title: String, message: String): AlchemistUiState = copy(
+        controls = controls.copy(dialog = ControlDialogState(title, message)),
+    )
+
+    /** This state, with [nodeIds] selected and the inspector updated. */
+    internal fun withSelection(nodeIds: List<Int>): AlchemistUiState {
+        val selectedIds = scene.sanitizeSelection(nodeIds)
+        return copy(selectedNodeIds = selectedIds, inspector = scene.toInspectorState(selectedIds))
+    }
+}

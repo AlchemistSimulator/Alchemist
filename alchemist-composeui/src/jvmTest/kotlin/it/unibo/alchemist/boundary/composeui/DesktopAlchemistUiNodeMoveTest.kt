@@ -14,6 +14,7 @@ import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.util.TestSimulations
 import it.unibo.alchemist.boundary.composeui.util.TestSimulations.runningInBackground
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.collections.immutable.persistentListOf

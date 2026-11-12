@@ -10,8 +10,11 @@
 package it.unibo.alchemist.boundary.composeui.model
 
 import androidx.compose.runtime.Immutable
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
+import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 /**
  * A node projected in the central viewport.
@@ -35,4 +38,31 @@ data class ViewportNode(
             "Viewport nodes require at least two coordinates."
         }
     }
+
+    /** The inspector view of this node. */
+    internal fun toInspectorState(): SingleNode = SingleNode(
+        nodeId = id,
+        subtitle = "Live node snapshot",
+        position = persistentListOf(Labeled("X", coordinates[0]), Labeled("Y", coordinates[1])),
+        concentrations = concentrations,
+        metadata = metadata,
+    )
+
+    /** The current position, to send back to the simulation. */
+    internal fun toPositionUpdate(): NodePositionUpdate = NodePositionUpdate(id, coordinates)
+
+    /** This node moved by [deltaX] and [deltaY] on the plane. */
+    internal fun translate(deltaX: Double, deltaY: Double): ViewportNode = copy(
+        coordinates = coordinates.mapIndexed { index, coordinate ->
+            coordinate + when (index) {
+                0 -> deltaX
+                1 -> deltaY
+                else -> 0.0
+            }
+        }.toImmutableList(),
+    )
+
+    /** This node at [newCoordinates]. */
+    internal fun withCoordinates(newCoordinates: List<Double>): ViewportNode =
+        copy(coordinates = newCoordinates.toImmutableList())
 }

@@ -29,7 +29,7 @@ Make the module consistent with the rest of the repository before building on it
   - `adapter/AlchemistNodeAdapter.kt`, `collectEdgeSnapshot`
   - `view/viewport/ViewportRendering.kt`
   - Use pipelines or `tailrec` instead.
-- [ ] Move shared helpers into internal plural `util` objects:
+- [x] Move shared helpers into internal plural `util` objects:
   - formatting (`formatFixed`, readable counts)
   - edge-key packing
   - geometry helpers
@@ -42,6 +42,7 @@ Make the module consistent with the rest of the repository before building on it
   - gesture handling (select / pan / drag)
   - keyboard handling
   - drawing
+- [x] One non-private `@Composable` per file, named after it; private helpers stay with it. Split `ControlDock.kt` into `view/controls/`.
 - [ ] Reorder members according to `AGENTS.md`, in a separate `style` commit.
 - [ ] KDoc on every public declaration. Reduce visibility to `internal` wherever possible; the public API should be `ComposeMonitor` plus the effect/extension SPI.
 

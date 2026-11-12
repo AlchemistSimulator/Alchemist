@@ -19,6 +19,12 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.view.theme.Surface as SurfaceColor
 
+private const val COMPONENT_SURFACE_ALPHA = 0.78f
+
+internal val componentShape = RoundedCornerShape(8.dp)
+internal val pillShape = RoundedCornerShape(999.dp)
+internal val componentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
+
 @Composable
 internal fun ComponentSurface(
     color: Color = SurfaceColor.copy(alpha = COMPONENT_SURFACE_ALPHA),
@@ -35,9 +41,3 @@ internal fun ComponentSurface(
         content()
     }
 }
-
-internal val componentShape = RoundedCornerShape(8.dp)
-internal val pillShape = RoundedCornerShape(999.dp)
-internal val componentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
-
-private const val COMPONENT_SURFACE_ALPHA = 0.78f

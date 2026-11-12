@@ -34,6 +34,9 @@ import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
 import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
 import it.unibo.alchemist.boundary.composeui.view.theme.StatusPillWidth
 
+private const val STATUS_PILL_ALPHA = 0.14f
+private val statusIndicatorSpacing = 10.dp
+
 @Composable
 internal fun StatusPill(controls: SimulationControlsState) {
     val presentation = controls.toStatusPillPresentation()
@@ -75,6 +78,3 @@ private fun SimulationControlsState.toStatusPillPresentation(): StatusPillPresen
         else -> SecondaryAccent
     },
 )
-
-private const val STATUS_PILL_ALPHA = 0.14f
-private val statusIndicatorSpacing = 10.dp

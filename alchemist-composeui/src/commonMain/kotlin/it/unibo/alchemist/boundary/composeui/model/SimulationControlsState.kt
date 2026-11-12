@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.composeui.model
 
 import androidx.compose.runtime.Immutable
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
 import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling
 
@@ -74,4 +75,10 @@ data class SimulationControlsState(
     fun updateEventThrottling(newValue: Int): SimulationControlsState = copy(
         simulationEventThrottling = simulationEventThrottling.update(newValue),
     )
+
+    /** Returns a copy with the frame rate set to [target], clamped to the allowed range. */
+    internal fun withUiFps(target: Int): SimulationControlsState {
+        val clamped = target.coerceIn(MIN_UI_FPS, maxUiFps)
+        return copy(fpsInput = clamped.toString(), uiFps = clamped, dialog = null)
+    }
 }

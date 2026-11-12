@@ -60,11 +60,9 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import it.unibo.alchemist.boundary.composeui.formatFixed
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
-import it.unibo.alchemist.boundary.composeui.toPositionUpdate
-import it.unibo.alchemist.boundary.composeui.translateSelectedNodes
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundVariant
 import it.unibo.alchemist.boundary.composeui.view.theme.GRID_HORIZONTAL_DIVISIONS
@@ -84,6 +82,8 @@ import it.unibo.alchemist.boundary.composeui.view.theme.lerp
 import kotlin.math.max
 import kotlin.math.min
 import kotlinx.coroutines.launch
+
+private const val KEYBOARD_PAN_STEP_PX = 48f
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -126,7 +126,7 @@ internal fun ViewportSurface(
     val dragThresholdPx = with(density) { 6.dp.toPx() }
     val selectionRect = selectionDragAnchor?.let { anchor ->
         val current = selectionDragCurrent ?: anchor
-        createSelectionRect(anchor, current).takeIf { anchor.distanceTo(current) >= dragThresholdPx }
+        createSelectionRect(anchor, current).takeIf { (anchor - current).getDistance() >= dragThresholdPx }
     }
     Surface(
         modifier = modifier,
@@ -307,7 +307,7 @@ internal fun ViewportSurface(
                         val moveAnchor = nodeDragAnchor
                         val moveCurrent = nodeDragCurrent ?: releasePosition
                         if (moveAnchor != null && moveCurrent != null) {
-                            if (moveAnchor.distanceTo(moveCurrent) >= dragThresholdPx && projection != null) {
+                            if ((moveAnchor - moveCurrent).getDistance() >= dragThresholdPx && projection != null) {
                                 val (deltaX, deltaY) = screenDeltaToWorldDelta(
                                     moveAnchor,
                                     moveCurrent,
@@ -328,7 +328,7 @@ internal fun ViewportSurface(
                             val anchor = selectionDragAnchor
                             val current = selectionDragCurrent ?: releasePosition
                             if (anchor != null && current != null) {
-                                if (anchor.distanceTo(current) >= dragThresholdPx) {
+                                if ((anchor - current).getDistance() >= dragThresholdPx) {
                                     val selectedIds = sceneCache.selectNodes(
                                         viewportSize = viewportSize,
                                         camera = camera,
@@ -734,5 +734,3 @@ private fun screenDeltaToWorldDelta(
         -baseDelta.y / projection.pixelsPerUnit
         ).toDouble()
 }
-
-private const val KEYBOARD_PAN_STEP_PX = 48f

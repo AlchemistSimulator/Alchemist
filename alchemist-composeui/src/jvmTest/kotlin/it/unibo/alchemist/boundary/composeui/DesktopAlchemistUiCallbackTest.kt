@@ -15,6 +15,7 @@ import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.util.TestSimulations
 import it.unibo.alchemist.boundary.composeui.util.TestSimulations.onFirstStep
 import it.unibo.alchemist.boundary.composeui.util.TestSimulations.runningInBackground
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.SimulationState
 import it.unibo.alchemist.model.positions.Euclidean2DPosition

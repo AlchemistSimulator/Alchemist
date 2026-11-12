@@ -16,6 +16,8 @@ import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.SimulationState
 import it.unibo.alchemist.model.Position

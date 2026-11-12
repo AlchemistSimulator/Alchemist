@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
 
+private val metricBlockSpacing = 4.dp
+
 @Composable
 internal fun MetricBlock(label: String, value: String) {
     ComponentSurface {
@@ -39,5 +41,3 @@ internal fun MetricBlock(label: String, value: String) {
         }
     }
 }
-
-private val metricBlockSpacing = 4.dp

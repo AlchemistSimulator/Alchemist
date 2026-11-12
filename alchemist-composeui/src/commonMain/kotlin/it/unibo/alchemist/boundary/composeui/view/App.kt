@@ -13,15 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import it.unibo.alchemist.boundary.composeui.ComposeUiController
-import it.unibo.alchemist.boundary.composeui.demoController
+import it.unibo.alchemist.boundary.composeui.demo.DemoUiCallbacks
+import it.unibo.alchemist.boundary.composeui.demo.DemoUiState
 import it.unibo.alchemist.boundary.composeui.view.root.AlchemistUiRoot
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 
 /**
  * Application entry point, rendered consistently across supported platforms.
  */
 @Composable
-fun app(controller: ComposeUiController = remember { demoController() }) {
+fun app(controller: ComposeUiController = remember { ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks) }) {
     val state by controller.store.stateFlow.collectAsState()
     AlchemistUiRoot(
         state = state,

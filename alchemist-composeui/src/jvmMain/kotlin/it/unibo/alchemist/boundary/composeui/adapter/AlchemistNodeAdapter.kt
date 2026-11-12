@@ -15,6 +15,7 @@ import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.util.DoubleInt
 import it.unibo.alchemist.boundary.composeui.view.viewport.FULL_EDGE_RENDER_LIMIT
 import it.unibo.alchemist.boundary.composeui.view.viewport.MAX_DRAWN_EDGES_PER_FRAME
 import it.unibo.alchemist.boundary.composeui.view.viewport.SAMPLED_EDGE_RENDER_LIMIT
@@ -120,8 +121,8 @@ internal fun collectEdgeSnapshot(edgePairs: Sequence<Pair<Int, Int>>, renderLink
     }
 }
 
-private fun PriorityQueue<SampledViewportEdge>.consider(edgeKey: Long) {
-    val candidate = SampledViewportEdge(score = edgeKey.sampleScore(), edge = edgeKey.toViewportEdge())
+private fun PriorityQueue<SampledViewportEdge>.consider(edgeKey: DoubleInt) {
+    val candidate = SampledViewportEdge(score = edgeKey.packed.sampleScore(), edge = edgeKey.toViewportEdge())
     if (size < MAX_DRAWN_EDGES_PER_FRAME) {
         add(candidate)
         return
@@ -153,19 +154,13 @@ private fun Long.sampleScore(): Long {
     return ((mix() * FMIX_FIRST_MULTIPLIER).mix() * FMIX_SECOND_MULTIPLIER).mix()
 }
 
-private fun Long.toViewportEdge(): ViewportEdge = ViewportEdge(
-    fromNodeId = (this ushr Int.SIZE_BITS).toInt(),
-    toNodeId = this.toInt(),
-)
+private fun DoubleInt.toViewportEdge(): ViewportEdge = ViewportEdge(fromNodeId = high, toNodeId = low)
 
-private fun canonicalEdgeKey(firstNodeId: Int, secondNodeId: Int): Long? = when {
+private fun canonicalEdgeKey(firstNodeId: Int, secondNodeId: Int): DoubleInt? = when {
     firstNodeId == secondNodeId -> null
-    firstNodeId < secondNodeId -> edgeKey(firstNodeId, secondNodeId)
-    else -> edgeKey(secondNodeId, firstNodeId)
+    firstNodeId < secondNodeId -> DoubleInt(firstNodeId, secondNodeId)
+    else -> DoubleInt(secondNodeId, firstNodeId)
 }
-
-private fun edgeKey(firstNodeId: Int, secondNodeId: Int): Long =
-    (firstNodeId.toLong() shl Int.SIZE_BITS) or secondNodeId.toUInt().toLong()
 
 internal fun canonicalEdge(firstNodeId: Int, secondNodeId: Int): ViewportEdge? =
     canonicalEdgeKey(firstNodeId, secondNodeId)?.toViewportEdge()

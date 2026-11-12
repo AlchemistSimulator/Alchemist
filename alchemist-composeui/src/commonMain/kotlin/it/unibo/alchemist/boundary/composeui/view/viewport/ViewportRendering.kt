@@ -18,10 +18,10 @@ import androidx.compose.ui.unit.IntSize
 import it.unibo.alchemist.boundary.composeui.model.LinkRenderMode
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.util.DoubleInt
 import it.unibo.alchemist.boundary.composeui.view.theme.NODE_HIT_RADIUS
 import it.unibo.alchemist.boundary.composeui.view.theme.ZOOM_STEP
 import kotlin.math.floor
-import kotlin.math.sqrt
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -118,8 +118,8 @@ internal fun ViewportSceneCache.findHitNode(
         ),
     )
     val bestMatch = candidateIndices
-        .minByOrNull { nodeIndex -> baseCenters[nodeIndex].distanceTo(tapInBaseSpace) }
-        ?.takeIf { nodeIndex -> baseCenters[nodeIndex].distanceTo(tapInBaseSpace) <= tapRadius }
+        .minByOrNull { nodeIndex -> (baseCenters[nodeIndex] - tapInBaseSpace).getDistance() }
+        ?.takeIf { nodeIndex -> (baseCenters[nodeIndex] - tapInBaseSpace).getDistance() <= tapRadius }
     return bestMatch?.let(scene.nodes::get)
 }
 
@@ -168,7 +168,7 @@ internal data class ViewportFrame(
 internal data class IndexedEdge(val fromIndex: Int, val toIndex: Int)
 
 internal class NodeSpatialIndex(positions: List<Offset>) {
-    private val cells = mutableMapOf<Long, MutableList<Int>>()
+    private val cells = mutableMapOf<DoubleInt, MutableList<Int>>()
 
     init {
         positions.forEachIndexed { index, position ->
@@ -187,28 +187,20 @@ internal class NodeSpatialIndex(positions: List<Offset>) {
         val matches = mutableListOf<Int>()
         for (cellX in minCellX..maxCellX) {
             for (cellY in minCellY..maxCellY) {
-                cells[cellKey(cellX, cellY)]?.let(matches::addAll)
+                cells[DoubleInt(cellX, cellY)]?.let(matches::addAll)
             }
         }
         return matches.toImmutableList()
     }
 
-    private fun cellKey(position: Offset): Long = cellKey(
+    private fun cellKey(position: Offset): DoubleInt = DoubleInt(
         floor(position.x / SPATIAL_INDEX_CELL_SIZE).toInt(),
         floor(position.y / SPATIAL_INDEX_CELL_SIZE).toInt(),
     )
-
-    private fun cellKey(cellX: Int, cellY: Int): Long = (cellX.toLong() shl Int.SIZE_BITS) or cellY.toUInt().toLong()
 }
 
 @Immutable
 internal data class ViewportCameraState(val pan: Offset = Offset.Zero, val zoom: Float = 1f)
-
-internal fun Offset.distanceTo(other: Offset): Float {
-    val dx = x - other.x
-    val dy = y - other.y
-    return sqrt(dx * dx + dy * dy)
-}
 
 internal fun Offset.toScreenPosition(viewportSize: IntSize, camera: ViewportCameraState): Offset {
     val center = viewportSize.center

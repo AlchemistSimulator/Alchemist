@@ -22,6 +22,11 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Surface
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
+private const val ACCENT_LUMINANCE_THRESHOLD = 0.35f
+private const val ENABLED_BUTTON_ALPHA = 0.92f
+private const val DISABLED_BUTTON_ALPHA = 0.28f
+private val transportButtonPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)
+
 @Composable
 internal fun TransportButton(label: String, enabled: Boolean, accent: Color, onClick: () -> Unit) {
     val colors = accent.toTransportButtonColors(enabled)
@@ -48,8 +53,3 @@ private fun Color.toTransportButtonColors(enabled: Boolean): TransportButtonPale
     background = copy(alpha = if (enabled) ENABLED_BUTTON_ALPHA else DISABLED_BUTTON_ALPHA),
     content = if (luminance() > ACCENT_LUMINANCE_THRESHOLD) TextPrimary else Surface,
 )
-
-private const val ACCENT_LUMINANCE_THRESHOLD = 0.35f
-private const val ENABLED_BUTTON_ALPHA = 0.92f
-private const val DISABLED_BUTTON_ALPHA = 0.28f
-private val transportButtonPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)

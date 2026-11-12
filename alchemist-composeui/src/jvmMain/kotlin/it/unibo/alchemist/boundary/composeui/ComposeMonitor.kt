@@ -24,7 +24,10 @@ import it.unibo.alchemist.boundary.composeui.adapter.toViewport
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import it.unibo.alchemist.boundary.composeui.view.app
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction

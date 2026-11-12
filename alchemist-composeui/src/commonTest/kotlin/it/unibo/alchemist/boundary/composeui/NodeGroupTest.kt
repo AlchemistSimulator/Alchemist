@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
+import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup.Companion.MIXED_CONCENTRATION_PLACEHOLDER
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
 import it.unibo.alchemist.boundary.composeui.model.Labeled
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode

@@ -10,12 +10,16 @@
 package it.unibo.alchemist.boundary.composeui
 
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
+import it.unibo.alchemist.boundary.composeui.demo.DemoUiCallbacks
+import it.unibo.alchemist.boundary.composeui.demo.DemoUiState
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
@@ -66,7 +70,7 @@ class SimulationControlsStateTest {
 
     @Test
     fun `demo controller toggles links without changing selection`() {
-        val controller = demoController()
+        val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
         controller.store.update { it.withSelection(listOf(3)) }
 
         runSuspend { controller.callbacks.onToggleLinks() }
@@ -94,7 +98,7 @@ class SimulationControlsStateTest {
 
     @Test
     fun `demo controller rejects backward time jumps`() {
-        val controller = demoController()
+        val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
         runSuspend {
             controller.callbacks.onToTimeInputChanged("1.5")
@@ -108,7 +112,7 @@ class SimulationControlsStateTest {
 
     @Test
     fun `demo controller updates fps on submit`() {
-        val controller = demoController()
+        val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
         runSuspend {
             controller.callbacks.onFpsInputChanged("120")
@@ -121,7 +125,7 @@ class SimulationControlsStateTest {
 
     @Test
     fun `demo controller preserves running state after jump`() {
-        val controller = demoController()
+        val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
         controller.store.update {
             it.copy(
                 controls = it.controls.copy(status = SimulationStatus.RUNNING),
@@ -139,7 +143,7 @@ class SimulationControlsStateTest {
 
     @Test
     fun `demo controller builds a group inspector for multi selection`() {
-        val controller = demoController()
+        val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
         runSuspend {
             controller.callbacks.onNodesSelected(listOf(1, 3))

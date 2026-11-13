@@ -76,10 +76,10 @@ Make the module consistent with the rest of the repository before building on it
 
 ### Tests
 
-- [ ] Build JVM test scenarios through the Kotlin script DSL / generated factories instead of hand-made stubs:
+- [x] Build JVM test scenarios through the Kotlin script DSL / generated factories instead of hand-made stubs:
   - `DesktopAlchemistUiCallbackTest`
   - `DesktopAlchemistUiNodeMoveTest`
-- [ ] Use backtick test names and `kotlin.test` throughout; no timing-based assertions.
+- [x] Use backtick test names and `kotlin.test` throughout; no timing-based assertions.
 
 ---
 

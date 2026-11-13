@@ -46,6 +46,7 @@ kotlin {
                 implementation(alchemist("loading"))
                 implementation(alchemist("test"))
                 implementation(incarnation("protelis"))
+                implementation(incarnation("sapere"))
             }
         }
     }

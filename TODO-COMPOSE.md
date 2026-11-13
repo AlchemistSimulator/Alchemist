@@ -33,11 +33,11 @@ Make the module consistent with the rest of the repository before building on it
   - formatting (`formatFixed`, readable counts)
   - edge-key packing
   - geometry helpers
-- [ ] Split `UiStore.kt` (516 lines) into:
+- [x] Split `UiStore.kt` (516 lines) into:
   - the store
   - the demo controller
   - selection/inspector reducers
-- [ ] Split `ViewportSurface.kt` (745 lines) into:
+- [x] Split `ViewportSurface.kt` (745 lines) into:
   - camera state
   - gesture handling (select / pan / drag)
   - keyboard handling

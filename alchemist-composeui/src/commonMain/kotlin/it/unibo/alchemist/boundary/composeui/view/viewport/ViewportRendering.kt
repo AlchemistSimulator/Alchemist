@@ -15,12 +15,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.toSize
 import it.unibo.alchemist.boundary.composeui.model.LinkRenderMode
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.util.DoubleInt
 import it.unibo.alchemist.boundary.composeui.view.theme.NODE_HIT_RADIUS
-import it.unibo.alchemist.boundary.composeui.view.theme.ZOOM_STEP
 import kotlin.math.floor
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -68,13 +68,13 @@ internal fun buildViewportFrame(
     if (cache.baseCenters.isEmpty() || viewportSize.width == 0 || viewportSize.height == 0) {
         return ViewportFrame.empty(cache.baseCenters.size)
     }
-    val visibleBaseRect = viewportSize
-        .toBaseRect(camera)
+    val visibleBaseRect = camera
+        .toBase(Rect(Offset.Zero, viewportSize.toSize()), viewportSize)
         .inflate(NODE_HIT_RADIUS / camera.zoom.coerceAtLeast(1e-6f))
     val visibleNodeIndices = cache.queryNodeIndices(visibleBaseRect)
     val mutableScreenPositions = MutableList<Offset?>(cache.baseCenters.size) { null }
     visibleNodeIndices.forEach { nodeIndex ->
-        mutableScreenPositions[nodeIndex] = cache.baseCenters[nodeIndex].toScreenPosition(viewportSize, camera)
+        mutableScreenPositions[nodeIndex] = camera.toScreen(cache.baseCenters[nodeIndex], viewportSize)
     }
     val screenPositions = mutableScreenPositions.toImmutableList()
     val visibleEdges = if (!cache.scene.showLinks || cache.scene.linkRenderMode == LinkRenderMode.HIDDEN) {
@@ -107,7 +107,7 @@ internal fun ViewportSceneCache.findHitNode(
     if (baseCenters.isEmpty()) {
         return null
     }
-    val tapInBaseSpace = tapOffset.toBasePosition(viewportSize, camera)
+    val tapInBaseSpace = camera.toBase(tapOffset, viewportSize)
     val tapRadius = tapThresholdPx / camera.zoom.coerceAtLeast(1e-6f)
     val candidateIndices = queryNodeIndices(
         Rect(
@@ -131,7 +131,7 @@ internal fun ViewportSceneCache.selectNodes(
     if (baseCenters.isEmpty()) {
         return emptyList()
     }
-    val selectionInBaseSpace = selectionRect.toBaseRect(viewportSize, camera)
+    val selectionInBaseSpace = camera.toBase(selectionRect, viewportSize)
     return queryNodeIndices(selectionInBaseSpace)
         .filter { nodeIndex -> selectionInBaseSpace.contains(baseCenters[nodeIndex]) }
         .map { nodeIndex -> scene.nodes[nodeIndex].id }
@@ -199,79 +199,9 @@ internal class NodeSpatialIndex(positions: List<Offset>) {
     )
 }
 
-@Immutable
-internal data class ViewportCameraState(val pan: Offset = Offset.Zero, val zoom: Float = 1f)
-
-internal fun Offset.toScreenPosition(viewportSize: IntSize, camera: ViewportCameraState): Offset {
-    val center = viewportSize.center
-    return center + ((this - center) * camera.zoom) + camera.pan
-}
-
-internal fun ViewportCameraState.panBy(delta: Offset): ViewportCameraState = copy(pan = pan + delta)
-
-internal fun ViewportCameraState.zoomBy(
-    viewportSize: IntSize,
-    pivot: Offset,
-    scrollDelta: Float,
-): ViewportCameraState {
-    val zoomFactor = when {
-        scrollDelta < 0f -> ZOOM_STEP
-        scrollDelta > 0f -> 1f / ZOOM_STEP
-        else -> 1f
-    }
-    val targetZoom = applyInfiniteZoomFactor(zoom, zoomFactor)
-    if (targetZoom == zoom) {
-        return this
-    }
-    val center = viewportSize.center
-    val worldPoint = pivot.toWorldPosition(viewportSize, this)
-    val newPan = pivot - center - ((worldPoint - center) * targetZoom)
-    return copy(zoom = targetZoom, pan = newPan)
-}
-
-internal fun applyInfiniteZoomFactor(currentZoom: Float, zoomFactor: Float): Float {
-    if (currentZoom <= 0f || !currentZoom.isFinite() || zoomFactor <= 0f || !zoomFactor.isFinite()) {
-        return currentZoom
-    }
-    val targetZoom = currentZoom * zoomFactor
-    return when {
-        targetZoom.isNaN() -> currentZoom
-        targetZoom == 0f -> Float.MIN_VALUE
-        targetZoom == Float.POSITIVE_INFINITY -> Float.MAX_VALUE
-        else -> targetZoom
-    }
-}
-
-internal fun Offset.toWorldPosition(viewportSize: IntSize, camera: ViewportCameraState): Offset {
-    val center = viewportSize.center
-    return center + ((this - center - camera.pan) / camera.zoom)
-}
-
-internal fun Offset.toBasePosition(viewportSize: IntSize, camera: ViewportCameraState): Offset =
-    toWorldPosition(viewportSize, camera).toScreenPosition(viewportSize, ViewportCameraState())
-
-internal fun Rect.toBaseRect(viewportSize: IntSize, camera: ViewportCameraState): Rect {
-    val topLeft = topLeft.toBasePosition(viewportSize, camera)
-    val bottomRight = bottomRight.toBasePosition(viewportSize, camera)
-    return Rect(
-        left = minOf(topLeft.x, bottomRight.x),
-        top = minOf(topLeft.y, bottomRight.y),
-        right = maxOf(topLeft.x, bottomRight.x),
-        bottom = maxOf(topLeft.y, bottomRight.y),
-    )
-}
-
-private fun IntSize.toBaseRect(camera: ViewportCameraState): Rect = Rect(
-    topLeft = Offset.Zero.toBasePosition(this, camera),
-    bottomRight = Offset(width.toFloat(), height.toFloat()).toBasePosition(this, camera),
-)
-
 private fun Rect.inflate(amount: Float): Rect = Rect(
     left = left - amount,
     top = top - amount,
     right = right + amount,
     bottom = bottom + amount,
 )
-
-internal val IntSize.center: Offset
-    get() = Offset(width / 2f, height / 2f)

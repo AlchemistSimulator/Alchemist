@@ -13,16 +13,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,57 +29,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isCtrlPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.semantics.CustomAccessibilityAction
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.customActions
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
-import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundVariant
-import it.unibo.alchemist.boundary.composeui.view.theme.GRID_HORIZONTAL_DIVISIONS
-import it.unibo.alchemist.boundary.composeui.view.theme.GRID_VERTICAL_DIVISIONS
-import it.unibo.alchemist.boundary.composeui.view.theme.LINK_STROKE_WIDTH
 import it.unibo.alchemist.boundary.composeui.view.theme.NODE_HIT_RADIUS
-import it.unibo.alchemist.boundary.composeui.view.theme.NODE_RADIUS
 import it.unibo.alchemist.boundary.composeui.view.theme.Outline
-import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
-import it.unibo.alchemist.boundary.composeui.view.theme.SELECTED_NODE_INNER_RADIUS
-import it.unibo.alchemist.boundary.composeui.view.theme.SELECTED_NODE_RADIUS
-import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
-import it.unibo.alchemist.boundary.composeui.view.theme.Surface
-import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
+import it.unibo.alchemist.boundary.composeui.view.theme.Surface as SurfaceColor
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
-import it.unibo.alchemist.boundary.composeui.view.theme.lerp
-import kotlin.math.max
-import kotlin.math.min
 import kotlinx.coroutines.launch
 
-private const val KEYBOARD_PAN_STEP_PX = 48f
+private val dragThreshold = 6.dp
 
+/**
+ * The simulation viewport: draws the scene and handles camera, selection and node dragging.
+ */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun ViewportSurface(
@@ -96,12 +64,7 @@ internal fun ViewportSurface(
     var viewportSize by remember { mutableStateOf(IntSize.Zero) }
     var camera by remember { mutableStateOf(ViewportCameraState()) }
     var fixedProjection by remember { mutableStateOf<ViewportProjection?>(null) }
-    var rightDragAnchor by remember { mutableStateOf<Offset?>(null) }
-    var selectionDragAnchor by remember { mutableStateOf<Offset?>(null) }
-    var selectionDragCurrent by remember { mutableStateOf<Offset?>(null) }
-    var nodeDragAnchor by remember { mutableStateOf<Offset?>(null) }
-    var nodeDragCurrent by remember { mutableStateOf<Offset?>(null) }
-    var draggedNodeIds by remember { mutableStateOf<List<Int>>(emptyList()) }
+    var drag by remember { mutableStateOf<ViewportDrag>(ViewportDrag.None) }
     val candidateProjection = remember(scene.nodes, viewportSize) { scene.createViewportProjection(viewportSize) }
     val projection = fixedProjection ?: candidateProjection
     LaunchedEffect(candidateProjection) {
@@ -116,34 +79,34 @@ internal fun ViewportSurface(
         buildViewportFrame(sceneCache, viewportSize, camera)
     }
     val selectedNodeIdSet = remember(selectedNodeIds) { selectedNodeIds.toHashSet() }
-    val draggedNodeIdSet = remember(draggedNodeIds) { draggedNodeIds.toHashSet() }
-    val nodeDragScreenDelta = nodeDragAnchor?.let { anchor ->
-        val current = nodeDragCurrent ?: anchor
-        current - anchor
-    } ?: Offset.Zero
-    val density = androidx.compose.ui.platform.LocalDensity.current
-    val tapThresholdPx = with(density) { NODE_HIT_RADIUS.dp.toPx() }
-    val dragThresholdPx = with(density) { 6.dp.toPx() }
-    val selectionRect = selectionDragAnchor?.let { anchor ->
-        val current = selectionDragCurrent ?: anchor
-        createSelectionRect(anchor, current).takeIf { (anchor - current).getDistance() >= dragThresholdPx }
-    }
+    val density = LocalDensity.current
+    val dragThresholdPx = with(density) { dragThreshold.toPx() }
+    val gestures = ViewportGestures(
+        sceneCache = sceneCache,
+        viewportSize = viewportSize,
+        camera = camera,
+        projection = projection,
+        selectedNodeIds = selectedNodeIdSet,
+        tapThresholdPx = with(density) { NODE_HIT_RADIUS.dp.toPx() },
+        dragThresholdPx = dragThresholdPx,
+    )
+    val selectionRect = (drag as? ViewportDrag.Select)?.takeIf { it.length >= dragThresholdPx }?.rect
+    val coroutineScope = rememberCoroutineScope()
+    val send: (ViewportAction) -> Unit = { action -> coroutineScope.launch { callbacks.action() } }
+    val selectFirstNode = { scene.nodes.firstOrNull()?.also { node -> send { onNodeSelected(node.id) } } != null }
+    val clearSelection = { selectedNodeIds.isNotEmpty().also { if (it) send { onInspectorDismiss() } } }
+    val pan = { delta: Offset -> camera = camera.panBy(delta) }
     Surface(
         modifier = modifier,
-        color = Surface,
+        color = SurfaceColor,
         contentColor = TextPrimary,
         shape = RoundedCornerShape(12.dp),
         elevation = 0.dp,
     ) {
-        val coroutineScope = rememberCoroutineScope()
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .border(
-                    width = 1.dp,
-                    color = Outline.copy(alpha = 0.8f),
-                    shape = RoundedCornerShape(12.dp),
-                )
+                .border(width = 1.dp, color = Outline.copy(alpha = 0.8f), shape = RoundedCornerShape(12.dp))
                 .background(
                     Brush.radialGradient(
                         colors = listOf(BackgroundVariant.copy(alpha = 0.55f), Background),
@@ -156,581 +119,73 @@ internal fun ViewportSurface(
                     .fillMaxSize()
                     .onGloballyPositioned { coordinates -> viewportSize = coordinates.size }
                     .focusable()
-                    .semantics {
-                        contentDescription = viewportContentDescription(
-                            nodeCount = scene.nodes.size,
-                            selectedNodeCount = selectedNodeIds.size,
-                            showLinks = scene.showLinks,
-                        )
-                        stateDescription = viewportStateDescription(
-                            camera = camera,
-                            selectedNodeCount = selectedNodeIds.size,
-                        )
-                        role = Role.Image
-                        customActions = buildViewportAccessibilityActions(
-                            hasNodes = scene.nodes.isNotEmpty(),
-                            hasSelection = selectedNodeIds.isNotEmpty(),
-                            onSelectFirstNode = {
-                                scene.nodes.firstOrNull()?.let { node ->
-                                    coroutineScope.launch { callbacks.onNodeSelected(node.id) }
-                                    true
-                                } ?: false
-                            },
-                            onClearSelection = {
-                                if (selectedNodeIds.isEmpty()) {
-                                    false
-                                } else {
-                                    coroutineScope.launch { callbacks.onInspectorDismiss() }
-                                    true
-                                }
-                            },
-                            onZoomIn = {
-                                camera = camera.zoomIn(viewportSize)
-                                true
-                            },
-                            onZoomOut = {
-                                camera = camera.zoomOut(viewportSize)
-                                true
-                            },
-                            onPanLeft = {
-                                camera = camera.panBy(Offset(KEYBOARD_PAN_STEP_PX, 0f))
-                                true
-                            },
-                            onPanRight = {
-                                camera = camera.panBy(Offset(-KEYBOARD_PAN_STEP_PX, 0f))
-                                true
-                            },
-                            onPanUp = {
-                                camera = camera.panBy(Offset(0f, KEYBOARD_PAN_STEP_PX))
-                                true
-                            },
-                            onPanDown = {
-                                camera = camera.panBy(Offset(0f, -KEYBOARD_PAN_STEP_PX))
-                                true
-                            },
-                        )
-                    }
-                    .onPreviewKeyEvent { event ->
-                        if (event.type != KeyEventType.KeyDown) {
-                            return@onPreviewKeyEvent false
-                        }
-                        when (event.key) {
-                            Key.DirectionLeft -> {
-                                camera = camera.panBy(Offset(KEYBOARD_PAN_STEP_PX, 0f))
-                                true
-                            }
-                            Key.DirectionRight -> {
-                                camera = camera.panBy(Offset(-KEYBOARD_PAN_STEP_PX, 0f))
-                                true
-                            }
-                            Key.DirectionUp -> {
-                                camera = camera.panBy(Offset(0f, KEYBOARD_PAN_STEP_PX))
-                                true
-                            }
-                            Key.DirectionDown -> {
-                                camera = camera.panBy(Offset(0f, -KEYBOARD_PAN_STEP_PX))
-                                true
-                            }
-                            Key.Enter, Key.NumPadEnter -> {
-                                scene.nodes.firstOrNull()?.let { node ->
-                                    coroutineScope.launch { callbacks.onNodeSelected(node.id) }
-                                    true
-                                } ?: false
-                            }
-                            Key.Backspace -> {
-                                if (selectedNodeIds.isEmpty()) {
-                                    false
-                                } else {
-                                    coroutineScope.launch { callbacks.onInspectorDismiss() }
-                                    true
-                                }
-                            }
-                            else -> false
-                        }
-                    }
+                    .viewportSemantics(
+                        scene = scene,
+                        selectedNodeCount = selectedNodeIds.size,
+                        zoom = camera.zoom,
+                        onSelectFirstNode = selectFirstNode,
+                        onClearSelection = clearSelection,
+                        onZoomIn = { camera = camera.zoomIn(viewportSize) },
+                        onZoomOut = { camera = camera.zoomOut(viewportSize) },
+                        onPan = pan,
+                    )
+                    .viewportKeyboard(
+                        onPan = pan,
+                        onSelectFirstNode = selectFirstNode,
+                        onClearSelection = clearSelection,
+                    )
                     .onPointerEvent(PointerEventType.Press) { event ->
-                        val change = event.changes.firstOrNull() ?: return@onPointerEvent
-                        if (event.buttons.isSecondaryPressed) {
-                            rightDragAnchor = change.position
-                            selectionDragAnchor = null
-                            selectionDragCurrent = null
-                            nodeDragAnchor = null
-                            nodeDragCurrent = null
-                            draggedNodeIds = emptyList()
-                        } else {
-                            rightDragAnchor = null
-                            val hit = sceneCache.findHitNode(
-                                viewportSize = viewportSize,
-                                camera = camera,
-                                tapOffset = change.position,
-                                tapThresholdPx = tapThresholdPx,
+                        event.changes.firstOrNull()?.let { change ->
+                            drag = gestures.press(
+                                position = change.position,
+                                secondaryPressed = event.buttons.isSecondaryPressed,
+                                ctrlPressed = event.keyboardModifiers.isCtrlPressed,
                             )
-                            val shouldDragSelection =
-                                event.keyboardModifiers.isCtrlPressed &&
-                                    hit != null &&
-                                    hit.id in selectedNodeIdSet
-                            if (shouldDragSelection) {
-                                selectionDragAnchor = null
-                                selectionDragCurrent = null
-                                nodeDragAnchor = change.position
-                                nodeDragCurrent = change.position
-                                draggedNodeIds = selectedNodeIds
-                            } else {
-                                nodeDragAnchor = null
-                                nodeDragCurrent = null
-                                draggedNodeIds = emptyList()
-                                selectionDragAnchor = change.position
-                                selectionDragCurrent = change.position
-                            }
                         }
                     }
                     .onPointerEvent(PointerEventType.Move) { event ->
-                        val change = event.changes.firstOrNull() ?: return@onPointerEvent
-                        if (event.buttons.isSecondaryPressed) {
-                            val previous = rightDragAnchor ?: change.position
-                            val delta = change.position - previous
-                            if (delta != Offset.Zero) {
-                                camera = camera.panBy(delta)
+                        event.changes.firstOrNull()?.let { change ->
+                            val secondaryPressed = event.buttons.isSecondaryPressed
+                            val lastPan = (drag as? ViewportDrag.Pan)?.last
+                            if (secondaryPressed && lastPan != null) {
+                                pan(change.position - lastPan)
                             }
-                            rightDragAnchor = change.position
-                        } else {
-                            rightDragAnchor = null
-                            if (nodeDragAnchor != null) {
-                                nodeDragCurrent = change.position
-                            } else if (selectionDragAnchor != null) {
-                                selectionDragCurrent = change.position
-                            }
+                            drag = drag.movedTo(change.position, secondaryPressed)
                         }
                     }
-                    .onPointerEvent(PointerEventType.Release) { event ->
-                        val releasePosition = event.changes.firstOrNull()?.position
-                        val moveAnchor = nodeDragAnchor
-                        val moveCurrent = nodeDragCurrent ?: releasePosition
-                        if (moveAnchor != null && moveCurrent != null) {
-                            if ((moveAnchor - moveCurrent).getDistance() >= dragThresholdPx && projection != null) {
-                                val (deltaX, deltaY) = screenDeltaToWorldDelta(
-                                    moveAnchor,
-                                    moveCurrent,
-                                    viewportSize,
-                                    camera,
-                                    projection,
-                                )
-                                val movedNodes = scene
-                                    .translateSelectedNodes(draggedNodeIds, deltaX, deltaY)
-                                    .nodes
-                                    .filter { it.id in draggedNodeIds }
-                                    .map { it.toPositionUpdate() }
-                                if (movedNodes.isNotEmpty()) {
-                                    coroutineScope.launch { callbacks.onNodesMoved(movedNodes) }
-                                }
-                            }
-                        } else {
-                            val anchor = selectionDragAnchor
-                            val current = selectionDragCurrent ?: releasePosition
-                            if (anchor != null && current != null) {
-                                if ((anchor - current).getDistance() >= dragThresholdPx) {
-                                    val selectedIds = sceneCache.selectNodes(
-                                        viewportSize = viewportSize,
-                                        camera = camera,
-                                        selectionRect = createSelectionRect(anchor, current),
-                                    )
-                                    coroutineScope.launch { callbacks.onNodesSelected(selectedIds) }
-                                } else {
-                                    val hit = sceneCache.findHitNode(
-                                        viewportSize = viewportSize,
-                                        camera = camera,
-                                        tapOffset = current,
-                                        tapThresholdPx = tapThresholdPx,
-                                    )
-                                    coroutineScope.launch {
-                                        if (hit != null) {
-                                            callbacks.onNodeSelected(hit.id)
-                                        } else {
-                                            callbacks.onInspectorDismiss()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        selectionDragAnchor = null
-                        selectionDragCurrent = null
-                        nodeDragAnchor = null
-                        nodeDragCurrent = null
-                        draggedNodeIds = emptyList()
-                        rightDragAnchor = null
+                    .onPointerEvent(PointerEventType.Release) {
+                        gestures.release(drag)?.let(send)
+                        drag = ViewportDrag.None
                     }
                     .onPointerEvent(PointerEventType.Scroll) { event ->
-                        val pointerChange = event.changes.firstOrNull() ?: return@onPointerEvent
-                        val scroll = pointerChange.scrollDelta
-                        if (scroll != Offset.Zero && viewportSize.width > 0 && viewportSize.height > 0) {
-                            camera = camera.zoomBy(
-                                viewportSize = viewportSize,
-                                pivot = pointerChange.position,
-                                scrollDelta = scroll.y,
-                            )
-                        }
+                        event.changes.firstOrNull()
+                            ?.takeIf { it.scrollDelta != Offset.Zero }
+                            ?.let { change ->
+                                camera =
+                                    camera.zoomBy(viewportSize, change.position, change.scrollDelta.y)
+                            }
                     },
             ) {
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(BackgroundVariant.copy(alpha = 0.55f), Background),
-                    ),
-                )
-                val currentCamera = camera
-                drawGrid(size, currentCamera)
-                fun shiftedCenter(nodeIndex: Int): Offset? {
-                    val center = viewportFrame.screenPositions[nodeIndex]
-                    val node = scene.nodes.getOrNull(nodeIndex)
-                    return center?.let {
-                        if (node?.id in draggedNodeIdSet) it + nodeDragScreenDelta else it
-                    }
-                }
-                if (scene.showLinks) {
-                    viewportFrame.visibleEdges.forEach { edge ->
-                        val start = shiftedCenter(edge.fromIndex) ?: return@forEach
-                        val end = shiftedCenter(edge.toIndex) ?: return@forEach
-                        drawLine(
-                            color = Outline.copy(alpha = 0.42f),
-                            start = start,
-                            end = end,
-                            strokeWidth = LINK_STROKE_WIDTH.dp.toPx(),
-                            cap = StrokeCap.Round,
-                        )
-                    }
-                }
-                viewportFrame.visibleNodeIndices.forEach { nodeIndex ->
-                    val node = scene.nodes[nodeIndex]
-                    val center = shiftedCenter(nodeIndex) ?: return@forEach
-                    val isSelected = node.id in selectedNodeIdSet
-                    val nodeColor = lerp(SecondaryAccent, PrimaryAccent, node.accent)
-                    val screenRadius = NODE_RADIUS.dp.toPx() * currentCamera.zoom
-                    val screenSelectedRadius = SELECTED_NODE_RADIUS.dp.toPx() * currentCamera.zoom
-                    val screenSelectedInnerRadius = SELECTED_NODE_INNER_RADIUS.dp.toPx() * currentCamera.zoom
-
-                    if (isSelected) {
-                        drawCircle(
-                            color = nodeColor.copy(alpha = 0.20f),
-                            radius = screenSelectedRadius,
-                            center = center,
-                        )
-                        drawCircle(
-                            color = PrimaryAccent,
-                            radius = screenSelectedInnerRadius,
-                            center = center,
-                            style = Stroke(width = 2.dp.toPx() * currentCamera.zoom),
-                        )
-                    }
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(nodeColor, nodeColor.copy(alpha = 0.45f)),
-                            center = center,
-                            radius = max(1f, screenSelectedRadius),
-                        ),
-                        radius = screenRadius,
-                        center = center,
-                    )
-                }
-                selectionRect?.let { selection ->
-                    drawRect(
-                        color = PrimaryAccent.copy(alpha = 0.14f),
-                        topLeft = selection.topLeft,
-                        size = selection.size,
-                    )
-                    drawRect(
-                        color = PrimaryAccent.copy(alpha = 0.75f),
-                        topLeft = selection.topLeft,
-                        size = selection.size,
-                        style = Stroke(width = 1.5.dp.toPx()),
-                    )
-                }
+                drawBackdrop()
+                drawGrid(camera)
+                drawScene(scene, viewportFrame, camera, selectedNodeIdSet, drag)
+                selectionRect?.let { drawSelection(it) }
             }
             ViewportChrome(
                 scene = scene,
-                onToggleLinks = { coroutineScope.launch { callbacks.onToggleLinks() } },
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(20.dp),
+                onToggleLinks = { send { onToggleLinks() } },
+                modifier = Modifier.align(Alignment.TopStart).padding(20.dp),
             )
             ViewportGestureHint(
                 hasNodes = scene.nodes.isNotEmpty(),
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(20.dp),
+                modifier = Modifier.align(Alignment.BottomStart).padding(20.dp),
             )
-            val gridLegend = remember(viewportSize, camera.zoom, projection) {
-                if (viewportSize.width == 0 || viewportSize.height == 0 || projection == null) return@remember null
-                val baseStep = min(
-                    viewportSize.width / GRID_VERTICAL_DIVISIONS.toFloat(),
-                    viewportSize.height / GRID_HORIZONTAL_DIVISIONS.toFloat(),
-                )
-                var step = baseStep * camera.zoom
-                var s = 1.0
-                while (step < 10f) {
-                    step *= 2f
-                    s *= 2.0
-                }
-                while (step > 100f) {
-                    step /= 2f
-                    s /= 2.0
-                }
-                val worldStep = (baseStep * s) / projection.pixelsPerUnit
-                GridLegendData(worldStep, worldStep, step, step)
-            }
-            if (gridLegend != null) {
-                ViewportGridLegend(
-                    gridLegend = gridLegend,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(20.dp),
-                )
-            }
+            ViewportGridLegend(
+                viewportSize = viewportSize,
+                zoom = camera.zoom,
+                projection = projection,
+                modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
+            )
         }
     }
-}
-
-@Composable
-private fun ViewportChrome(scene: ViewportScene, onToggleLinks: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(
-            text = "Alchemist Simulator",
-            style = MaterialTheme.typography.h4,
-        )
-        Text(
-            text = scene.message,
-            style = MaterialTheme.typography.body2,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
-        SummaryRail(
-            summary = scene.summary,
-            showLinks = scene.showLinks,
-            onToggleLinks = onToggleLinks,
-            linkRenderNotice = scene.linkRenderNotice.takeIf { scene.showLinks },
-        )
-    }
-}
-
-@Composable
-private fun ViewportGestureHint(hasNodes: Boolean, modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        color = SurfaceStrong.copy(alpha = 0.88f),
-        shape = RoundedCornerShape(8.dp),
-        elevation = 0.dp,
-    ) {
-        Text(
-            text = if (hasNodes) {
-                "Click to inspect · drag to select · Ctrl-drag selected nodes · right-drag to pan · wheel to zoom"
-            } else {
-                "No nodes to display"
-            },
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-            style = MaterialTheme.typography.caption,
-        )
-    }
-}
-
-@Composable
-private fun ViewportGridLegend(gridLegend: GridLegendData, modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        color = SurfaceStrong.copy(alpha = 0.88f),
-        shape = RoundedCornerShape(8.dp),
-        elevation = 0.dp,
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(12.dp),
-        ) {
-            Text(
-                text = gridLegend.worldX.formatFixed(2),
-                style = MaterialTheme.typography.caption,
-                color = TextPrimary,
-                modifier = Modifier.padding(bottom = 4.dp),
-            )
-            val density = androidx.compose.ui.platform.LocalDensity.current
-            val canvasWidth = with(density) { gridLegend.stepX.toDp().coerceIn(20.dp, 120.dp) }
-            Canvas(modifier = Modifier.size(canvasWidth, 10.dp)) {
-                drawGridLegendScale()
-            }
-        }
-    }
-}
-
-private fun DrawScope.drawGridLegendScale() {
-    val strokeWidth = 1.5.dp.toPx()
-    val color = TextPrimary.copy(alpha = 0.7f)
-    val centerY = size.height / 2f
-    val tickHeight = 4.dp.toPx()
-    drawLine(
-        color = color,
-        start = Offset(0f, centerY),
-        end = Offset(size.width, centerY),
-        strokeWidth = strokeWidth,
-        cap = StrokeCap.Round,
-    )
-    drawLine(
-        color = color,
-        start = Offset(strokeWidth / 2, centerY - tickHeight),
-        end = Offset(strokeWidth / 2, centerY + tickHeight),
-        strokeWidth = strokeWidth,
-        cap = StrokeCap.Round,
-    )
-    drawLine(
-        color = color,
-        start = Offset(size.width - strokeWidth / 2, centerY - tickHeight),
-        end = Offset(size.width - strokeWidth / 2, centerY + tickHeight),
-        strokeWidth = strokeWidth,
-        cap = StrokeCap.Round,
-    )
-}
-internal fun DrawScope.drawGrid(canvasSize: Size, camera: ViewportCameraState) {
-    val center = Offset(canvasSize.width / 2f, canvasSize.height / 2f)
-    val origin = center + camera.pan
-
-    val baseStep = min(
-        canvasSize.width / GRID_VERTICAL_DIVISIONS.toFloat(),
-        canvasSize.height / GRID_HORIZONTAL_DIVISIONS.toFloat(),
-    )
-    var step = baseStep * camera.zoom
-
-    // Prevent the grid from becoming too dense when zoomed out
-    while (step < 10f) {
-        step *= 2f
-    }
-    // Prevent the grid from becoming too sparse when zoomed in
-    while (step > 100f) {
-        step /= 2f
-    }
-
-    val startX = (origin.x % step) - step
-    var currentX = startX
-    while (currentX < canvasSize.width) {
-        drawLine(
-            color = Outline.copy(alpha = 0.32f),
-            start = Offset(currentX, 0f),
-            end = Offset(currentX, canvasSize.height),
-            strokeWidth = 1f,
-        )
-        currentX += step
-    }
-
-    val startY = (origin.y % step) - step
-    var currentY = startY
-    while (currentY < canvasSize.height) {
-        drawLine(
-            color = Outline.copy(alpha = 0.28f),
-            start = Offset(0f, currentY),
-            end = Offset(canvasSize.width, currentY),
-            strokeWidth = 1f,
-        )
-        currentY += step
-    }
-
-    // Draw origin axes if they are visible
-    if (origin.x in 0f..canvasSize.width) {
-        drawLine(
-            color = Outline.copy(alpha = 0.7f),
-            start = Offset(origin.x, 0f),
-            end = Offset(origin.x, canvasSize.height),
-            strokeWidth = 1.6f,
-            cap = StrokeCap.Round,
-        )
-    }
-    if (origin.y in 0f..canvasSize.height) {
-        drawLine(
-            color = Outline.copy(alpha = 0.7f),
-            start = Offset(0f, origin.y),
-            end = Offset(canvasSize.width, origin.y),
-            strokeWidth = 1.6f,
-            cap = StrokeCap.Round,
-        )
-    }
-}
-
-private data class GridLegendData(val worldX: Double, val worldY: Double, val stepX: Float, val stepY: Float)
-
-private fun viewportContentDescription(nodeCount: Int, selectedNodeCount: Int, showLinks: Boolean): String =
-    buildString {
-        append("Simulation viewport with ")
-        append(nodeCount)
-        append(if (nodeCount == 1) " node" else " nodes")
-        append(". ")
-        append(selectedNodeCount)
-        append(if (selectedNodeCount == 1) " node selected. " else " nodes selected. ")
-        append(if (showLinks) "Links are visible." else "Links are hidden.")
-    }
-
-private fun viewportStateDescription(camera: ViewportCameraState, selectedNodeCount: Int): String =
-    "Zoom ${camera.zoom.toDouble().formatFixed(2)}, $selectedNodeCount selected"
-
-private fun buildViewportAccessibilityActions(
-    hasNodes: Boolean,
-    hasSelection: Boolean,
-    onSelectFirstNode: () -> Boolean,
-    onClearSelection: () -> Boolean,
-    onZoomIn: () -> Boolean,
-    onZoomOut: () -> Boolean,
-    onPanLeft: () -> Boolean,
-    onPanRight: () -> Boolean,
-    onPanUp: () -> Boolean,
-    onPanDown: () -> Boolean,
-): List<CustomAccessibilityAction> = buildList {
-    if (hasNodes) {
-        add(CustomAccessibilityAction("Select first node") { onSelectFirstNode() })
-    }
-    if (hasSelection) {
-        add(CustomAccessibilityAction("Clear node selection") { onClearSelection() })
-    }
-    add(CustomAccessibilityAction("Zoom in") { onZoomIn() })
-    add(CustomAccessibilityAction("Zoom out") { onZoomOut() })
-    add(CustomAccessibilityAction("Pan left") { onPanLeft() })
-    add(CustomAccessibilityAction("Pan right") { onPanRight() })
-    add(CustomAccessibilityAction("Pan up") { onPanUp() })
-    add(CustomAccessibilityAction("Pan down") { onPanDown() })
-}
-
-private fun ViewportCameraState.zoomIn(viewportSize: IntSize): ViewportCameraState =
-    if (viewportSize.width > 0 && viewportSize.height > 0) {
-        zoomBy(viewportSize = viewportSize, pivot = viewportSize.center, scrollDelta = -1f)
-    } else {
-        this
-    }
-
-private fun ViewportCameraState.zoomOut(viewportSize: IntSize): ViewportCameraState =
-    if (viewportSize.width > 0 && viewportSize.height > 0) {
-        zoomBy(viewportSize = viewportSize, pivot = viewportSize.center, scrollDelta = 1f)
-    } else {
-        this
-    }
-
-private fun createSelectionRect(anchor: Offset, current: Offset): Rect = Rect(
-    left = min(anchor.x, current.x),
-    top = min(anchor.y, current.y),
-    right = max(anchor.x, current.x),
-    bottom = max(anchor.y, current.y),
-)
-
-private fun screenDeltaToWorldDelta(
-    anchor: Offset,
-    current: Offset,
-    viewportSize: IntSize,
-    camera: ViewportCameraState,
-    projection: ViewportProjection,
-): Pair<Double, Double> {
-    val anchorInBaseSpace = anchor
-        .toWorldPosition(viewportSize, camera)
-        .toScreenPosition(viewportSize, ViewportCameraState())
-    val currentInBaseSpace = current
-        .toWorldPosition(viewportSize, camera)
-        .toScreenPosition(viewportSize, ViewportCameraState())
-    val baseDelta = currentInBaseSpace - anchorInBaseSpace
-    return (
-        baseDelta.x / projection.pixelsPerUnit
-        ).toDouble() to (
-        -baseDelta.y / projection.pixelsPerUnit
-        ).toDouble()
 }

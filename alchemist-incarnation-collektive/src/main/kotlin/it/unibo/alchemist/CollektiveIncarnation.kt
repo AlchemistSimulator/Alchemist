@@ -218,9 +218,8 @@ class CollektiveIncarnation<P> : Incarnation<Any?, P> where P : Position<P> {
             constructor(concentration: Any?, property: String) : this(
                 when (concentration) {
                     null -> "Any?"
-                    is List<*> -> "List<*>" // TODO: select the minimal common supertype
-                    // TODO: add support for maps, pairs, sets
-                    else -> {
+                    is List<*> -> "List<*>" // select the minimal common supertype
+                    else -> { // shall we add support for maps, pairs, sets ?
                         val type = concentration::class.starProjectedType
                         "$type${"?".takeIf { type.isMarkedNullable }.orEmpty()}"
                     }

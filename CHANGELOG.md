@@ -1,3 +1,17 @@
+## [50.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.1...50.0.2) (2026-11-13)
+
+### Dependency updates
+
+* **core-deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.13.0 ([#5748](https://github.com/AlchemistSimulator/Alchemist/issues/5748)) ([bd9e853](https://github.com/AlchemistSimulator/Alchemist/commit/bd9e85315b52517fa3f77589a3387bba123ec173))
+* **deps:** update dependency org.apache.commons:commons-lang3 to v3.22.0 ([#5749](https://github.com/AlchemistSimulator/Alchemist/issues/5749)) ([13cb854](https://github.com/AlchemistSimulator/Alchemist/commit/13cb854c8ed27cde62c2bf44b2b8f469e5e19e90))
+* **deps:** update gradle to v9.9.1 ([#5747](https://github.com/AlchemistSimulator/Alchemist/issues/5747)) ([ee69047](https://github.com/AlchemistSimulator/Alchemist/commit/ee69047946a094197f5f23f988eff6bddaa2b702))
+* **deps:** update kotest to v6.2.7 ([#5750](https://github.com/AlchemistSimulator/Alchemist/issues/5750)) ([8d5f037](https://github.com/AlchemistSimulator/Alchemist/commit/8d5f037bc5ed1c899fc3d55d90d1de9d4f461b02))
+* **deps:** update scala3 to v3.10.1 ([#5746](https://github.com/AlchemistSimulator/Alchemist/issues/5746)) ([f493b06](https://github.com/AlchemistSimulator/Alchemist/commit/f493b063e22cbcc7a3146cd402f346c684f11cf2))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([f821b94](https://github.com/AlchemistSimulator/Alchemist/commit/f821b9419bf0ee9372a3a1ef078eec25d990a41d))
+
 ## [50.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.0...50.0.1) (2026-11-09)
 
 ### Dependency updates

@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui
 
-import it.unibo.alchemist.boundary.composeui.adapter.toViewport
+import it.unibo.alchemist.boundary.composeui.adapter.AlchemistEnvironments.toViewport
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.util.TestSimulations

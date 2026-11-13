@@ -19,8 +19,8 @@ import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
-import it.unibo.alchemist.boundary.composeui.adapter.toSimulationStatus
-import it.unibo.alchemist.boundary.composeui.adapter.toViewport
+import it.unibo.alchemist.boundary.composeui.adapter.AlchemistEnvironments.toViewport
+import it.unibo.alchemist.boundary.composeui.adapter.AlchemistSimulations.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
@@ -163,15 +163,17 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
 
     private fun alchemistDesktopController(environment: Environment<T, P>): ComposeUiController =
         ComposeUiController(currentUiState, DesktopAlchemistUiCallback(environment.simulation, currentUiState))
+
+    private companion object {
+        private fun Time.toComposeUiLabel(): String = toDouble().formatFixed(DISPLAYED_TIME_DECIMALS)
+
+        private fun detectMonitorRefreshRate(): Int? = runCatching {
+            GraphicsEnvironment
+                .getLocalGraphicsEnvironment()
+                .defaultScreenDevice
+                .displayMode
+                .refreshRate
+                .takeIf { it > 0 }
+        }.getOrNull()
+    }
 }
-
-private fun Time.toComposeUiLabel(): String = toDouble().formatFixed(DISPLAYED_TIME_DECIMALS)
-
-private fun detectMonitorRefreshRate(): Int? = runCatching {
-    GraphicsEnvironment
-        .getLocalGraphicsEnvironment()
-        .defaultScreenDevice
-        .displayMode
-        .refreshRate
-        .takeIf { it > 0 }
-}.getOrNull()

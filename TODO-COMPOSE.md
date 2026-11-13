@@ -50,7 +50,7 @@ Make the module consistent with the rest of the repository before building on it
 
 - [x] Enter in the viewport selects "the first node". Remove it, or replace it with a meaningful action.
 - [x] Nodes are all drawn with the same default accent. Until effects land, keep a neutral default.
-- [ ] `ComposeMonitor` on a headless JVM must not crash. Add `failOnHeadless` (default `false`) as in `SwingGUI`: log a warning and do nothing.
+- [x] `ComposeMonitor` on a headless JVM must not crash. Add `failOnHeadless` (default `false`) as in `SwingGUI`: log a warning and do nothing.
 - [ ] Closing the window calls `exitApplication()` only, so the simulation keeps running. Decide the close semantics, matching Swing's `EXIT_ON_CLOSE` default: terminate the simulation, then exit.
 - [ ] Check that the terminated/finished state is displayed when the simulation ends.
 - [ ] `throttleSimulation` sleeps on the simulation thread on every step. Keep it, but make sure pausing or terminating the simulation never waits on that sleep.

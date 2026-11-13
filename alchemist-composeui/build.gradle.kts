@@ -39,6 +39,7 @@ kotlin {
                 implementation(alchemist("euclidean-geometry"))
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlin.coroutines.swing)
+                implementation(libs.slf4j)
             }
         }
         jvmTest {

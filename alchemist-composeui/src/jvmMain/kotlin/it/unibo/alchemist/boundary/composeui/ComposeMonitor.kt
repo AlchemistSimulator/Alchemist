@@ -38,13 +38,20 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.max
 import kotlin.math.roundToLong
+import org.slf4j.LoggerFactory
 
 /**
  * Shows the simulation in a desktop window.
+ * On a JVM without a display, it logs a warning and does nothing, unless [failOnHeadless] is true.
  *
  * @param targetFps how many times per second the UI redraws at startup.
+ * @param failOnHeadless whether to fail, instead of warning, when there is no display.
  */
-class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: Int = 30) : OutputMonitor<T, P> {
+class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
+    targetFps: Int = 30,
+    failOnHeadless: Boolean = false,
+) : OutputMonitor<T, P> {
+    private val headAttached = !GraphicsEnvironment.isHeadless()
     private val maxUiFps = detectMonitorRefreshRate() ?: DEFAULT_MAX_UI_FPS
     private val initialUiFps = targetFps.coerceIn(MIN_UI_FPS, maxUiFps)
     private val windowStarted = AtomicBoolean(false)
@@ -62,33 +69,52 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
         )
     }
 
-    override fun initialized(environment: Environment<T, P>) {
-        nextEventReleaseNs = 0L
-        ensureWindow(environment)
-        currentUiState.update {
-            it.copy(
-                controls = it.controls.copy(
-                    status = environment.simulation.toSimulationStatus(),
-                    uiFps = it.controls.uiFps.coerceIn(MIN_UI_FPS, maxUiFps),
-                    fpsInput = it.controls.uiFps.coerceIn(MIN_UI_FPS, maxUiFps).toString(),
-                    maxUiFps = maxUiFps,
-                ),
+    init {
+        check(headAttached || !failOnHeadless) {
+            "Cannot show the Compose UI on a JVM without a display. " +
+                "To run the simulation without the UI, pass `failOnHeadless: false` to the monitor."
+        }
+        if (!headAttached) {
+            logger.warn(
+                "Compose UI requested, but this JVM has no display: the simulation runs without the UI. " +
+                    "To fail instead, pass `failOnHeadless: true` to the monitor.",
             )
         }
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        val now = System.currentTimeMillis()
-        if (now - lastUpdate >= uiThrottleMs()) {
-            lastUpdate = now
-            updateUiState(environment, time, step)
+    override fun initialized(environment: Environment<T, P>) {
+        if (headAttached) {
+            nextEventReleaseNs = 0L
+            ensureWindow(environment)
+            currentUiState.update {
+                it.copy(
+                    controls = it.controls.copy(
+                        status = environment.simulation.toSimulationStatus(),
+                        uiFps = it.controls.uiFps.coerceIn(MIN_UI_FPS, maxUiFps),
+                        fpsInput = it.controls.uiFps.coerceIn(MIN_UI_FPS, maxUiFps).toString(),
+                        maxUiFps = maxUiFps,
+                    ),
+                )
+            }
         }
-        throttleSimulation()
+    }
+
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
+        if (headAttached) {
+            val now = System.currentTimeMillis()
+            if (now - lastUpdate >= uiThrottleMs()) {
+                lastUpdate = now
+                updateUiState(environment, time, step)
+            }
+            throttleSimulation()
+        }
     }
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
-        nextEventReleaseNs = 0L
-        updateUiState(environment, time, step)
+        if (headAttached) {
+            nextEventReleaseNs = 0L
+            updateUiState(environment, time, step)
+        }
     }
 
     private fun updateUiState(environment: Environment<T, P>, time: Time, step: Long) {
@@ -165,6 +191,8 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
         ComposeUiController(currentUiState, DesktopAlchemistUiCallback(environment.simulation, currentUiState))
 
     private companion object {
+        private val logger = LoggerFactory.getLogger(ComposeMonitor::class.java)
+
         private fun Time.toComposeUiLabel(): String = toDouble().formatFixed(DISPLAYED_TIME_DECIMALS)
 
         private fun detectMonitorRefreshRate(): Int? = runCatching {

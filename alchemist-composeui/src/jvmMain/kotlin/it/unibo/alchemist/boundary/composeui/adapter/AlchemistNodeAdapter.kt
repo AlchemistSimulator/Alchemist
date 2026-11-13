@@ -33,7 +33,7 @@ import kotlinx.collections.immutable.toImmutableList
 /**
  * Projects this node, as currently placed in [environment], into its viewport representation.
  */
-fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): ViewportNode = ViewportNode(
+internal fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): ViewportNode = ViewportNode(
     id = id,
     coordinates = environment.currentPositionOf(this).coordinates.toList().toImmutableList(),
     concentrations = contents.current
@@ -45,7 +45,7 @@ fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): Vie
  * Projects the current state of this environment into a viewport scene,
  * including the links between neighbors if [renderLinks] is true.
  */
-fun <T, P : Position<P>> Environment<T, P>.toViewport(renderLinks: Boolean = false): ViewportScene {
+internal fun <T, P : Position<P>> Environment<T, P>.toViewport(renderLinks: Boolean = false): ViewportScene {
     val viewportNodes = nodes.current.map { it.toViewport(this) }.toImmutableList()
     val edgeSnapshot = extractEdgeSnapshot(renderLinks)
     return ViewportScene(
@@ -61,7 +61,7 @@ fun <T, P : Position<P>> Environment<T, P>.toViewport(renderLinks: Boolean = fal
 /**
  * Maps the state of this simulation to the status displayed by the UI.
  */
-fun <T, P : Position<P>> Simulation<T, P>.toSimulationStatus(): SimulationStatus = when (state) {
+internal fun <T, P : Position<P>> Simulation<T, P>.toSimulationStatus(): SimulationStatus = when (state) {
     SimulationState.INIT -> SimulationStatus.INIT
     SimulationState.READY -> SimulationStatus.READY
     SimulationState.PAUSED -> SimulationStatus.PAUSED

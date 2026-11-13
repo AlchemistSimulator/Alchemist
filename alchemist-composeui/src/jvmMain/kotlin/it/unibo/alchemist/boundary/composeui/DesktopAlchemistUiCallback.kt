@@ -30,7 +30,7 @@ import kotlinx.coroutines.withContext
 /**
  * UI callbacks that drive a [simulation] running in the same JVM and publish the resulting UI state to [store].
  */
-class DesktopAlchemistUiCallback<T, P : Position<P>>(
+internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
     private val simulation: Simulation<T, P>,
     private val store: ComposeUiStateStore,
 ) : AlchemistUiCallbacks {

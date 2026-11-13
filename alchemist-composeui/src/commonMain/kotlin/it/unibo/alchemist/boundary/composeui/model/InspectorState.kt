@@ -18,7 +18,7 @@ import kotlinx.collections.immutable.toImmutableList
  * State for the right-side inspector panel.
  */
 @Immutable
-sealed interface InspectorState {
+internal sealed interface InspectorState {
 
     /**
      * Inspector state for a single node.

@@ -40,8 +40,9 @@ import kotlin.math.max
 import kotlin.math.roundToLong
 
 /**
- * Monitor extension that uses JVM Compose UI to display the simulation.
- * @param targetFps The initial target frames per second for the UI updates. Defaults to 30.
+ * Shows the simulation in a desktop window.
+ *
+ * @param targetFps how many times per second the UI redraws at startup.
  */
 class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: Int = 30) : OutputMonitor<T, P> {
     private val maxUiFps = detectMonitorRefreshRate() ?: DEFAULT_MAX_UI_FPS

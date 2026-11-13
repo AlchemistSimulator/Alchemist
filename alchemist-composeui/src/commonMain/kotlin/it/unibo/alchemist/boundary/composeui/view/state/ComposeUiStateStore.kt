@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
  * Holds the UI state; safe to use from any thread.
  * The UI reads [stateFlow]; all changes go through [set] or [update].
  */
-class ComposeUiStateStore(initialState: AlchemistUiState) {
+internal class ComposeUiStateStore(initialState: AlchemistUiState) {
     private val mutableState = MutableStateFlow(initialState)
 
     /** The state, observable. */

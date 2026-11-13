@@ -32,7 +32,7 @@ import kotlinx.collections.immutable.toImmutableList
  * @property message the text shown when there is nothing to draw.
  */
 @Immutable
-data class ViewportScene(
+internal data class ViewportScene(
     val nodes: ImmutableList<ViewportNode> = persistentListOf(),
     val edges: ImmutableList<ViewportEdge> = persistentListOf(),
     val edgeCount: Int = edges.size,

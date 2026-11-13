@@ -18,7 +18,7 @@ import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallback
  * @property store the UI state.
  * @property callbacks what runs when the user acts.
  */
-data class ComposeUiController(val store: ComposeUiStateStore, val callbacks: AlchemistUiCallbacks) {
+internal data class ComposeUiController(val store: ComposeUiStateStore, val callbacks: AlchemistUiCallbacks) {
     /** Starts a store from [initialState] and builds the [callbacks] on it. */
     constructor(
         initialState: AlchemistUiState,

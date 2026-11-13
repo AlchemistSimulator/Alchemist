@@ -12,4 +12,4 @@ package it.unibo.alchemist.boundary.composeui.model.throttling
 /**
  * No throttling: the simulation runs as fast as possible.
  */
-data object FullThrottle : SimulationEventThrottling(Int.MAX_VALUE)
+internal data object FullThrottle : SimulationEventThrottling(Int.MAX_VALUE)

@@ -22,7 +22,9 @@ import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
  * Application entry point, rendered consistently across supported platforms.
  */
 @Composable
-fun app(controller: ComposeUiController = remember { ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks) }) {
+internal fun app(
+    controller: ComposeUiController = remember { ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks) },
+) {
     val state by controller.store.stateFlow.collectAsState()
     AlchemistUiRoot(
         state = state,

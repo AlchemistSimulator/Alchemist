@@ -14,7 +14,7 @@ import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 /**
  * Shared no-op callback implementation.
  */
-object NoOpUiCallbacks : AlchemistUiCallbacks {
+internal object NoOpUiCallbacks : AlchemistUiCallbacks {
     override suspend fun onPlay() = Unit
 
     override suspend fun onPause() = Unit

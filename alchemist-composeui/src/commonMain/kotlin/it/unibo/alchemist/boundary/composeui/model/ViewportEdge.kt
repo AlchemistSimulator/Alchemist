@@ -18,7 +18,7 @@ import androidx.compose.runtime.Immutable
  * @property toNodeId the other end.
  */
 @Immutable
-data class ViewportEdge(val fromNodeId: Int, val toNodeId: Int) {
+internal data class ViewportEdge(val fromNodeId: Int, val toNodeId: Int) {
     init {
         require(fromNodeId != toNodeId) {
             "Viewport edges require two distinct endpoints."

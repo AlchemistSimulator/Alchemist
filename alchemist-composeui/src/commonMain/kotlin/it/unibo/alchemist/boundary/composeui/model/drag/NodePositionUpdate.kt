@@ -19,7 +19,7 @@ import kotlinx.collections.immutable.ImmutableList
  * @property coordinates the new position.
  */
 @Immutable
-data class NodePositionUpdate(val nodeId: Int, val coordinates: ImmutableList<Double>) {
+internal data class NodePositionUpdate(val nodeId: Int, val coordinates: ImmutableList<Double>) {
     init {
         require(coordinates.size >= 2) {
             "Moved nodes require at least two coordinates."

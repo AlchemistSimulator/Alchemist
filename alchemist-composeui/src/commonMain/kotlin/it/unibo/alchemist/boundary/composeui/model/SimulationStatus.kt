@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.composeui.model
 /**
  * High-level simulation status mirrored in the Compose UI.
  */
-enum class SimulationStatus {
+internal enum class SimulationStatus {
     /** Initializing. */
     INIT,
 

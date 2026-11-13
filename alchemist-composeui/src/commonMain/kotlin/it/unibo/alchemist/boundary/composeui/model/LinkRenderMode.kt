@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.composeui.model
 /**
  * Effective link rendering strategy used for the current scene snapshot.
  */
-enum class LinkRenderMode {
+internal enum class LinkRenderMode {
     /** All links are drawn. */
     FULL,
 

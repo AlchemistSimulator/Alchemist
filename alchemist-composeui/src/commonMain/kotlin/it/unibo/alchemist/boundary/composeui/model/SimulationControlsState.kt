@@ -31,7 +31,7 @@ import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThr
  * @property dialog the error to show, if any.
  */
 @Immutable
-data class SimulationControlsState(
+internal data class SimulationControlsState(
     val status: SimulationStatus = SimulationStatus.INIT,
     val timeLabel: String = "0",
     val step: Long = 0L,

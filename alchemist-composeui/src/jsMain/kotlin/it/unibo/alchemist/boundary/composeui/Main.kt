@@ -16,7 +16,7 @@ import kotlinx.browser.document
 import org.jetbrains.skiko.wasm.onWasmReady
 
 /**
- * Main entry point that loads the compose generic application in the browser.
+ * Starts the UI in the browser, on the demo scene.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {

@@ -20,4 +20,4 @@ import androidx.compose.runtime.Immutable
  * @property maxY the largest y.
  */
 @Immutable
-data class ViewportWorldBounds(val minX: Double, val maxX: Double, val minY: Double, val maxY: Double)
+internal data class ViewportWorldBounds(val minX: Double, val maxX: Double, val minY: Double, val maxY: Double)

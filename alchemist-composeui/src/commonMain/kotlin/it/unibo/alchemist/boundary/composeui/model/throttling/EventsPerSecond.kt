@@ -12,4 +12,4 @@ package it.unibo.alchemist.boundary.composeui.model.throttling
 /**
  * Throttling that limits the simulation to [eventsPerSecond] events per second.
  */
-class EventsPerSecond(eventsPerSecond: Int) : SimulationEventThrottling(eventsPerSecond)
+internal class EventsPerSecond(eventsPerSecond: Int) : SimulationEventThrottling(eventsPerSecond)

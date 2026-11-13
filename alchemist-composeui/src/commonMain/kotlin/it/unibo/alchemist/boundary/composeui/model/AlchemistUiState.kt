@@ -22,7 +22,7 @@ import kotlinx.collections.immutable.persistentListOf
  * @property inspector the inspector; `null` if nothing is selected.
  */
 @Immutable
-data class AlchemistUiState(
+internal data class AlchemistUiState(
     val scene: ViewportScene = ViewportScene(),
     val controls: SimulationControlsState = SimulationControlsState(),
     val selectedNodeIds: ImmutableList<Int> = persistentListOf(),

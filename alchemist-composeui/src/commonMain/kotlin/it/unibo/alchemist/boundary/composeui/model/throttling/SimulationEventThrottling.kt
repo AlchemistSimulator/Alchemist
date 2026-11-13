@@ -14,7 +14,7 @@ package it.unibo.alchemist.boundary.composeui.model.throttling
  *
  * @property value the maximum number of events per second.
  */
-sealed class SimulationEventThrottling(val value: Int) {
+internal sealed class SimulationEventThrottling(val value: Int) {
     init {
         require(value >= MIN_SIMULATION_EVENTS_PER_SECOND) {
             "Simulation events per second cannot be less than $MIN_SIMULATION_EVENTS_PER_SECOND, but was $value."

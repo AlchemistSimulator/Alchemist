@@ -18,4 +18,4 @@ import androidx.compose.runtime.Immutable
  * @property value the value.
  */
 @Immutable
-data class Labeled<out T>(val label: String, val value: T)
+internal data class Labeled<out T>(val label: String, val value: T)

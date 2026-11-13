@@ -16,7 +16,7 @@ import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
  * The UI talks to the simulation only through these.
  * Invalid inputs are reported by setting [it.unibo.alchemist.boundary.composeui.model.SimulationControlsState.dialog].
  */
-interface AlchemistUiCallbacks {
+internal interface AlchemistUiCallbacks {
     /** Plays. */
     suspend fun onPlay()
 

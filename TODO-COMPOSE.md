@@ -44,7 +44,7 @@ Make the module consistent with the rest of the repository before building on it
   - drawing
 - [x] One non-private `@Composable` per file, named after it; private helpers stay with it. Split `ControlDock.kt` into `view/controls/`.
 - [x] Reorder members according to `AGENTS.md`, in a separate `style` commit.
-- [ ] KDoc on every public declaration. Reduce visibility to `internal` wherever possible; the public API should be `ComposeMonitor` plus the effect/extension SPI.
+- [x] KDoc on every public declaration. Reduce visibility to `internal` wherever possible; the public API should be `ComposeMonitor` plus the effect/extension SPI.
 
 ### Behaviour fixes
 

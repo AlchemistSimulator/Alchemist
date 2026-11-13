@@ -18,7 +18,7 @@ import androidx.compose.runtime.Immutable
  * @property label the progress text.
  */
 @Immutable
-data class SimulationProgress(val fraction: Float? = null, val label: String = "Progress unavailable") {
+internal data class SimulationProgress(val fraction: Float? = null, val label: String = "Progress unavailable") {
     init {
         require(fraction == null || fraction in 0f..1f) {
             "Progress fraction must be null or within [0, 1]."

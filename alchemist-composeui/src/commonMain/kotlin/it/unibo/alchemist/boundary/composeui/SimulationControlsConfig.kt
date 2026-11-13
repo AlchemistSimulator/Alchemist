@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.composeui
 /**
  * Limits and defaults of the simulation controls shown in the UI.
  */
-object SimulationControlsConfig {
+internal object SimulationControlsConfig {
     /**
      * Lowest refresh rate, in frames per second, the UI can be set to.
      */

@@ -62,7 +62,7 @@ import kotlinx.coroutines.launch
  * Main shared screen for the simulator UI.
  */
 @Composable
-fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
+internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
     val coroutineScope = rememberCoroutineScope()
     MaterialTheme(
         colors = MaterialTheme.colors.copy(

@@ -18,4 +18,4 @@ import androidx.compose.runtime.Immutable
  * @property message the error message.
  */
 @Immutable
-data class ControlDialogState(val title: String, val message: String)
+internal data class ControlDialogState(val title: String, val message: String)

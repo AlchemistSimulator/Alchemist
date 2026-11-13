@@ -26,7 +26,7 @@ import kotlinx.collections.immutable.toImmutableList
  * @property concentrations the node contents, by molecule.
  */
 @Immutable
-data class ViewportNode(
+internal data class ViewportNode(
     val id: Int,
     val coordinates: ImmutableList<Double>,
     val accent: Float = 0.5f,

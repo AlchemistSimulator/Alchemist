@@ -21,7 +21,7 @@ class ComposeUiDemoScenarioTest {
     fun `the demo scenario loads with the compose monitor`() {
         val scenario = assertNotNull(javaClass.classLoader.getResource("composeui-demo.yml"))
         val simulation = LoadAlchemist.from(scenario).getDefault<Any, Euclidean2DPosition>()
-        assertEquals(1000, simulation.environment.nodeCount)
+        assertEquals(1000, simulation.environment.nodeCount.current)
         assertTrue(simulation.outputMonitors.any { it is ComposeMonitor })
     }
 }

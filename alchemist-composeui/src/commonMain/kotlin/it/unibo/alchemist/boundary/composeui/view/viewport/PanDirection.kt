@@ -15,21 +15,24 @@ import androidx.compose.ui.input.key.Key
 private const val PAN_STEP_PX = 48f
 
 /**
- * A fixed camera move, triggered by the arrow keys or by accessibility actions.
+ * A camera pan direction, held with the arrow keys or WASD, or stepped by accessibility actions.
  *
  * @property label the accessibility action name.
- * @property key the arrow key.
- * @property offset how far the camera pans.
+ * @property keys the keys that hold it.
+ * @property direction which way the camera pans, as a unit vector.
  */
-internal enum class PanDirection(val label: String, val key: Key, val offset: Offset) {
-    LEFT("Pan left", Key.DirectionLeft, Offset(PAN_STEP_PX, 0f)),
-    RIGHT("Pan right", Key.DirectionRight, Offset(-PAN_STEP_PX, 0f)),
-    UP("Pan up", Key.DirectionUp, Offset(0f, PAN_STEP_PX)),
-    DOWN("Pan down", Key.DirectionDown, Offset(0f, -PAN_STEP_PX)),
+internal enum class PanDirection(val label: String, val keys: Set<Key>, val direction: Offset) {
+    LEFT("Pan left", setOf(Key.DirectionLeft, Key.A), Offset(1f, 0f)),
+    RIGHT("Pan right", setOf(Key.DirectionRight, Key.D), Offset(-1f, 0f)),
+    UP("Pan up", setOf(Key.DirectionUp, Key.W), Offset(0f, 1f)),
+    DOWN("Pan down", setOf(Key.DirectionDown, Key.S), Offset(0f, -1f)),
     ;
+
+    /** One accessibility step in this direction. */
+    val step: Offset get() = direction * PAN_STEP_PX
 
     companion object {
         /** The direction bound to [key], if any. */
-        fun of(key: Key): PanDirection? = entries.firstOrNull { it.key == key }
+        fun of(key: Key): PanDirection? = entries.firstOrNull { key in it.keys }
     }
 }

@@ -39,7 +39,6 @@ internal object DemoUiState {
             ViewportNode(
                 id = 1,
                 coordinates = persistentListOf(-3.5, 1.7),
-                accent = 0.15f,
                 metadata = persistentListOf(
                     Labeled("Neighbors", "4"),
                     Labeled("Reactions", "3"),
@@ -53,7 +52,6 @@ internal object DemoUiState {
             ViewportNode(
                 id = 2,
                 coordinates = persistentListOf(-1.2, 0.3),
-                accent = 0.33f,
                 metadata = persistentListOf(
                     Labeled("Neighbors", "5"),
                     Labeled("Reactions", "2"),
@@ -67,7 +65,6 @@ internal object DemoUiState {
             ViewportNode(
                 id = 3,
                 coordinates = persistentListOf(0.8, 2.2),
-                accent = 0.55f,
                 metadata = persistentListOf(
                     Labeled("Neighbors", "3"),
                     Labeled("Reactions", "4"),
@@ -81,7 +78,6 @@ internal object DemoUiState {
             ViewportNode(
                 id = 4,
                 coordinates = persistentListOf(2.1, -0.8),
-                accent = 0.74f,
                 metadata = persistentListOf(
                     Labeled("Neighbors", "6"),
                     Labeled("Reactions", "2"),
@@ -95,7 +91,6 @@ internal object DemoUiState {
             ViewportNode(
                 id = 5,
                 coordinates = persistentListOf(3.9, 1.4),
-                accent = 0.92f,
                 metadata = persistentListOf(
                     Labeled("Neighbors", "2"),
                     Labeled("Reactions", "1"),

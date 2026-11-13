@@ -28,7 +28,6 @@ internal fun Modifier.viewportSemantics(
     scene: ViewportScene,
     selectedNodeCount: Int,
     zoom: Float,
-    onSelectFirstNode: () -> Boolean,
     onClearSelection: () -> Boolean,
     onZoomIn: () -> Unit,
     onZoomOut: () -> Unit,
@@ -42,15 +41,12 @@ internal fun Modifier.viewportSemantics(
     stateDescription = "Zoom ${zoom.toDouble().formatFixed(2)}, $selectedNodeCount selected"
     role = Role.Image
     customActions = buildList {
-        if (scene.nodes.isNotEmpty()) {
-            add(CustomAccessibilityAction("Select first node", onSelectFirstNode))
-        }
         if (selectedNodeCount > 0) {
             add(CustomAccessibilityAction("Clear node selection", onClearSelection))
         }
         add(alwaysHandled("Zoom in", onZoomIn))
         add(alwaysHandled("Zoom out", onZoomOut))
-        PanDirection.entries.forEach { direction -> add(alwaysHandled(direction.label) { onPan(direction.offset) }) }
+        PanDirection.entries.forEach { direction -> add(alwaysHandled(direction.label) { onPan(direction.step) }) }
     }
 }
 

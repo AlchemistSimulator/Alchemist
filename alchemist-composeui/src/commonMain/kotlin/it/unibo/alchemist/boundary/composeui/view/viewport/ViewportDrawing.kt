@@ -17,18 +17,16 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundVariant
 import it.unibo.alchemist.boundary.composeui.view.theme.LINK_STROKE_WIDTH
 import it.unibo.alchemist.boundary.composeui.view.theme.NODE_RADIUS
+import it.unibo.alchemist.boundary.composeui.view.theme.NodeColor
 import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
 import it.unibo.alchemist.boundary.composeui.view.theme.SELECTED_NODE_INNER_RADIUS
 import it.unibo.alchemist.boundary.composeui.view.theme.SELECTED_NODE_RADIUS
-import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
-import it.unibo.alchemist.boundary.composeui.view.theme.lerp
 import kotlin.math.max
 
 /** Fills the viewport background. */
@@ -95,8 +93,9 @@ internal fun DrawScope.drawScene(
         }
     }
     frame.visibleNodeIndices.forEach { nodeIndex ->
-        val node = scene.nodes[nodeIndex]
-        centerOf(nodeIndex)?.let { center -> drawNode(node, center, camera.zoom, node.id in selectedNodeIds) }
+        centerOf(nodeIndex)?.let { center ->
+            drawNode(center, camera.zoom, isSelected = scene.nodes[nodeIndex].id in selectedNodeIds)
+        }
     }
 }
 
@@ -115,11 +114,10 @@ private fun DrawScope.drawAxis(start: Offset, end: Offset) {
     drawLine(color = Outline.copy(alpha = 0.7f), start = start, end = end, strokeWidth = 1.6f, cap = StrokeCap.Round)
 }
 
-private fun DrawScope.drawNode(node: ViewportNode, center: Offset, zoom: Float, isSelected: Boolean) {
-    val nodeColor = lerp(SecondaryAccent, PrimaryAccent, node.accent)
+private fun DrawScope.drawNode(center: Offset, zoom: Float, isSelected: Boolean) {
     val selectedRadius = SELECTED_NODE_RADIUS.dp.toPx() * zoom
     if (isSelected) {
-        drawCircle(color = nodeColor.copy(alpha = 0.20f), radius = selectedRadius, center = center)
+        drawCircle(color = NodeColor.copy(alpha = 0.20f), radius = selectedRadius, center = center)
         drawCircle(
             color = PrimaryAccent,
             radius = SELECTED_NODE_INNER_RADIUS.dp.toPx() * zoom,
@@ -129,7 +127,7 @@ private fun DrawScope.drawNode(node: ViewportNode, center: Offset, zoom: Float, 
     }
     drawCircle(
         brush = Brush.radialGradient(
-            colors = listOf(nodeColor, nodeColor.copy(alpha = 0.45f)),
+            colors = listOf(NodeColor, NodeColor.copy(alpha = 0.45f)),
             center = center,
             radius = max(1f, selectedRadius),
         ),

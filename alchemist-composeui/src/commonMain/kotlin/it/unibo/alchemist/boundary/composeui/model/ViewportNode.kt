@@ -21,7 +21,6 @@ import kotlinx.collections.immutable.toImmutableList
  *
  * @property id the node id.
  * @property coordinates the node position; only the first two are drawn.
- * @property accent the node color, from secondary (0) to primary (1) accent.
  * @property metadata extra details about the node.
  * @property concentrations the node contents, by molecule.
  */
@@ -29,7 +28,6 @@ import kotlinx.collections.immutable.toImmutableList
 internal data class ViewportNode(
     val id: Int,
     val coordinates: ImmutableList<Double>,
-    val accent: Float = 0.5f,
     val metadata: ImmutableList<Labeled<Any?>> = persistentListOf(),
     val concentrations: ImmutableList<Labeled<Any?>> = persistentListOf(),
 ) {

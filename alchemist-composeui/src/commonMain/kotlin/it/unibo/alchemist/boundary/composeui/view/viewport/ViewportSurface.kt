@@ -28,6 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -48,6 +51,8 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Surface as SurfaceColor
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import kotlinx.coroutines.launch
 
+private const val KEYBOARD_PAN_SPEED_PX_PER_SECOND = 900f
+
 private val dragThreshold = 6.dp
 
 /**
@@ -65,6 +70,10 @@ internal fun ViewportSurface(
     var camera by remember { mutableStateOf(ViewportCameraState()) }
     var fixedProjection by remember { mutableStateOf<ViewportProjection?>(null) }
     var drag by remember { mutableStateOf<ViewportDrag>(ViewportDrag.None) }
+    var pointer by remember { mutableStateOf<Offset?>(null) }
+    var heldPans by remember { mutableStateOf(emptySet<PanDirection>()) }
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
     val candidateProjection = remember(scene.nodes, viewportSize) { scene.createViewportProjection(viewportSize) }
     val projection = fixedProjection ?: candidateProjection
     LaunchedEffect(candidateProjection) {
@@ -93,9 +102,12 @@ internal fun ViewportSurface(
     val selectionRect = (drag as? ViewportDrag.Select)?.takeIf { it.length >= dragThresholdPx }?.rect
     val coroutineScope = rememberCoroutineScope()
     val send: (ViewportAction) -> Unit = { action -> coroutineScope.launch { callbacks.action() } }
-    val selectFirstNode = { scene.nodes.firstOrNull()?.also { node -> send { onNodeSelected(node.id) } } != null }
     val clearSelection = { selectedNodeIds.isNotEmpty().also { if (it) send { onInspectorDismiss() } } }
+    val selectNearestNode = {
+        pointer?.let(gestures::nearestNode)?.also { node -> send { onNodeSelected(node.id) } } != null
+    }
     val pan = { delta: Offset -> camera = camera.panBy(delta) }
+    LaunchedEffect(heldPans) { panWhileHeld(heldPans, KEYBOARD_PAN_SPEED_PX_PER_SECOND, pan) }
     Surface(
         modifier = modifier,
         color = SurfaceColor,
@@ -118,23 +130,27 @@ internal fun ViewportSurface(
                 modifier = Modifier
                     .fillMaxSize()
                     .onGloballyPositioned { coordinates -> viewportSize = coordinates.size }
+                    .focusRequester(focusRequester)
+                    .onFocusChanged { focus -> if (!focus.isFocused) heldPans = emptySet() }
                     .focusable()
                     .viewportSemantics(
                         scene = scene,
                         selectedNodeCount = selectedNodeIds.size,
                         zoom = camera.zoom,
-                        onSelectFirstNode = selectFirstNode,
                         onClearSelection = clearSelection,
                         onZoomIn = { camera = camera.zoomIn(viewportSize) },
                         onZoomOut = { camera = camera.zoomOut(viewportSize) },
                         onPan = pan,
                     )
                     .viewportKeyboard(
-                        onPan = pan,
-                        onSelectFirstNode = selectFirstNode,
+                        onPanKey = { direction, pressed ->
+                            heldPans = if (pressed) heldPans + direction else heldPans - direction
+                        },
+                        onSelectNearestNode = selectNearestNode,
                         onClearSelection = clearSelection,
                     )
                     .onPointerEvent(PointerEventType.Press) { event ->
+                        focusRequester.requestFocus()
                         event.changes.firstOrNull()?.let { change ->
                             drag = gestures.press(
                                 position = change.position,
@@ -145,6 +161,7 @@ internal fun ViewportSurface(
                     }
                     .onPointerEvent(PointerEventType.Move) { event ->
                         event.changes.firstOrNull()?.let { change ->
+                            pointer = change.position
                             val secondaryPressed = event.buttons.isSecondaryPressed
                             val lastPan = (drag as? ViewportDrag.Pan)?.last
                             if (secondaryPressed && lastPan != null) {
@@ -153,6 +170,7 @@ internal fun ViewportSurface(
                             drag = drag.movedTo(change.position, secondaryPressed)
                         }
                     }
+                    .onPointerEvent(PointerEventType.Exit) { pointer = null }
                     .onPointerEvent(PointerEventType.Release) {
                         gestures.release(drag)?.let(send)
                         drag = ViewportDrag.None

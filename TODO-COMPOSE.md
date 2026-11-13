@@ -48,8 +48,8 @@ Make the module consistent with the rest of the repository before building on it
 
 ### Behaviour fixes
 
-- [ ] Enter in the viewport selects "the first node". Remove it, or replace it with a meaningful action.
-- [ ] Nodes are all drawn with the same default accent. Until effects land, keep a neutral default.
+- [x] Enter in the viewport selects "the first node". Remove it, or replace it with a meaningful action.
+- [x] Nodes are all drawn with the same default accent. Until effects land, keep a neutral default.
 - [ ] `ComposeMonitor` on a headless JVM must not crash. Add `failOnHeadless` (default `false`) as in `SwingGUI`: log a warning and do nothing.
 - [ ] Closing the window calls `exitApplication()` only, so the simulation keeps running. Decide the close semantics, matching Swing's `EXIT_ON_CLOSE` default: terminate the simulation, then exit.
 - [ ] Check that the terminated/finished state is displayed when the simulation ends.
@@ -201,7 +201,7 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 | `D` delete | Delete the selection (shortcut and inspector button), scheduled on the simulation thread |
 | `E` molecule injector | Covered by content editing in the inspector (Phase 0, "Look and controls") |
 | `L` links | Done as a toggle; becomes the "Links" effect group |
-| `P` play/pause | Shortcut (Space) in addition to the dock buttons |
+| `P` play/pause | Done (Space) |
 | `R` real-time | Covered by the pacing modes in Phase 0 ("simulated time units per second") |
 | `←`/`→` redraw frequency | Covered by the FPS control; add shortcuts if useful |
 | `zoomTo(center, zoom)` API | Programmatic camera API on `ComposeMonitor` and "fit to scene" / "reset camera" controls |

@@ -123,6 +123,17 @@ internal fun ViewportSceneCache.findHitNode(
     return bestMatch?.let(scene.nodes::get)
 }
 
+internal fun ViewportSceneCache.findNearestNode(
+    viewportSize: IntSize,
+    camera: ViewportCameraState,
+    position: Offset,
+): ViewportNode? {
+    val target = camera.toBase(position, viewportSize)
+    return baseCenters.indices
+        .minByOrNull { nodeIndex -> (baseCenters[nodeIndex] - target).getDistanceSquared() }
+        ?.let(scene.nodes::get)
+}
+
 internal fun ViewportSceneCache.selectNodes(
     viewportSize: IntSize,
     camera: ViewportCameraState,

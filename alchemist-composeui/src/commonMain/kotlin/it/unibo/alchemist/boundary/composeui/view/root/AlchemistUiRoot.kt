@@ -118,6 +118,11 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
+                .playPauseOnSpace(
+                    controls = state.controls,
+                    onPlay = { coroutineScope.launch { callbacks.onPlay() } },
+                    onPause = { coroutineScope.launch { callbacks.onPause() } },
+                )
                 .background(
                     Brush.linearGradient(
                         colors = listOf(Background, BackgroundVariant, BackgroundGradientEnd),

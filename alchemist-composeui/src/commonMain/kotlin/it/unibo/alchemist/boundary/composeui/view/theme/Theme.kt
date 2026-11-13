@@ -18,8 +18,6 @@ package it.unibo.alchemist.boundary.composeui.view.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import kotlin.math.max
-import kotlin.math.min
 
 internal val Background = Color(0xFFF8F9FA)
 internal val BackgroundVariant = Color(0xFFE9ECEF)
@@ -34,6 +32,9 @@ internal val TextPrimary = Color(0xFF212529)
 internal val TextSecondary = Color(0xFF495057)
 internal val TextMuted = Color(0xFF6C757D)
 internal val Danger = Color(0xFFDC3545)
+
+/** One neutral color for every node, until effects choose colors. */
+internal val NodeColor = Color(0xFF495057)
 internal val InspectorScrim = Color(0x66050A11)
 internal const val ZOOM_STEP = 1.12f
 internal const val NODE_HIT_RADIUS = 22f
@@ -44,12 +45,3 @@ internal const val LINK_STROKE_WIDTH = 1.5f
 internal val StatusPillWidth = 132.dp
 internal const val GRID_VERTICAL_DIVISIONS = 8
 internal const val GRID_HORIZONTAL_DIVISIONS = 6
-internal fun lerp(start: Color, end: Color, amount: Float): Color {
-    val clamped = min(1f, max(0f, amount))
-    return Color(
-        red = start.red + (end.red - start.red) * clamped,
-        green = start.green + (end.green - start.green) * clamped,
-        blue = start.blue + (end.blue - start.blue) * clamped,
-        alpha = start.alpha + (end.alpha - start.alpha) * clamped,
-    )
-}

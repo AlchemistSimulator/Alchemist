@@ -42,6 +42,9 @@ internal class ViewportGestures(
         else -> ViewportDrag.Select(anchor = position, current = position)
     }
 
+    /** The node nearest to [position], however far; `null` if there are no nodes. */
+    fun nearestNode(position: Offset): ViewportNode? = sceneCache.findNearestNode(viewportSize, camera, position)
+
     /** What to do when [drag] ends; `null` for nothing. */
     fun release(drag: ViewportDrag): ViewportAction? = when (drag) {
         is ViewportDrag.MoveNodes -> moveNodes(drag)

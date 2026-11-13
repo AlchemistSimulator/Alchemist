@@ -22,6 +22,19 @@ sealed class SimulationEventThrottling(val value: Int) {
     }
 
     /**
+     * Returns the throttling policy for the newly selected event rate [newValue].
+     */
+    fun update(newValue: Int): SimulationEventThrottling = toEventThrottling(newValue)
+
+    /**
+     * Returns the label displayed for this policy.
+     */
+    fun toLabel(): String = when (this) {
+        is FullThrottle -> "Max"
+        is EventsPerSecond -> "$value"
+    }
+
+    /**
      * Bounds of the event rate and conversion from the rate selected in the UI.
      */
     companion object {
@@ -47,18 +60,5 @@ sealed class SimulationEventThrottling(val value: Int) {
                     "Simulation events per second must be at least $MIN_SIMULATION_EVENTS_PER_SECOND, but was $value.",
                 )
         }
-    }
-
-    /**
-     * Returns the throttling policy for the newly selected event rate [newValue].
-     */
-    fun update(newValue: Int): SimulationEventThrottling = toEventThrottling(newValue)
-
-    /**
-     * Returns the label displayed for this policy.
-     */
-    fun toLabel(): String = when (this) {
-        is FullThrottle -> "Max"
-        is EventsPerSecond -> "$value"
     }
 }

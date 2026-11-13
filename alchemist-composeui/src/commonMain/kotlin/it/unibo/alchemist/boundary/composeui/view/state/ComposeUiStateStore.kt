@@ -22,11 +22,11 @@ import kotlinx.coroutines.flow.update
 class ComposeUiStateStore(initialState: AlchemistUiState) {
     private val mutableState = MutableStateFlow(initialState)
 
-    /** The current state. */
-    val state: AlchemistUiState get() = mutableState.value
-
     /** The state, observable. */
     val stateFlow: StateFlow<AlchemistUiState> = mutableState.asStateFlow()
+
+    /** The current state. */
+    val state: AlchemistUiState get() = mutableState.value
 
     /**
      * Replace the current state.

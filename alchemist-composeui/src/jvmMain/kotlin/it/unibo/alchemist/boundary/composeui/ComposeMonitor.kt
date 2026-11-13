@@ -47,6 +47,8 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
     private val maxUiFps = detectMonitorRefreshRate() ?: DEFAULT_MAX_UI_FPS
     private val initialUiFps = targetFps.coerceIn(MIN_UI_FPS, maxUiFps)
     private val windowStarted = AtomicBoolean(false)
+    private var lastUpdate: Long = 0L
+    private var nextEventReleaseNs: Long = 0L
     private val currentUiState by lazy {
         ComposeUiStateStore(
             AlchemistUiState(
@@ -73,9 +75,6 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(targetFps: In
             )
         }
     }
-
-    private var lastUpdate: Long = 0L
-    private var nextEventReleaseNs: Long = 0L
 
     override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val now = System.currentTimeMillis()

@@ -35,9 +35,7 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.Time
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.max
 import kotlin.math.roundToLong
 import org.slf4j.LoggerFactory
 
@@ -58,7 +56,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
     private val initialUiFps = targetFps.coerceIn(MIN_UI_FPS, maxUiFps)
     private val windowStarted = AtomicBoolean(false)
     private var lastUpdate: Long = 0L
-    private var nextEventReleaseNs: Long = 0L
+    private val throttle = SimulationThrottle()
     private val currentUiState by lazy {
         ComposeUiStateStore(
             AlchemistUiState(
@@ -86,7 +84,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
 
     override fun initialized(environment: Environment<T, P>) {
         if (headAttached) {
-            nextEventReleaseNs = 0L
+            throttle.reset()
             ensureWindow(environment)
             currentUiState.update {
                 it.copy(
@@ -114,7 +112,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         if (headAttached) {
-            nextEventReleaseNs = 0L
+            throttle.wakeUp()
             updateUiState(environment, time, step)
         }
     }
@@ -139,25 +137,8 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
         .coerceAtLeast(1L)
 
     private fun throttleSimulation() {
-        val controls = currentUiState.state.controls
-        val eventsPerSecond = when (val throttling = controls.simulationEventThrottling) {
-            is FullThrottle -> {
-                nextEventReleaseNs = 0
-                return
-            }
-            else -> throttling.value
-        }
-        val intervalNs = (1_000_000_000.0 / eventsPerSecond).roundToLong().coerceAtLeast(1L)
-        val now = System.nanoTime()
-        nextEventReleaseNs = max(now, nextEventReleaseNs) + intervalNs
-        val remainingNs = nextEventReleaseNs - System.nanoTime()
-        if (remainingNs > 0L) {
-            try {
-                TimeUnit.NANOSECONDS.sleep(remainingNs)
-            } catch (_: InterruptedException) {
-                Thread.currentThread().interrupt()
-            }
-        }
+        val throttling = currentUiState.state.controls.simulationEventThrottling
+        throttle.await(throttling.takeUnless { it is FullThrottle }?.value)
     }
 
     private fun ensureWindow(environment: Environment<T, P>) {
@@ -167,6 +148,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                 application {
                     Window(
                         onCloseRequest = {
+                            throttle.wakeUp()
                             environment.simulation.takeUnless { it.state == SimulationState.TERMINATED }?.terminate()
                             exitApplication()
                         },
@@ -192,8 +174,10 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
         }
     }
 
-    private fun alchemistDesktopController(environment: Environment<T, P>): ComposeUiController =
-        ComposeUiController(currentUiState, DesktopAlchemistUiCallback(environment.simulation, currentUiState))
+    private fun alchemistDesktopController(environment: Environment<T, P>): ComposeUiController = ComposeUiController(
+        currentUiState,
+        DesktopAlchemistUiCallback(environment.simulation, currentUiState, throttle),
+    )
 
     private companion object {
         private val logger = LoggerFactory.getLogger(ComposeMonitor::class.java)

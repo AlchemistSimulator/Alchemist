@@ -29,10 +29,12 @@ import kotlinx.coroutines.withContext
 
 /**
  * UI callbacks that drive a [simulation] running in the same JVM and publish the resulting UI state to [store].
+ * Every command wakes up the [throttle] first, so it never waits for the pause between events.
  */
 internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
     private val simulation: Simulation<T, P>,
     private val store: ComposeUiStateStore,
+    private val throttle: SimulationThrottle = SimulationThrottle(),
 ) : AlchemistUiCallbacks {
     override suspend fun onPlay() {
         whileActive {
@@ -144,6 +146,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
         updateState {
             it.copy(controls = it.controls.updateEventThrottling(value.roundToInt()))
         }
+        throttle.wakeUp()
     }
 
     override suspend fun onNodeSelected(nodeId: Int) {
@@ -237,6 +240,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
      * so the user gets a dialog instead.
      */
     private suspend fun whileActive(action: suspend () -> Unit) {
+        throttle.wakeUp()
         if (simulation.state == SimulationState.TERMINATED) {
             showDialog("Simulation ended", "The simulation has terminated: it can no longer run, jump, or change.")
         } else {

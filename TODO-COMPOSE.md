@@ -53,7 +53,7 @@ Make the module consistent with the rest of the repository before building on it
 - [x] `ComposeMonitor` on a headless JVM must not crash. Add `failOnHeadless` (default `false`) as in `SwingGUI`: log a warning and do nothing.
 - [x] Closing the window calls `exitApplication()` only, so the simulation keeps running. Decide the close semantics, matching Swing's `EXIT_ON_CLOSE` default: terminate the simulation, then exit.
 - [x] Check that the terminated/finished state is displayed when the simulation ends.
-- [ ] `throttleSimulation` sleeps on the simulation thread on every step. Keep it, but make sure pausing or terminating the simulation never waits on that sleep.
+- [x] `throttleSimulation` sleeps on the simulation thread on every step. Keep it, but make sure pausing or terminating the simulation never waits on that sleep.
 
 ### Look and controls
 
@@ -116,7 +116,7 @@ A way to look at the UI while developing, for both the developer and the agent.
 Separate what the simulation produces from how it is shown, so the same UI can run in-process or remotely.
 
 - [ ] **Frame model** in `commonMain`, `@Serializable`: a `SceneFrame` holding
-  - time, step, status (mirrored as `SimulationStatus` until Phase 9);
+  - time, step, status (mirrored as `SimulationStatus` until Phase 8);
   - nodes: id, position, and only the values requested by active effects;
   - links;
   - environment-level primitives: polygons, polylines, raster grids, markers;
@@ -127,7 +127,7 @@ Separate what the simulation produces from how it is shown, so the same UI can r
   - `LocalSession` (JVM) wraps the current `DesktopAlchemistUiCallback` logic.
   - `RemoteSession` (common: JVM, JS, wasm) is implemented in Phase 4.
 - [ ] **Frame builder** (JVM): turns `Environment` into a `SceneFrame`. It extracts only what the current effect set requests (Phase 3), throttled to the UI FPS. It runs on the simulation thread, and the result is published immutably.
-- [ ] **Projection abstraction**: `WorldProjection` with an identity/Euclidean implementation now and Web Mercator in Phase 6. Camera, hit-testing, selection and drag must work through it.
+- [ ] **Projection abstraction**: `WorldProjection` with an identity/Euclidean implementation now and Web Mercator in Phase 5. Camera, hit-testing, selection and drag must work through it.
 - [ ] Move the demo controller onto a `FakeSession` so the browser demo exercises the same code paths.
 
 ---
@@ -185,36 +185,9 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 
 ---
 
-## Phase 5: Interaction parity with Swing
+## Phase 5: Maps
 
-| Swing | Compose target |
-|---|---|
-| Left-drag pan, wheel zoom | Done (middle/right-drag pan, wheel zoom, arrows) |
-| Right-drag rotate | Rotate gesture (e.g. Shift + right-drag) and a reset-rotation control; disabled on maps |
-| Middle-click follow node | "Follow" action in the inspector, plus a shortcut; camera tracks the node and panning stops following |
-| `M` closest-node marker | Hover highlight of the nearest node, toggleable |
-| Tooltip with coordinates and nearest node | Status-bar readout of cursor world coordinates and nearest node id |
-| Double-click NodeTracker | Inspector already exists; add the **Program** section (reactions, with their time distributions / next scheduled time) and live refresh |
-| `S` selection mode | Already modeless: box select and click select |
-| `O` move | Done (Ctrl + drag) |
-| `C` clone | Clone the selection to the clicked position (context menu and shortcut); error message if cloning is unsupported |
-| `D` delete | Delete the selection (shortcut and inspector button), scheduled on the simulation thread |
-| `E` molecule injector | Covered by content editing in the inspector (Phase 0, "Look and controls") |
-| `L` links | Done as a toggle; becomes the "Links" effect group |
-| `P` play/pause | Done (Space) |
-| `R` real-time | Covered by the pacing modes in Phase 0 ("simulated time units per second") |
-| `←`/`→` redraw frequency | Covered by the FPS control; add shortcuts if useful |
-| `zoomTo(center, zoom)` API | Programmatic camera API on `ComposeMonitor` and "fit to scene" / "reset camera" controls |
-
-- [ ] Each row above is a separate step, with a snapshot scenario showing it.
-- [ ] Keyboard shortcut reference overlay (`?`).
-- [ ] Optional extras Swing lacks: export the viewport as PNG (cheap thanks to Phase 1), fullscreen.
-
----
-
-## Phase 6: Maps
-
-- [ ] **Coordinate system.** Detect `GeoPosition` environments (`MapEnvironment`). Frames carry lat/lon, and the viewport uses Web Mercator through `WorldProjection`. Rotation is disabled on maps.
+- [ ] **Coordinate system.** Detect `GeoPosition` environments (`MapEnvironment`). Frames carry lat/lon, and the viewport uses Web Mercator through `WorldProjection`.
 - [ ] **Tile layer** (common, so it works on desktop and in the browser):
   - slippy-map tiles fetched with the Ktor client;
   - decoded to `ImageBitmap`;
@@ -229,7 +202,7 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 
 ---
 
-## Phase 7: Domain effects (Swing parity)
+## Phase 6: Domain effects (Swing parity)
 
 One step per effect: extractor (JVM), renderer (common), descriptor, snapshot scenario.
 
@@ -251,7 +224,7 @@ One step per effect: extractor (JVM), renderer (common), descriptor, snapshot sc
 
 ---
 
-## Phase 8: Documentation and transition
+## Phase 7: Documentation and transition
 
 - [ ] Reference page for the Compose UI, alongside `site/content/reference/swing/`: launch options, modes, shortcuts, effects and groups, maps.
 - [ ] Write the "swing-effects" how-to that is currently a stub, as a Compose effects how-to, including conversion of legacy effect files.
@@ -260,7 +233,7 @@ One step per effect: extractor (JVM), renderer (common), descriptor, snapshot sc
 
 ---
 
-## Phase 9: Multiplatform simulation core
+## Phase 8: Multiplatform simulation core
 
 Use the simulation primitives directly in the UI instead of mirroring them: `SimulationState` instead of `SimulationStatus`, and then `Time`, positions, and the other types that `SceneFrame` copies.
 This requires `alchemist-api` and `alchemist-engine` to be Kotlin Multiplatform (pure Kotlin, no JVM-only API in `commonMain`).

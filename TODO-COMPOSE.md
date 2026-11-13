@@ -55,6 +55,25 @@ Make the module consistent with the rest of the repository before building on it
 - [ ] Check that the terminated/finished state is displayed when the simulation ends.
 - [ ] `throttleSimulation` sleeps on the simulation thread on every step. Keep it, but make sure pausing or terminating the simulation never waits on that sleep.
 
+### Look and controls
+
+- [ ] Show the Alchemist icon next to "Alchemist Simulator" at the top left. Source: `site/static/images/logo.svg`; ship it as a resource of the module.
+- [ ] Use the same icon as the application/window icon.
+- [ ] "To Step" defaults to the current step + 1; "To Time" defaults to the current time + 1. Keep them in sync while the simulation runs, unless the user is editing the field.
+- [ ] All controls in the bottom bar have the same size.
+- [ ] Scale the whole UI (bottom bar included) with the window size, so it looks right at any screen size and density. Sizes come from the window, not from fixed `dp` values tuned on one screen.
+- [ ] Make the inspector (right side bar) resizable by dragging its edge.
+- [ ] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.
+
+### Pacing
+
+- [ ] Replace the event-rate slider with explicit pacing modes:
+  - events per second;
+  - simulated time units per second (real-time with a speed multiplier; covers Swing's `R`);
+  - maximum speed.
+  A mode selector plus a numeric field is likely clearer than a slider.
+- [ ] Unlink the UI frame rate from the simulation pacing. The FPS cap (default 30, maximum 240) only limits how often the UI redraws, so the simulation can run fast without the UI eating CPU. It must never slow down or speed up the simulation.
+
 ### Tests
 
 - [ ] Build JVM test scenarios through the Kotlin script DSL / generated factories instead of hand-made stubs:
@@ -180,10 +199,10 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 | `O` move | Done (Ctrl + drag) |
 | `C` clone | Clone the selection to the clicked position (context menu and shortcut); error message if cloning is unsupported |
 | `D` delete | Delete the selection (shortcut and inspector button), scheduled on the simulation thread |
-| `E` molecule injector | Inspector action "Set molecule…": molecule and concentration, applied to the selection through the incarnation |
+| `E` molecule injector | Covered by content editing in the inspector (Phase 0, "Look and controls") |
 | `L` links | Done as a toggle; becomes the "Links" effect group |
 | `P` play/pause | Shortcut (Space) in addition to the dock buttons |
-| `R` real-time | Real-time mode in the dock (1 simulated time unit ≈ 1 s, with a speed multiplier) alongside events/s throttling |
+| `R` real-time | Covered by the pacing modes in Phase 0 ("simulated time units per second") |
 | `←`/`→` redraw frequency | Covered by the FPS control; add shortcuts if useful |
 | `zoomTo(center, zoom)` API | Programmatic camera API on `ComposeMonitor` and "fit to scene" / "reset camera" controls |
 

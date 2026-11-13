@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory
 
 /**
  * Shows the simulation in a desktop window.
+ * Closing the window terminates the simulation, so exporters can finish and Alchemist can exit.
  * On a JVM without a display, it logs a warning and does nothing, unless [failOnHeadless] is true.
  *
  * @param targetFps how many times per second the UI redraws at startup.
@@ -164,7 +165,10 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                 val screenSize = Toolkit.getDefaultToolkit().screenSize
                 application {
                     Window(
-                        onCloseRequest = { exitApplication() },
+                        onCloseRequest = {
+                            environment.simulation.terminate()
+                            exitApplication()
+                        },
                         title = "Alchemist",
                         state = rememberWindowState(
                             size = DpSize(

@@ -13,6 +13,7 @@ import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.kotlindsl.environment
 import it.unibo.alchemist.boundary.kotlindsl.simulation2D
 import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.core.SimulationState
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
@@ -65,14 +66,16 @@ internal object TestSimulations {
 
     /**
      * Runs this simulation on a dedicated thread while [block] executes,
-     * then terminates it and waits for the thread to end.
+     * then terminates it, unless [block] already did, and waits for the thread to end.
      */
     fun <T, P : Position<out P>, R> Simulation<T, P>.runningInBackground(block: () -> R): R {
         val engine = thread(name = "Compose UI test simulation") { run() }
         return try {
             block()
         } finally {
-            terminate()
+            if (state != SimulationState.TERMINATED) {
+                terminate()
+            }
             engine.join()
         }
     }

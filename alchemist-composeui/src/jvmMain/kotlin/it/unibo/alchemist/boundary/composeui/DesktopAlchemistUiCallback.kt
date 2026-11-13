@@ -35,25 +35,31 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
     private val store: ComposeUiStateStore,
 ) : AlchemistUiCallbacks {
     override suspend fun onPlay() {
-        simulation.play().await()
-        updateState {
-            it.copy(controls = it.controls.copy(status = simulation.toSimulationStatus()))
+        whileActive {
+            simulation.play().await()
+            updateState {
+                it.copy(controls = it.controls.copy(status = simulation.toSimulationStatus()))
+            }
         }
     }
 
     override suspend fun onPause() {
-        simulation.pause().await()
-        updateState {
-            it.copy(controls = it.controls.copy(status = simulation.toSimulationStatus()))
+        whileActive {
+            simulation.pause().await()
+            updateState {
+                it.copy(controls = it.controls.copy(status = simulation.toSimulationStatus()))
+            }
         }
     }
 
     override suspend fun onStep() {
-        val nextStep = simulation.step + 1
-        val stepCompletion = simulation.goToStep(nextStep)
-        simulation.play().await()
-        stepCompletion.await()
-        syncSimulationState()
+        whileActive {
+            val nextStep = simulation.step + 1
+            val stepCompletion = simulation.goToStep(nextStep)
+            simulation.play().await()
+            stepCompletion.await()
+            syncSimulationState()
+        }
     }
 
     override suspend fun onToTimeInputChanged(value: String) {
@@ -63,28 +69,30 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
     }
 
     override suspend fun onToTimeSubmit() {
-        val currentState = store.state.controls
-        val target = currentState.toTimeInput.toDoubleOrNull()
-            ?: return showDialog("Invalid time", "Insert a valid numeric time.")
-        val currentTime = simulation.currentTime.toDouble()
-        val wasRunning = simulation.state == SimulationState.RUNNING
-        if (target < currentTime) {
-            return showDialog(
-                title = "Invalid time",
-                message = "Target time $target cannot be lower than current time ${currentTime.formatFixed(
-                    DISPLAYED_TIME_DECIMALS,
-                )}.",
-            )
-        }
-        if (target > currentTime) {
-            val jumpCompletion = simulation.goToTime(DoubleTime(target))
-            simulation.play().await()
-            jumpCompletion.await()
-            if (wasRunning) {
-                simulation.play().await()
+        whileActive {
+            val currentState = store.state.controls
+            val target = currentState.toTimeInput.toDoubleOrNull()
+                ?: return@whileActive showDialog("Invalid time", "Insert a valid numeric time.")
+            val currentTime = simulation.currentTime.toDouble()
+            val wasRunning = simulation.state == SimulationState.RUNNING
+            if (target < currentTime) {
+                return@whileActive showDialog(
+                    title = "Invalid time",
+                    message = "Target time $target cannot be lower than current time ${currentTime.formatFixed(
+                        DISPLAYED_TIME_DECIMALS,
+                    )}.",
+                )
             }
+            if (target > currentTime) {
+                val jumpCompletion = simulation.goToTime(DoubleTime(target))
+                simulation.play().await()
+                jumpCompletion.await()
+                if (wasRunning) {
+                    simulation.play().await()
+                }
+            }
+            syncSimulationState()
         }
-        syncSimulationState()
     }
 
     override suspend fun onToStepInputChanged(value: String) {
@@ -94,25 +102,27 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
     }
 
     override suspend fun onToStepSubmit() {
-        val currentState = store.state.controls
-        val target = currentState.toStepInput.toLongOrNull()
-            ?: return showDialog("Invalid step", "Insert a valid integer step.")
-        val wasRunning = simulation.state == SimulationState.RUNNING
-        if (target < simulation.step) {
-            return showDialog(
-                title = "Invalid step",
-                message = "Target step $target cannot be lower than current step ${simulation.step}.",
-            )
-        }
-        if (target > simulation.step) {
-            val jumpCompletion = simulation.goToStep(target)
-            simulation.play().await()
-            jumpCompletion.await()
-            if (wasRunning) {
-                simulation.play().await()
+        whileActive {
+            val currentState = store.state.controls
+            val target = currentState.toStepInput.toLongOrNull()
+                ?: return@whileActive showDialog("Invalid step", "Insert a valid integer step.")
+            val wasRunning = simulation.state == SimulationState.RUNNING
+            if (target < simulation.step) {
+                return@whileActive showDialog(
+                    title = "Invalid step",
+                    message = "Target step $target cannot be lower than current step ${simulation.step}.",
+                )
             }
+            if (target > simulation.step) {
+                val jumpCompletion = simulation.goToStep(target)
+                simulation.play().await()
+                jumpCompletion.await()
+                if (wasRunning) {
+                    simulation.play().await()
+                }
+            }
+            syncSimulationState()
         }
-        syncSimulationState()
     }
 
     override suspend fun onFpsInputChanged(value: String) {
@@ -149,27 +159,29 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
     }
 
     override suspend fun onNodesMoved(nodePositions: List<NodePositionUpdate>) {
-        if (nodePositions.isEmpty()) {
-            return
-        }
-        val environment = simulation.environment
-        val completion = java.util.concurrent.CompletableFuture<Unit>()
-        simulation.schedule {
-            runCatching {
-                nodePositions.forEach { nodePosition ->
-                    val node = environment.nodeWithId(nodePosition.nodeId)
-                    val newPosition = environment.makePosition(nodePosition.coordinates)
-                    environment.moveNodeTo(node, newPosition)
-                }
-            }.onSuccess {
-                completion.complete(Unit)
-            }.onFailure { error ->
-                completion.completeExceptionally(error)
-                throw error
+        whileActive {
+            if (nodePositions.isEmpty()) {
+                return@whileActive
             }
+            val environment = simulation.environment
+            val completion = java.util.concurrent.CompletableFuture<Unit>()
+            simulation.schedule {
+                runCatching {
+                    nodePositions.forEach { nodePosition ->
+                        val node = environment.nodeWithId(nodePosition.nodeId)
+                        val newPosition = environment.makePosition(nodePosition.coordinates)
+                        environment.moveNodeTo(node, newPosition)
+                    }
+                }.onSuccess {
+                    completion.complete(Unit)
+                }.onFailure { error ->
+                    completion.completeExceptionally(error)
+                    throw error
+                }
+            }
+            completion.await()
+            syncSimulationState(refreshScene = true)
         }
-        completion.await()
-        syncSimulationState(refreshScene = true)
     }
 
     override suspend fun onInspectorDismiss() {
@@ -217,6 +229,18 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
                     dialog = null,
                 ),
             ).withSelection(it.selectedNodeIds)
+        }
+    }
+
+    /**
+     * Runs [action] unless the simulation has ended: a terminated engine rejects every command,
+     * so the user gets a dialog instead.
+     */
+    private suspend fun whileActive(action: suspend () -> Unit) {
+        if (simulation.state == SimulationState.TERMINATED) {
+            showDialog("Simulation ended", "The simulation has terminated: it can no longer run, jump, or change.")
+        } else {
+            action()
         }
     }
 

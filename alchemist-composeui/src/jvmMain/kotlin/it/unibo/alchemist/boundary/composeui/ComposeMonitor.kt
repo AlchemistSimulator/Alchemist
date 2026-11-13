@@ -28,6 +28,7 @@ import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import it.unibo.alchemist.boundary.composeui.view.app
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
+import it.unibo.alchemist.core.SimulationState
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
@@ -166,7 +167,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                 application {
                     Window(
                         onCloseRequest = {
-                            environment.simulation.terminate()
+                            environment.simulation.takeUnless { it.state == SimulationState.TERMINATED }?.terminate()
                             exitApplication()
                         },
                         title = "Alchemist",

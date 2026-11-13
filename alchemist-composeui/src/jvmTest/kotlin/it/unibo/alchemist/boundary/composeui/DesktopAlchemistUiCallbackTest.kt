@@ -82,6 +82,19 @@ class DesktopAlchemistUiCallbackTest {
         }
     }
 
+    @Test
+    fun `commands after the end show a dialog instead of failing`() {
+        val simulation = TestSimulations.ticking(0.0 to 0.0)
+        val store = ComposeUiStateStore(AlchemistUiState())
+        val callback = DesktopAlchemistUiCallback(simulation, store)
+        simulation.runningInBackground {
+            simulation.terminate().join()
+            store.update { it.copy(controls = it.controls.copy(toStepInput = "5")) }
+            runBlocking { callback.onToStepSubmit() }
+            assertEquals("Simulation ended", store.state.controls.dialog?.title)
+        }
+    }
+
     private companion object {
         /**
          * Prepares a jump issued while the simulation is running.

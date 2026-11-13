@@ -52,7 +52,7 @@ Make the module consistent with the rest of the repository before building on it
 - [x] Nodes are all drawn with the same default accent. Until effects land, keep a neutral default.
 - [x] `ComposeMonitor` on a headless JVM must not crash. Add `failOnHeadless` (default `false`) as in `SwingGUI`: log a warning and do nothing.
 - [x] Closing the window calls `exitApplication()` only, so the simulation keeps running. Decide the close semantics, matching Swing's `EXIT_ON_CLOSE` default: terminate the simulation, then exit.
-- [ ] Check that the terminated/finished state is displayed when the simulation ends.
+- [x] Check that the terminated/finished state is displayed when the simulation ends.
 - [ ] `throttleSimulation` sleeps on the simulation thread on every step. Keep it, but make sure pausing or terminating the simulation never waits on that sleep.
 
 ### Look and controls

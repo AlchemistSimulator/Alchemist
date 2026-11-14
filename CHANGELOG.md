@@ -1,3 +1,13 @@
+## [50.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.2...50.0.3) (2026-11-14)
+
+### Dependency updates
+
+* **deps:** update ksp monorepo to v2.3.14 ([#5752](https://github.com/AlchemistSimulator/Alchemist/issues/5752)) ([d1ec669](https://github.com/AlchemistSimulator/Alchemist/commit/d1ec6698cb8db3bf94a53a0c3af6b6058635d483))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.170.0 ([#5751](https://github.com/AlchemistSimulator/Alchemist/issues/5751)) ([dae9d4e](https://github.com/AlchemistSimulator/Alchemist/commit/dae9d4eade7f8f49a7e116ad318f00fc59797fe3))
+
 ## [50.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.1...50.0.2) (2026-11-13)
 
 ### Dependency updates

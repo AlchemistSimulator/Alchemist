@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Danilo Pianini, Nicolas Farabegoli, Elisa Tronetti,
+ * Copyright (c) 2023-2026, Danilo Pianini, Nicolas Farabegoli, Elisa Tronetti,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
  * This file is part of Collektive, and is distributed under the terms of the Apache License 2.0,
@@ -39,7 +39,8 @@ class CollektiveDevice<P>(
     private val retainMessagesFor: Time? = null,
 ) : Capability<Any?>,
     Mailbox<Int>,
-    EnvironmentVariables where P : Position<P> {
+    EnvironmentVariables
+    where P : Position<P> {
 
     private data class TimedMessage(val receivedAt: Time, val payload: Message<Int, *>)
 
@@ -49,7 +50,7 @@ class CollektiveDevice<P>(
      * The current time.
      */
     val currentTime: Time
-        get() = environment.simulationOrNull?.currentTime ?: Time.ZERO
+        get() = environment.simulationOrNull?.time?.current ?: Time.ZERO
 
     /**
      * The ID of the node (alias of [localId]).
@@ -71,7 +72,7 @@ class CollektiveDevice<P>(
      * Returns the distances to the neighboring nodes.
      */
     fun <ID : Any> Aggregate<ID>.distances(): Field<ID, Double> =
-        environment.currentPositionOf(node).let { nodePosition ->
+        environment.positionOf(node).current.let { nodePosition ->
             neighboring(nodePosition.coordinates).mapValues { position ->
                 nodePosition.distanceTo(environment.makePosition(position))
             }
@@ -82,13 +83,12 @@ class CollektiveDevice<P>(
 
     override fun deliverableFor(outboundMessage: OutboundEnvelope<Int>) {
         if (outboundMessage.isNotEmpty()) {
-            val neighborsNodes = environment.neighborhoodOf(node).current
-            if (!neighborsNodes.isEmpty) {
-                val neighborhood =
-                    neighborsNodes.neighbors.mapNotNull { node ->
-                        @Suppress("UNCHECKED_CAST")
-                        node.properties.firstOrNull { it is CollektiveDevice<*> } as? CollektiveDevice<P>
-                    }
+            val neighborsNodes = environment.neighborhoodOf(node).current.neighbors
+            if (!neighborsNodes.isEmpty()) {
+                val neighborhood = neighborsNodes.mapNotNull { node ->
+                    @Suppress("UNCHECKED_CAST")
+                    node.properties.firstOrNull { it is CollektiveDevice<*> } as? CollektiveDevice<P>
+                }
                 neighborhood.forEach { neighbor ->
                     neighbor.deliverableReceived(outboundMessage.prepareMessageFor(neighbor.id))
                 }
@@ -124,7 +124,7 @@ class CollektiveDevice<P>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> get(name: String): T = node[SimpleMolecule(name)].getOrNull() as T
+    override fun <T> get(name: String): T = node[SimpleMolecule(name)] as T
 
     override fun <T> getOrNull(name: String): T? = when {
         isDefined(name) -> get(name)

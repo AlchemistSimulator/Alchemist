@@ -18,12 +18,10 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.GenericReaction
@@ -73,8 +71,10 @@ class CollektiveIncarnation<P> : Incarnation<Any?, P> where P : Position<P> {
         reaction: Reaction<Any?>,
         additionalParameters: Any?,
     ): Action<Any?> {
-        requireNotNull(node) { GLOBAL_REACTION_ERROR }
-        require(reaction is NodeReaction<Any?>) { GLOBAL_REACTION_ERROR }
+        requireNotNull(node) { "Collektive requires a device and cannot execute in a Global Reaction" }
+        require(reaction is NodeReaction<Any?>) {
+            "Collektive cannot execute on the environment, it requires a node"
+        }
         if (additionalParameters is CharSequence) {
             return RunCollektiveProgram(reaction, additionalParameters.toString())
         }
@@ -124,24 +124,13 @@ class CollektiveIncarnation<P> : Incarnation<Any?, P> where P : Position<P> {
         node: Node<Any?>?,
         reaction: Reaction<Any?>,
         additionalParameters: Any?,
-    ): Condition<Any?> {
-        requireNotNull(node)
-        return object : AbstractCondition<Any?>(reaction) {
-            override fun cloneCondition(newReaction: Reaction<Any?>): Condition<Any?> = createCondition(
-                randomGenerator,
-                environment,
-                newReaction.host as? Node<Any?>,
-                newReaction,
-                additionalParameters,
-            )
-        }
-    }
+    ): Condition<Any?> = error("Collektive does not support conditions.")
 
     override fun createReaction(
         randomGenerator: RandomGenerator,
         environment: Environment<Any?, P>,
         parameter: Any?,
-    ): Reaction<Any?> = throw UnsupportedOperationException(GLOBAL_REACTION_ERROR)
+    ): Reaction<Any?> = error("Collektive reactions must run on nodes.")
 
     override fun createNodeReaction(
         randomGenerator: RandomGenerator,
@@ -192,12 +181,12 @@ class CollektiveIncarnation<P> : Incarnation<Any?, P> where P : Position<P> {
     }
 
     override fun readConcentration(node: Node<Any?>, molecule: Molecule, property: String): Double {
-        val concentration = node[molecule].getOrNull()
         val interpreted = when {
-            property.isBlank() -> concentration
+            property.isBlank() -> node[molecule]
             else -> {
+                val concentration = node[molecule]
                 val toInvoke = propertyCache.get(CodeElements(concentration, property))
-                node.asPropertyOrNull<Any?, CollektiveDevice<*>>().toInvoke(concentration)
+                node.asPropertyOrNull(CollektiveDevice::class).toInvoke(concentration)
             }
         }
         return when (interpreted) {
@@ -210,9 +199,6 @@ class CollektiveIncarnation<P> : Incarnation<Any?, P> where P : Position<P> {
     }
 
     private companion object {
-
-        private const val GLOBAL_REACTION_ERROR =
-            "Collektive requires a device and cannot execute in a Global Reaction"
 
         private data class CodeElements(val concentrationType: String, val property: String) {
             constructor(concentration: Any?, property: String) : this(

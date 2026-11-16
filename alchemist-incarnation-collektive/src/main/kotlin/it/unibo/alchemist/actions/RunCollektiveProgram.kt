@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2023-2026, Danilo Pianini, Nicolas Farabegoli, Elisa Tronetti,
+ * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
+ *
+ * This file is part of Collektive, and is distributed under the terms of the Apache License 2.0,
+ * as described in the LICENSE file in this project's repository's top directory.
+ */
+
 package it.unibo.alchemist.actions
 
 import it.unibo.alchemist.collektive.device.CollektiveDevice
@@ -7,8 +15,8 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.NodeReaction
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.actions.AbstractLocalAction
-import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.collektive.Collektive
 import it.unibo.collektive.aggregate.api.Aggregate
 import it.unibo.collektive.path.FullPathFactory
@@ -18,31 +26,26 @@ import kotlin.reflect.jvm.kotlinFunction
 
 /**
  * An Alchemist [Action] that runs a [Collektive] program.
- * Requires the hosting [reaction], a program [name], and the actual [program] to execute.
+ * Requires a [reaction], a program [name], and the actual [program] to execute.
  */
 class RunCollektiveProgram<P : Position<P>>(
     reaction: NodeReaction<Any?>,
     val name: String,
     val program: Aggregate<Int>.(CollektiveDevice<P>) -> Any?,
-) : AbstractLocalAction<Any?>(reaction) {
-    private val programIdentifier = SimpleMolecule(name)
+) : AbstractAction<Any?>(reaction) {
 
     /**
-     * The [CollektiveDevice] associated with the [targetNode].
+     * The [CollektiveDevice] associated with the [reaction] host node.
      */
-    val localDevice: CollektiveDevice<P> = targetNode.asProperty()
+    val localDevice: CollektiveDevice<P> = reaction.host.asProperty()
 
     /**
      * The [Collektive] program on which cycles will be executed.
      */
-    val collektiveProgram: Collektive<Int, Any?>
-
-    init {
-        collektiveProgram =
-            Collektive(localDevice.id, network = localDevice, pathFactory = FullPathFactory) {
-                program(localDevice)
-            }
-    }
+    val collektiveProgram: Collektive<Int, Any?> =
+        Collektive(localDevice.id, network = localDevice, pathFactory = FullPathFactory) {
+            program(localDevice)
+        }
 
     /**
      * Create a [RunCollektiveProgram] with a specific [entrypoint] and a [reaction].
@@ -62,12 +65,16 @@ class RunCollektiveProgram<P : Position<P>>(
         name: String = entrypoint.name,
     ) : this(reaction, name, buildEntryPoint(entrypoint))
 
-    override fun cloneOnNodeReaction(newReaction: NodeReaction<Any?>): Action<Any?> =
-        RunCollektiveProgram(newReaction, name, program)
+    override fun cloneAction(newReaction: Reaction<Any?>): Action<Any?> {
+        require(newReaction is NodeReaction<Any?>) {
+            "RunCollektiveProgram can only be cloned on a NodeReaction."
+        }
+        return RunCollektiveProgram(newReaction, name)
+    }
 
     override fun execute() {
         collektiveProgram.cycle().also {
-            targetNode[programIdentifier] = it
+            localDevice[name] = it
         }
     }
 

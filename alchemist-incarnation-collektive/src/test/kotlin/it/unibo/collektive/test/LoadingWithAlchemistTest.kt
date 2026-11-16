@@ -43,7 +43,7 @@ class LoadingWithAlchemistTest {
         val incarnation = CollektiveIncarnation<Euclidean2DPosition>()
         val environment = Continuous2DEnvironment(incarnation)
         val reference = SimpleMolecule("ref")
-        val node = GenericNode(environment).apply { this[reference] = listOf(1, 2, 3) }
+        val node = GenericNode(environment).apply { set(reference, listOf(1, 2, 3)) }
         assertEquals(
             3.0,
             incarnation.readConcentration(node, reference, "it[2]"),

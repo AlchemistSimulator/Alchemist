@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, Danilo Pianini, Nicolas Farabegoli, Elisa Tronetti,
+ * Copyright (c) 2023-2026, Danilo Pianini, Nicolas Farabegoli, Elisa Tronetti,
  * and all authors listed in the `build.gradle.kts` and the generated `pom.xml` file.
  *
  * This file is part of Collektive, and is distributed under the terms of the Apache License 2.0,
@@ -29,13 +29,12 @@ class GradientTest {
             simulation.play()
             simulation.run()
             simulation.error.onSome { exception -> throw exception }
-            val nodes = simulation.environment.nodes.current
-            assertEquals(10, nodes.size)
+            assertEquals(10, simulation.environment.nodes.size.current)
             val moleculeToRead = SimpleMolecule("Gradient")
-            val sourceNode = nodes.first { node ->
+            val sourceNode = simulation.environment.nodes.current.first { node ->
                 node[SimpleMolecule("source")].getOrNull() == true
             }
-            nodes.forEach { node ->
+            simulation.environment.nodes.current.forEach { node ->
                 val distance = simulation.environment.distanceBetween(sourceNode, node)
                 assertEquals(distance, node[moleculeToRead].getOrNull() as Double, 1e-7)
             }

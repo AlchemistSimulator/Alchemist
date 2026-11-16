@@ -1,3 +1,14 @@
+## [50.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.3...50.0.4) (2026-11-16)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.11.2-19.3.1 ([#5756](https://github.com/AlchemistSimulator/Alchemist/issues/5756)) ([90982cd](https://github.com/AlchemistSimulator/Alchemist/commit/90982cdf6996bde84d44e6a55ffce5ea84d693dd))
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.6.7 ([#5754](https://github.com/AlchemistSimulator/Alchemist/issues/5754)) ([f70bc20](https://github.com/AlchemistSimulator/Alchemist/commit/f70bc2003a251f538e7158f2e9a4ebb9336857a7))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.52 ([#5755](https://github.com/AlchemistSimulator/Alchemist/issues/5755)) ([1f1014d](https://github.com/AlchemistSimulator/Alchemist/commit/1f1014d7e1b925561c0f4eaa53c36078e6f24aea))
+
 ## [50.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.2...50.0.3) (2026-11-14)
 
 ### Dependency updates

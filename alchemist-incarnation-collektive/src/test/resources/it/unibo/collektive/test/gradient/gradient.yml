@@ -11,7 +11,7 @@ _pool: &program
       source-sets:
         - src/test/resources/it/unibo/collektive/test/kotlin
       code: |
-        import my.test.*
+        import it.unibo.collektive.test.kotlin.*
         import it.unibo.collektive.alchemist.device.sensors.EnvironmentVariables
       entrypoint: gradient(device, device.get("source"))
 

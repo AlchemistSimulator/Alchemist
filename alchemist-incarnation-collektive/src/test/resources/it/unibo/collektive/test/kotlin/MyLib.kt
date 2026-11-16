@@ -1,4 +1,4 @@
-package my.test
+package it.unibo.collektive.test.kotlin
 
 import it.unibo.alchemist.collektive.device.CollektiveDevice
 import it.unibo.collektive.aggregate.api.Aggregate

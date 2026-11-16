@@ -182,9 +182,9 @@ class CollektiveIncarnation<P> : Incarnation<Any?, P> where P : Position<P> {
 
     override fun readConcentration(node: Node<Any?>, molecule: Molecule, property: String): Double {
         val interpreted = when {
-            property.isBlank() -> node[molecule]
+            property.isBlank() -> node[molecule].getOrNull()
             else -> {
-                val concentration = node[molecule]
+                val concentration = node[molecule].getOrNull()
                 val toInvoke = propertyCache.get(CodeElements(concentration, property))
                 node.asPropertyOrNull(CollektiveDevice::class).toInvoke(concentration)
             }

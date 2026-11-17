@@ -53,6 +53,10 @@ kotlin {
     }
 }
 
+compose.resources {
+    packageOfResClass = "it.unibo.alchemist.boundary.composeui.resources"
+}
+
 publishing.publications.withType<MavenPublication>().configureEach {
     pom {
         developers {

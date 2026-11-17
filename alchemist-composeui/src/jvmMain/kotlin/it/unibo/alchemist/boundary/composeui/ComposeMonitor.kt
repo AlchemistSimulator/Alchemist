@@ -24,6 +24,8 @@ import it.unibo.alchemist.boundary.composeui.adapter.AlchemistSimulations.toSimu
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
+import it.unibo.alchemist.boundary.composeui.resources.Res
+import it.unibo.alchemist.boundary.composeui.resources.alchemist_logo
 import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import it.unibo.alchemist.boundary.composeui.view.app
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
@@ -37,6 +39,7 @@ import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.roundToLong
+import org.jetbrains.compose.resources.painterResource
 import org.slf4j.LoggerFactory
 
 /**
@@ -153,6 +156,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                             exitApplication()
                         },
                         title = "Alchemist",
+                        icon = painterResource(Res.drawable.alchemist_logo),
                         state = rememberWindowState(
                             size = DpSize(
                                 width = (screenSize.width * 3 / 4).dp,

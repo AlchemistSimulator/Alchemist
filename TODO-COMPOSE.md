@@ -57,8 +57,8 @@ Make the module consistent with the rest of the repository before building on it
 
 ### Look and controls
 
-- [ ] Show the Alchemist icon next to "Alchemist Simulator" at the top left. Source: `site/static/images/logo.svg`; ship it as a resource of the module.
-- [ ] Use the same icon as the application/window icon.
+- [x] Show the Alchemist icon next to "Alchemist Simulator" at the top left. Source: `site/static/images/logo.svg`; ship it as a resource of the module.
+- [x] Use the same icon as the application/window icon.
 - [ ] "To Step" defaults to the current step + 1; "To Time" defaults to the current time + 1. Keep them in sync while the simulation runs, unless the user is editing the field.
 - [ ] All controls in the bottom bar have the same size.
 - [ ] Scale the whole UI (bottom bar included) with the window size, so it looks right at any screen size and density. Sizes come from the window, not from fixed `dp` values tuned on one screen.

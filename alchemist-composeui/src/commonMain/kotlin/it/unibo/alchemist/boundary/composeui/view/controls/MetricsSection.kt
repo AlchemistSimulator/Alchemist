@@ -11,27 +11,54 @@ package it.unibo.alchemist.boundary.composeui.view.controls
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
-import it.unibo.alchemist.boundary.composeui.view.components.MetricBlock
+import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
+import it.unibo.alchemist.boundary.composeui.view.theme.Danger
+import it.unibo.alchemist.boundary.composeui.view.theme.Positive
+import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
+import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
 
+private val readoutSpacing = 4.dp
+
+private val SimulationStatus.color: Color get() = when (this) {
+    SimulationStatus.RUNNING -> Positive
+    SimulationStatus.PAUSED -> PrimaryAccent
+    SimulationStatus.TERMINATED -> Danger
+    else -> SecondaryAccent
+}
+
+/**
+ * The status, the time, and the step, in one line.
+ */
 @Composable
 internal fun MetricsSection(controls: SimulationControlsState) {
-    DockSection(title = "Metrics") {
-        Row(horizontalArrangement = Arrangement.spacedBy(sectionItemSpacing)) {
-            metrics(controls).forEach { metric ->
-                MetricBlock(
-                    label = metric.label,
-                    value = metric.value,
-                )
-            }
-        }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(stripItemSpacing),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = controls.statusLabel,
+            style = MaterialTheme.typography.caption,
+            fontWeight = FontWeight.SemiBold,
+            color = controls.status.color,
+        )
+        Readout(label = "time", value = controls.timeLabel)
+        Readout(label = "step", value = controls.step.toString())
     }
 }
 
-private data class MetricValue(val label: String, val value: String)
-
-private fun metrics(controls: SimulationControlsState): List<MetricValue> = listOf(
-    MetricValue(label = "Time", value = controls.timeLabel),
-    MetricValue(label = "Step", value = controls.step.toString()),
-)
+@Composable
+private fun Readout(label: String, value: String) {
+    Row(horizontalArrangement = Arrangement.spacedBy(readoutSpacing), verticalAlignment = Alignment.CenterVertically) {
+        Text(text = label, style = MaterialTheme.typography.caption, color = SecondaryAccent)
+        Text(text = value, style = MaterialTheme.typography.subtitle1.copy(fontFamily = FontFamily.Monospace))
+    }
+}

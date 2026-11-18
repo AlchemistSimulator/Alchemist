@@ -9,100 +9,112 @@
 
 package it.unibo.alchemist.boundary.composeui.view.controls
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import it.unibo.alchemist.boundary.composeui.view.components.TransportButtonSize
+import it.unibo.alchemist.boundary.composeui.view.components.componentShape
 import it.unibo.alchemist.boundary.composeui.view.theme.Danger
 import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
+import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
-import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
-private val DockTextFieldWidth = 132.dp
+private val fieldPadding = 8.dp
 
 /**
- * A dock text box that submits on Enter.
+ * A compact dock text box, labeled inside, that submits on Enter.
  * With a [default], the box shows it until focused, then starts editing from it, and Enter leaves the box.
- * The [error], if any, replaces the [hint] while editing.
+ * While editing, an [error] turns the border red.
  */
 @Composable
 internal fun DockTextField(
     label: String,
     value: String,
-    hint: String,
     error: String?,
     onValueChange: (String) -> Unit,
     onSubmit: () -> Unit,
+    width: Dp,
     default: String? = null,
 ) {
     var focused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val following = default != null && !focused
-    val isError = error != null && !following
-    Column(
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        OutlinedTextField(
-            value = default?.takeIf { following } ?: value,
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .width(DockTextFieldWidth)
-                .onFocusChanged { focus ->
-                    if (focus.isFocused && !focused && default != null) {
-                        onValueChange(default)
-                    }
-                    focused = focus.isFocused
-                }
-                .onPreviewKeyEvent {
-                    val isEnter = it.key == Key.Enter || it.key == Key.NumPadEnter
-                    if (it.type == KeyEventType.KeyUp && isEnter) {
-                        onSubmit()
-                        default?.let { focusManager.clearFocus() }
-                        true
-                    } else {
-                        false
-                    }
-                },
-            label = { Text(label) },
-            singleLine = true,
-            isError = isError,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = TextPrimary,
-                focusedBorderColor = PrimaryAccent,
-                unfocusedBorderColor = Outline,
-                errorBorderColor = Danger,
-                errorLabelColor = Danger,
-                errorCursorColor = Danger,
-                focusedLabelColor = PrimaryAccent,
-                unfocusedLabelColor = TextSecondary,
-                cursorColor = PrimaryAccent,
-            ),
-        )
-        Text(
-            text = error?.takeIf { isError } ?: hint,
-            style = MaterialTheme.typography.caption,
-            color = if (isError) Danger else TextSecondary,
-        )
+    val shownError = error?.takeUnless { following }
+    val borderColor = when {
+        shownError != null -> Danger
+        focused -> PrimaryAccent
+        else -> Outline
     }
+    BasicTextField(
+        value = default?.takeIf { following } ?: value,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .width(width)
+            .height(TransportButtonSize)
+            .semantics { shownError?.let { error(it) } }
+            .onFocusChanged { focus ->
+                if (focus.isFocused && !focused && default != null) {
+                    onValueChange(default)
+                }
+                focused = focus.isFocused
+            }
+            .onPreviewKeyEvent {
+                val isEnter = it.key == Key.Enter || it.key == Key.NumPadEnter
+                if (it.type == KeyEventType.KeyUp && isEnter) {
+                    onSubmit()
+                    default?.let { focusManager.clearFocus() }
+                    true
+                } else {
+                    false
+                }
+            },
+        singleLine = true,
+        textStyle = MaterialTheme.typography.body2.copy(color = TextPrimary, fontFamily = FontFamily.Monospace),
+        cursorBrush = SolidColor(PrimaryAccent),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        decorationBox = { innerTextField ->
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(width = 1.dp, color = borderColor, shape = componentShape)
+                    .padding(horizontal = fieldPadding),
+                horizontalArrangement = Arrangement.spacedBy(fieldPadding),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(text = label, style = MaterialTheme.typography.caption, color = SecondaryAccent)
+                Box(modifier = Modifier.weight(1f)) { innerTextField() }
+            }
+        },
+    )
 }

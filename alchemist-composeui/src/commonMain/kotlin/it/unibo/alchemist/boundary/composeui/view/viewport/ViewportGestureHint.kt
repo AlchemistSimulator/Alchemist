@@ -37,6 +37,7 @@ private val shortcuts = listOf(
     "Space" to "Play / pause",
     "C" to "Show or hide the controls",
     "H" to "Show or hide this help",
+    "Ctrl + Q" to "Quit",
 )
 
 private val keyColumnWidth = 110.dp

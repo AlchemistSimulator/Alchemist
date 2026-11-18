@@ -9,6 +9,12 @@
 
 package it.unibo.alchemist.boundary.composeui.model.throttling
 
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatCompact
+import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.pow
+import kotlin.math.roundToInt
+
 /**
  * Limit on how many simulation events per second the simulation thread may execute.
  *
@@ -21,6 +27,9 @@ internal sealed class SimulationEventThrottling(val value: Int) {
         }
     }
 
+    /** Where this rate sits on the logarithmic speed slider, from 0 to [MAX_SLIDER_POSITION]. */
+    val sliderPosition: Float get() = log10(value.coerceAtMost(MAX_SIMULATION_EVENTS_PER_SECOND).toFloat())
+
     /**
      * Returns the throttling policy for the newly selected event rate [newValue].
      */
@@ -31,7 +40,7 @@ internal sealed class SimulationEventThrottling(val value: Int) {
      */
     fun toLabel(): String = when (this) {
         is FullThrottle -> "Max"
-        is EventsPerSecond -> "$value"
+        is EventsPerSecond -> "${value.formatCompact()} events/s"
     }
 
     /**
@@ -46,7 +55,20 @@ internal sealed class SimulationEventThrottling(val value: Int) {
         /**
          * Highest selectable event rate: selecting it disables throttling.
          */
-        const val MAX_SIMULATION_EVENTS_PER_SECOND: Int = 2000
+        const val MAX_SIMULATION_EVENTS_PER_SECOND: Int = 1_000_000
+
+        /** The top of the logarithmic speed slider: the base-10 logarithm of the highest rate. */
+        val MAX_SLIDER_POSITION: Float = log10(MAX_SIMULATION_EVENTS_PER_SECOND.toFloat())
+
+        /**
+         * The event rate at [position] on the logarithmic speed slider, rounded to two significant digits.
+         */
+        fun rateAt(position: Float): Int {
+            val raw = 10.0.pow(position.toDouble())
+            val unit = 10.0.pow(floor(log10(raw)) - 1).coerceAtLeast(1.0)
+            return ((raw / unit).roundToInt() * unit).roundToInt()
+                .coerceIn(MIN_SIMULATION_EVENTS_PER_SECOND, MAX_SIMULATION_EVENTS_PER_SECOND)
+        }
 
         /**
          * Converts the selected event rate [value] into a throttling policy:

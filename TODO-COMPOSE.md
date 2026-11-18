@@ -68,13 +68,13 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 - [x] The viewport fills the window: no card frame or outer margins. The other controls float over it as translucent panels.
 - [x] A handle line above the bottom bar, or the C key, hides it, leaving only the line, and shows it again. It starts visible.
 - [ ] Replace the bottom bar with one thin strip (about 48 dp), centred at the bottom, with the same height for every control:
-  - one Play/Pause toggle whose icon shows the state, replacing the Play and Pause buttons and the status pill;
-  - Step;
-  - time and step readouts;
-  - "To Time" and "To Step" boxes, kept separate because they use different scales;
-  - quick jumps: time +1, +10, +100, +1000; step +1, +N, +2N, +10N, where N is the node count;
-  - the pacing control (see [Pacing](#pacing));
-  - a ⚙ menu with the FPS and the links toggle.
+  - [x] one Play/Pause toggle whose icon shows the state, replacing the Play and Pause buttons and the status pill;
+  - [x] Step;
+  - [x] time and step readouts;
+  - [x] "To Time" and "To Step" boxes, kept separate because they use different scales;
+  - [ ] quick jumps: time +1, +10, +100, +1000; step +1, +N, +2N, +10N, where N is the node count;
+  - [ ] the pacing control (see [Pacing](#pacing));
+  - [ ] a ⚙ menu with the FPS and the links toggle.
 - [ ] Optionally, let the monitor configure the quick jumps.
 - [ ] Make the inspector (right side bar) resizable by dragging its edge.
 - [ ] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.

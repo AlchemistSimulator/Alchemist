@@ -13,38 +13,44 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
-import it.unibo.alchemist.boundary.composeui.view.components.StatusPill
-import it.unibo.alchemist.boundary.composeui.view.components.TransportButton
-import it.unibo.alchemist.boundary.composeui.view.theme.Danger
+import it.unibo.alchemist.boundary.composeui.view.components.TransportIcon
+import it.unibo.alchemist.boundary.composeui.view.components.TransportIconButton
 import it.unibo.alchemist.boundary.composeui.view.theme.Positive
 import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
 
+/**
+ * One Play/Pause toggle, showing what a click does, and Step.
+ */
 @Composable
 internal fun TransportSection(controls: SimulationControlsState, actions: DockActions) {
-    DockSection(title = "Transport") {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(sectionItemSpacing),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            StatusPill(controls)
-            transportActions(controls, actions).forEach { action ->
-                TransportButton(
-                    label = action.label,
-                    enabled = action.enabled,
-                    accent = action.accent,
-                    onClick = action.onClick,
-                )
-            }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(stripItemSpacing),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (controls.canPause) {
+            TransportIconButton(
+                icon = TransportIcon.PAUSE,
+                label = "Pause",
+                enabled = true,
+                accent = PrimaryAccent,
+                onClick = actions.onPause,
+            )
+        } else {
+            TransportIconButton(
+                icon = TransportIcon.PLAY,
+                label = "Play",
+                enabled = controls.canPlay,
+                accent = Positive,
+                onClick = actions.onPlay,
+            )
         }
+        TransportIconButton(
+            icon = TransportIcon.STEP,
+            label = "Step",
+            enabled = controls.canStep,
+            accent = PrimaryAccent,
+            onClick = actions.onStep,
+        )
     }
 }
-
-private data class TransportAction(val label: String, val enabled: Boolean, val accent: Color, val onClick: () -> Unit)
-
-private fun transportActions(controls: SimulationControlsState, actions: DockActions): List<TransportAction> = listOf(
-    TransportAction(label = "Play", enabled = controls.canPlay, accent = Positive, onClick = actions.onPlay),
-    TransportAction(label = "Pause", enabled = controls.canPause, accent = Danger, onClick = actions.onPause),
-    TransportAction(label = "Step", enabled = controls.canStep, accent = PrimaryAccent, onClick = actions.onStep),
-)

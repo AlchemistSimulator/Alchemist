@@ -9,7 +9,10 @@
 
 package it.unibo.alchemist.boundary.composeui.view.controls
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -20,12 +23,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.view.theme.FloatingPanel
+import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 
-private const val DOCK_ALPHA = 0.6f
+private const val DOCK_ALPHA = 0.8f
 
-private val dockHorizontalPadding = 18.dp
-private val dockVerticalPadding = 16.dp
-private val dockSectionSpacing = 14.dp
+private val dockHorizontalPadding = 12.dp
+private val dockVerticalPadding = 6.dp
+private val dockSectionSpacing = 12.dp
+private val dockCornerRadius = 24.dp
+private val dividerInset = 6.dp
+
+/** The space between the items of a dock section. */
+internal val stripItemSpacing = 8.dp
 
 @Composable
 internal fun ControlDock(
@@ -58,7 +67,7 @@ internal fun ControlDock(
     Surface(
         modifier = modifier,
         color = FloatingPanel.copy(alpha = DOCK_ALPHA),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(dockCornerRadius),
         elevation = 0.dp,
     ) {
         DockContent(controls, validation, actions)
@@ -72,10 +81,23 @@ private fun DockContent(controls: SimulationControlsState, validation: DockValid
         modifier = Modifier.padding(horizontal = dockHorizontalPadding, vertical = dockVerticalPadding),
     ) {
         TransportSection(controls, actions)
+        DockDivider()
         MetricsSection(controls)
+        DockDivider()
         JumpSection(controls, validation, actions)
+        DockDivider()
         PacingSection(controls, validation, actions)
     }
+}
+
+@Composable
+private fun DockDivider() {
+    Box(
+        modifier = Modifier
+            .padding(vertical = dividerInset)
+            .width(1.dp)
+            .background(Outline),
+    )
 }
 
 /**

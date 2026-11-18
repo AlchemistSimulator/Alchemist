@@ -13,35 +13,39 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 
+private val jumpFieldWidth = 150.dp
+
+/**
+ * The "to time" and "to step" boxes: Enter jumps there.
+ */
 @Composable
 internal fun JumpSection(controls: SimulationControlsState, validation: DockValidationMessages, actions: DockActions) {
-    DockSection(title = "Jump") {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(sectionItemSpacing),
-            verticalAlignment = Alignment.Top,
-        ) {
-            DockTextField(
-                label = "To Time",
-                value = controls.toTimeInput,
-                default = controls.defaultTargetTime.formatFixed(DISPLAYED_TIME_DECIMALS),
-                hint = "Enter to jump",
-                error = validation.toTime,
-                onValueChange = actions.onToTimeInputChanged,
-                onSubmit = actions.onToTimeSubmit,
-            )
-            DockTextField(
-                label = "To Step",
-                value = controls.toStepInput,
-                default = controls.defaultTargetStep.toString(),
-                hint = "Enter to jump",
-                error = validation.toStep,
-                onValueChange = actions.onToStepInputChanged,
-                onSubmit = actions.onToStepSubmit,
-            )
-        }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(stripItemSpacing),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        DockTextField(
+            label = "to time",
+            value = controls.toTimeInput,
+            default = controls.defaultTargetTime.formatFixed(DISPLAYED_TIME_DECIMALS),
+            width = jumpFieldWidth,
+            error = validation.toTime,
+            onValueChange = actions.onToTimeInputChanged,
+            onSubmit = actions.onToTimeSubmit,
+        )
+        DockTextField(
+            label = "to step",
+            value = controls.toStepInput,
+            default = controls.defaultTargetStep.toString(),
+            width = jumpFieldWidth,
+            error = validation.toStep,
+            onValueChange = actions.onToStepInputChanged,
+            onSubmit = actions.onToStepSubmit,
+        )
     }
 }

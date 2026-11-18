@@ -15,7 +15,10 @@ import kotlin.math.max
 
 /**
  * Slows the simulation thread down to a given event rate.
- * The wait between events can be cut short with [wakeUp], so that commands such as pause or terminate,
+ * Events follow a schedule, and the thread waits only once it is at least [MIN_WAIT_NS] ahead of it:
+ * shorter waits are not precise enough, and would cap fast rates far below the requested one.
+ * A simulation that falls behind may catch up for at most [MAX_CATCH_UP_NS], without waiting.
+ * The wait can be cut short with [wakeUp], so that commands such as pause or terminate,
  * which the engine runs between steps, never wait for it.
  */
 internal class SimulationThrottle {
@@ -33,10 +36,14 @@ internal class SimulationThrottle {
             nextReleaseNs = 0L
         } else {
             val intervalNs = (TimeUnit.SECONDS.toNanos(1) / eventsPerSecond).coerceAtLeast(1L)
-            nextReleaseNs = max(System.nanoTime(), nextReleaseNs) + intervalNs
-            var remainingNs = nextReleaseNs - System.nanoTime()
-            while (remainingNs > 0L && !wokenUp) {
-                remainingNs = wakeUpSignal.awaitNanos(remainingNs)
+            val now = System.nanoTime()
+            val scheduled = if (nextReleaseNs == 0L) now else max(nextReleaseNs, now - MAX_CATCH_UP_NS)
+            nextReleaseNs = scheduled + intervalNs
+            var remainingNs = nextReleaseNs - now
+            if (remainingNs >= MIN_WAIT_NS) {
+                while (remainingNs > 0L && !wokenUp) {
+                    remainingNs = wakeUpSignal.awaitNanos(remainingNs)
+                }
             }
         }
         wokenUp = false
@@ -52,5 +59,13 @@ internal class SimulationThrottle {
         wokenUp = true
         nextReleaseNs = 0L
         wakeUpSignal.signalAll()
+    }
+
+    private companion object {
+        /** Shorter waits are skipped, and made up for by a longer one later. */
+        val MIN_WAIT_NS: Long = TimeUnit.MILLISECONDS.toNanos(1)
+
+        /** How far behind the schedule a slow simulation may fall and still catch up. */
+        val MAX_CATCH_UP_NS: Long = TimeUnit.MILLISECONDS.toNanos(100)
     }
 }

@@ -17,12 +17,17 @@ import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
+import it.unibo.alchemist.boundary.composeui.model.throttling.EventsPerSecond
 import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
+import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.MAX_SIMULATION_EVENTS_PER_SECOND
+import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.MAX_SLIDER_POSITION
+import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.rateAt
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
+import kotlin.math.log10
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -95,6 +100,29 @@ class SimulationControlsStateTest {
         assertTrue(controls.isFullThrottle)
         assertEquals(FullThrottle, controls.simulationEventThrottling)
         assertEquals("Max", controls.simulationEventThrottling.toLabel())
+    }
+
+    @Test
+    fun `the speed slider spans one to the highest rate`() {
+        assertEquals(1, rateAt(0f))
+        assertEquals(MAX_SIMULATION_EVENTS_PER_SECOND, rateAt(MAX_SLIDER_POSITION))
+        val atTop = SimulationControlsState().updateEventThrottling(rateAt(MAX_SLIDER_POSITION))
+        assertEquals(FullThrottle, atTop.simulationEventThrottling)
+    }
+
+    @Test
+    fun `the speed slider is logarithmic and rounds to two significant digits`() {
+        assertEquals(100, rateAt(2f))
+        assertEquals(1200, rateAt(log10(1234f)))
+        assertEquals(2f, EventsPerSecond(100).sliderPosition)
+    }
+
+    @Test
+    fun `speed labels show their unit`() {
+        assertEquals("10 events/s", EventsPerSecond(10).toLabel())
+        assertEquals("1.2K events/s", EventsPerSecond(1200).toLabel())
+        assertEquals("10K events/s", EventsPerSecond(10_000).toLabel())
+        assertEquals("1M events/s", EventsPerSecond(1_000_000).toLabel())
     }
 
     @Test

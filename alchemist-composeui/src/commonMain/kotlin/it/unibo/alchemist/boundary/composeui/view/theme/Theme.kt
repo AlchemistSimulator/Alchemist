@@ -40,7 +40,7 @@ internal val NodeColor = Color(0xFF495057)
 internal val FloatingPanel = SurfaceStrong.copy(alpha = 0.85f)
 
 /** The background of the help button and panels, lighter than [FloatingPanel]. */
-internal val HelpPanel = SurfaceStrong.copy(alpha = 0.55f)
+internal val HelpPanel = SurfaceStrong.copy(alpha = 0.75f)
 
 /** The space between floating panels and the window edges. */
 internal val OverlayMargin = 16.dp
@@ -50,6 +50,5 @@ internal const val SELECTED_NODE_RADIUS = 18f
 internal const val SELECTED_NODE_INNER_RADIUS = 12f
 internal const val NODE_RADIUS = 7f
 internal const val LINK_STROKE_WIDTH = 1.5f
-internal val StatusPillWidth = 132.dp
 internal const val GRID_VERTICAL_DIVISIONS = 8
 internal const val GRID_HORIZONTAL_DIVISIONS = 6

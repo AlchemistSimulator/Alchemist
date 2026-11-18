@@ -10,6 +10,12 @@
 package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.runtime.remember
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -42,7 +48,7 @@ import org.slf4j.LoggerFactory
 
 /**
  * Shows the simulation in a desktop window.
- * Closing the window terminates the simulation, so exporters can finish and Alchemist can exit.
+ * Closing the window, or pressing Ctrl+Q, terminates the simulation, so exporters can finish and Alchemist can exit.
  * On a JVM without a display, it logs a warning and does nothing, unless [failOnHeadless] is true.
  *
  * @param targetFps how many times per second the UI redraws at startup.
@@ -146,11 +152,15 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
             Thread {
                 val screenSize = Toolkit.getDefaultToolkit().screenSize
                 application {
+                    val close = {
+                        throttle.wakeUp()
+                        environment.simulation.takeUnless { it.state == SimulationState.TERMINATED }?.terminate()
+                        exitApplication()
+                    }
                     Window(
-                        onCloseRequest = {
-                            throttle.wakeUp()
-                            environment.simulation.takeUnless { it.state == SimulationState.TERMINATED }?.terminate()
-                            exitApplication()
+                        onCloseRequest = close,
+                        onPreviewKeyEvent = { event ->
+                            event.isQuitShortcut.also { quit -> if (quit) close() }
                         },
                         title = "Alchemist",
                         icon = painterResource(Res.drawable.alchemist_logo),
@@ -191,5 +201,9 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                 .refreshRate
                 .takeIf { it > 0 }
         }.getOrNull()
+
+        /** Whether this is Ctrl+Q being pressed. */
+        private val KeyEvent.isQuitShortcut: Boolean
+            get() = type == KeyEventType.KeyDown && isCtrlPressed && key == Key.Q
     }
 }

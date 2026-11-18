@@ -72,6 +72,7 @@ internal fun ViewportSurface(
     var drag by remember { mutableStateOf<ViewportDrag>(ViewportDrag.None) }
     var pointer by remember { mutableStateOf<Offset?>(null) }
     var heldPans by remember { mutableStateOf(emptySet<PanDirection>()) }
+    var showHelp by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
     val candidateProjection = remember(scene.nodes, viewportSize) { scene.createViewportProjection(viewportSize) }
@@ -148,6 +149,7 @@ internal fun ViewportSurface(
                         },
                         onSelectNearestNode = selectNearestNode,
                         onClearSelection = clearSelection,
+                        onToggleHelp = { showHelp = !showHelp },
                     )
                     .onPointerEvent(PointerEventType.Press) { event ->
                         focusRequester.requestFocus()
@@ -196,7 +198,9 @@ internal fun ViewportSurface(
             )
             ViewportGestureHint(
                 hasNodes = scene.nodes.isNotEmpty(),
-                modifier = Modifier.align(Alignment.BottomStart).padding(20.dp),
+                expanded = showHelp,
+                onToggle = { showHelp = !showHelp },
+                modifier = Modifier.align(Alignment.BottomStart).padding(8.dp),
             )
             ViewportGridLegend(
                 viewportSize = viewportSize,

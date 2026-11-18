@@ -64,7 +64,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 - [x] "To Step" defaults to the current step + 1; "To Time" defaults to the current time + 1. Keep them in sync while the simulation runs, unless the user is editing the field.
 - [x] All controls in the bottom bar have the same size.
 - [x] Scale the whole UI (bottom bar included) with the window size, so it looks right at any screen size and density. Sizes come from the window, not from fixed `dp` values tuned on one screen.
-- [ ] Shortcuts help (bottom left): hidden behind a **?** button, shown or hidden by clicking it or pressing H.
+- [x] Shortcuts help (bottom left): hidden behind a **?** button, shown or hidden by clicking it or pressing H.
 - [ ] The viewport fills the window: no card frame or outer margins. The other controls float over it as translucent panels.
 - [ ] Replace the bottom bar with one thin strip (about 48 dp), centred at the bottom, with the same height for every control:
   - one Play/Pause toggle whose icon shows the state, replacing the Play and Pause buttons and the status pill;

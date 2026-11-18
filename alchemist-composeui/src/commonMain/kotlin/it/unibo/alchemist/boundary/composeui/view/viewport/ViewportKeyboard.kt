@@ -24,7 +24,7 @@ private const val NANOS_PER_SECOND = 1e9f
 
 /**
  * Keyboard controls: arrows or WASD pan while held, Enter or E select the node nearest to the pointer and open it,
- * Backspace clears the selection.
+ * Backspace clears the selection, H shows or hides the shortcuts.
  * [onPanKey] gets each pan direction as it is pressed or released; the other callbacks return whether they
  * handled the key.
  */
@@ -32,6 +32,7 @@ internal fun Modifier.viewportKeyboard(
     onPanKey: (direction: PanDirection, pressed: Boolean) -> Unit,
     onSelectNearestNode: () -> Boolean,
     onClearSelection: () -> Boolean,
+    onToggleHelp: () -> Unit,
 ): Modifier = onPreviewKeyEvent { event ->
     val panDirection = PanDirection.of(event.key)
     when {
@@ -42,6 +43,10 @@ internal fun Modifier.viewportKeyboard(
         event.type != KeyEventType.KeyDown -> false
         event.key == Key.Enter || event.key == Key.NumPadEnter || event.key == Key.E -> onSelectNearestNode()
         event.key == Key.Backspace -> onClearSelection()
+        event.key == Key.H -> {
+            onToggleHelp()
+            true
+        }
         else -> false
     }
 }

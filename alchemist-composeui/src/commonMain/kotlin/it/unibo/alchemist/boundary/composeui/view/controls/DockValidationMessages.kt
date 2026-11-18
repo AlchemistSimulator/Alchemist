@@ -24,20 +24,22 @@ internal data class DockValidationMessages(
         /** The errors in the inputs of [controls]. */
         fun of(controls: SimulationControlsState): DockValidationMessages = with(controls) {
             DockValidationMessages(
-                toTime = toTimeInput.numericValidationError("Use a numeric time"),
-                toStep = toStepValidationError(),
+                toTime = jumpError(targetTime, time, "Use a numeric time", "Target is before current time"),
+                toStep = jumpError(targetStep, step, "Use an integer step", "Target is before current step"),
                 fps = fpsValidationError(),
             )
         }
 
-        private fun String.numericValidationError(parseError: String): String? =
-            takeIf { it.isNotBlank() }?.let { if (it.toDoubleOrNull() == null) parseError else null }
-
-        private fun SimulationControlsState.toStepValidationError(): String? =
-            toStepInput.takeIf { it.isNotBlank() }?.let { input ->
-                val targetStep = input.toLongOrNull() ?: return@let "Use an integer step"
-                if (targetStep < step) "Target is before current step" else null
-            }
+        private fun <N : Comparable<N>> jumpError(
+            target: N?,
+            current: N,
+            parseError: String,
+            pastError: String,
+        ): String? = when {
+            target == null -> parseError
+            target < current -> pastError
+            else -> null
+        }
 
         private fun SimulationControlsState.fpsValidationError(): String? =
             fpsInput.takeIf { it.isNotBlank() }?.let { input ->

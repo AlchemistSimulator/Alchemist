@@ -11,19 +11,21 @@ package it.unibo.alchemist.boundary.composeui.model
 
 import androidx.compose.runtime.Immutable
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
 import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 
 /**
  * State for transport controls and simulator metrics.
  *
  * @property status the simulation status.
- * @property timeLabel the simulation time, as text.
+ * @property time the simulation time.
  * @property step the number of steps done.
  * @property progress the simulation progress.
- * @property toTimeInput the text in the "to time" box.
- * @property toStepInput the text in the "to step" box.
+ * @property toTimeInput the text in the "to time" box; empty means one time unit ahead.
+ * @property toStepInput the text in the "to step" box; empty means the next step.
  * @property fpsInput the text in the FPS box.
  * @property uiFps the UI frame rate.
  * @property maxUiFps the highest allowed UI frame rate.
@@ -33,7 +35,7 @@ import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThr
 @Immutable
 internal data class SimulationControlsState(
     val status: SimulationStatus = SimulationStatus.INIT,
-    val timeLabel: String = "0",
+    val time: Double = 0.0,
     val step: Long = 0L,
     val progress: SimulationProgress = SimulationProgress(),
     val toTimeInput: String = "",
@@ -61,6 +63,21 @@ internal data class SimulationControlsState(
 
     /** Whether Step is enabled. */
     val canStep: Boolean = status == SimulationStatus.READY || status == SimulationStatus.PAUSED
+
+    /** The time, as text. */
+    val timeLabel: String = time.formatFixed(DISPLAYED_TIME_DECIMALS)
+
+    /** The step "To Step" shows when the user is not editing it. */
+    val defaultTargetStep: Long = step + 1
+
+    /** The time "To Time" shows when the user is not editing it. */
+    val defaultTargetTime: Double = time + 1
+
+    /** The step to jump to, or null if the input is not an integer. */
+    val targetStep: Long? = if (toStepInput.isBlank()) defaultTargetStep else toStepInput.toLongOrNull()
+
+    /** The time to jump to, or null if the input is not a number. */
+    val targetTime: Double? = if (toTimeInput.isBlank()) defaultTargetTime else toTimeInput.toDoubleOrNull()
 
     /** The status, as text. */
     val statusLabel: String = status.name.lowercase().replaceFirstChar(Char::uppercaseChar)

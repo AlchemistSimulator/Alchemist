@@ -72,8 +72,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onToTimeSubmit() {
         whileActive {
-            val currentState = store.state.controls
-            val target = currentState.toTimeInput.toDoubleOrNull()
+            val target = store.state.controls.targetTime
                 ?: return@whileActive showDialog("Invalid time", "Insert a valid numeric time.")
             val currentTime = simulation.currentTime.toDouble()
             val wasRunning = simulation.state == SimulationState.RUNNING
@@ -105,8 +104,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onToStepSubmit() {
         whileActive {
-            val currentState = store.state.controls
-            val target = currentState.toStepInput.toLongOrNull()
+            val target = store.state.controls.targetStep
                 ?: return@whileActive showDialog("Invalid step", "Insert a valid integer step.")
             val wasRunning = simulation.state == SimulationState.RUNNING
             if (target < simulation.step) {
@@ -227,7 +225,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
                 scene = nextScene,
                 controls = it.controls.copy(
                     status = simulation.toSimulationStatus(),
-                    timeLabel = simulation.currentTime.toDouble().formatFixed(DISPLAYED_TIME_DECIMALS),
+                    time = simulation.currentTime.toDouble(),
                     step = simulation.step,
                     dialog = null,
                 ),

@@ -16,7 +16,6 @@ import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
-import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import kotlinx.collections.immutable.persistentListOf
 
 /**
@@ -31,8 +30,8 @@ internal object DemoUiState {
     /** The scene at startup. */
     val initial: AlchemistUiState = sampleUiState()
 
-    /** The time shown at [step]. */
-    fun timeLabel(step: Long): String = (step / TIME_SCALE).formatFixed(2)
+    /** The time at [step]. */
+    fun time(step: Long): Double = step / TIME_SCALE
 
     private fun sampleUiState(): AlchemistUiState {
         val nodes = persistentListOf(
@@ -121,7 +120,7 @@ internal object DemoUiState {
             ),
             controls = SimulationControlsState(
                 status = SimulationStatus.PAUSED,
-                timeLabel = timeLabel(INITIAL_STEP),
+                time = time(INITIAL_STEP),
                 step = INITIAL_STEP,
                 progress = SimulationProgress(
                     fraction = 0.42f,

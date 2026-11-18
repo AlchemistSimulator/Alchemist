@@ -50,8 +50,8 @@ internal fun PacingSection(
             DockTextField(
                 label = "FPS",
                 value = controls.fpsInput,
-                caption = validation.fps ?: controls.fpsRangeLabel,
-                isError = validation.fps != null,
+                hint = controls.fpsRangeLabel,
+                error = validation.fps,
                 onValueChange = actions.onFpsInputChanged,
                 onSubmit = actions.onFpsSubmit,
             )

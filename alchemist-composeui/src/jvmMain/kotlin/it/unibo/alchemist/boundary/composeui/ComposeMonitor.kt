@@ -17,7 +17,6 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
-import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistEnvironments.toViewport
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistSimulations.toSimulationStatus
@@ -26,7 +25,6 @@ import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
 import it.unibo.alchemist.boundary.composeui.resources.Res
 import it.unibo.alchemist.boundary.composeui.resources.alchemist_logo
-import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import it.unibo.alchemist.boundary.composeui.view.app
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
@@ -123,11 +121,10 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
     private fun updateUiState(environment: Environment<T, P>, time: Time, step: Long) {
         currentUiState.update {
             val viewport = environment.toViewport(renderLinks = it.scene.showLinks)
-            val displayedTime = time.toComposeUiLabel()
             it.copy(
                 scene = viewport.copy(showLinks = it.scene.showLinks),
                 controls = it.controls.copy(
-                    timeLabel = displayedTime,
+                    time = time.toDouble(),
                     step = step,
                     status = environment.simulation.toSimulationStatus(),
                 ),
@@ -185,8 +182,6 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
 
     private companion object {
         private val logger = LoggerFactory.getLogger(ComposeMonitor::class.java)
-
-        private fun Time.toComposeUiLabel(): String = toDouble().formatFixed(DISPLAYED_TIME_DECIMALS)
 
         private fun detectMonitorRefreshRate(): Int? = runCatching {
             GraphicsEnvironment

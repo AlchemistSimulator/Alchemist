@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 
 @Composable
 internal fun JumpSection(controls: SimulationControlsState, validation: DockValidationMessages, actions: DockActions) {
@@ -25,16 +27,18 @@ internal fun JumpSection(controls: SimulationControlsState, validation: DockVali
             DockTextField(
                 label = "To Time",
                 value = controls.toTimeInput,
-                caption = validation.toTime ?: "Enter to jump",
-                isError = validation.toTime != null,
+                default = controls.defaultTargetTime.formatFixed(DISPLAYED_TIME_DECIMALS),
+                hint = "Enter to jump",
+                error = validation.toTime,
                 onValueChange = actions.onToTimeInputChanged,
                 onSubmit = actions.onToTimeSubmit,
             )
             DockTextField(
                 label = "To Step",
                 value = controls.toStepInput,
-                caption = validation.toStep ?: "Enter to jump",
-                isError = validation.toStep != null,
+                default = controls.defaultTargetStep.toString(),
+                hint = "Enter to jump",
+                error = validation.toStep,
                 onValueChange = actions.onToStepInputChanged,
                 onSubmit = actions.onToStepSubmit,
             )

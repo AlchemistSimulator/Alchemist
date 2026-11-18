@@ -46,6 +46,18 @@ class DesktopAlchemistUiCallbackTest {
     }
 
     @Test
+    fun `to step with an empty box advances one step`() {
+        val simulation = TestSimulations.ticking(0.0 to 0.0)
+        val store = ComposeUiStateStore(AlchemistUiState())
+        val callback = DesktopAlchemistUiCallback(simulation, store)
+        simulation.runningInBackground {
+            runBlocking { callback.onToStepSubmit() }
+            assertEquals(1L, simulation.step)
+            assertEquals(1L, store.state.controls.step)
+        }
+    }
+
+    @Test
     fun `to step resumes the simulation if it was running`() {
         val simulation = TestSimulations.ticking(0.0 to 0.0)
         val store = ComposeUiStateStore(AlchemistUiState())
@@ -78,7 +90,7 @@ class DesktopAlchemistUiCallbackTest {
             assertEquals(SimulationState.RUNNING, simulation.state)
             assertTrue(simulation.currentTime.toDouble() >= target)
             assertEquals(SimulationStatus.RUNNING, store.state.controls.status)
-            assertTrue(store.state.controls.timeLabel.toDouble() >= target)
+            assertTrue(store.state.controls.time >= target)
         }
     }
 

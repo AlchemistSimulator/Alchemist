@@ -27,6 +27,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class SimulationControlsStateTest {
@@ -94,6 +95,32 @@ class SimulationControlsStateTest {
         assertTrue(controls.isFullThrottle)
         assertEquals(FullThrottle, controls.simulationEventThrottling)
         assertEquals("Max", controls.simulationEventThrottling.toLabel())
+    }
+
+    @Test
+    fun `empty jump boxes target the next step and one time unit ahead`() {
+        val controls = SimulationControlsState(step = 7, time = 2.5)
+        assertEquals(8L, controls.targetStep)
+        assertEquals(3.5, controls.targetTime)
+    }
+
+    @Test
+    fun `typed jump targets win over the defaults`() {
+        val controls = SimulationControlsState(step = 7, time = 2.5, toStepInput = "20", toTimeInput = "x")
+        assertEquals(20L, controls.targetStep)
+        assertNull(controls.targetTime)
+    }
+
+    @Test
+    fun `demo controller advances one step when to step is empty`() {
+        val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
+        val start = controller.store.state.controls.step
+
+        runSuspend {
+            controller.callbacks.onToStepSubmit()
+        }
+
+        assertEquals(start + 1, controller.store.state.controls.step)
     }
 
     @Test

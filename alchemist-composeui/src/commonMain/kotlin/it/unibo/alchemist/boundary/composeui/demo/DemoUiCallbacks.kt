@@ -8,13 +8,11 @@
  */
 package it.unibo.alchemist.boundary.composeui.demo
 
-import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.SimulationProgress
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
-import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -54,9 +52,9 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
 
     override suspend fun onToTimeSubmit() {
         store.update { state ->
-            val target = state.controls.toTimeInput.toDoubleOrNull()
+            val target = state.controls.targetTime
                 ?: return@update state.withDialog("Invalid time", "Insert a valid numeric time.")
-            val currentTime = state.controls.timeLabel.toDoubleOrNull() ?: 0.0
+            val currentTime = state.controls.time
             val wasRunning = state.controls.status == SimulationStatus.RUNNING
             if (target < currentTime) {
                 return@update state.withDialog(
@@ -67,7 +65,7 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
             val targetStep = ceil(target * DemoUiState.TIME_SCALE).toLong()
             state.withStepProgress(
                 targetStep,
-                timeLabel = target.formatFixed(DISPLAYED_TIME_DECIMALS),
+                time = target,
                 status = if (wasRunning) SimulationStatus.RUNNING else SimulationStatus.PAUSED,
             )
         }
@@ -81,7 +79,7 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
 
     override suspend fun onToStepSubmit() {
         store.update { state ->
-            val target = state.controls.toStepInput.toLongOrNull()
+            val target = state.controls.targetStep
                 ?: return@update state.withDialog("Invalid step", "Insert a valid integer step.")
             val wasRunning = state.controls.status == SimulationStatus.RUNNING
             if (target < state.controls.step) {
@@ -159,13 +157,13 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
 
     private fun AlchemistUiState.withStepProgress(
         step: Long,
-        timeLabel: String = DemoUiState.timeLabel(step),
+        time: Double = DemoUiState.time(step),
         status: SimulationStatus = SimulationStatus.PAUSED,
     ): AlchemistUiState = copy(
         controls = controls.copy(
             status = status,
             step = step,
-            timeLabel = timeLabel,
+            time = time,
             progress = SimulationProgress(
                 fraction = (step % 100).toFloat() / 100f,
                 label = "Scenario exploration",

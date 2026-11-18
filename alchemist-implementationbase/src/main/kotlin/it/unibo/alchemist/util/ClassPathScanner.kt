@@ -41,7 +41,8 @@ object ClassPathScanner {
             // WHITELIST package
             acceptPackages(*inPackage)
             // BLACKLIST package
-            rejectPackages("org.gradle")
+            // Skip the embedded Kotlin compiler: huge and never relevant, scanning it exhausts the heap
+            rejectPackages("org.gradle", "org.jetbrains.kotlin")
         }
 
     /**

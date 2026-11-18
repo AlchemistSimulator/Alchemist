@@ -11,12 +11,10 @@ package it.unibo.alchemist.boundary.composeui.view.viewport
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +44,7 @@ import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallback
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundVariant
 import it.unibo.alchemist.boundary.composeui.view.theme.NODE_HIT_RADIUS
-import it.unibo.alchemist.boundary.composeui.view.theme.Outline
+import it.unibo.alchemist.boundary.composeui.view.theme.OverlayMargin
 import it.unibo.alchemist.boundary.composeui.view.theme.Surface as SurfaceColor
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import kotlinx.coroutines.launch
@@ -64,6 +62,8 @@ internal fun ViewportSurface(
     scene: ViewportScene,
     selectedNodeIds: List<Int>,
     callbacks: AlchemistUiCallbacks,
+    onToggleHelp: () -> Unit,
+    onToggleControls: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var viewportSize by remember { mutableStateOf(IntSize.Zero) }
@@ -72,7 +72,6 @@ internal fun ViewportSurface(
     var drag by remember { mutableStateOf<ViewportDrag>(ViewportDrag.None) }
     var pointer by remember { mutableStateOf<Offset?>(null) }
     var heldPans by remember { mutableStateOf(emptySet<PanDirection>()) }
-    var showHelp by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
     val candidateProjection = remember(scene.nodes, viewportSize) { scene.createViewportProjection(viewportSize) }
@@ -113,13 +112,11 @@ internal fun ViewportSurface(
         modifier = modifier,
         color = SurfaceColor,
         contentColor = TextPrimary,
-        shape = RoundedCornerShape(12.dp),
         elevation = 0.dp,
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .border(width = 1.dp, color = Outline.copy(alpha = 0.8f), shape = RoundedCornerShape(12.dp))
                 .background(
                     Brush.radialGradient(
                         colors = listOf(BackgroundVariant.copy(alpha = 0.55f), Background),
@@ -149,7 +146,8 @@ internal fun ViewportSurface(
                         },
                         onSelectNearestNode = selectNearestNode,
                         onClearSelection = clearSelection,
-                        onToggleHelp = { showHelp = !showHelp },
+                        onToggleHelp = onToggleHelp,
+                        onToggleControls = onToggleControls,
                     )
                     .onPointerEvent(PointerEventType.Press) { event ->
                         focusRequester.requestFocus()
@@ -194,19 +192,13 @@ internal fun ViewportSurface(
             ViewportChrome(
                 scene = scene,
                 onToggleLinks = { send { onToggleLinks() } },
-                modifier = Modifier.align(Alignment.TopStart).padding(20.dp),
-            )
-            ViewportGestureHint(
-                hasNodes = scene.nodes.isNotEmpty(),
-                expanded = showHelp,
-                onToggle = { showHelp = !showHelp },
-                modifier = Modifier.align(Alignment.BottomStart).padding(8.dp),
+                modifier = Modifier.align(Alignment.TopStart).padding(OverlayMargin),
             )
             ViewportGridLegend(
                 viewportSize = viewportSize,
                 zoom = camera.zoom,
                 projection = projection,
-                modifier = Modifier.align(Alignment.BottomEnd).padding(20.dp),
+                modifier = Modifier.align(Alignment.BottomEnd).padding(OverlayMargin),
             )
         }
     }

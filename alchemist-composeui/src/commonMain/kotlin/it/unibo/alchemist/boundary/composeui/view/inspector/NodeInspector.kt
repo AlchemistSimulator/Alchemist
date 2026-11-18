@@ -29,8 +29,8 @@ import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
 import it.unibo.alchemist.boundary.composeui.model.Labeled
 import it.unibo.alchemist.boundary.composeui.view.components.TransportButton
+import it.unibo.alchemist.boundary.composeui.view.theme.FloatingPanel
 import it.unibo.alchemist.boundary.composeui.view.theme.Outline
-import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
@@ -38,7 +38,7 @@ import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 internal fun NodeInspector(inspector: InspectorState, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
-        color = SurfaceStrong,
+        color = FloatingPanel,
         contentColor = TextPrimary,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
         elevation = 0.dp,

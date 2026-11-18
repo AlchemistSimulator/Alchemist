@@ -27,7 +27,7 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
 import it.unibo.alchemist.boundary.composeui.view.theme.Surface as SurfaceColor
 
-private const val DOCK_SECTION_SURFACE_ALPHA = 0.78f
+private const val DOCK_SECTION_SURFACE_ALPHA = 0.45f
 private const val DOCK_SECTION_BORDER_ALPHA = 0.7f
 private val dockSectionCornerRadius = 12.dp
 private val dockSectionBorderWidth = 1.dp

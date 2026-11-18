@@ -35,7 +35,15 @@ internal val Danger = Color(0xFFDC3545)
 
 /** One neutral color for every node, until effects choose colors. */
 internal val NodeColor = Color(0xFF495057)
-internal val InspectorScrim = Color(0x66050A11)
+
+/** The background of panels floating over the viewport. */
+internal val FloatingPanel = SurfaceStrong.copy(alpha = 0.85f)
+
+/** The background of the help button and panels, lighter than [FloatingPanel]. */
+internal val HelpPanel = SurfaceStrong.copy(alpha = 0.55f)
+
+/** The space between floating panels and the window edges. */
+internal val OverlayMargin = 16.dp
 internal const val ZOOM_STEP = 1.12f
 internal const val NODE_HIT_RADIUS = 22f
 internal const val SELECTED_NODE_RADIUS = 18f

@@ -9,12 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui.view.controls
 
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -24,10 +19,9 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
-import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
+import it.unibo.alchemist.boundary.composeui.view.theme.FloatingPanel
 
-private const val COMPACT_COLUMNS = 2
-private const val WIDE_COLUMNS = 4
+private const val DOCK_ALPHA = 0.6f
 
 private val dockHorizontalPadding = 18.dp
 private val dockVerticalPadding = 16.dp
@@ -46,7 +40,6 @@ internal fun ControlDock(
     onFpsInputChanged: (String) -> Unit,
     onFpsSubmit: () -> Unit,
     onEventRateChanged: (Float) -> Unit,
-    compact: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val validation = DockValidationMessages.of(controls)
@@ -64,67 +57,60 @@ internal fun ControlDock(
     )
     Surface(
         modifier = modifier,
-        color = SurfaceStrong,
+        color = FloatingPanel.copy(alpha = DOCK_ALPHA),
         shape = RoundedCornerShape(12.dp),
         elevation = 0.dp,
     ) {
-        DockContent(controls, validation, actions, columns = if (compact) COMPACT_COLUMNS else WIDE_COLUMNS)
+        DockContent(controls, validation, actions)
     }
 }
 
 @Composable
-private fun DockContent(
-    controls: SimulationControlsState,
-    validation: DockValidationMessages,
-    actions: DockActions,
-    columns: Int,
-) {
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = dockHorizontalPadding, vertical = dockVerticalPadding),
+private fun DockContent(controls: SimulationControlsState, validation: DockValidationMessages, actions: DockActions) {
+    DockRow(
+        spacing = dockSectionSpacing,
+        modifier = Modifier.padding(horizontal = dockHorizontalPadding, vertical = dockVerticalPadding),
     ) {
-        EqualCells(
-            columns = columns,
-            spacing = dockSectionSpacing,
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState())
-                .widthIn(min = maxWidth),
-        ) {
-            TransportSection(controls, actions)
-            MetricsSection(controls)
-            JumpSection(controls, validation, actions)
-            PacingSection(controls, validation, actions)
-        }
+        TransportSection(controls, actions)
+        MetricsSection(controls)
+        JumpSection(controls, validation, actions)
+        PacingSection(controls, validation, actions)
     }
 }
 
 /**
- * Lays out [content] in a grid of [columns] cells of the same size:
- * as wide as the widest item, or wider to fill the minimum width, and as tall as the tallest.
+ * Lays out [content] in one row of equally tall items, each at its own width.
+ * Only if the row does not fit do the items wrap onto more rows, each centered.
  */
 @Composable
-private fun EqualCells(columns: Int, spacing: Dp, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+private fun DockRow(spacing: Dp, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     SubcomposeLayout(modifier) { constraints ->
         val gap = spacing.roundToPx()
-        val natural = subcompose(EqualCellsSlot.NATURAL, content).map { it.measure(Constraints()) }
-        val cellWidth = maxOf(
-            natural.maxOfOrNull { it.width } ?: 0,
-            (constraints.minWidth - gap * (columns - 1)) / columns,
-        )
-        val cellHeight = natural.maxOfOrNull { it.height } ?: 0
-        val cells = subcompose(EqualCellsSlot.FINAL, content).map {
-            it.measure(Constraints.fixed(cellWidth, cellHeight))
+        val natural = subcompose(DockRowSlot.NATURAL, content).map { it.measure(Constraints()) }
+        val height = natural.maxOfOrNull { it.height } ?: 0
+        val widths = natural.map { it.width.coerceAtMost(constraints.maxWidth) }
+        val rows = widths.indices.fold(emptyList<List<Int>>()) { rows, index ->
+            val last = rows.lastOrNull()
+            when {
+                last != null && last.sumOf { widths[it] + gap } + widths[index] <= constraints.maxWidth ->
+                    rows.dropLast(1) + listOf(last + index)
+                else -> rows + listOf(listOf(index))
+            }
         }
-        val rows = (cells.size + columns - 1) / columns
-        val width = (cellWidth * columns + gap * (columns - 1)).coerceAtLeast(constraints.minWidth)
-        val height = (cellHeight * rows + gap * (rows - 1)).coerceAtLeast(0)
-        layout(width, height) {
-            cells.forEachIndexed { index, cell ->
-                cell.place(x = index % columns * (cellWidth + gap), y = index / columns * (cellHeight + gap))
+        val cells = subcompose(DockRowSlot.FINAL, content).mapIndexed { index, measurable ->
+            measurable.measure(Constraints.fixed(widths[index], height))
+        }
+        val rowWidths = rows.map { row -> row.sumOf { widths[it] } + gap * (row.size - 1) }
+        val width = rowWidths.maxOrNull() ?: 0
+        layout(width, (height * rows.size + gap * (rows.size - 1)).coerceAtLeast(0)) {
+            rows.forEachIndexed { rowIndex, row ->
+                row.fold((width - rowWidths[rowIndex]) / 2) { x, index ->
+                    cells[index].place(x, rowIndex * (height + gap))
+                    x + widths[index] + gap
+                }
             }
         }
     }
 }
 
-private enum class EqualCellsSlot { NATURAL, FINAL }
+private enum class DockRowSlot { NATURAL, FINAL }

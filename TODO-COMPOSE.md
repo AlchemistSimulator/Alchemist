@@ -62,10 +62,11 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 - [x] Show the Alchemist icon next to "Alchemist Simulator" at the top left. Source: `site/static/images/logo.svg`; ship it as a resource of the module.
 - [x] Use the same icon as the application/window icon.
 - [x] "To Step" defaults to the current step + 1; "To Time" defaults to the current time + 1. Keep them in sync while the simulation runs, unless the user is editing the field.
-- [x] All controls in the bottom bar have the same size.
+- [x] All controls in the bottom bar have the same height, and sit in one row.
 - [x] Scale the whole UI (bottom bar included) with the window size, so it looks right at any screen size and density. Sizes come from the window, not from fixed `dp` values tuned on one screen.
 - [x] Shortcuts help (bottom left): hidden behind a **?** button, shown or hidden by clicking it or pressing H.
-- [ ] The viewport fills the window: no card frame or outer margins. The other controls float over it as translucent panels.
+- [x] The viewport fills the window: no card frame or outer margins. The other controls float over it as translucent panels.
+- [x] A handle line above the bottom bar, or the C key, hides it, leaving only the line, and shows it again. It starts visible.
 - [ ] Replace the bottom bar with one thin strip (about 48 dp), centred at the bottom, with the same height for every control:
   - one Play/Pause toggle whose icon shows the state, replacing the Play and Pause buttons and the status pill;
   - Step;

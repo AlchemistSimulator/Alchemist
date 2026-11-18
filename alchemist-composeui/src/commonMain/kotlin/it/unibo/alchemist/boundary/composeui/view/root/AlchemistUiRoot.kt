@@ -99,142 +99,146 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
             ),
         ),
     ) {
-        state.controls.dialog?.let { dialog ->
-            androidx.compose.material.AlertDialog(
-                onDismissRequest = { coroutineScope.launch { callbacks.onDialogDismiss() } },
-                title = { Text(dialog.title) },
-                text = { Text(dialog.message) },
-                confirmButton = {
-                    androidx.compose.material.TextButton(
-                        onClick = { coroutineScope.launch { callbacks.onDialogDismiss() } },
-                    ) {
-                        Text("OK")
-                    }
-                },
-                backgroundColor = SurfaceStrong,
-                contentColor = TextPrimary,
-            )
-        }
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxSize()
-                .playPauseOnSpace(
-                    controls = state.controls,
-                    onPlay = { coroutineScope.launch { callbacks.onPlay() } },
-                    onPause = { coroutineScope.launch { callbacks.onPause() } },
+        ScaledToWindow(Modifier.fillMaxSize()) {
+            state.controls.dialog?.let { dialog ->
+                androidx.compose.material.AlertDialog(
+                    onDismissRequest = { coroutineScope.launch { callbacks.onDialogDismiss() } },
+                    title = { Text(dialog.title) },
+                    text = { Text(dialog.message) },
+                    confirmButton = {
+                        androidx.compose.material.TextButton(
+                            onClick = { coroutineScope.launch { callbacks.onDialogDismiss() } },
+                        ) {
+                            Text("OK")
+                        }
+                    },
+                    backgroundColor = SurfaceStrong,
+                    contentColor = TextPrimary,
                 )
-                .background(
-                    Brush.linearGradient(
-                        colors = listOf(Background, BackgroundVariant, BackgroundGradientEnd),
-                    ),
-                ),
-        ) {
-            val compactLayout = maxWidth < 980.dp
-            val inspectorVisible = state.inspector != null
-            val inspectorWidth = 324.dp
-            val bottomBarHeight = 152.dp
-            val layoutSpacing = 20.dp
-            val paneSpacing = if (inspectorVisible) 8.dp else layoutSpacing
-            val inspectorTransition = updateTransition(targetState = inspectorVisible, label = "inspector")
-            val animatedInspectorWidth by inspectorTransition.animateDp(
-                transitionSpec = { tween(durationMillis = 320) },
-                label = "inspector-width",
-            ) { visible ->
-                if (visible) {
-                    inspectorWidth
-                } else {
-                    0.dp
-                }
             }
-            var displayedInspector by remember { mutableStateOf(state.inspector) }
-            if (state.inspector != null) {
-                displayedInspector = state.inspector
-            }
-            if (!inspectorTransition.currentState && !inspectorTransition.targetState && displayedInspector != null) {
-                displayedInspector = null
-            }
-            if (compactLayout) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(layoutSpacing),
-                ) {
-                    SimulationPrimaryPane(
-                        scene = state.scene,
+            BoxWithConstraints(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .playPauseOnSpace(
                         controls = state.controls,
-                        selectedNodeIds = state.selectedNodeIds,
-                        callbacks = callbacks,
-                        dockWidthFraction = 1f,
-                        spacing = layoutSpacing,
-                        modifier = Modifier.fillMaxSize(),
+                        onPlay = { coroutineScope.launch { callbacks.onPlay() } },
+                        onPause = { coroutineScope.launch { callbacks.onPause() } },
                     )
-                    if (inspectorVisible) {
-                        Box(
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(Background, BackgroundVariant, BackgroundGradientEnd),
+                        ),
+                    ),
+            ) {
+                val compactLayout = maxWidth < 980.dp
+                val inspectorVisible = state.inspector != null
+                val inspectorWidth = 324.dp
+                val bottomBarHeight = 152.dp
+                val layoutSpacing = 20.dp
+                val paneSpacing = if (inspectorVisible) 8.dp else layoutSpacing
+                val inspectorTransition = updateTransition(targetState = inspectorVisible, label = "inspector")
+                val animatedInspectorWidth by inspectorTransition.animateDp(
+                    transitionSpec = { tween(durationMillis = 320) },
+                    label = "inspector-width",
+                ) { visible ->
+                    if (visible) {
+                        inspectorWidth
+                    } else {
+                        0.dp
+                    }
+                }
+                var displayedInspector by remember { mutableStateOf(state.inspector) }
+                if (state.inspector != null) {
+                    displayedInspector = state.inspector
+                }
+                if (!inspectorTransition.currentState && !inspectorTransition.targetState &&
+                    displayedInspector != null
+                ) {
+                    displayedInspector = null
+                }
+                if (compactLayout) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(layoutSpacing),
+                    ) {
+                        SimulationPrimaryPane(
+                            scene = state.scene,
+                            controls = state.controls,
+                            selectedNodeIds = state.selectedNodeIds,
+                            callbacks = callbacks,
+                            dockWidthFraction = 1f,
+                            spacing = layoutSpacing,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                        if (inspectorVisible) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(InspectorScrim)
+                                    .clickable(
+                                        onClickLabel = "Dismiss inspector",
+                                        role = Role.Button,
+                                        onClick = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
+                                    ),
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = bottomBarHeight + 12.dp)
+                                    .fillMaxWidth(),
+                            ) {
+                                NodeInspector(
+                                    inspector = requireNotNull(state.inspector),
+                                    onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(layoutSpacing),
+                        horizontalArrangement = Arrangement.spacedBy(paneSpacing),
+                    ) {
+                        SimulationPrimaryPane(
+                            scene = state.scene,
+                            controls = state.controls,
+                            selectedNodeIds = state.selectedNodeIds,
+                            callbacks = callbacks,
+                            dockWidthFraction = 0.84f,
+                            spacing = layoutSpacing,
                             modifier = Modifier
-                                .fillMaxSize()
-                                .background(InspectorScrim)
-                                .clickable(
-                                    onClickLabel = "Dismiss inspector",
-                                    role = Role.Button,
-                                    onClick = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
-                                ),
+                                .weight(1f)
+                                .animateContentSize(animationSpec = tween(durationMillis = 320))
+                                .fillMaxHeight(),
                         )
                         Box(
                             modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = bottomBarHeight + 12.dp)
-                                .fillMaxWidth(),
+                                .fillMaxHeight()
+                                .width(animatedInspectorWidth),
                         ) {
-                            NodeInspector(
-                                inspector = requireNotNull(state.inspector),
-                                onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                    }
-                }
-            } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(layoutSpacing),
-                    horizontalArrangement = Arrangement.spacedBy(paneSpacing),
-                ) {
-                    SimulationPrimaryPane(
-                        scene = state.scene,
-                        controls = state.controls,
-                        selectedNodeIds = state.selectedNodeIds,
-                        callbacks = callbacks,
-                        dockWidthFraction = 0.84f,
-                        spacing = layoutSpacing,
-                        modifier = Modifier
-                            .weight(1f)
-                            .animateContentSize(animationSpec = tween(durationMillis = 320))
-                            .fillMaxHeight(),
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(animatedInspectorWidth),
-                    ) {
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = inspectorVisible,
-                            enter = slideInHorizontally(
-                                animationSpec = tween(durationMillis = 320),
-                                initialOffsetX = { it / 3 },
-                            ) + fadeIn(animationSpec = tween(durationMillis = 220)),
-                            exit = slideOutHorizontally(
-                                animationSpec = tween(durationMillis = 320),
-                                targetOffsetX = { it / 3 },
-                            ) + fadeOut(animationSpec = tween(durationMillis = 180)),
-                            modifier = Modifier.fillMaxHeight(),
-                        ) {
-                            displayedInspector?.let {
-                                NodeInspector(
-                                    inspector = it,
-                                    onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
-                                    modifier = Modifier.fillMaxHeight(),
-                                )
+                            androidx.compose.animation.AnimatedVisibility(
+                                visible = inspectorVisible,
+                                enter = slideInHorizontally(
+                                    animationSpec = tween(durationMillis = 320),
+                                    initialOffsetX = { it / 3 },
+                                ) + fadeIn(animationSpec = tween(durationMillis = 220)),
+                                exit = slideOutHorizontally(
+                                    animationSpec = tween(durationMillis = 320),
+                                    targetOffsetX = { it / 3 },
+                                ) + fadeOut(animationSpec = tween(durationMillis = 180)),
+                                modifier = Modifier.fillMaxHeight(),
+                            ) {
+                                displayedInspector?.let {
+                                    NodeInspector(
+                                        inspector = it,
+                                        onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
+                                        modifier = Modifier.fillMaxHeight(),
+                                    )
+                                }
                             }
                         }
                     }

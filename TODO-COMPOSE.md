@@ -57,11 +57,24 @@ Make the module consistent with the rest of the repository before building on it
 
 ### Look and controls
 
+Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-window viewport with small floating controls. From RTS games, keep box selection, shortcuts for everything, and group summaries.
+
 - [x] Show the Alchemist icon next to "Alchemist Simulator" at the top left. Source: `site/static/images/logo.svg`; ship it as a resource of the module.
 - [x] Use the same icon as the application/window icon.
 - [x] "To Step" defaults to the current step + 1; "To Time" defaults to the current time + 1. Keep them in sync while the simulation runs, unless the user is editing the field.
 - [x] All controls in the bottom bar have the same size.
-- [ ] Scale the whole UI (bottom bar included) with the window size, so it looks right at any screen size and density. Sizes come from the window, not from fixed `dp` values tuned on one screen.
+- [x] Scale the whole UI (bottom bar included) with the window size, so it looks right at any screen size and density. Sizes come from the window, not from fixed `dp` values tuned on one screen.
+- [ ] Shortcuts help (bottom left): hidden behind a **?** button, shown or hidden by clicking it or pressing H.
+- [ ] The viewport fills the window: no card frame or outer margins. The other controls float over it as translucent panels.
+- [ ] Replace the bottom bar with one thin strip (about 48 dp), centred at the bottom, with the same height for every control:
+  - one Play/Pause toggle whose icon shows the state, replacing the Play and Pause buttons and the status pill;
+  - Step;
+  - time and step readouts;
+  - "To Time" and "To Step" boxes, kept separate because they use different scales;
+  - quick jumps: time +1, +10, +100, +1000; step +1, +N, +2N, +10N, where N is the node count;
+  - the pacing control (see [Pacing](#pacing));
+  - a ⚙ menu with the FPS and the links toggle.
+- [ ] Optionally, let the monitor configure the quick jumps.
 - [ ] Make the inspector (right side bar) resizable by dragging its edge.
 - [ ] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.
 

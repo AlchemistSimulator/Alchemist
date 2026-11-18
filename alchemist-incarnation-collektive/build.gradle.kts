@@ -20,6 +20,11 @@ dependencies {
     implementation(kotlin("compiler-embeddable"))
     implementation(libs.caffeine)
     implementation(libs.kotlin.reflect)
+    implementation(libs.collektive.compiler.embeddable) {
+        // Test-only deps leaked into the published POM: drop them until fixed upstream
+        exclude(group = "com.perfma.wrapped") // JDK 8 tools.jar, unneeded on JDK 9+
+        exclude(group = "io.kotest")
+    }
     // Kotlin JSR-223 engine, used to evaluate the properties passed to readConcentration
     runtimeOnly(kotlin("scripting-jsr223"))
 

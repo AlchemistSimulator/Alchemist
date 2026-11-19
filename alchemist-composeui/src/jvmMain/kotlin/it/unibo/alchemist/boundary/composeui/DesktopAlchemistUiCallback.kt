@@ -21,8 +21,9 @@ import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.SimulationState
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.times.DoubleTime
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withContext
@@ -30,14 +31,18 @@ import kotlinx.coroutines.withContext
 /**
  * UI callbacks that drive a [simulation] running in the same JVM and publish the resulting UI state to [store].
  * Every command wakes up the [throttle] first, so it never waits for the pause between events.
+ * The latest command wins: playing or pausing drops the pending jumps, and of several jumps the first one reached wins.
  */
 internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
     private val simulation: Simulation<T, P>,
     private val store: ComposeUiStateStore,
     private val throttle: SimulationThrottle = SimulationThrottle(),
 ) : AlchemistUiCallbacks {
+    private val stops = JumpStops(simulation).also(simulation::addOutputMonitor)
+
     override suspend fun onPlay() {
         whileActive {
+            stops.clear()
             simulation.play().await()
             updateState {
                 it.copy(controls = it.controls.copy(status = simulation.toSimulationStatus()))
@@ -47,6 +52,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onPause() {
         whileActive {
+            stops.clear()
             simulation.pause().await()
             updateState {
                 it.copy(controls = it.controls.copy(status = simulation.toSimulationStatus()))
@@ -55,13 +61,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
     }
 
     override suspend fun onStep() {
-        whileActive {
-            val nextStep = simulation.step + 1
-            val stepCompletion = simulation.goToStep(nextStep)
-            simulation.play().await()
-            stepCompletion.await()
-            syncSimulationState()
-        }
+        whileActive { jumpToStep(simulation.step + 1) }
     }
 
     override suspend fun onToTimeInputChanged(value: String) {
@@ -72,27 +72,8 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onToTimeSubmit() {
         whileActive {
-            val target = store.state.controls.targetTime
-                ?: return@whileActive showDialog("Invalid time", "Insert a valid numeric time.")
-            val currentTime = simulation.currentTime.toDouble()
-            val wasRunning = simulation.state == SimulationState.RUNNING
-            if (target < currentTime) {
-                return@whileActive showDialog(
-                    title = "Invalid time",
-                    message = "Target time $target cannot be lower than current time ${currentTime.formatFixed(
-                        DISPLAYED_TIME_DECIMALS,
-                    )}.",
-                )
-            }
-            if (target > currentTime) {
-                val jumpCompletion = simulation.goToTime(DoubleTime(target))
-                simulation.play().await()
-                jumpCompletion.await()
-                if (wasRunning) {
-                    simulation.play().await()
-                }
-            }
-            syncSimulationState()
+            store.state.controls.targetTime?.let { jumpToTime(it) }
+                ?: showDialog("Invalid time", "Insert a valid numeric time.")
         }
     }
 
@@ -104,25 +85,17 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onToStepSubmit() {
         whileActive {
-            val target = store.state.controls.targetStep
-                ?: return@whileActive showDialog("Invalid step", "Insert a valid integer step.")
-            val wasRunning = simulation.state == SimulationState.RUNNING
-            if (target < simulation.step) {
-                return@whileActive showDialog(
-                    title = "Invalid step",
-                    message = "Target step $target cannot be lower than current step ${simulation.step}.",
-                )
-            }
-            if (target > simulation.step) {
-                val jumpCompletion = simulation.goToStep(target)
-                simulation.play().await()
-                jumpCompletion.await()
-                if (wasRunning) {
-                    simulation.play().await()
-                }
-            }
-            syncSimulationState()
+            store.state.controls.targetStep?.let { jumpToStep(it) }
+                ?: showDialog("Invalid step", "Insert a valid integer step.")
         }
+    }
+
+    override suspend fun onJumpTimeBy(delta: Double) {
+        whileActive { jumpToTime(simulation.currentTime.toDouble() + delta) }
+    }
+
+    override suspend fun onJumpStepBy(delta: Long) {
+        whileActive { jumpToStep(simulation.step + delta) }
     }
 
     override suspend fun onFpsInputChanged(value: String) {
@@ -165,7 +138,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
                 return@whileActive
             }
             val environment = simulation.environment
-            val completion = java.util.concurrent.CompletableFuture<Unit>()
+            val completion = CompletableDeferred<Unit>()
             simulation.schedule {
                 runCatching {
                     nodePositions.forEach { nodePosition ->
@@ -244,6 +217,45 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
         } else {
             action()
         }
+    }
+
+    private suspend fun jumpToStep(target: Long) {
+        when {
+            target < simulation.step -> showDialog(
+                title = "Invalid step",
+                message = "Target step $target cannot be lower than current step ${simulation.step}.",
+            )
+            else -> {
+                if (target > simulation.step) {
+                    runUntil(stops.atStep(target))
+                }
+                syncSimulationState()
+            }
+        }
+    }
+
+    private suspend fun jumpToTime(target: Double) {
+        val currentTime = simulation.currentTime.toDouble()
+        when {
+            target < currentTime -> showDialog(
+                title = "Invalid time",
+                message = "Target time $target cannot be lower than current time ${
+                    currentTime.formatFixed(DISPLAYED_TIME_DECIMALS)
+                }.",
+            )
+            else -> {
+                if (target > currentTime) {
+                    runUntil(stops.atTime(target))
+                }
+                syncSimulationState()
+            }
+        }
+    }
+
+    /** Runs until [stopped] completes: at a stop, or when a later command takes over. */
+    private suspend fun runUntil(stopped: Deferred<Unit>) {
+        simulation.play().await()
+        stopped.await()
     }
 
     private suspend fun showDialog(title: String, message: String) {

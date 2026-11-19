@@ -52,22 +52,8 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
 
     override suspend fun onToTimeSubmit() {
         store.update { state ->
-            val target = state.controls.targetTime
-                ?: return@update state.withDialog("Invalid time", "Insert a valid numeric time.")
-            val currentTime = state.controls.time
-            val wasRunning = state.controls.status == SimulationStatus.RUNNING
-            if (target < currentTime) {
-                return@update state.withDialog(
-                    title = "Invalid time",
-                    message = "Target time $target cannot be lower than current time $currentTime.",
-                )
-            }
-            val targetStep = ceil(target * DemoUiState.TIME_SCALE).toLong()
-            state.withStepProgress(
-                targetStep,
-                time = target,
-                status = if (wasRunning) SimulationStatus.RUNNING else SimulationStatus.PAUSED,
-            )
+            state.controls.targetTime?.let { state.jumpedToTime(it) }
+                ?: state.withDialog("Invalid time", "Insert a valid numeric time.")
         }
     }
 
@@ -79,20 +65,17 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
 
     override suspend fun onToStepSubmit() {
         store.update { state ->
-            val target = state.controls.targetStep
-                ?: return@update state.withDialog("Invalid step", "Insert a valid integer step.")
-            val wasRunning = state.controls.status == SimulationStatus.RUNNING
-            if (target < state.controls.step) {
-                return@update state.withDialog(
-                    title = "Invalid step",
-                    message = "Target step $target cannot be lower than current step ${state.controls.step}.",
-                )
-            }
-            state.withStepProgress(
-                target,
-                status = if (wasRunning) SimulationStatus.RUNNING else SimulationStatus.PAUSED,
-            )
+            state.controls.targetStep?.let { state.jumpedToStep(it) }
+                ?: state.withDialog("Invalid step", "Insert a valid integer step.")
         }
+    }
+
+    override suspend fun onJumpTimeBy(delta: Double) {
+        store.update { it.jumpedToTime(it.controls.time + delta) }
+    }
+
+    override suspend fun onJumpStepBy(delta: Long) {
+        store.update { it.jumpedToStep(it.controls.step + delta) }
     }
 
     override suspend fun onFpsInputChanged(value: String) {
@@ -155,13 +138,32 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
         }
     }
 
+    /** A jump keeps the simulation running if it was, and pauses it otherwise. */
+    private fun AlchemistUiState.jumpedToStep(target: Long): AlchemistUiState = when {
+        target < controls.step -> withDialog(
+            title = "Invalid step",
+            message = "Target step $target cannot be lower than current step ${controls.step}.",
+        )
+        else -> withStepProgress(target)
+    }
+
+    private fun AlchemistUiState.jumpedToTime(target: Double): AlchemistUiState = when {
+        target < controls.time -> withDialog(
+            title = "Invalid time",
+            message = "Target time $target cannot be lower than current time ${controls.time}.",
+        )
+        else -> withStepProgress(
+            ceil(target * DemoUiState.TIME_SCALE).toLong(),
+            time = target,
+        )
+    }
+
     private fun AlchemistUiState.withStepProgress(
         step: Long,
         time: Double = DemoUiState.time(step),
-        status: SimulationStatus = SimulationStatus.PAUSED,
     ): AlchemistUiState = copy(
         controls = controls.copy(
-            status = status,
+            status = SimulationStatus.PAUSED,
             step = step,
             time = time,
             progress = SimulationProgress(

@@ -40,7 +40,7 @@ internal sealed class SimulationEventThrottling(val value: Int) {
      */
     fun toLabel(): String = when (this) {
         is FullThrottle -> "Max"
-        is EventsPerSecond -> "${value.formatCompact()} events/s"
+        is EventsPerSecond -> "${value.toLong().formatCompact()} events/s"
     }
 
     /**

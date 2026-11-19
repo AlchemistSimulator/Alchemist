@@ -35,7 +35,6 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
@@ -49,17 +48,20 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
 import it.unibo.alchemist.boundary.composeui.view.theme.SecondaryAccent
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
+import it.unibo.alchemist.boundary.composeui.view.viewport.LocalViewportFocus
 
 private val fieldPadding = 8.dp
 
 /**
- * A compact dock text box, labeled inside, that submits on Enter.
- * With a [default], the box shows it until focused, then starts editing from it, and Enter leaves the box.
+ * A compact dock text box, with an optional [label] inside, that submits on Enter.
+ * With a [default], the box shows it until focused, then starts editing from it,
+ * and Enter or leaving the box clears the text, so that the box follows the default again.
+ * Enter in such a box also hands the focus back to the viewport.
  * While editing, an [error] turns the border red.
  */
 @Composable
 internal fun DockTextField(
-    label: String,
+    label: String?,
     value: String,
     error: String?,
     onValueChange: (String) -> Unit,
@@ -68,7 +70,7 @@ internal fun DockTextField(
     default: String? = null,
 ) {
     var focused by remember { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
+    val viewportFocus = LocalViewportFocus.current
     val following = default != null && !focused
     val shownError = error?.takeUnless { following }
     val borderColor = when {
@@ -84,8 +86,8 @@ internal fun DockTextField(
             .height(TransportButtonSize)
             .semantics { shownError?.let { error(it) } }
             .onFocusChanged { focus ->
-                if (focus.isFocused && !focused && default != null) {
-                    onValueChange(default)
+                if (default != null && focus.isFocused != focused) {
+                    onValueChange(if (focus.isFocused) default else "")
                 }
                 focused = focus.isFocused
             }
@@ -93,7 +95,7 @@ internal fun DockTextField(
                 val isEnter = it.key == Key.Enter || it.key == Key.NumPadEnter
                 if (it.type == KeyEventType.KeyUp && isEnter) {
                     onSubmit()
-                    default?.let { focusManager.clearFocus() }
+                    default?.let { viewportFocus.requestFocus() }
                     true
                 } else {
                     false
@@ -112,7 +114,7 @@ internal fun DockTextField(
                 horizontalArrangement = Arrangement.spacedBy(fieldPadding),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(text = label, style = MaterialTheme.typography.caption, color = SecondaryAccent)
+                label?.let { Text(text = it, style = MaterialTheme.typography.caption, color = SecondaryAccent) }
                 Box(modifier = Modifier.weight(1f)) { innerTextField() }
             }
         },

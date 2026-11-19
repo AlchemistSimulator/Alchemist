@@ -24,12 +24,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,7 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Surface
 import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
+import it.unibo.alchemist.boundary.composeui.view.viewport.LocalViewportFocus
 import it.unibo.alchemist.boundary.composeui.view.viewport.ViewportSurface
 import kotlinx.coroutines.launch
 
@@ -97,75 +100,79 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
         ),
     ) {
         ScaledToWindow(Modifier.fillMaxSize()) {
-            state.controls.dialog?.let { dialog ->
-                androidx.compose.material.AlertDialog(
-                    onDismissRequest = { coroutineScope.launch { callbacks.onDialogDismiss() } },
-                    title = { Text(dialog.title) },
-                    text = { Text(dialog.message) },
-                    confirmButton = {
-                        androidx.compose.material.TextButton(
-                            onClick = { coroutineScope.launch { callbacks.onDialogDismiss() } },
-                        ) {
-                            Text("OK")
-                        }
-                    },
-                    backgroundColor = SurfaceStrong,
-                    contentColor = TextPrimary,
-                )
-            }
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .playPauseOnSpace(
-                        controls = state.controls,
-                        onPlay = { coroutineScope.launch { callbacks.onPlay() } },
-                        onPause = { coroutineScope.launch { callbacks.onPause() } },
-                    ),
-            ) {
-                var displayedInspector by remember { mutableStateOf(state.inspector) }
-                state.inspector?.let { displayedInspector = it }
-                var dockVisible by remember { mutableStateOf(true) }
-                var helpVisible by remember { mutableStateOf(false) }
-                ViewportSurface(
-                    scene = state.scene,
-                    selectedNodeIds = state.selectedNodeIds,
-                    callbacks = callbacks,
-                    onToggleHelp = { helpVisible = !helpVisible },
-                    onToggleControls = { dockVisible = !dockVisible },
-                    modifier = Modifier.fillMaxSize(),
-                )
-                Row(modifier = Modifier.fillMaxSize()) {
-                    ControlsOverlay(
-                        controls = state.controls,
-                        hasNodes = state.scene.nodes.isNotEmpty(),
-                        callbacks = callbacks,
-                        dockVisible = dockVisible,
-                        onToggleDock = { dockVisible = !dockVisible },
-                        helpVisible = helpVisible,
-                        onToggleHelp = { helpVisible = !helpVisible },
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .padding(helpMargin),
+            CompositionLocalProvider(LocalViewportFocus provides remember { FocusRequester() }) {
+                state.controls.dialog?.let { dialog ->
+                    androidx.compose.material.AlertDialog(
+                        onDismissRequest = { coroutineScope.launch { callbacks.onDialogDismiss() } },
+                        title = { Text(dialog.title) },
+                        text = { Text(dialog.message) },
+                        confirmButton = {
+                            androidx.compose.material.TextButton(
+                                onClick = { coroutineScope.launch { callbacks.onDialogDismiss() } },
+                            ) {
+                                Text("OK")
+                            }
+                        },
+                        backgroundColor = SurfaceStrong,
+                        contentColor = TextPrimary,
                     )
-                    AnimatedVisibility(
-                        visible = state.inspector != null,
-                        enter = expandHorizontally(
-                            tween(INSPECTOR_SLIDE_MILLIS),
-                        ) + fadeIn(tween(INSPECTOR_FADE_MILLIS)),
-                        exit = shrinkHorizontally(
-                            tween(INSPECTOR_SLIDE_MILLIS),
-                        ) + fadeOut(tween(INSPECTOR_FADE_MILLIS)),
-                    ) {
-                        displayedInspector?.let {
-                            NodeInspector(
-                                inspector = it,
-                                onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
-                                modifier = Modifier
-                                    .padding(OverlayMargin)
-                                    .width(minOf(inspectorWidth, this@BoxWithConstraints.maxWidth - OverlayMargin * 2))
-                                    .fillMaxHeight(),
-                            )
+                }
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .playPauseOnSpace(
+                            controls = state.controls,
+                            onPlay = { coroutineScope.launch { callbacks.onPlay() } },
+                            onPause = { coroutineScope.launch { callbacks.onPause() } },
+                        ),
+                ) {
+                    var displayedInspector by remember { mutableStateOf(state.inspector) }
+                    state.inspector?.let { displayedInspector = it }
+                    var dockVisible by remember { mutableStateOf(true) }
+                    var helpVisible by remember { mutableStateOf(false) }
+                    ViewportSurface(
+                        scene = state.scene,
+                        selectedNodeIds = state.selectedNodeIds,
+                        callbacks = callbacks,
+                        onToggleHelp = { helpVisible = !helpVisible },
+                        onToggleControls = { dockVisible = !dockVisible },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    Row(modifier = Modifier.fillMaxSize()) {
+                        ControlsOverlay(
+                            controls = state.controls,
+                            nodeCount = state.scene.nodes.size,
+                            callbacks = callbacks,
+                            dockVisible = dockVisible,
+                            onToggleDock = { dockVisible = !dockVisible },
+                            helpVisible = helpVisible,
+                            onToggleHelp = { helpVisible = !helpVisible },
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .padding(helpMargin),
+                        )
+                        AnimatedVisibility(
+                            visible = state.inspector != null,
+                            enter = expandHorizontally(
+                                tween(INSPECTOR_SLIDE_MILLIS),
+                            ) + fadeIn(tween(INSPECTOR_FADE_MILLIS)),
+                            exit = shrinkHorizontally(
+                                tween(INSPECTOR_SLIDE_MILLIS),
+                            ) + fadeOut(tween(INSPECTOR_FADE_MILLIS)),
+                        ) {
+                            displayedInspector?.let {
+                                NodeInspector(
+                                    inspector = it,
+                                    onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
+                                    modifier = Modifier
+                                        .padding(OverlayMargin)
+                                        .width(
+                                            minOf(inspectorWidth, this@BoxWithConstraints.maxWidth - OverlayMargin * 2),
+                                        )
+                                        .fillMaxHeight(),
+                                )
+                            }
                         }
                     }
                 }

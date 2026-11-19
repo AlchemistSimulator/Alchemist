@@ -38,6 +38,12 @@ internal interface AlchemistUiCallbacks {
     /** Runs to the step in the "to step" box. */
     suspend fun onToStepSubmit()
 
+    /** Runs [delta] time units past the current time. */
+    suspend fun onJumpTimeBy(delta: Double)
+
+    /** Runs [delta] steps past the current step. */
+    suspend fun onJumpStepBy(delta: Long)
+
     /** The FPS box changed to [value]. */
     suspend fun onFpsInputChanged(value: String)
 

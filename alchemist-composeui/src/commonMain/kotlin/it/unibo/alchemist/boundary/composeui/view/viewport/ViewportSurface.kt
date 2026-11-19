@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
@@ -72,7 +71,7 @@ internal fun ViewportSurface(
     var drag by remember { mutableStateOf<ViewportDrag>(ViewportDrag.None) }
     var pointer by remember { mutableStateOf<Offset?>(null) }
     var heldPans by remember { mutableStateOf(emptySet<PanDirection>()) }
-    val focusRequester = remember { FocusRequester() }
+    val focusRequester = LocalViewportFocus.current
     LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
     val candidateProjection = remember(scene.nodes, viewportSize) { scene.createViewportProjection(viewportSize) }
     val projection = fixedProjection ?: candidateProjection

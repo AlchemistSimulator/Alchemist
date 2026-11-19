@@ -14,6 +14,7 @@ import it.unibo.alchemist.boundary.composeui.demo.DemoUiCallbacks
 import it.unibo.alchemist.boundary.composeui.demo.DemoUiState
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
+import it.unibo.alchemist.boundary.composeui.model.QuickJumps
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
@@ -24,9 +25,6 @@ import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThr
 import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.rateAt
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.startCoroutine
 import kotlin.math.log10
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,6 +32,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.runTest
 
 class SimulationControlsStateTest {
     @Test
@@ -75,11 +74,11 @@ class SimulationControlsStateTest {
     }
 
     @Test
-    fun `demo controller toggles links without changing selection`() {
+    fun `demo controller toggles links without changing selection`() = runTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
         controller.store.update { it.withSelection(listOf(3)) }
 
-        runSuspend { controller.callbacks.onToggleLinks() }
+        controller.callbacks.onToggleLinks()
 
         assertTrue(controller.store.state.scene.showLinks)
         assertEquals(listOf(3), controller.store.state.selectedNodeIds)
@@ -140,25 +139,46 @@ class SimulationControlsStateTest {
     }
 
     @Test
-    fun `demo controller advances one step when to step is empty`() {
+    fun `demo controller advances one step when to step is empty`() = runTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
         val start = controller.store.state.controls.step
 
-        runSuspend {
-            controller.callbacks.onToStepSubmit()
-        }
+        controller.callbacks.onToStepSubmit()
 
         assertEquals(start + 1, controller.store.state.controls.step)
     }
 
     @Test
-    fun `demo controller rejects backward time jumps`() {
+    fun `time quick jumps go from ten to a thousand`() {
+        assertEquals(listOf(10.0, 100.0, 1000.0), QuickJumps.timeDeltas)
+    }
+
+    @Test
+    fun `step quick jumps scale with the node count`() {
+        assertEquals(listOf(100L, 200L, 1000L), QuickJumps.stepDeltas(100))
+        assertEquals(listOf(2L, 10L), QuickJumps.stepDeltas(1))
+        assertEquals(emptyList(), QuickJumps.stepDeltas(0))
+    }
+
+    @Test
+    fun `demo controller quick jumps run ahead from the current step and time`() = runTest {
+        val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
+        val start = controller.store.state.controls
+
+        controller.callbacks.onJumpStepBy(10)
+        assertEquals(start.step + 10, controller.store.state.controls.step)
+
+        val afterSteps = controller.store.state.controls.time
+        controller.callbacks.onJumpTimeBy(100.0)
+        assertEquals(afterSteps + 100.0, controller.store.state.controls.time)
+    }
+
+    @Test
+    fun `demo controller rejects backward time jumps`() = runTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
-        runSuspend {
-            controller.callbacks.onToTimeInputChanged("1.5")
-            controller.callbacks.onToTimeSubmit()
-        }
+        controller.callbacks.onToTimeInputChanged("1.5")
+        controller.callbacks.onToTimeSubmit()
 
         val dialog = controller.store.state.controls.dialog
         assertNotNull(dialog)
@@ -166,20 +186,18 @@ class SimulationControlsStateTest {
     }
 
     @Test
-    fun `demo controller updates fps on submit`() {
+    fun `demo controller updates fps on submit`() = runTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
-        runSuspend {
-            controller.callbacks.onFpsInputChanged("120")
-            controller.callbacks.onFpsSubmit()
-        }
+        controller.callbacks.onFpsInputChanged("120")
+        controller.callbacks.onFpsSubmit()
 
         assertEquals(DEFAULT_MAX_UI_FPS, controller.store.state.controls.uiFps)
         assertEquals(DEFAULT_MAX_UI_FPS.toString(), controller.store.state.controls.fpsInput)
     }
 
     @Test
-    fun `demo controller preserves running state after jump`() {
+    fun `demo controller pauses at the jump target even if running`() = runTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
         controller.store.update {
             it.copy(
@@ -187,38 +205,22 @@ class SimulationControlsStateTest {
             )
         }
 
-        runSuspend {
-            controller.callbacks.onToStepInputChanged("99")
-            controller.callbacks.onToStepSubmit()
-        }
+        controller.callbacks.onToStepInputChanged("99")
+        controller.callbacks.onToStepSubmit()
 
-        assertEquals(SimulationStatus.RUNNING, controller.store.state.controls.status)
+        assertEquals(SimulationStatus.PAUSED, controller.store.state.controls.status)
         assertEquals(99L, controller.store.state.controls.step)
     }
 
     @Test
-    fun `demo controller builds a group inspector for multi selection`() {
+    fun `demo controller builds a group inspector for multi selection`() = runTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
-        runSuspend {
-            controller.callbacks.onNodesSelected(listOf(1, 3))
-        }
+        controller.callbacks.onNodesSelected(listOf(1, 3))
 
         assertEquals(listOf(1, 3), controller.store.state.selectedNodeIds)
         val inspector = controller.store.state.inspector as NodeGroup
         assertEquals(listOf(1, 3), inspector.nodeIds)
         assertEquals("Mixed", inspector.concentrations.first { it.label == "signal" }.value)
     }
-}
-
-private fun runSuspend(block: suspend () -> Unit) {
-    block.startCoroutine(
-        object : Continuation<Unit> {
-            override val context = EmptyCoroutineContext
-
-            override fun resumeWith(result: Result<Unit>) {
-                result.getOrThrow()
-            }
-        },
-    )
 }

@@ -34,6 +34,11 @@ kotlin {
                 implementation(libs.kotlinx.collections.immutable)
             }
         }
+        commonTest {
+            dependencies {
+                implementation(libs.kotlin.coroutines.test)
+            }
+        }
         jvmMain {
             dependencies {
                 implementation(alchemist("euclidean-geometry"))

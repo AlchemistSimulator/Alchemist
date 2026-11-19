@@ -18,11 +18,11 @@ import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 class DesktopAlchemistUiNodeMoveTest {
     @Test
-    fun `node move commits translated positions through the simulator and refreshes the scene`() {
+    fun `node move commits translated positions through the simulator and refreshes the scene`() = runTest {
         val simulation = TestSimulations.ticking(0.0 to 0.0, 2.0 to 3.0)
         val environment = simulation.environment
         val (firstNode, secondNode) = environment.nodes.current.sortedBy { environment.currentPositionOf(it).x }
@@ -30,14 +30,12 @@ class DesktopAlchemistUiNodeMoveTest {
         val store = ComposeUiStateStore(AlchemistUiState(scene = environment.toViewport()).withSelection(selection))
         val callback = DesktopAlchemistUiCallback(simulation, store)
         simulation.runningInBackground {
-            runBlocking {
-                callback.onNodesMoved(
-                    listOf(
-                        NodePositionUpdate(firstNode.id, persistentListOf(1.5, -2.0)),
-                        NodePositionUpdate(secondNode.id, persistentListOf(3.5, 1.0)),
-                    ),
-                )
-            }
+            callback.onNodesMoved(
+                listOf(
+                    NodePositionUpdate(firstNode.id, persistentListOf(1.5, -2.0)),
+                    NodePositionUpdate(secondNode.id, persistentListOf(3.5, 1.0)),
+                ),
+            )
         }
         assertEquals(listOf(1.5, -2.0), environment.currentPositionOf(firstNode).coordinates.toList())
         assertEquals(listOf(3.5, 1.0), environment.currentPositionOf(secondNode).coordinates.toList())

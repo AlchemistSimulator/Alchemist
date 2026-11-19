@@ -29,6 +29,10 @@ internal object NoOpUiCallbacks : AlchemistUiCallbacks {
 
     override suspend fun onToStepSubmit() = Unit
 
+    override suspend fun onJumpTimeBy(delta: Double) = Unit
+
+    override suspend fun onJumpStepBy(delta: Long) = Unit
+
     override suspend fun onFpsInputChanged(value: String) = Unit
 
     override suspend fun onFpsSubmit() = Unit

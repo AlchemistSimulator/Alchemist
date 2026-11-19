@@ -8,10 +8,11 @@
  */
 package it.unibo.alchemist.boundary.composeui
 
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.math.max
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Slows the simulation thread down to a given event rate.
@@ -20,6 +21,7 @@ import kotlin.math.max
  * A simulation that falls behind may catch up for at most [MAX_CATCH_UP_NS], without waiting.
  * The wait can be cut short with [wakeUp], so that commands such as pause or terminate,
  * which the engine runs between steps, never wait for it.
+ * It blocks rather than suspends: the engine runs on its own thread and calls monitors synchronously.
  */
 internal class SimulationThrottle {
     private val lock = ReentrantLock()
@@ -35,7 +37,7 @@ internal class SimulationThrottle {
         if (eventsPerSecond == null) {
             nextReleaseNs = 0L
         } else {
-            val intervalNs = (TimeUnit.SECONDS.toNanos(1) / eventsPerSecond).coerceAtLeast(1L)
+            val intervalNs = (1.seconds.inWholeNanoseconds / eventsPerSecond).coerceAtLeast(1L)
             val now = System.nanoTime()
             val scheduled = if (nextReleaseNs == 0L) now else max(nextReleaseNs, now - MAX_CATCH_UP_NS)
             nextReleaseNs = scheduled + intervalNs
@@ -63,9 +65,9 @@ internal class SimulationThrottle {
 
     private companion object {
         /** Shorter waits are skipped, and made up for by a longer one later. */
-        val MIN_WAIT_NS: Long = TimeUnit.MILLISECONDS.toNanos(1)
+        val MIN_WAIT_NS: Long = 1.milliseconds.inWholeNanoseconds
 
         /** How far behind the schedule a slow simulation may fall and still catch up. */
-        val MAX_CATCH_UP_NS: Long = TimeUnit.MILLISECONDS.toNanos(100)
+        val MAX_CATCH_UP_NS: Long = 100.milliseconds.inWholeNanoseconds
     }
 }

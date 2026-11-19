@@ -23,7 +23,12 @@ import it.unibo.alchemist.model.deployments.point
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.genericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
-import kotlin.concurrent.thread
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Simulations and engine drivers shared by the JVM tests of the Compose UI.
@@ -65,18 +70,21 @@ internal object TestSimulations {
     }
 
     /**
-     * Runs this simulation on a dedicated thread while [block] executes,
-     * then terminates it, unless [block] already did, and waits for the thread to end.
+     * Runs this simulation on [dispatcher] while [block] executes,
+     * then terminates it, unless [block] already did, and waits for it to end.
      */
-    fun <T, P : Position<out P>, R> Simulation<T, P>.runningInBackground(block: () -> R): R {
-        val engine = thread(name = "Compose UI test simulation") { run() }
-        return try {
+    suspend fun <T, P : Position<out P>, R> Simulation<T, P>.runningInBackground(
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        block: suspend () -> R,
+    ): R = coroutineScope {
+        val engine = launch(dispatcher) { run() }
+        try {
             block()
         } finally {
             if (state != SimulationState.TERMINATED) {
                 terminate()
             }
-            engine.join()
+            withContext(NonCancellable) { engine.join() }
         }
     }
 }

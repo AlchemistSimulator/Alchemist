@@ -15,7 +15,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
@@ -39,6 +37,7 @@ import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 import it.unibo.alchemist.boundary.composeui.view.viewport.HelpButton
 import it.unibo.alchemist.boundary.composeui.view.viewport.HelpButtonSize
 import it.unibo.alchemist.boundary.composeui.view.viewport.ViewportGestureHint
+import it.unibo.alchemist.boundary.composeui.view.viewport.clickableKeepingShortcuts
 import kotlinx.coroutines.launch
 
 private const val HANDLE_ALPHA = 0.6f
@@ -55,7 +54,7 @@ private val handleThickness = 4.dp
 @Composable
 internal fun ControlsOverlay(
     controls: SimulationControlsState,
-    hasNodes: Boolean,
+    nodeCount: Int,
     callbacks: AlchemistUiCallbacks,
     dockVisible: Boolean,
     onToggleDock: () -> Unit,
@@ -65,7 +64,7 @@ internal fun ControlsOverlay(
 ) {
     val coroutineScope = rememberCoroutineScope()
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom)) {
-        ViewportGestureHint(hasNodes = hasNodes, expanded = helpVisible)
+        ViewportGestureHint(hasNodes = nodeCount > 0, expanded = helpVisible)
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
             HelpButton(expanded = helpVisible, onToggle = onToggleHelp)
             Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -77,6 +76,7 @@ internal fun ControlsOverlay(
                 ) {
                     ControlDock(
                         controls = controls,
+                        nodeCount = nodeCount,
                         onPlay = { coroutineScope.launch { callbacks.onPlay() } },
                         onPause = { coroutineScope.launch { callbacks.onPause() } },
                         onStep = { coroutineScope.launch { callbacks.onStep() } },
@@ -84,6 +84,8 @@ internal fun ControlsOverlay(
                         onToTimeSubmit = { coroutineScope.launch { callbacks.onToTimeSubmit() } },
                         onToStepInputChanged = { coroutineScope.launch { callbacks.onToStepInputChanged(it) } },
                         onToStepSubmit = { coroutineScope.launch { callbacks.onToStepSubmit() } },
+                        onJumpTimeBy = { coroutineScope.launch { callbacks.onJumpTimeBy(it) } },
+                        onJumpStepBy = { coroutineScope.launch { callbacks.onJumpStepBy(it) } },
                         onFpsInputChanged = { coroutineScope.launch { callbacks.onFpsInputChanged(it) } },
                         onFpsSubmit = { coroutineScope.launch { callbacks.onFpsSubmit() } },
                         onEventRateChanged = { coroutineScope.launch { callbacks.onEventRateChanged(it) } },
@@ -101,9 +103,8 @@ private fun DockHandle(dockVisible: Boolean, onToggle: () -> Unit) {
     Box(
         modifier = Modifier
             .size(width = handleWidth, height = handleTouchHeight)
-            .clickable(
+            .clickableKeepingShortcuts(
                 onClickLabel = if (dockVisible) "Hide controls (C)" else "Show controls (C)",
-                role = Role.Button,
                 onClick = onToggle,
             ),
         contentAlignment = Alignment.Center,

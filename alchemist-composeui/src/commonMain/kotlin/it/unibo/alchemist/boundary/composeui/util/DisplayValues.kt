@@ -14,8 +14,8 @@ package it.unibo.alchemist.boundary.composeui.util
  */
 internal object DisplayValues {
     private const val DISPLAYED_DECIMALS = 3
-    private const val THOUSAND = 1_000
-    private const val MILLION = 1_000_000
+    private const val THOUSAND = 1_000L
+    private const val MILLION = 1_000_000L
 
     /**
      * Decimals get three digits, `null` becomes empty, anything else uses [toString].
@@ -30,7 +30,7 @@ internal object DisplayValues {
     /**
      * Shortens this number with K and M, keeping one decimal if needed: 1200 becomes 1.2K, 10000 becomes 10K.
      */
-    fun Int.formatCompact(): String = when {
+    fun Long.formatCompact(): String = when {
         this >= MILLION -> compact(MILLION, "M")
         this >= THOUSAND -> compact(THOUSAND, "K")
         else -> toString()
@@ -54,6 +54,6 @@ internal object DisplayValues {
         }
     }
 
-    private fun Int.compact(unit: Int, suffix: String): String =
-        (if (this % unit == 0) (this / unit).toString() else (toDouble() / unit).formatFixed(1)) + suffix
+    private fun Long.compact(unit: Long, suffix: String): String =
+        (if (this % unit == 0L) (this / unit).toString() else (toDouble() / unit).formatFixed(1)) + suffix
 }

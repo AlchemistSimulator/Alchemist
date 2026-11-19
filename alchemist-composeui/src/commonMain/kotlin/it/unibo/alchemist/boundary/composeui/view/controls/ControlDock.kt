@@ -9,21 +9,20 @@
 
 package it.unibo.alchemist.boundary.composeui.view.controls
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.view.theme.FloatingPanel
-import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 
 private const val DOCK_ALPHA = 0.8f
 
@@ -31,7 +30,6 @@ private val dockHorizontalPadding = 12.dp
 private val dockVerticalPadding = 6.dp
 private val dockSectionSpacing = 12.dp
 private val dockCornerRadius = 24.dp
-private val dividerInset = 6.dp
 
 /** The space between the items of a dock section. */
 internal val stripItemSpacing = 8.dp
@@ -39,6 +37,7 @@ internal val stripItemSpacing = 8.dp
 @Composable
 internal fun ControlDock(
     controls: SimulationControlsState,
+    nodeCount: Int,
     onPlay: () -> Unit,
     onPause: () -> Unit,
     onStep: () -> Unit,
@@ -46,6 +45,8 @@ internal fun ControlDock(
     onToTimeSubmit: () -> Unit,
     onToStepInputChanged: (String) -> Unit,
     onToStepSubmit: () -> Unit,
+    onJumpTimeBy: (Double) -> Unit,
+    onJumpStepBy: (Long) -> Unit,
     onFpsInputChanged: (String) -> Unit,
     onFpsSubmit: () -> Unit,
     onEventRateChanged: (Float) -> Unit,
@@ -60,6 +61,8 @@ internal fun ControlDock(
         onToTimeSubmit = onToTimeSubmit,
         onToStepInputChanged = onToStepInputChanged,
         onToStepSubmit = onToStepSubmit,
+        onJumpTimeBy = onJumpTimeBy,
+        onJumpStepBy = onJumpStepBy,
         onFpsInputChanged = onFpsInputChanged,
         onFpsSubmit = onFpsSubmit,
         onEventRateChanged = onEventRateChanged,
@@ -70,12 +73,17 @@ internal fun ControlDock(
         shape = RoundedCornerShape(dockCornerRadius),
         elevation = 0.dp,
     ) {
-        DockContent(controls, validation, actions)
+        DockContent(controls, nodeCount, validation, actions)
     }
 }
 
 @Composable
-private fun DockContent(controls: SimulationControlsState, validation: DockValidationMessages, actions: DockActions) {
+private fun DockContent(
+    controls: SimulationControlsState,
+    nodeCount: Int,
+    validation: DockValidationMessages,
+    actions: DockActions,
+) {
     DockRow(
         spacing = dockSectionSpacing,
         modifier = Modifier.padding(horizontal = dockHorizontalPadding, vertical = dockVerticalPadding),
@@ -84,55 +92,45 @@ private fun DockContent(controls: SimulationControlsState, validation: DockValid
         DockDivider()
         MetricsSection(controls)
         DockDivider()
-        JumpSection(controls, validation, actions)
+        JumpSection(controls, nodeCount, validation, actions)
         DockDivider()
         PacingSection(controls, validation, actions)
     }
 }
 
-@Composable
-private fun DockDivider() {
-    Box(
-        modifier = Modifier
-            .padding(vertical = dividerInset)
-            .width(1.dp)
-            .background(Outline),
-    )
-}
-
 /**
- * Lays out [content] in one row of equally tall items, each at its own width.
- * Only if the row does not fit do the items wrap onto more rows, each centered.
+ * Lays out [content] in a single row of equally tall items, each at its own width.
+ * If the row does not fit, it shrinks as a whole, text included, until it does.
  */
 @Composable
 private fun DockRow(spacing: Dp, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val density = LocalDensity.current
     SubcomposeLayout(modifier) { constraints ->
-        val gap = spacing.roundToPx()
-        val natural = subcompose(DockRowSlot.NATURAL, content).map { it.measure(Constraints()) }
-        val height = natural.maxOfOrNull { it.height } ?: 0
-        val widths = natural.map { it.width.coerceAtMost(constraints.maxWidth) }
-        val rows = widths.indices.fold(emptyList<List<Int>>()) { rows, index ->
-            val last = rows.lastOrNull()
-            when {
-                last != null && last.sumOf { widths[it] + gap } + widths[index] <= constraints.maxWidth ->
-                    rows.dropLast(1) + listOf(last + index)
-                else -> rows + listOf(listOf(index))
-            }
+        val naturalWidth = subcompose(DockRowSlot.NATURAL, content)
+            .map { it.measure(Constraints()) }
+            .let { items -> items.sumOf { it.width } + spacing.roundToPx() * (items.size - 1) }
+        val scale = when {
+            constraints.hasBoundedWidth && naturalWidth > constraints.maxWidth ->
+                constraints.maxWidth.toFloat() / naturalWidth
+            else -> 1f
         }
-        val cells = subcompose(DockRowSlot.FINAL, content).mapIndexed { index, measurable ->
-            measurable.measure(Constraints.fixed(widths[index], height))
-        }
-        val rowWidths = rows.map { row -> row.sumOf { widths[it] } + gap * (row.size - 1) }
-        val width = rowWidths.maxOrNull() ?: 0
-        layout(width, (height * rows.size + gap * (rows.size - 1)).coerceAtLeast(0)) {
-            rows.forEachIndexed { rowIndex, row ->
-                row.fold((width - rowWidths[rowIndex]) / 2) { x, index ->
-                    cells[index].place(x, rowIndex * (height + gap))
-                    x + widths[index] + gap
-                }
+        val scaled = Density(density.density * scale, density.fontScale)
+        val items = subcompose(DockRowSlot.SCALED) {
+            CompositionLocalProvider(LocalDensity provides scaled, content = content)
+        }.map { it.measure(Constraints()) }
+        val gap = with(scaled) { spacing.roundToPx() }
+        val height = items.maxOfOrNull { it.height } ?: 0
+        val cells = subcompose(DockRowSlot.SIZED) {
+            CompositionLocalProvider(LocalDensity provides scaled, content = content)
+        }.mapIndexed { index, measurable -> measurable.measure(Constraints.fixed(items[index].width, height)) }
+        val width = (cells.sumOf { it.width } + gap * (cells.size - 1)).coerceIn(0, constraints.maxWidth)
+        layout(width, height) {
+            cells.fold(0) { x, cell ->
+                cell.place(x, 0)
+                x + cell.width + gap
             }
         }
     }
 }
 
-private enum class DockRowSlot { NATURAL, FINAL }
+private enum class DockRowSlot { NATURAL, SCALED, SIZED }

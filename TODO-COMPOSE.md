@@ -72,7 +72,8 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
   - [x] Step;
   - [x] time and step readouts;
   - [x] "To Time" and "To Step" boxes, kept separate because they use different scales;
-  - [ ] quick jumps: time +1, +10, +100, +1000; step +1, +N, +2N, +10N, where N is the node count;
+  - [x] quick jumps: time +10, +100, +1000; step +N, +2N, +10N, where N is the node count; "to time" and "to step" are buttons, whose box defaults to +1, split by a line;
+  - [x] the latest command wins: Play and Pause drop pending jumps, of several jumps the first one reached wins, and every jump ends paused;
   - [ ] the pacing control (see [Pacing](#pacing));
   - [ ] a ⚙ menu with the FPS and the links toggle.
 - [ ] Optionally, let the monitor configure the quick jumps.

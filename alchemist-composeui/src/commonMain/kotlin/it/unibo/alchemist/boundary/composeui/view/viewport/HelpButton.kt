@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.composeui.view.viewport
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -18,7 +17,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.view.theme.HelpPanel
@@ -32,9 +30,8 @@ internal fun HelpButton(expanded: Boolean, onToggle: () -> Unit, modifier: Modif
     Surface(
         modifier = modifier
             .size(HelpButtonSize)
-            .clickable(
+            .clickableKeepingShortcuts(
                 onClickLabel = if (expanded) "Hide shortcuts (H)" else "Show shortcuts (H)",
-                role = Role.Button,
                 onClick = onToggle,
             ),
         color = HelpPanel,

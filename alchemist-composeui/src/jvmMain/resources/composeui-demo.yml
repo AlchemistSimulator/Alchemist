@@ -1,0 +1,30 @@
+incarnation: sapere
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [0.5]
+
+monitors:
+  type: ComposeMonitor
+
+deployments:
+#  type: Grid
+#  parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  type: Rectangle
+  parameters: [1000, -5, -5, 10, 10]
+  contents:
+    - in:
+        type: Rectangle
+        parameters: [-0.5, -0.5, 1, 1]
+      molecule: token
+  programs: # A list of the sets of reactions programming the node
+    -
+      - time-distribution: 1 # Frequency. If the class is not specified, the implementation to use is chosen by the incarnation. The SAPERE incarnation automatically loads ExponentialTime, which takes a number representing the Markovian rate.
+        # program lets the incarnation choose the class implementing Reaction, and passes down a string that, when parsed, produces the program
+        program: > # ">" begins a multiline string (quote mode)
+          {token} --> {firing}
+      # If the time distribution is unspecified, the SAPERE incarnation assumes a "ASAP" behavior (rate = Infinity)
+      - program: "{firing} --> +{token}"
+    - type: GenericReaction
+      time-distribution: 1
+      actions: { type: BrownianMove, parameters: [ 0.4 ] }

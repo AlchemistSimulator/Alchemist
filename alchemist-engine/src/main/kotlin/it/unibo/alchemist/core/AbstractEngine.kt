@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
-import java.util.function.BooleanSupplier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -59,7 +58,10 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
     final override val outputMonitors: List<OutputMonitor<T, P>> get() = Collections.unmodifiableList(monitors)
 
     /** The current step (thread-safe). */
-    final override val step: Long get() = currentStep
+    final override var step: Long = 0
+        @Synchronized get
+
+        @Synchronized protected set
 
     /** The simulation time. */
     // Shareable, so that the current time can be read from any thread.
@@ -67,12 +69,6 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
 
     /** The current simulation time (thread-safe). */
     final override val currentTime: Time get() = time.current
-
-    /** Current simulation step count. */
-    protected var currentStep: Long = 0
-        @Synchronized get
-
-        @Synchronized set
 
     /** Thread executing the simulation. */
     @Volatile
@@ -235,7 +231,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
      * @param condition the condition to trigger the pause
      * @return a [CompletableFuture] that completes when the simulation is paused
      */
-    private fun pauseWhen(condition: BooleanSupplier): CompletableFuture<Unit> {
+    private fun pauseWhen(condition: () -> Boolean): CompletableFuture<Unit> {
         val future = CompletableFuture<Unit>()
         val monitor = object : OutputMonitor<T, P> {
             @Volatile
@@ -250,7 +246,7 @@ abstract class AbstractEngine<T, P : Position<out P>>(final override val environ
             }
 
             private fun checkConditionAndPause() {
-                if (!hasTriggered && condition.asBoolean) {
+                if (!hasTriggered && condition()) {
                     hasTriggered = true
                     monitors.remove(this)
                     pause().thenRun { future.complete(null) }

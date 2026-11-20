@@ -148,12 +148,13 @@ open class Engine<T, P : Position<out P>>(environment: Environment<T, P>, protec
                 }
             }
         }
-        monitors.forEach { it.stepDone(environment, nextEvent.takeIf { fired }, currentTime, step) }
+        // The counter advances before monitors and termination predicates observe the simulation.
+        val executedStep = step++
+        monitors.forEach { it.stepDone(environment, nextEvent.takeIf { fired }, currentTime, executedStep) }
         if (environment.isTerminated) {
             terminate()
             LOGGER.info("Termination condition reached.")
         }
-        currentStep = step + 1
     }
 
     override fun initialize() {

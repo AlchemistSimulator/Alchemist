@@ -1,0 +1,13 @@
+incarnation: sapere
+
+monitors:
+  type: ComposeMonitor
+  parameters:
+    targetFps: 30
+    failOnHeadless: false
+    timeJumps: [1, 2.5, 50]
+    stepJumps: [10, 100]
+
+deployments:
+  type: Point
+  parameters: [0, 0]

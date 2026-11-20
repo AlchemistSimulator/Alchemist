@@ -7,6 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+import Libs.alchemist
+import Libs.incarnation
 import it.unibo.alchemist.build.devServer
 import it.unibo.alchemist.build.webCommonConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -29,9 +31,36 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.bundles.compose)
+                implementation(libs.kotlinx.collections.immutable)
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(libs.kotlin.coroutines.test)
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation(alchemist("euclidean-geometry"))
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlin.coroutines.swing)
+                implementation(libs.slf4j)
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation(libs.compose.ui.test)
+                implementation(alchemist("loading"))
+                implementation(alchemist("test"))
+                implementation(incarnation("protelis"))
+                implementation(incarnation("sapere"))
             }
         }
     }
+}
+
+compose.resources {
+    packageOfResClass = "it.unibo.alchemist.boundary.composeui.resources"
 }
 
 publishing.publications.withType<MavenPublication>().configureEach {

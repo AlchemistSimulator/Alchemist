@@ -77,7 +77,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
   - [x] the pacing control (see [Pacing](#pacing));
   - [x] a ⚙ menu with the FPS and the links toggle, at the right end of the bar;
 - [x] Let the monitor configure the quick jumps (`timeJumps`, `stepJumps`).
-- [ ] Make the inspector (right side bar) resizable by dragging its edge.
+- [x] Make the inspector (right side bar) resizable by dragging its edge (240 dp to 70% of the window).
 - [ ] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.
 
 ### Pacing

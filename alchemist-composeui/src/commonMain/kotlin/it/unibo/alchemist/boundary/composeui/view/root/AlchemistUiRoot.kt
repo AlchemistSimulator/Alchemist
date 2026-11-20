@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
-import it.unibo.alchemist.boundary.composeui.view.inspector.NodeInspector
+import it.unibo.alchemist.boundary.composeui.view.inspector.ResizableInspector
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.OverlayMargin
 import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
@@ -53,7 +52,7 @@ import kotlinx.coroutines.launch
 private const val INSPECTOR_SLIDE_MILLIS = 320
 private const val INSPECTOR_FADE_MILLIS = 200
 
-private val inspectorWidth = 324.dp
+private val defaultInspectorWidth = 324.dp
 
 /** The help button sits closer to the corner than the other panels. */
 private val helpMargin = 8.dp
@@ -130,6 +129,7 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
                     state.inspector?.let { displayedInspector = it }
                     var dockVisible by remember { mutableStateOf(true) }
                     var helpVisible by remember { mutableStateOf(false) }
+                    var inspectorWidth by remember { mutableStateOf(defaultInspectorWidth) }
                     ViewportSurface(
                         scene = state.scene,
                         selectedNodeIds = state.selectedNodeIds,
@@ -163,14 +163,14 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
                             ) + fadeOut(tween(INSPECTOR_FADE_MILLIS)),
                         ) {
                             displayedInspector?.let {
-                                NodeInspector(
+                                ResizableInspector(
                                     inspector = it,
+                                    width = inspectorWidth,
+                                    availableWidth = this@BoxWithConstraints.maxWidth - OverlayMargin * 2,
+                                    onWidthChange = { width -> inspectorWidth = width },
                                     onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
                                     modifier = Modifier
                                         .padding(OverlayMargin)
-                                        .width(
-                                            minOf(inspectorWidth, this@BoxWithConstraints.maxWidth - OverlayMargin * 2),
-                                        )
                                         .fillMaxHeight(),
                                 )
                             }

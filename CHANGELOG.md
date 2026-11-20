@@ -1,3 +1,19 @@
+## [50.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.4...50.0.5) (2026-11-20)
+
+### Dependency updates
+
+* **deps:** update dependency ch.qos.logback:logback-classic to v1.6.8 ([#5759](https://github.com/AlchemistSimulator/Alchemist/issues/5759)) ([39efbc8](https://github.com/AlchemistSimulator/Alchemist/commit/39efbc8d3598347f602e55151de5b28d922116e7))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.159 ([#5758](https://github.com/AlchemistSimulator/Alchemist/issues/5758)) ([7c4c5cb](https://github.com/AlchemistSimulator/Alchemist/commit/7c4c5cbfc9c4b00c31cb0f80e675083668310ec5))
+* **deps:** update gradle to v9.9.2 ([#5761](https://github.com/AlchemistSimulator/Alchemist/issues/5761)) ([6b0f5b0](https://github.com/AlchemistSimulator/Alchemist/commit/6b0f5b0b17ecb00c954925f6ce0c94a629da0c77))
+
+### Documentation
+
+* **deps:** update gohugoio/hugo action to v0.170.1 ([365fb33](https://github.com/AlchemistSimulator/Alchemist/commit/365fb3341ef908794ef2aa3ac81a02bc0a20154d))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([1babfbc](https://github.com/AlchemistSimulator/Alchemist/commit/1babfbca8fdca046aad2e72284180b4a00c1e124))
+
 ## [50.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.3...50.0.4) (2026-11-16)
 
 ### Dependency updates

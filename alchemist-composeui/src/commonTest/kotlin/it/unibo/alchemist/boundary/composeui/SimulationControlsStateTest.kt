@@ -20,10 +20,12 @@ import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.model.pacing.Pacing
 import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatCompact
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -151,14 +153,31 @@ class SimulationControlsStateTest {
 
     @Test
     fun `time quick jumps go from ten to a thousand`() {
-        assertEquals(listOf(10.0, 100.0, 1000.0), QuickJumps.timeDeltas)
+        assertEquals(listOf(10.0, 100.0, 1000.0), QuickJumps().time)
     }
 
     @Test
     fun `step quick jumps scale with the node count`() {
-        assertEquals(listOf(100L, 200L, 1000L), QuickJumps.stepDeltas(100))
-        assertEquals(listOf(2L, 10L), QuickJumps.stepDeltas(1))
-        assertEquals(emptyList(), QuickJumps.stepDeltas(0))
+        assertEquals(listOf(100L, 200L, 1000L), QuickJumps().stepDeltas(100))
+        assertEquals(listOf(2L, 10L), QuickJumps().stepDeltas(1))
+        assertEquals(emptyList(), QuickJumps().stepDeltas(0))
+    }
+
+    @Test
+    fun `configured step quick jumps ignore the node count`() {
+        assertEquals(listOf(5L, 50L), QuickJumps(steps = listOf(5L, 50L)).stepDeltas(100))
+    }
+
+    @Test
+    fun `quick jumps must be positive`() {
+        assertFailsWith<IllegalArgumentException> { QuickJumps(time = listOf(0.0)) }
+        assertFailsWith<IllegalArgumentException> { QuickJumps(steps = listOf(-1L)) }
+    }
+
+    @Test
+    fun `fractional time jumps keep their decimals`() {
+        assertEquals("0.5", 0.5.formatCompact())
+        assertEquals("1K", 1000.0.formatCompact())
     }
 
     @Test

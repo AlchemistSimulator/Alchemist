@@ -27,6 +27,7 @@ import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistEnvironments.toViewport
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistSimulations.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
+import it.unibo.alchemist.boundary.composeui.model.QuickJumps
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.resources.Res
 import it.unibo.alchemist.boundary.composeui.resources.alchemist_logo
@@ -51,15 +52,22 @@ import org.slf4j.LoggerFactory
  *
  * @param targetFps how many times per second the UI redraws at startup.
  * @param failOnHeadless whether to fail, instead of warning, when there is no display.
+ * @param timeJumps the time quick jumps, by default 10, 100 and 1000 time units.
+ * @param stepJumps the step quick jumps, by default one, two and ten steps per node.
  */
 class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
     targetFps: Int = 30,
     failOnHeadless: Boolean = false,
+    timeJumps: List<Number> = QuickJumps().time,
+    stepJumps: List<Number>? = null,
 ) : OutputMonitor<T, P> {
     private val headAttached = !GraphicsEnvironment.isHeadless()
     private val maxUiFps = MAX_UI_FPS
     private val initialUiFps = targetFps.coerceIn(MIN_UI_FPS, maxUiFps)
     private val windowStarted = AtomicBoolean(false)
+
+    // Numbers, as simulation files give whole numbers as integers.
+    private val quickJumps = QuickJumps(timeJumps.map(Number::toDouble), stepJumps?.map(Number::toLong))
     private val frames = FrameSchedule()
     private val throttle = SimulationThrottle()
     private val currentUiState by lazy {
@@ -69,6 +77,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                     uiFps = initialUiFps,
                     fpsInput = initialUiFps.toString(),
                     maxUiFps = maxUiFps,
+                    quickJumps = quickJumps,
                 ),
             ),
         )

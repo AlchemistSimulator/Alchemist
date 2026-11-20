@@ -11,18 +11,26 @@ package it.unibo.alchemist.boundary.composeui.model
 
 /**
  * How far the quick-jump buttons move the simulation.
+ *
+ * @property time the time jumps, by default 10, 100 and 1000 time units.
+ * @property steps the step jumps, or null for one, two and ten steps per node.
  */
-internal object QuickJumps {
-    private const val THOUSAND = 1000.0
-    private const val TEN = 10L
-
-    /** Time jumps: 10, 100, and 1000 time units; a jump of one is the default of the "to time" box. */
-    val timeDeltas: List<Double> = generateSequence(TEN.toDouble()) { it * TEN }.takeWhile { it <= THOUSAND }.toList()
+internal data class QuickJumps(val time: List<Double> = DEFAULT_TIME, val steps: List<Long>? = null) {
+    init {
+        require(time.all { it > 0 && it.isFinite() }) { "Time quick jumps must be positive, but were $time." }
+        require(steps.orEmpty().all { it > 0 }) { "Step quick jumps must be positive, but were $steps." }
+    }
 
     /**
-     * Step jumps: one, two and ten steps per node, so that every node can act about that often.
-     * Jumps of one step, the default of the "to step" box, or less are dropped.
+     * The step jumps for [nodeCount] nodes.
+     * Unless configured, they are one, two and ten steps per node, so that every node can act about that often,
+     * without jumps of one step, the default of the "to step" box, or less.
      */
-    fun stepDeltas(nodeCount: Int): List<Long> = listOf(nodeCount.toLong(), 2L * nodeCount, TEN * nodeCount)
-        .filter { it > 1 }
+    fun stepDeltas(nodeCount: Int): List<Long> =
+        steps ?: listOf(nodeCount.toLong(), 2L * nodeCount, TEN * nodeCount).filter { it > 1 }
+
+    private companion object {
+        const val TEN = 10L
+        val DEFAULT_TIME: List<Double> = listOf(10.0, 100.0, 1000.0)
+    }
 }

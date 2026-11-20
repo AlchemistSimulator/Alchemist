@@ -31,6 +31,7 @@ import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
  * @property maxUiFps the highest allowed UI frame rate.
  * @property pacing the limit on simulation speed.
  * @property pacingInput the text in the pacing box.
+ * @property quickJumps how far the quick-jump buttons go.
  * @property dialog the error to show, if any.
  */
 @Immutable
@@ -46,6 +47,7 @@ internal data class SimulationControlsState(
     val maxUiFps: Int = SimulationControlsConfig.MAX_UI_FPS,
     val pacing: Pacing = Pacing(),
     val pacingInput: String = pacing.rateLabel,
+    val quickJumps: QuickJumps = QuickJumps(),
     val dialog: ControlDialogState? = null,
 ) {
     init {

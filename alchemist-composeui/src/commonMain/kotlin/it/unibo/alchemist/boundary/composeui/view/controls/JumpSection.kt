@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
-import it.unibo.alchemist.boundary.composeui.model.QuickJumps
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatCompact
 import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
@@ -67,10 +66,10 @@ internal fun JumpSection(
             onSubmit = actions.onToTimeSubmit,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(quickJumpSpacing)) {
-            QuickJumps.timeDeltas.forEach { delta ->
+            controls.quickJumps.time.forEach { delta ->
                 JumpButton(
-                    label = "+${delta.toLong().formatCompact()}",
-                    description = "Run ${delta.toLong()} time units ahead",
+                    label = "+${delta.formatCompact()}",
+                    description = "Run ${delta.formatCompact()} time units ahead",
                     onClick = { actions.onJumpTimeBy(delta) },
                 )
             }
@@ -91,7 +90,7 @@ internal fun JumpSection(
             onSubmit = actions.onToStepSubmit,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(quickJumpSpacing)) {
-            QuickJumps.stepDeltas(nodeCount).forEach { delta ->
+            controls.quickJumps.stepDeltas(nodeCount).forEach { delta ->
                 JumpButton(
                     label = "+${delta.formatCompact()}",
                     description = "Run $delta steps ahead",

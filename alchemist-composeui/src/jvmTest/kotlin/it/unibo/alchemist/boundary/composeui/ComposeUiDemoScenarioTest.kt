@@ -24,4 +24,11 @@ class ComposeUiDemoScenarioTest {
         assertEquals(1000, simulation.environment.nodeCount.current)
         assertTrue(simulation.outputMonitors.any { it is ComposeMonitor })
     }
+
+    @Test
+    fun `a simulation file can set the quick jumps with whole and decimal numbers`() {
+        val scenario = assertNotNull(javaClass.classLoader.getResource("composeui-quick-jumps.yml"))
+        val simulation = LoadAlchemist.from(scenario).getDefault<Any, Euclidean2DPosition>()
+        assertTrue(simulation.outputMonitors.any { it is ComposeMonitor })
+    }
 }

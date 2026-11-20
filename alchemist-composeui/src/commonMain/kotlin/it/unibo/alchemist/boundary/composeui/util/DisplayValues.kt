@@ -37,6 +37,12 @@ internal object DisplayValues {
     }
 
     /**
+     * Shortens this number as [Long.formatCompact] if it is a whole number, or leaves it as it is otherwise.
+     */
+    fun Double.formatCompact(): String =
+        if (this == kotlin.math.floor(this) && this < Long.MAX_VALUE) toLong().formatCompact() else toString()
+
+    /**
      * Formats this number with exactly [decimals] digits after the point.
      */
     fun Double.formatFixed(decimals: Int): String {

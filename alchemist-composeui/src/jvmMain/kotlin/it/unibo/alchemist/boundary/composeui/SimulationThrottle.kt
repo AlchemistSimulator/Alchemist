@@ -16,7 +16,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 /**
- * Slows the simulation thread down to a [Pacing].
+ * Slows the simulation thread down to a [Pacing]: [dueAt] tells when an event is due, and [sleepUntil] waits for it.
  * Each event has a due date, counted from the first event at the current pace:
  * the thread waits only once it is at least [MIN_WAIT_NS] ahead of it,
  * since shorter waits are not precise enough, and would cap fast rates far below the requested one.
@@ -35,22 +35,30 @@ internal class SimulationThrottle {
     private var wokenUp = false
 
     /**
-     * Waits until the event that reached simulated [time] is due at [pace], or until [wakeUp] is called.
+     * Returns when the event that reached simulated [time] is due at [pace], as a [System.nanoTime] value.
      */
-    fun await(pace: Pacing, time: Double) = lock.withLock {
+    fun dueAt(pace: Pacing, time: Double): Long = lock.withLock {
         val now = System.nanoTime()
         if (pace != pacing) {
             restart(pace, now, time)
         }
         events++
         val dueNs = startNs + (pace.secondsFor(events, time - startTime) * 1.seconds.inWholeNanoseconds).roundToLong()
-        var remainingNs = dueNs - now
-        when {
-            remainingNs < -MAX_CATCH_UP_NS -> restart(pace, now, time)
-            remainingNs >= MIN_WAIT_NS ->
-                while (remainingNs > 0L && !wokenUp) {
-                    remainingNs = wakeUpSignal.awaitNanos(remainingNs)
-                }
+        if (dueNs < now - MAX_CATCH_UP_NS) {
+            restart(pace, now, time)
+            now
+        } else {
+            dueNs
+        }
+    }
+
+    /** Waits until [dueNs], or until [wakeUp] is called. */
+    fun sleepUntil(dueNs: Long) = lock.withLock {
+        var remainingNs = dueNs - System.nanoTime()
+        if (remainingNs >= MIN_WAIT_NS) {
+            while (remainingNs > 0L && !wokenUp) {
+                remainingNs = wakeUpSignal.awaitNanos(remainingNs)
+            }
         }
         wokenUp = false
     }

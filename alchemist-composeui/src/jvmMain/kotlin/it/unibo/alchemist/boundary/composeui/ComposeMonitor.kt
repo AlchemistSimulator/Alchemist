@@ -41,7 +41,6 @@ import it.unibo.alchemist.model.Time
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.roundToLong
 import org.jetbrains.compose.resources.painterResource
 import org.slf4j.LoggerFactory
 
@@ -61,7 +60,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
     private val maxUiFps = MAX_UI_FPS
     private val initialUiFps = targetFps.coerceIn(MIN_UI_FPS, maxUiFps)
     private val windowStarted = AtomicBoolean(false)
-    private var lastUpdate: Long = 0L
+    private val frames = FrameSchedule()
     private val throttle = SimulationThrottle()
     private val currentUiState by lazy {
         ComposeUiStateStore(
@@ -107,12 +106,14 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
 
     override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         if (headAttached) {
-            val now = System.currentTimeMillis()
-            if (now - lastUpdate >= uiThrottleMs()) {
-                lastUpdate = now
+            val controls = currentUiState.state.controls
+            val dueNs = throttle.dueAt(controls.pacing, time.toDouble())
+            val now = System.nanoTime()
+            if (frames.isDue(now, idleNs = dueNs - now, fps = controls.uiFps)) {
                 updateUiState(environment, time, step)
+                frames.taken(startNs = now, endNs = System.nanoTime(), fps = controls.uiFps)
             }
-            throttle.await(currentUiState.state.controls.pacing, time.toDouble())
+            throttle.sleepUntil(dueNs)
         }
     }
 
@@ -124,8 +125,10 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     private fun updateUiState(environment: Environment<T, P>, time: Time, step: Long) {
+        // Built once, outside of update, which may run its lambda again if the UI changes the state meanwhile.
+        val showLinks = currentUiState.state.scene.showLinks
+        val viewport = environment.toViewport(renderLinks = showLinks)
         currentUiState.update {
-            val viewport = environment.toViewport(renderLinks = it.scene.showLinks)
             it.copy(
                 scene = viewport.copy(showLinks = it.scene.showLinks),
                 controls = it.controls.copy(
@@ -136,10 +139,6 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
             ).withSelection(it.selectedNodeIds)
         }
     }
-
-    private fun uiThrottleMs(): Long = (1000.0 / currentUiState.state.controls.uiFps.coerceIn(MIN_UI_FPS, maxUiFps))
-        .roundToLong()
-        .coerceAtLeast(1L)
 
     private fun ensureWindow(environment: Environment<T, P>) {
         if (windowStarted.compareAndSet(false, true)) {

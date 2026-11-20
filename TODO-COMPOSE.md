@@ -87,7 +87,8 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
   - simulated time units per second (real-time with a speed multiplier; covers Swing's `R`);
   - maximum speed.
   One button per mode, plus a box for the rate, applied as it is typed.
-- [ ] Unlink the UI frame rate from the simulation pacing. The FPS cap (1 to 120, default 30, set live from a slider or a box in the ⚙ menu) only limits how often the UI redraws, so the simulation can run fast without the UI eating CPU. It must never slow down or speed up the simulation.
+- [x] Unlink the UI frame rate from the simulation pacing. The FPS cap (1 to 120, default 30, set live from a slider or a box in the ⚙ menu) only limits how often the UI redraws, so the simulation can run fast without the UI eating CPU. It must never slow down or speed up the simulation.
+  Snapshots are built on the simulation thread, so they still cost it some time: at most one per frame, never more time than they leave to the simulation, and always one before a wait of a frame or more, so a slow pace never shows a stale step.
 
 ### Tests
 

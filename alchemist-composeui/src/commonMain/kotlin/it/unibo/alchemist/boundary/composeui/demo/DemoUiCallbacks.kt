@@ -13,9 +13,9 @@ import it.unibo.alchemist.boundary.composeui.model.SimulationProgress
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
+import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 /**
  * Fake simulation controls for the demo scene, used when no simulation is attached.
@@ -92,9 +92,15 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
         }
     }
 
-    override suspend fun onEventRateChanged(value: Float) {
-        store.update { state ->
-            state.copy(controls = state.controls.updateEventThrottling(value.roundToInt()))
+    override suspend fun onPacingInputChanged(value: String) {
+        store.update {
+            it.copy(controls = it.controls.withPacingInput(value))
+        }
+    }
+
+    override suspend fun onPacingModeChanged(mode: PacingMode) {
+        store.update {
+            it.copy(controls = it.controls.withPacingMode(mode))
         }
     }
 

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.composeui.model.callbacks
 
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
+import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 
 /**
  * User actions, sent by the UI to the simulation.
@@ -50,8 +51,11 @@ internal interface AlchemistUiCallbacks {
     /** Applies the frame rate in the FPS box. */
     suspend fun onFpsSubmit()
 
-    /** The speed slider moved to [value]. */
-    suspend fun onEventRateChanged(value: Float)
+    /** The pacing box changed to [value], applied at once if it is a positive number. */
+    suspend fun onPacingInputChanged(value: String)
+
+    /** Paces the simulation by [mode], at its default rate. */
+    suspend fun onPacingModeChanged(mode: PacingMode)
 
     /** Selects only node [nodeId]. */
     suspend fun onNodeSelected(nodeId: Int)

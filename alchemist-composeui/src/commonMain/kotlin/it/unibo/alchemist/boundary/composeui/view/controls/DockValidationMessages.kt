@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.composeui.view.controls
 
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.model.pacing.Pacing
 
 /**
  * Errors to show under the dock text fields; `null` where the input is fine.
@@ -19,6 +20,7 @@ internal data class DockValidationMessages(
     val toTime: String? = null,
     val toStep: String? = null,
     val fps: String? = null,
+    val pacing: String? = null,
 ) {
     companion object {
         /** The errors in the inputs of [controls]. */
@@ -27,6 +29,7 @@ internal data class DockValidationMessages(
                 toTime = jumpError(targetTime, time, "Use a numeric time", "Target is before current time"),
                 toStep = jumpError(targetStep, step, "Use an integer step", "Target is before current step"),
                 fps = fpsValidationError(),
+                pacing = pacingValidationError(),
             )
         }
 
@@ -46,5 +49,8 @@ internal data class DockValidationMessages(
                 val fps = input.toIntOrNull() ?: return@let "Use an integer FPS"
                 if (fps in MIN_UI_FPS..maxUiFps) null else "Use $MIN_UI_FPS-$maxUiFps FPS"
             }
+
+        private fun SimulationControlsState.pacingValidationError(): String? =
+            "Use a positive number".takeIf { Pacing.parseRate(pacingInput) == null }
     }
 }

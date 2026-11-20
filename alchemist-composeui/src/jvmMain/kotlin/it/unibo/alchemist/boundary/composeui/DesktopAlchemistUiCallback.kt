@@ -16,12 +16,12 @@ import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
+import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.SimulationState
 import it.unibo.alchemist.model.Position
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -113,9 +113,16 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
         }
     }
 
-    override suspend fun onEventRateChanged(value: Float) {
+    override suspend fun onPacingInputChanged(value: String) {
         updateState {
-            it.copy(controls = it.controls.updateEventThrottling(value.roundToInt()))
+            it.copy(controls = it.controls.withPacingInput(value))
+        }
+        throttle.wakeUp()
+    }
+
+    override suspend fun onPacingModeChanged(mode: PacingMode) {
+        updateState {
+            it.copy(controls = it.controls.withPacingMode(mode))
         }
         throttle.wakeUp()
     }

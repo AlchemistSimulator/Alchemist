@@ -13,8 +13,8 @@ import androidx.compose.runtime.Immutable
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DISPLAYED_TIME_DECIMALS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
-import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
-import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling
+import it.unibo.alchemist.boundary.composeui.model.pacing.Pacing
+import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
 
 /**
@@ -29,7 +29,8 @@ import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatFixed
  * @property fpsInput the text in the FPS box.
  * @property uiFps the UI frame rate.
  * @property maxUiFps the highest allowed UI frame rate.
- * @property simulationEventThrottling the limit on simulation speed.
+ * @property pacing the limit on simulation speed.
+ * @property pacingInput the text in the pacing box.
  * @property dialog the error to show, if any.
  */
 @Immutable
@@ -43,7 +44,8 @@ internal data class SimulationControlsState(
     val fpsInput: String = SimulationControlsConfig.DEFAULT_UI_FPS.toString(),
     val uiFps: Int = SimulationControlsConfig.DEFAULT_UI_FPS,
     val maxUiFps: Int = SimulationControlsConfig.MAX_UI_FPS,
-    val simulationEventThrottling: SimulationEventThrottling = FullThrottle,
+    val pacing: Pacing = Pacing(),
+    val pacingInput: String = pacing.rateLabel,
     val dialog: ControlDialogState? = null,
 ) {
     init {
@@ -82,22 +84,22 @@ internal data class SimulationControlsState(
     /** The status, as text. */
     val statusLabel: String = status.name.lowercase().replaceFirstChar(Char::uppercaseChar)
 
-    /** Whether the simulation runs at full speed. */
-    val isFullThrottle: Boolean = simulationEventThrottling is FullThrottle
-
     /** The allowed frame rates, as text. */
     val fpsRangeLabel: String = "${SimulationControlsConfig.MIN_UI_FPS}-$maxUiFps FPS"
-
-    /** Returns a copy with the speed limit set by the slider at [newValue]. */
-    fun updateEventThrottling(newValue: Int): SimulationControlsState = copy(
-        simulationEventThrottling = simulationEventThrottling.update(newValue),
-    )
 
     /** Returns a copy with [value] in the frame rate box, applied at once if it is an allowed frame rate. */
     internal fun withFpsInput(value: String): SimulationControlsState = copy(
         fpsInput = value,
         uiFps = value.toIntOrNull()?.takeIf { it in MIN_UI_FPS..maxUiFps } ?: uiFps,
     )
+
+    /** Returns a copy with [value] in the pacing box, applied at once if it is a positive number. */
+    internal fun withPacingInput(value: String): SimulationControlsState =
+        copy(pacingInput = value, pacing = pacing.withRate(value))
+
+    /** Returns a copy paced by [mode], at its default rate. */
+    internal fun withPacingMode(mode: PacingMode): SimulationControlsState =
+        Pacing(mode).let { copy(pacing = it, pacingInput = it.rateLabel) }
 
     /** Returns a copy with the frame rate set to [target], clamped to the allowed range. */
     internal fun withUiFps(target: Int): SimulationControlsState {

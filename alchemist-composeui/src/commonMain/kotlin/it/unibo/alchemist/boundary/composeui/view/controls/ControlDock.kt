@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
+import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 import it.unibo.alchemist.boundary.composeui.view.theme.FloatingPanel
 import kotlin.math.roundToInt
 
@@ -49,7 +50,8 @@ internal fun ControlDock(
     onToStepSubmit: () -> Unit,
     onJumpTimeBy: (Double) -> Unit,
     onJumpStepBy: (Long) -> Unit,
-    onEventRateChanged: (Float) -> Unit,
+    onPacingInputChanged: (String) -> Unit,
+    onPacingModeChanged: (PacingMode) -> Unit,
     onToggleSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -64,7 +66,8 @@ internal fun ControlDock(
         onToStepSubmit = onToStepSubmit,
         onJumpTimeBy = onJumpTimeBy,
         onJumpStepBy = onJumpStepBy,
-        onEventRateChanged = onEventRateChanged,
+        onPacingInputChanged = onPacingInputChanged,
+        onPacingModeChanged = onPacingModeChanged,
         onToggleSettings = onToggleSettings,
     )
     Surface(
@@ -95,7 +98,7 @@ private fun DockContent(
         DockDivider(Modifier.layoutId(DOCK_DIVIDER))
         JumpSection(controls, nodeCount, validation, actions)
         DockDivider(Modifier.layoutId(DOCK_DIVIDER))
-        PacingSection(controls, actions)
+        PacingSection(controls, validation, actions)
         DockDivider(Modifier.layoutId(DOCK_DIVIDER))
         SettingsSection(settingsOpen, actions)
     }

@@ -28,7 +28,6 @@ import it.unibo.alchemist.boundary.composeui.adapter.AlchemistEnvironments.toVie
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistSimulations.toSimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
-import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
 import it.unibo.alchemist.boundary.composeui.resources.Res
 import it.unibo.alchemist.boundary.composeui.resources.alchemist_logo
 import it.unibo.alchemist.boundary.composeui.view.app
@@ -113,7 +112,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                 lastUpdate = now
                 updateUiState(environment, time, step)
             }
-            throttleSimulation()
+            throttle.await(currentUiState.state.controls.pacing, time.toDouble())
         }
     }
 
@@ -141,11 +140,6 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
     private fun uiThrottleMs(): Long = (1000.0 / currentUiState.state.controls.uiFps.coerceIn(MIN_UI_FPS, maxUiFps))
         .roundToLong()
         .coerceAtLeast(1L)
-
-    private fun throttleSimulation() {
-        val throttling = currentUiState.state.controls.simulationEventThrottling
-        throttle.await(throttling.takeUnless { it is FullThrottle }?.value)
-    }
 
     private fun ensureWindow(environment: Environment<T, P>) {
         if (windowStarted.compareAndSet(false, true)) {

@@ -116,7 +116,8 @@ internal fun ControlsOverlay(
                             onToStepSubmit = { coroutineScope.launch { callbacks.onToStepSubmit() } },
                             onJumpTimeBy = { coroutineScope.launch { callbacks.onJumpTimeBy(it) } },
                             onJumpStepBy = { coroutineScope.launch { callbacks.onJumpStepBy(it) } },
-                            onEventRateChanged = { coroutineScope.launch { callbacks.onEventRateChanged(it) } },
+                            onPacingInputChanged = { coroutineScope.launch { callbacks.onPacingInputChanged(it) } },
+                            onPacingModeChanged = { coroutineScope.launch { callbacks.onPacingModeChanged(it) } },
                             onToggleSettings = { settingsOpen = !settingsOpen },
                         )
                     }

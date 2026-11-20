@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.boundary.composeui.view.controls
 
+import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
+
 /**
  * The callbacks triggered by the controls of the dock.
  */
@@ -22,6 +24,7 @@ internal class DockActions(
     val onToStepSubmit: () -> Unit,
     val onJumpTimeBy: (Double) -> Unit,
     val onJumpStepBy: (Long) -> Unit,
-    val onEventRateChanged: (Float) -> Unit,
+    val onPacingInputChanged: (String) -> Unit,
+    val onPacingModeChanged: (PacingMode) -> Unit,
     val onToggleSettings: () -> Unit,
 )

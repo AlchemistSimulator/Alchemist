@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.composeui.model.callbacks
 
 import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
+import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 
 /**
  * Shared no-op callback implementation.
@@ -37,7 +38,9 @@ internal object NoOpUiCallbacks : AlchemistUiCallbacks {
 
     override suspend fun onFpsSubmit() = Unit
 
-    override suspend fun onEventRateChanged(value: Float) = Unit
+    override suspend fun onPacingInputChanged(value: String) = Unit
+
+    override suspend fun onPacingModeChanged(mode: PacingMode) = Unit
 
     override suspend fun onNodeSelected(nodeId: Int) = Unit
 

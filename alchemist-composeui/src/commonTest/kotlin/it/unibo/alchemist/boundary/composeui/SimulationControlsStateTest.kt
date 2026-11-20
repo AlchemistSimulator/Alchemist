@@ -18,14 +18,10 @@ import it.unibo.alchemist.boundary.composeui.model.QuickJumps
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.SimulationStatus
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
-import it.unibo.alchemist.boundary.composeui.model.throttling.EventsPerSecond
-import it.unibo.alchemist.boundary.composeui.model.throttling.FullThrottle
-import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.MAX_SIMULATION_EVENTS_PER_SECOND
-import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.MAX_SLIDER_POSITION
-import it.unibo.alchemist.boundary.composeui.model.throttling.SimulationEventThrottling.Companion.rateAt
+import it.unibo.alchemist.boundary.composeui.model.pacing.Pacing
+import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
-import kotlin.math.log10
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -102,35 +98,31 @@ class SimulationControlsStateTest {
     }
 
     @Test
-    fun `full throttle is represented by the max slider value`() {
-        val controls = SimulationControlsState().updateEventThrottling(Int.MAX_VALUE)
-
-        assertTrue(controls.isFullThrottle)
-        assertEquals(FullThrottle, controls.simulationEventThrottling)
-        assertEquals("Max", controls.simulationEventThrottling.toLabel())
+    fun `the simulation starts at max speed`() {
+        assertEquals(PacingMode.MAX_SPEED, SimulationControlsState().pacing.mode)
     }
 
     @Test
-    fun `the speed slider spans one to the highest rate`() {
-        assertEquals(1, rateAt(0f))
-        assertEquals(MAX_SIMULATION_EVENTS_PER_SECOND, rateAt(MAX_SLIDER_POSITION))
-        val atTop = SimulationControlsState().updateEventThrottling(rateAt(MAX_SLIDER_POSITION))
-        assertEquals(FullThrottle, atTop.simulationEventThrottling)
+    fun `choosing a pacing mode starts from its default rate`() {
+        val controls = SimulationControlsState().withPacingMode(PacingMode.EVENTS_PER_SECOND)
+        assertEquals(Pacing(PacingMode.EVENTS_PER_SECOND, 1000.0), controls.pacing)
+        assertEquals("1000", controls.pacingInput)
     }
 
     @Test
-    fun `the speed slider is logarithmic and rounds to two significant digits`() {
-        assertEquals(100, rateAt(2f))
-        assertEquals(1200, rateAt(log10(1234f)))
-        assertEquals(2f, EventsPerSecond(100).sliderPosition)
+    fun `a typed pacing rate applies at once only if positive`() {
+        val controls = SimulationControlsState().withPacingMode(PacingMode.TIME_PER_SECOND)
+        assertEquals(2.5, controls.withPacingInput("2.5").pacing.rate)
+        assertEquals(1.0, controls.withPacingInput("0").pacing.rate)
+        assertEquals(1.0, controls.withPacingInput("x").pacing.rate)
+        assertEquals("x", controls.withPacingInput("x").pacingInput)
     }
 
     @Test
-    fun `speed labels show their unit`() {
-        assertEquals("10 events/s", EventsPerSecond(10).toLabel())
-        assertEquals("1.2K events/s", EventsPerSecond(1200).toLabel())
-        assertEquals("10K events/s", EventsPerSecond(10_000).toLabel())
-        assertEquals("1M events/s", EventsPerSecond(1_000_000).toLabel())
+    fun `events per second pace events, time per second paces simulated time`() {
+        assertEquals(0.5, Pacing(PacingMode.EVENTS_PER_SECOND, 10.0).secondsFor(events = 5, elapsedTime = 100.0))
+        assertEquals(50.0, Pacing(PacingMode.TIME_PER_SECOND, 2.0).secondsFor(events = 5, elapsedTime = 100.0))
+        assertEquals(0.0, Pacing(PacingMode.MAX_SPEED).secondsFor(events = 5, elapsedTime = 100.0))
     }
 
     @Test

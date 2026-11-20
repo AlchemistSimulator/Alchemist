@@ -74,7 +74,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
   - [x] "To Time" and "To Step" boxes, kept separate because they use different scales;
   - [x] quick jumps: time +10, +100, +1000; step +N, +2N, +10N, where N is the node count; "to time" and "to step" are buttons, whose box defaults to +1, split by a line;
   - [x] the latest command wins: Play and Pause drop pending jumps, of several jumps the first one reached wins, and every jump ends paused;
-  - [ ] the pacing control (see [Pacing](#pacing));
+  - [x] the pacing control (see [Pacing](#pacing));
   - [x] a ⚙ menu with the FPS and the links toggle, at the right end of the bar;
 - [ ] Optionally, let the monitor configure the quick jumps.
 - [ ] Make the inspector (right side bar) resizable by dragging its edge.
@@ -82,11 +82,11 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 
 ### Pacing
 
-- [ ] Replace the event-rate slider with explicit pacing modes:
+- [x] Replace the event-rate slider with explicit pacing modes:
   - events per second;
   - simulated time units per second (real-time with a speed multiplier; covers Swing's `R`);
   - maximum speed.
-  A mode selector plus a numeric field is likely clearer than a slider.
+  One button per mode, plus a box for the rate, applied as it is typed.
 - [ ] Unlink the UI frame rate from the simulation pacing. The FPS cap (1 to 120, default 30, set live from a slider or a box in the ⚙ menu) only limits how often the UI redraws, so the simulation can run fast without the UI eating CPU. It must never slow down or speed up the simulation.
 
 ### Tests

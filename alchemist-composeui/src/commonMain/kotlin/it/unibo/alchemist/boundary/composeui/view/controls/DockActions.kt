@@ -22,7 +22,6 @@ internal class DockActions(
     val onToStepSubmit: () -> Unit,
     val onJumpTimeBy: (Double) -> Unit,
     val onJumpStepBy: (Long) -> Unit,
-    val onFpsInputChanged: (String) -> Unit,
-    val onFpsSubmit: () -> Unit,
     val onEventRateChanged: (Float) -> Unit,
+    val onToggleSettings: () -> Unit,
 )

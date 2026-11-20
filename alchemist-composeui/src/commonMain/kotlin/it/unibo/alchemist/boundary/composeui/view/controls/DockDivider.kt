@@ -21,11 +21,11 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 
 private val dividerInset = 6.dp
 
-/** A thin vertical line between groups of dock controls. */
+/** A thin vertical line between groups of dock controls, as tall as the space it is given. */
 @Composable
-internal fun DockDivider() {
+internal fun DockDivider(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
             .padding(vertical = dividerInset)
             .width(1.dp)

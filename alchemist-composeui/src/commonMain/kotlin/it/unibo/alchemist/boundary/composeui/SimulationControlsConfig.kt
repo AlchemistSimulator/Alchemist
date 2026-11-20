@@ -14,19 +14,19 @@ package it.unibo.alchemist.boundary.composeui
  */
 internal object SimulationControlsConfig {
     /**
-     * Lowest refresh rate, in frames per second, the UI can be set to.
+     * Lowest frame rate cap, in frames per second.
      */
-    const val MIN_UI_FPS = 5
+    const val MIN_UI_FPS = 1
 
     /**
-     * Refresh rate, in frames per second, used when none is configured.
+     * Frame rate cap, in frames per second, used when none is configured.
      */
     const val DEFAULT_UI_FPS = 30
 
     /**
-     * Highest refresh rate, in frames per second, used when the refresh rate of the display cannot be detected.
+     * Highest frame rate cap, in frames per second.
      */
-    const val DEFAULT_MAX_UI_FPS = 60
+    const val MAX_UI_FPS = 120
 
     /**
      * Number of decimal digits used to display the simulation time.

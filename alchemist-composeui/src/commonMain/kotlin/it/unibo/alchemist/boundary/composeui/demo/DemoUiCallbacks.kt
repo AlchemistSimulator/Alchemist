@@ -80,7 +80,7 @@ internal class DemoUiCallbacks(private val store: ComposeUiStateStore) : Alchemi
 
     override suspend fun onFpsInputChanged(value: String) {
         store.update {
-            it.copy(controls = it.controls.copy(fpsInput = value))
+            it.copy(controls = it.controls.withFpsInput(value))
         }
     }
 

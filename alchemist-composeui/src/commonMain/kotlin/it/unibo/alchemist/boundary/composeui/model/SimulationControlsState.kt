@@ -42,7 +42,7 @@ internal data class SimulationControlsState(
     val toStepInput: String = "",
     val fpsInput: String = SimulationControlsConfig.DEFAULT_UI_FPS.toString(),
     val uiFps: Int = SimulationControlsConfig.DEFAULT_UI_FPS,
-    val maxUiFps: Int = SimulationControlsConfig.DEFAULT_MAX_UI_FPS,
+    val maxUiFps: Int = SimulationControlsConfig.MAX_UI_FPS,
     val simulationEventThrottling: SimulationEventThrottling = FullThrottle,
     val dialog: ControlDialogState? = null,
 ) {
@@ -91,6 +91,12 @@ internal data class SimulationControlsState(
     /** Returns a copy with the speed limit set by the slider at [newValue]. */
     fun updateEventThrottling(newValue: Int): SimulationControlsState = copy(
         simulationEventThrottling = simulationEventThrottling.update(newValue),
+    )
+
+    /** Returns a copy with [value] in the frame rate box, applied at once if it is an allowed frame rate. */
+    internal fun withFpsInput(value: String): SimulationControlsState = copy(
+        fpsInput = value,
+        uiFps = value.toIntOrNull()?.takeIf { it in MIN_UI_FPS..maxUiFps } ?: uiFps,
     )
 
     /** Returns a copy with the frame rate set to [target], clamped to the allowed range. */

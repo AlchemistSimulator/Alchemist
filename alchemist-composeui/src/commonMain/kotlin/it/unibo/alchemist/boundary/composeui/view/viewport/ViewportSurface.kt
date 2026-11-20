@@ -190,7 +190,6 @@ internal fun ViewportSurface(
             }
             ViewportChrome(
                 scene = scene,
-                onToggleLinks = { send { onToggleLinks() } },
                 modifier = Modifier.align(Alignment.TopStart).padding(OverlayMargin),
             )
             ViewportGridLegend(

@@ -53,10 +53,10 @@ import it.unibo.alchemist.boundary.composeui.view.viewport.LocalViewportFocus
 private val fieldPadding = 8.dp
 
 /**
- * A compact dock text box, with an optional [label] inside, that submits on Enter.
+ * A compact dock text box, with an optional [label] inside.
+ * Enter submits it and hands the focus back to the viewport.
  * With a [default], the box shows it until focused, then starts editing from it,
  * and Enter or leaving the box clears the text, so that the box follows the default again.
- * Enter in such a box also hands the focus back to the viewport.
  * While editing, an [error] turns the border red.
  */
 @Composable
@@ -95,7 +95,7 @@ internal fun DockTextField(
                 val isEnter = it.key == Key.Enter || it.key == Key.NumPadEnter
                 if (it.type == KeyEventType.KeyUp && isEnter) {
                     onSubmit()
-                    default?.let { viewportFocus.requestFocus() }
+                    viewportFocus.requestFocus()
                     true
                 } else {
                     false

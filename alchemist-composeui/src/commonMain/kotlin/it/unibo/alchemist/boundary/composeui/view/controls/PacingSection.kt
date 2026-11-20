@@ -31,29 +31,16 @@ import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 
 private val eventRateSliderWidth = 160.dp
 private val eventRateLabelWidth = 100.dp
-private val fpsFieldWidth = 84.dp
 
 /**
- * The UI frame rate box and the simulation speed slider.
+ * The simulation speed slider.
  */
 @Composable
-internal fun PacingSection(
-    controls: SimulationControlsState,
-    validation: DockValidationMessages,
-    actions: DockActions,
-) {
+internal fun PacingSection(controls: SimulationControlsState, actions: DockActions) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(stripItemSpacing),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        DockTextField(
-            label = "FPS",
-            value = controls.fpsInput,
-            error = validation.fps,
-            onValueChange = actions.onFpsInputChanged,
-            onSubmit = actions.onFpsSubmit,
-            width = fpsFieldWidth,
-        )
         Text(text = "speed", style = MaterialTheme.typography.caption, color = SecondaryAccent)
         Slider(
             value = controls.simulationEventThrottling.sliderPosition,

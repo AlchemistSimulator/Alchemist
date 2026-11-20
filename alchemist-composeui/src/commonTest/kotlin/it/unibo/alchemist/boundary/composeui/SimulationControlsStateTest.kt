@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui
 
-import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MAX_UI_FPS
 import it.unibo.alchemist.boundary.composeui.demo.DemoUiCallbacks
 import it.unibo.alchemist.boundary.composeui.demo.DemoUiState
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
@@ -90,6 +90,15 @@ class SimulationControlsStateTest {
 
         assertEquals(45, controls.uiFps)
         assertEquals("45", controls.fpsInput)
+    }
+
+    @Test
+    fun `a typed fps cap applies at once only if allowed`() {
+        val controls = SimulationControlsState(uiFps = 30)
+        assertEquals(12, controls.withFpsInput("12").uiFps)
+        assertEquals(30, controls.withFpsInput("").uiFps)
+        assertEquals(30, controls.withFpsInput("500").uiFps)
+        assertEquals("500", controls.withFpsInput("500").fpsInput)
     }
 
     @Test
@@ -192,8 +201,8 @@ class SimulationControlsStateTest {
         controller.callbacks.onFpsInputChanged("120")
         controller.callbacks.onFpsSubmit()
 
-        assertEquals(DEFAULT_MAX_UI_FPS, controller.store.state.controls.uiFps)
-        assertEquals(DEFAULT_MAX_UI_FPS.toString(), controller.store.state.controls.fpsInput)
+        assertEquals(MAX_UI_FPS, controller.store.state.controls.uiFps)
+        assertEquals(MAX_UI_FPS.toString(), controller.store.state.controls.fpsInput)
     }
 
     @Test

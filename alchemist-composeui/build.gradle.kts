@@ -49,6 +49,7 @@ kotlin {
         }
         jvmTest {
             dependencies {
+                implementation(libs.compose.ui.test)
                 implementation(alchemist("loading"))
                 implementation(alchemist("test"))
                 implementation(incarnation("protelis"))

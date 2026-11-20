@@ -100,7 +100,7 @@ internal class DesktopAlchemistUiCallback<T, P : Position<P>>(
 
     override suspend fun onFpsInputChanged(value: String) {
         updateState {
-            it.copy(controls = it.controls.copy(fpsInput = value))
+            it.copy(controls = it.controls.withFpsInput(value))
         }
     }
 

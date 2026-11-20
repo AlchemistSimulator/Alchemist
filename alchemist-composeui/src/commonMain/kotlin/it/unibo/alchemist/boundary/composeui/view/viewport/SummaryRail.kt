@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -23,9 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.Labeled
 import it.unibo.alchemist.boundary.composeui.util.DisplayValues.toDisplayString
@@ -34,12 +30,7 @@ import it.unibo.alchemist.boundary.composeui.view.theme.SurfaceStrong
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
 @Composable
-internal fun SummaryRail(
-    summary: List<Labeled<*>>,
-    showLinks: Boolean,
-    onToggleLinks: () -> Unit,
-    linkRenderNotice: String? = null,
-) {
+internal fun SummaryRail(summary: List<Labeled<*>>, linkRenderNotice: String? = null) {
     Row(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -55,21 +46,6 @@ internal fun SummaryRail(
                 labelColor = SecondaryAccent,
             )
         }
-        SummaryChip(
-            label = "LINKS",
-            value = if (showLinks) "ON" else "OFF",
-            background = if (showLinks) SecondaryAccent.copy(alpha = 0.2f) else SurfaceStrong.copy(alpha = 0.82f),
-            labelColor = if (showLinks) SecondaryAccent else TextSecondary,
-            modifier = Modifier
-                .toggleable(
-                    value = showLinks,
-                    role = Role.Switch,
-                    onValueChange = { onToggleLinks() },
-                )
-                .semantics {
-                    stateDescription = if (showLinks) "Links visible" else "Links hidden"
-                },
-        )
     }
 }
 

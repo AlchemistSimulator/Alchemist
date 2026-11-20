@@ -22,17 +22,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.view.controls.ControlDock
+import it.unibo.alchemist.boundary.composeui.view.controls.SettingsPanel
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 import it.unibo.alchemist.boundary.composeui.view.viewport.HelpButton
 import it.unibo.alchemist.boundary.composeui.view.viewport.HelpButtonSize
@@ -45,16 +51,18 @@ private const val HANDLE_ALPHA = 0.6f
 private val handleWidth = 96.dp
 private val handleTouchHeight = 16.dp
 private val handleThickness = 4.dp
+private val settingsGap = 8.dp
 
 /**
  * The controls at the bottom of the window: the help, and the control dock.
  * The help panels open above, so they never cover the dock.
- * A handle line above the dock hides or shows it.
+ * A handle line above the dock hides or shows it, and the ⚙ button of the dock opens the settings above it.
  */
 @Composable
 internal fun ControlsOverlay(
     controls: SimulationControlsState,
     nodeCount: Int,
+    showLinks: Boolean,
     callbacks: AlchemistUiCallbacks,
     dockVisible: Boolean,
     onToggleDock: () -> Unit,
@@ -63,33 +71,55 @@ internal fun ControlsOverlay(
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    var settingsOpen by remember { mutableStateOf(false) }
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom)) {
         ViewportGestureHint(hasNodes = nodeCount > 0, expanded = helpVisible)
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
             HelpButton(expanded = helpVisible, onToggle = onToggleHelp)
-            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                DockHandle(dockVisible = dockVisible, onToggle = onToggleDock)
-                AnimatedVisibility(
-                    visible = dockVisible,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut(),
-                ) {
-                    ControlDock(
-                        controls = controls,
-                        nodeCount = nodeCount,
-                        onPlay = { coroutineScope.launch { callbacks.onPlay() } },
-                        onPause = { coroutineScope.launch { callbacks.onPause() } },
-                        onStep = { coroutineScope.launch { callbacks.onStep() } },
-                        onToTimeInputChanged = { coroutineScope.launch { callbacks.onToTimeInputChanged(it) } },
-                        onToTimeSubmit = { coroutineScope.launch { callbacks.onToTimeSubmit() } },
-                        onToStepInputChanged = { coroutineScope.launch { callbacks.onToStepInputChanged(it) } },
-                        onToStepSubmit = { coroutineScope.launch { callbacks.onToStepSubmit() } },
-                        onJumpTimeBy = { coroutineScope.launch { callbacks.onJumpTimeBy(it) } },
-                        onJumpStepBy = { coroutineScope.launch { callbacks.onJumpStepBy(it) } },
-                        onFpsInputChanged = { coroutineScope.launch { callbacks.onFpsInputChanged(it) } },
-                        onFpsSubmit = { coroutineScope.launch { callbacks.onFpsSubmit() } },
-                        onEventRateChanged = { coroutineScope.launch { callbacks.onEventRateChanged(it) } },
+            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.BottomCenter) {
+                // As wide as the dock, so the settings panel lines up with its right end.
+                Column(horizontalAlignment = Alignment.End) {
+                    AnimatedVisibility(
+                        visible = dockVisible && settingsOpen,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut(),
+                    ) {
+                        SettingsPanel(
+                            controls = controls,
+                            showLinks = showLinks,
+                            onFpsInputChanged = { coroutineScope.launch { callbacks.onFpsInputChanged(it) } },
+                            onFpsSubmit = { coroutineScope.launch { callbacks.onFpsSubmit() } },
+                            onToggleLinks = { coroutineScope.launch { callbacks.onToggleLinks() } },
+                            modifier = Modifier.padding(bottom = settingsGap),
+                        )
+                    }
+                    DockHandle(
+                        dockVisible = dockVisible,
+                        onToggle = onToggleDock,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
                     )
+                    AnimatedVisibility(
+                        visible = dockVisible,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut(),
+                    ) {
+                        ControlDock(
+                            controls = controls,
+                            nodeCount = nodeCount,
+                            settingsOpen = settingsOpen,
+                            onPlay = { coroutineScope.launch { callbacks.onPlay() } },
+                            onPause = { coroutineScope.launch { callbacks.onPause() } },
+                            onStep = { coroutineScope.launch { callbacks.onStep() } },
+                            onToTimeInputChanged = { coroutineScope.launch { callbacks.onToTimeInputChanged(it) } },
+                            onToTimeSubmit = { coroutineScope.launch { callbacks.onToTimeSubmit() } },
+                            onToStepInputChanged = { coroutineScope.launch { callbacks.onToStepInputChanged(it) } },
+                            onToStepSubmit = { coroutineScope.launch { callbacks.onToStepSubmit() } },
+                            onJumpTimeBy = { coroutineScope.launch { callbacks.onJumpTimeBy(it) } },
+                            onJumpStepBy = { coroutineScope.launch { callbacks.onJumpStepBy(it) } },
+                            onEventRateChanged = { coroutineScope.launch { callbacks.onEventRateChanged(it) } },
+                            onToggleSettings = { settingsOpen = !settingsOpen },
+                        )
+                    }
                 }
             }
             // Balances the help button, so the dock stays centered.
@@ -99,9 +129,9 @@ internal fun ControlsOverlay(
 }
 
 @Composable
-private fun DockHandle(dockVisible: Boolean, onToggle: () -> Unit) {
+private fun DockHandle(dockVisible: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(width = handleWidth, height = handleTouchHeight)
             .clickableKeepingShortcuts(
                 onClickLabel = if (dockVisible) "Hide controls (C)" else "Show controls (C)",

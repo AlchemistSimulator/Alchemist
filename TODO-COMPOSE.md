@@ -75,7 +75,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
   - [x] quick jumps: time +10, +100, +1000; step +N, +2N, +10N, where N is the node count; "to time" and "to step" are buttons, whose box defaults to +1, split by a line;
   - [x] the latest command wins: Play and Pause drop pending jumps, of several jumps the first one reached wins, and every jump ends paused;
   - [ ] the pacing control (see [Pacing](#pacing));
-  - [ ] a ⚙ menu with the FPS and the links toggle.
+  - [x] a ⚙ menu with the FPS and the links toggle, at the right end of the bar;
 - [ ] Optionally, let the monitor configure the quick jumps.
 - [ ] Make the inspector (right side bar) resizable by dragging its edge.
 - [ ] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.
@@ -87,7 +87,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
   - simulated time units per second (real-time with a speed multiplier; covers Swing's `R`);
   - maximum speed.
   A mode selector plus a numeric field is likely clearer than a slider.
-- [ ] Unlink the UI frame rate from the simulation pacing. The FPS cap (default 30, maximum 240) only limits how often the UI redraws, so the simulation can run fast without the UI eating CPU. It must never slow down or speed up the simulation.
+- [ ] Unlink the UI frame rate from the simulation pacing. The FPS cap (1 to 120, default 30, set live from a slider or a box in the ⚙ menu) only limits how often the UI redraws, so the simulation can run fast without the UI eating CPU. It must never slow down or speed up the simulation.
 
 ### Tests
 

@@ -22,7 +22,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.DEFAULT_MAX_UI_FPS
+import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MAX_UI_FPS
 import it.unibo.alchemist.boundary.composeui.SimulationControlsConfig.MIN_UI_FPS
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistEnvironments.toViewport
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistSimulations.toSimulationStatus
@@ -59,7 +59,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
     failOnHeadless: Boolean = false,
 ) : OutputMonitor<T, P> {
     private val headAttached = !GraphicsEnvironment.isHeadless()
-    private val maxUiFps = detectMonitorRefreshRate() ?: DEFAULT_MAX_UI_FPS
+    private val maxUiFps = MAX_UI_FPS
     private val initialUiFps = targetFps.coerceIn(MIN_UI_FPS, maxUiFps)
     private val windowStarted = AtomicBoolean(false)
     private var lastUpdate: Long = 0L
@@ -192,15 +192,6 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
 
     private companion object {
         private val logger = LoggerFactory.getLogger(ComposeMonitor::class.java)
-
-        private fun detectMonitorRefreshRate(): Int? = runCatching {
-            GraphicsEnvironment
-                .getLocalGraphicsEnvironment()
-                .defaultScreenDevice
-                .displayMode
-                .refreshRate
-                .takeIf { it > 0 }
-        }.getOrNull()
 
         /** Whether this is Ctrl+Q being pressed. */
         private val KeyEvent.isQuitShortcut: Boolean

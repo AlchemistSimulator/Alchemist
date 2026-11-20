@@ -142,6 +142,7 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
                         ControlsOverlay(
                             controls = state.controls,
                             nodeCount = state.scene.nodes.size,
+                            showLinks = state.scene.showLinks,
                             callbacks = callbacks,
                             dockVisible = dockVisible,
                             onToggleDock = { dockVisible = !dockVisible },

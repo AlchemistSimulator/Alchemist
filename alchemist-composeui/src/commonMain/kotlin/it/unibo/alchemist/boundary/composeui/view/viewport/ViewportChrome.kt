@@ -28,7 +28,7 @@ import org.jetbrains.compose.resources.painterResource
 
 /** The logo and title, the scene message and the summary bar, over the top-left of the viewport. */
 @Composable
-internal fun ViewportChrome(scene: ViewportScene, onToggleLinks: () -> Unit, modifier: Modifier = Modifier) {
+internal fun ViewportChrome(scene: ViewportScene, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -55,8 +55,6 @@ internal fun ViewportChrome(scene: ViewportScene, onToggleLinks: () -> Unit, mod
         )
         SummaryRail(
             summary = scene.summary,
-            showLinks = scene.showLinks,
-            onToggleLinks = onToggleLinks,
             linkRenderNotice = scene.linkRenderNotice.takeIf { scene.showLinks },
         )
     }

@@ -75,7 +75,7 @@ internal fun JumpSection(
                 )
             }
         }
-        DockDivider()
+        DockDivider(Modifier.height(TransportButtonSize))
         JumpButton(
             label = "to step",
             description = "Run to the step in the box",

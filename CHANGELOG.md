@@ -1,3 +1,14 @@
+## [50.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.5...50.0.6) (2026-11-22)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.11.3-19.3.1 ([#5764](https://github.com/AlchemistSimulator/Alchemist/issues/5764)) ([2f4b2fb](https://github.com/AlchemistSimulator/Alchemist/commit/2f4b2fbc2bc21517c2a6fcac14380eef2b5643fb))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v5.15.0 ([#5762](https://github.com/AlchemistSimulator/Alchemist/issues/5762)) ([4277b52](https://github.com/AlchemistSimulator/Alchemist/commit/4277b52d2d56e8dccabdff50ba38e7ccab7733dc))
+
+### General maintenance
+
+* **build:** update the javadoc.io cache ([2618514](https://github.com/AlchemistSimulator/Alchemist/commit/261851401ec2d566a756fe44bdf9b316373bcd0d))
+
 ## [50.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.4...50.0.5) (2026-11-20)
 
 ### Dependency updates

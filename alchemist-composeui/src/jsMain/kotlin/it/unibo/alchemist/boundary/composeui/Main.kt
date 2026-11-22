@@ -11,11 +11,12 @@ package it.unibo.alchemist.boundary.composeui
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
+import it.unibo.alchemist.boundary.composeui.view.app
 import kotlinx.browser.document
 import org.jetbrains.skiko.wasm.onWasmReady
 
 /**
- * Main entry point that loads the compose generic application in the browser.
+ * Starts the UI in the browser, on the demo scene.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {

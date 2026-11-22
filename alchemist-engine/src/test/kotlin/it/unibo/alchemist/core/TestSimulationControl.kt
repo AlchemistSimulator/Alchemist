@@ -60,6 +60,35 @@ class TestSimulationControl :
                         currentTime shouldBe nextJump
                     }
                 }
+                "goToStep should pause after executing exactly the given steps" {
+                    val environment = createEmptyEnvironment<Nothing>()
+                    environment.tickRate(1.0)
+                    with(environment.simulation) {
+                        val jumpFuture = goToStep(5)
+                        play()
+                        workerPool.submit { run() }
+                        jumpFuture.get()
+                        step shouldBe 5
+                        state shouldBe SimulationState.PAUSED
+                        terminate()
+                    }
+                }
+                "goToStep to the next step should execute a single step" {
+                    val environment = createEmptyEnvironment<Nothing>()
+                    environment.tickRate(1.0)
+                    with(environment.simulation) {
+                        val firstJump = goToStep(3)
+                        play()
+                        workerPool.submit { run() }
+                        firstJump.get()
+                        val secondJump = goToStep(step + 1)
+                        play()
+                        secondJump.get()
+                        step shouldBe 4
+                        state shouldBe SimulationState.PAUSED
+                        terminate()
+                    }
+                }
             }
         },
     ) {

@@ -77,25 +77,28 @@ internal fun buildViewportFrame(
         mutableScreenPositions[nodeIndex] = camera.toScreen(cache.baseCenters[nodeIndex], viewportSize)
     }
     val screenPositions = mutableScreenPositions.toImmutableList()
-    val visibleEdges = if (!cache.scene.showLinks || cache.scene.linkRenderMode == LinkRenderMode.HIDDEN) {
-        persistentListOf()
-    } else {
-        val edgeBudget = when (cache.scene.linkRenderMode) {
-            LinkRenderMode.FULL -> cache.indexedEdges.size
-            LinkRenderMode.SAMPLED -> MAX_DRAWN_EDGES_PER_FRAME
-            LinkRenderMode.HIDDEN -> 0
-        }
-        cache.indexedEdges
-            .asSequence()
-            .filter { edge -> screenPositions[edge.fromIndex] != null && screenPositions[edge.toIndex] != null }
-            .take(edgeBudget)
-            .toImmutableList()
-    }
     return ViewportFrame(
         screenPositions = screenPositions,
         visibleNodeIndices = visibleNodeIndices,
-        visibleEdges = visibleEdges,
+        visibleEdges = cache.visibleEdges(screenPositions),
     )
+}
+
+/** The links to draw between nodes on screen, at most as many as the link render mode allows. */
+private fun ViewportSceneCache.visibleEdges(screenPositions: List<Offset?>): ImmutableList<IndexedEdge> {
+    val edgeBudget = when {
+        !scene.showLinks -> 0
+        else -> when (scene.linkRenderMode) {
+            LinkRenderMode.FULL -> indexedEdges.size
+            LinkRenderMode.SAMPLED -> MAX_DRAWN_EDGES_PER_FRAME
+            LinkRenderMode.HIDDEN -> 0
+        }
+    }
+    return indexedEdges
+        .asSequence()
+        .filter { edge -> screenPositions[edge.fromIndex] != null && screenPositions[edge.toIndex] != null }
+        .take(edgeBudget)
+        .toImmutableList()
 }
 
 internal fun ViewportSceneCache.findHitNode(

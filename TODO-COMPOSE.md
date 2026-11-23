@@ -173,6 +173,7 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 - [ ] Inline definition in the simulation YAML / Kotlin DSL under the monitor's parameters.
 - [ ] Default configuration when none is given: one group, "Nodes", with a plain node effect, plus a "Links" group that is off by default.
 - [ ] Once links are an effect, remove the ad-hoc link state from the UI model: `LinkRenderMode`, `ViewportScene.showLinks`, `linkRenderMode`, `linkRenderNotice`, and the summary-bar links toggle.
+  - Fix the culling: today a link is drawn only if both its nodes are on screen, so a link from a visible node to one off screen disappears. Cull a link only if its segment misses the view: a link between two off-screen nodes can still cross it.
 - [ ] Legacy import (JVM): read Swing effect JSON (`DrawShape` and friends) and convert it to the new format, so existing `effects/*.json` (e.g. in `external-resources/learning-scafi-alchemist`) keep working.
 
 ### UI

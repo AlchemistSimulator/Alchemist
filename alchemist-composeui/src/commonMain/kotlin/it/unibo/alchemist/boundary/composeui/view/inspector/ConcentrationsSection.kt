@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.Labeled
@@ -47,10 +48,11 @@ import it.unibo.alchemist.boundary.composeui.view.viewport.clickableKeepingShort
 
 private const val OPEN_GLYPH = "…"
 
-/** Value boxes take this many times the room of the molecule names, and grow with the inspector. */
-private const val VALUE_WEIGHT = 2f
+/** Value boxes take as much room as the molecule names, and both grow with the inspector. */
+private const val VALUE_WEIGHT = 1f
 
 private val rowSpacing = 8.dp
+private val entrySpacing = 4.dp
 private val nodeRowIndent = 16.dp
 
 /**
@@ -70,13 +72,16 @@ internal fun ConcentrationsSection(
     valuesByNode: Map<String, List<NodeValue>> = emptyMap(),
 ) {
     InspectorCard(title, description) {
-        concentrations.forEach { field ->
-            key(field.label) {
-                ConcentrationRow(field, nodeIds, valuesByNode[field.label].orEmpty(), actions)
+        // One tight list: the card spaces its own children far apart.
+        Column(verticalArrangement = Arrangement.spacedBy(entrySpacing)) {
+            concentrations.forEach { field ->
+                key(field.label) {
+                    ConcentrationRow(field, nodeIds, valuesByNode[field.label].orEmpty(), actions)
+                }
+                Divider(color = Outline.copy(alpha = DIVIDER_ALPHA))
             }
-            Divider(color = Outline.copy(alpha = DIVIDER_ALPHA))
+            NewMoleculeRow { molecule, value -> actions.onConcentrationSet(nodeIds, molecule, value) }
         }
-        NewMoleculeRow { molecule, value -> actions.onConcentrationSet(nodeIds, molecule, value) }
     }
 }
 
@@ -105,11 +110,14 @@ private fun ConcentrationRow(
                     onClick = { expanded = !expanded },
                 )
             }
+            // Long names end with an ellipsis instead of wrapping: … shows them whole.
             Text(
                 text = molecule,
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.body2,
                 color = TextSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             ValueField(shown = field.value.toDisplayString(), modifier = Modifier.weight(VALUE_WEIGHT)) {
                 actions.onConcentrationSet(nodeIds, molecule, it)

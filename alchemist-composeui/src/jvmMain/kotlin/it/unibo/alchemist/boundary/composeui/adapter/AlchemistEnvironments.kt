@@ -22,13 +22,15 @@ internal object AlchemistEnvironments {
     /** This environment as the viewport shows it; links are collected only if [renderLinks]. */
     fun <T, P : Position<P>> Environment<T, P>.toViewport(renderLinks: Boolean = false): ViewportScene {
         val links = if (renderLinks) EdgeSnapshot.of(neighborPairs()) else EdgeSnapshot()
+        val viewportNodes = nodes.current.map { it.toViewport(this) }.toImmutableList()
         return ViewportScene(
-            nodes = nodes.current.map { it.toViewport(this) }.toImmutableList(),
+            nodes = viewportNodes,
             edges = links.edges,
             edgeCount = links.edgeCount,
             linkRenderMode = links.renderMode,
             linkRenderNotice = links.notice,
             dimensions = dimensions,
+            message = if (viewportNodes.isEmpty()) "The environment has no nodes" else "",
         )
     }
 

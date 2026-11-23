@@ -47,12 +47,14 @@ internal fun ViewportChrome(scene: ViewportScene, modifier: Modifier = Modifier)
                 style = MaterialTheme.typography.h4,
             )
         }
-        Text(
-            text = scene.message,
-            style = MaterialTheme.typography.body2,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
+        if (scene.message.isNotBlank()) {
+            Text(
+                text = scene.message,
+                style = MaterialTheme.typography.body2,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         SummaryRail(
             summary = scene.summary,
             linkRenderNotice = scene.linkRenderNotice.takeIf { scene.showLinks },

@@ -20,10 +20,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isSpecified
 import it.unibo.alchemist.boundary.composeui.model.InspectorState
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
@@ -35,8 +38,19 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Outline
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
+/** How much smaller the text of the inspector is than in the rest of the UI. */
+private const val TEXT_SCALE = 0.85f
+
 @Composable
 internal fun NodeInspector(inspector: InspectorState, actions: InspectorActions, modifier: Modifier = Modifier) {
+    // The inspector holds many small fields: smaller text fits more of them, boxes and buttons included.
+    MaterialTheme(typography = MaterialTheme.typography.scaled(TEXT_SCALE)) {
+        InspectorPanel(inspector, actions, modifier)
+    }
+}
+
+@Composable
+private fun InspectorPanel(inspector: InspectorState, actions: InspectorActions, modifier: Modifier) {
     Surface(
         modifier = modifier,
         color = FloatingPanel,
@@ -150,3 +164,14 @@ private val InspectorState.subtitle: String
             is NodeGroup -> subtitle
             is SingleNode -> subtitle
         }
+
+private fun Typography.scaled(factor: Float): Typography = copy(
+    h6 = h6.scaled(factor),
+    subtitle1 = subtitle1.scaled(factor),
+    body2 = body2.scaled(factor),
+    caption = caption.scaled(factor),
+    button = button.scaled(factor),
+)
+
+private fun TextStyle.scaled(factor: Float): TextStyle =
+    if (fontSize.isSpecified) copy(fontSize = fontSize * factor) else this

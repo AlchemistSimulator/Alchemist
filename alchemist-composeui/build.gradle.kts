@@ -64,8 +64,8 @@ compose.resources {
     packageOfResClass = "it.unibo.alchemist.boundary.composeui.resources"
 }
 
-tasks.register<JavaExec>("renderSnapshots") {
-    group = "documentation"
+val renderSnapshots = tasks.register<JavaExec>("renderSnapshots") {
+    group = "verification"
     description = "Renders the UI offscreen on the scenarios in src/jvmTest/resources/snapshots"
     val testCompilation = kotlin.jvm().compilations.getByName("test")
     val scenarios = layout.projectDirectory.dir("src/jvmTest/resources/snapshots")
@@ -79,6 +79,9 @@ tasks.register<JavaExec>("renderSnapshots") {
         listOf(scenarios.asFile.absolutePath, snapshots.get().asFile.absolutePath)
     }
 }
+
+// Rendering real scenarios also catches crashes that unit tests miss; it reruns only when code or scenarios change.
+tasks.check { dependsOn(renderSnapshots) }
 
 publishing.publications.withType<MavenPublication>().configureEach {
     pom {

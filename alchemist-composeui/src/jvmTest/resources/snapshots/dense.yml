@@ -1,0 +1,36 @@
+# A dense random deployment: more than 20,000 links, so the UI samples them, for UI snapshots.
+incarnation: protelis
+
+seeds:
+  scenario: 0
+  simulation: 0
+
+_snapshots:
+  - name: wide
+  - name: inspector
+    select: [0, 1, 2, 3, 4, 5, 6, 7]
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [1]
+
+deployments:
+  type: Circle
+  parameters: [1500, 0, 0, 5]
+  contents:
+    - molecule: source
+      concentration: false
+    - in: { type: Rectangle, parameters: [-0.5, -0.5, 1, 1] }
+      molecule: source
+      concentration: true
+  programs:
+    - time-distribution: 1
+      program: |
+        import java.lang.Double.POSITIVE_INFINITY
+        let source = env.has("source") && env.get("source");
+        let distance = rep (d <- POSITIVE_INFINITY) {
+          mux (source) { 0 } else { minHood(nbr(d) + self.nbrRange()) }
+        };
+        env.put("distance", distance);
+        distance
+    - program: send

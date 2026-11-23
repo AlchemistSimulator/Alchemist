@@ -118,19 +118,22 @@ A way to look at the UI while developing, for both the developer and the agent.
 - [ ] **Canvas image sequences** (after the effect system, Phase 3). The same renderer writes a sequence of images of the canvas alone, without panels, at a chosen resolution: one image every chosen number of steps or amount of simulated time, numbered so they can be turned into a video. The canvas is drawn with the configured effects.
 - [x] **Scripted UI states.** Each snapshot can declare UI actions to apply before rendering: select nodes, toggle groups, set zoom/pan, open panels. This lets one image show one specific feature.
   Done as a `_snapshots` list in the scenario file (the loader ignores `_` keys): size, selection, value editor, zoom, pan and keys, replayed as real input. Toggling effect groups comes with Phase 3.
-- [ ] **Live desktop run.** A task, e.g. `alchemist-composeui:runDemo`, that launches the desktop UI on a chosen scenario (`-Pscenario=...`) for hands-on inspection.
-- [ ] **Live browser run.** `wasmJsBrowserDevelopmentRun` on the demo controller now; on a real simulation once Phase 4 lands.
+- [x] **Live desktop run.** `alchemist-composeui:runScenario` launches the desktop UI on a chosen scenario (`-Pscenario=...`, from the repository root; the gradient test scenario by default) for hands-on inspection.
+- [ ] **Live browser run.**
+  - [x] `wasmJsBrowserDevelopmentRun` on the demo controller.
+  - [ ] On an ongoing simulation, once Phase 4 serves one to the browser: a task like `runScenario` that starts the simulation with the server and opens the browser on it.
 - [ ] **Browser snapshots (optional, later).** Headless Chromium screenshots of the wasm build, so both targets can be compared visually.
 - [ ] **Scenarios.** Add `snapshots/` scenarios covering:
-  - a plain 2D grid
-  - a dense random deployment with links
+  - [x] a plain 2D grid (`grid.yml`)
+  - [x] a dense random deployment with links (`dense.yml`, enough links to be sampled)
   - obstacles
   - a map environment
   - a layer
   - navigation graph / cognitive agents
   - smartcam
 
-  Phases 5–7 grow this set as their features land.
+  Phases 5–7 grow this set as their features land: the UI draws nodes and links only, so the others wait for the
+  features that draw them, together with the modules and data files they need on the test classpath.
 
 ---
 

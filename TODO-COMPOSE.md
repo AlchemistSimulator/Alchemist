@@ -14,7 +14,7 @@ Make the module consistent with the rest of the repository before building on it
 
 - [x] Replace the hard-coded `kotlinx-coroutines-swing:1.10.2` with a catalog entry tied to `kotlinx-coroutines` (currently 1.11.0).
 - [x] Use `jvmMain { }` instead of `val jvmMain by getting`, matching master (#5465).
-- [ ] Check that the `js` target from `kotlin-multiplatform-convention` and the `wasmJs` target both build. Drop either target only after a deliberate decision.
+- [x] Check that the `js` target from `kotlin-multiplatform-convention` and the `wasmJs` target both build. Drop either target only after a deliberate decision.
 
 ### Repository hygiene
 

@@ -79,11 +79,10 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 - [x] Let the monitor configure the quick jumps (`timeJumps`, `stepJumps`).
 - [x] Make the inspector (right side bar) resizable by dragging its edge (240 dp to 70% of the window).
 - [x] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.
-- [ ] Selection actions overlay: hovering the bounding box of the selected nodes shows a small translucent control, near a corner so it neither hides nodes nor blocks box-selecting next to the selection, with three buttons:
+- [x] Selection actions overlay: hovering the bounding box of the selected nodes shows a small translucent control, near a corner so it neither hides nodes nor blocks box-selecting next to the selection, with three buttons:
   - [x] **Move**: the same drag as Ctrl+drag, keeping the grabbed point under the pointer while panning or zooming.
   - [x] **Clone**: the same drag, drawing the original nodes plus a translucent copy under the pointer; on release, the copies are added at the new positions, through `nodes.clone`: on the engine, `Node.cloneNode` and `addNode` between two steps.
-  - [x] **Delete**: removes the selection at once, through `nodes.delete`.
-  - [ ] A short undo window after Delete, instead of a confirmation dialog. The engine disposes the reactions of removed nodes, so undo must add copies of them (taken before deletion, with new ids), not the removed nodes.
+  - [x] **Delete**: removes the selection at once, through `nodes.delete`. There is no undo: the engine disposes removed nodes, so bringing them back would only create new nodes.
   - [x] Keyboard shortcuts: Ctrl+D clones the selection a little down and right, Delete deletes it; both listed in the help.
 
 ### Pacing
@@ -116,6 +115,7 @@ A way to look at the UI while developing, for both the developer and the agent.
   - writes PNGs to `alchemist-composeui/build/ui-snapshots/<scenario>-<size>.png`.
 
   These are review images, not assertions, so they cannot become flaky tests. The agent can open the PNGs directly; the user can open the folder.
+- [ ] **Canvas image sequences** (after the effect system, Phase 3). The same renderer writes a sequence of images of the canvas alone, without panels, at a chosen resolution: one image every chosen number of steps or amount of simulated time, numbered so they can be turned into a video. The canvas is drawn with the configured effects.
 - [ ] **Scripted UI states.** Each snapshot can declare UI actions to apply before rendering: select nodes, toggle groups, set zoom/pan, open panels. This lets one image show one specific feature.
 - [ ] **Live desktop run.** A task, e.g. `alchemist-composeui:runDemo`, that launches the desktop UI on a chosen scenario (`-Pscenario=...`) for hands-on inspection.
 - [ ] **Live browser run.** `wasmJsBrowserDevelopmentRun` on the demo controller now; on a real simulation once Phase 4 lands.

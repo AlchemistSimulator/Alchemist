@@ -64,6 +64,22 @@ compose.resources {
     packageOfResClass = "it.unibo.alchemist.boundary.composeui.resources"
 }
 
+tasks.register<JavaExec>("renderSnapshots") {
+    group = "documentation"
+    description = "Renders the UI offscreen on the scenarios in src/jvmTest/resources/snapshots"
+    val testCompilation = kotlin.jvm().compilations.getByName("test")
+    val scenarios = layout.projectDirectory.dir("src/jvmTest/resources/snapshots")
+    val snapshots = layout.buildDirectory.dir("ui-snapshots")
+    classpath(listOfNotNull(testCompilation.output.allOutputs, testCompilation.runtimeDependencyFiles))
+    mainClass = "it.unibo.alchemist.boundary.composeui.snapshots.SnapshotRendererKt"
+    systemProperty("java.awt.headless", "true")
+    inputs.dir(scenarios)
+    outputs.dir(snapshots)
+    argumentProviders += CommandLineArgumentProvider {
+        listOf(scenarios.asFile.absolutePath, snapshots.get().asFile.absolutePath)
+    }
+}
+
 publishing.publications.withType<MavenPublication>().configureEach {
     pom {
         developers {

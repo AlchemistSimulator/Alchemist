@@ -81,6 +81,20 @@ val renderSnapshots = tasks.register<JavaExec>("renderSnapshots") {
     }
 }
 
+val runScenario = tasks.register<JavaExec>("runScenario") {
+    group = "application"
+    description = "Opens the desktop UI on -Pscenario=<file>, relative to the repository root; " +
+        "without it, on the gradient scenario of the tests"
+    val testCompilation = kotlin.jvm().compilations.getByName("test")
+    val repository = rootProject.layout.projectDirectory
+    val scenario = providers.gradleProperty("scenario")
+        .map { repository.file(it).asFile }
+        .orElse(layout.projectDirectory.file("src/jvmTest/resources/composeui-gradient.yml").asFile)
+    classpath(listOfNotNull(testCompilation.output.allOutputs, testCompilation.runtimeDependencyFiles))
+    mainClass = "it.unibo.alchemist.boundary.composeui.live.LiveRunKt"
+    argumentProviders += CommandLineArgumentProvider { listOf(scenario.get().absolutePath) }
+}
+
 // Rendering real scenarios also catches crashes that unit tests miss; it reruns only when code or scenarios change.
 tasks.check { dependsOn(renderSnapshots) }
 

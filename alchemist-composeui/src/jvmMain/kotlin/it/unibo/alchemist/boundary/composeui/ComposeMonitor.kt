@@ -110,6 +110,9 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                     ),
                 )
             }
+            // The simulation starts paused: show its nodes now, not only after the first step.
+            val simulation = environment.simulation
+            updateUiState(environment, simulation.currentTime, simulation.step)
         }
     }
 

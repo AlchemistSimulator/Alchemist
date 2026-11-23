@@ -1,3 +1,10 @@
+## [50.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.6...50.0.7) (2026-11-23)
+
+### Dependency updates
+
+* **core-deps:** update protelis to v20.1.1 ([#5768](https://github.com/AlchemistSimulator/Alchemist/issues/5768)) ([3700e1f](https://github.com/AlchemistSimulator/Alchemist/commit/3700e1f570bc5ea77b6d89711fb56744af3c5b4d))
+* **deps:** update plugin spotless to v8.12.0 ([#5763](https://github.com/AlchemistSimulator/Alchemist/issues/5763)) ([4f80c5a](https://github.com/AlchemistSimulator/Alchemist/commit/4f80c5a0c94e55a6ed32757a7074bb7b59f3d804))
+
 ## [50.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.5...50.0.6) (2026-11-22)
 
 ### Dependency updates

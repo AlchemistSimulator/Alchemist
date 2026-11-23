@@ -13,68 +13,77 @@ import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 
 /**
- * User actions, sent by the UI to the simulation.
- * The UI talks to the simulation only through these.
- * Invalid inputs are reported by setting [it.unibo.alchemist.boundary.composeui.model.SimulationControlsState.dialog].
+ * What the UI asks of the simulation, by area.
+ * Changes that only touch the UI state, such as typing in a box or selecting nodes,
+ * are not here: see [it.unibo.alchemist.boundary.composeui.view.state.UiEdits].
+ * Failures are reported by setting [it.unibo.alchemist.boundary.composeui.model.SimulationControlsState.dialog],
+ * unless a function returns them.
  */
 internal interface AlchemistUiCallbacks {
-    /** Plays. */
-    suspend fun onPlay()
+    /** Running, pausing and jumping. */
+    val transport: Transport
 
-    /** Pauses. */
-    suspend fun onPause()
+    /** The simulation speed limit. */
+    val pace: Pace
 
-    /** Runs one step, then pauses. */
-    suspend fun onStep()
+    /** Changes to the nodes. */
+    val nodes: Nodes
 
-    /** The "to time" box changed to [value]. */
-    suspend fun onToTimeInputChanged(value: String)
+    /** What the simulation sends to draw. */
+    val display: Display
 
-    /** Runs to the time in the "to time" box. */
-    suspend fun onToTimeSubmit()
+    /** Running, pausing and jumping. Every jump ends paused. */
+    interface Transport {
+        /** Plays. */
+        suspend fun play()
 
-    /** The "to step" box changed to [value]. */
-    suspend fun onToStepInputChanged(value: String)
+        /** Pauses. */
+        suspend fun pause()
 
-    /** Runs to the step in the "to step" box. */
-    suspend fun onToStepSubmit()
+        /** Runs one step. */
+        suspend fun step()
 
-    /** Runs [delta] time units past the current time. */
-    suspend fun onJumpTimeBy(delta: Double)
+        /** Runs to time [target]. */
+        suspend fun runToTime(target: Double)
 
-    /** Runs [delta] steps past the current step. */
-    suspend fun onJumpStepBy(delta: Long)
+        /** Runs to step [target]. */
+        suspend fun runToStep(target: Long)
 
-    /** The FPS box changed to [value]. */
-    suspend fun onFpsInputChanged(value: String)
+        /** Runs [delta] time units past the current time. */
+        suspend fun jumpTimeBy(delta: Double)
 
-    /** Applies the frame rate in the FPS box. */
-    suspend fun onFpsSubmit()
+        /** Runs [delta] steps past the current step. */
+        suspend fun jumpStepBy(delta: Long)
+    }
 
-    /** The pacing box changed to [value], applied at once if it is a positive number. */
-    suspend fun onPacingInputChanged(value: String)
+    /** The simulation speed limit. */
+    interface Pace {
+        /** Paces the simulation by [mode], at its default rate. */
+        suspend fun setMode(mode: PacingMode)
 
-    /** Paces the simulation by [mode], at its default rate. */
-    suspend fun onPacingModeChanged(mode: PacingMode)
+        /** The rate box changed to [value], applied at once if it is a positive number. */
+        suspend fun setRateInput(value: String)
+    }
 
-    /** Selects only node [nodeId]. */
-    suspend fun onNodeSelected(nodeId: Int)
+    /** Changes to the nodes, run between two simulation steps. */
+    interface Nodes {
+        /** Moves nodes to [nodePositions], when a drag ends. */
+        suspend fun move(nodePositions: List<NodePositionUpdate>)
 
-    /** Selects exactly [nodeIds]. */
-    suspend fun onNodesSelected(nodeIds: List<Int>)
+        /**
+         * Sets [molecule] to [value] in the nodes [nodeIds], adding it where missing.
+         * The simulation parses both, as its incarnation does for simulation files.
+         * A failure is returned, not shown: the caller decides how to tell the user.
+         */
+        suspend fun setConcentration(nodeIds: List<Int>, molecule: String, value: String): Result<Unit>
 
-    /**
-     * Moves nodes to [nodePositions] when a drag ends.
-     * During the drag, the UI only previews the move.
-     */
-    suspend fun onNodesMoved(nodePositions: List<NodePositionUpdate>)
+        /** Removes [molecule] from the nodes [nodeIds] that contain it. */
+        suspend fun removeMolecule(nodeIds: List<Int>, molecule: String)
+    }
 
-    /** Closes the inspector and clears the selection. */
-    suspend fun onInspectorDismiss()
-
-    /** Shows or hides links. */
-    suspend fun onToggleLinks()
-
-    /** Closes the error dialog. */
-    suspend fun onDialogDismiss()
+    /** What the simulation sends to draw. */
+    interface Display {
+        /** Shows or hides links. */
+        suspend fun toggleLinks()
+    }
 }

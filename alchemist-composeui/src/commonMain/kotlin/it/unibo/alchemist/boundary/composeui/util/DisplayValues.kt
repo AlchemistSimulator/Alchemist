@@ -16,6 +16,7 @@ internal object DisplayValues {
     private const val DISPLAYED_DECIMALS = 3
     private const val THOUSAND = 1_000L
     private const val MILLION = 1_000_000L
+    private const val SHORTEST_RANGE = 3
 
     /**
      * Decimals get three digits, `null` becomes empty, anything else uses [toString].
@@ -59,6 +60,23 @@ internal object DisplayValues {
             }
         }
     }
+
+    /**
+     * Lists these ids in order, writing runs of three or more consecutive ids as ranges:
+     * 0, 1, 2, 4, 6, 7, 9, 10, 11 becomes `[0..2], 4, 6, 7, [9..11]`.
+     */
+    fun Iterable<Int>.formatIdRanges(): String = distinct().sorted()
+        .fold(mutableListOf<IntRange>()) { runs, id ->
+            val last = runs.lastOrNull()
+            if (last != null && last.last + 1 == id) runs[runs.lastIndex] = last.first..id else runs += id..id
+            runs
+        }
+        .joinToString(", ") { run ->
+            if (run.last - run.first + 1 >= SHORTEST_RANGE) "[${run.first}..${run.last}]" else run.joinToString(", ")
+        }
+
+    /** The name of the type of this value, or `null` for a missing one. */
+    fun Any?.typeName(): String = this?.let { it::class.simpleName ?: "unnamed type" } ?: "null"
 
     private fun Long.compact(unit: Long, suffix: String): String =
         (if (this % unit == 0L) (this / unit).toString() else (toDouble() / unit).formatFixed(1)) + suffix

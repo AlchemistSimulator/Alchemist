@@ -60,7 +60,22 @@ internal data class ViewportNode(
         }.toImmutableList(),
     )
 
+    /** This node with [molecule] at [value], in place if it was there already, or last otherwise. */
+    internal fun withConcentration(molecule: String, value: Any?): ViewportNode {
+        val updated = Labeled(molecule, value)
+        val contents = when {
+            concentrations.any { it.label == molecule } ->
+                concentrations.map { if (it.label == molecule) updated else it }
+            else -> concentrations + updated
+        }
+        return copy(concentrations = contents.toImmutableList())
+    }
+
     /** This node at [newCoordinates]. */
     internal fun withCoordinates(newCoordinates: List<Double>): ViewportNode =
         copy(coordinates = newCoordinates.toImmutableList())
+
+    /** This node without [molecule]. */
+    internal fun withoutMolecule(molecule: String): ViewportNode =
+        copy(concentrations = concentrations.filterNot { it.label == molecule }.toImmutableList())
 }

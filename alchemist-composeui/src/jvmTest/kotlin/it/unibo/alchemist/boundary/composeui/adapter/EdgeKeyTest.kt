@@ -26,6 +26,12 @@ class EdgeKeyTest {
     }
 
     @Test
+    fun `the same link in either direction is one key`() {
+        assertEquals(1, setOfNotNull(EdgeKey.of(1, 3), EdgeKey.of(3, 1)).size)
+        assertEquals(EdgeKey.of(1, 3)?.sampleScore, EdgeKey.of(3, 1)?.sampleScore)
+    }
+
+    @Test
     fun `edge keys merge mutual links`() {
         assertEquals(setOf(ViewportEdge(1, 3)), setOfNotNull(EdgeKey.of(1, 3)?.edge, EdgeKey.of(3, 1)?.edge))
     }

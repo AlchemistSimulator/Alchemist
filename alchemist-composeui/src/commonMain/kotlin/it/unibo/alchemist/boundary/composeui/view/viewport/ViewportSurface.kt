@@ -33,13 +33,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isCtrlPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
-import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundVariant
 import it.unibo.alchemist.boundary.composeui.view.theme.NODE_HIT_RADIUS
@@ -60,7 +61,7 @@ private val dragThreshold = 6.dp
 internal fun ViewportSurface(
     scene: ViewportScene,
     selectedNodeIds: List<Int>,
-    callbacks: AlchemistUiCallbacks,
+    controller: ComposeUiController,
     onToggleHelp: () -> Unit,
     onToggleControls: () -> Unit,
     modifier: Modifier = Modifier,
@@ -100,10 +101,10 @@ internal fun ViewportSurface(
     )
     val selectionRect = (drag as? ViewportDrag.Select)?.takeIf { it.length >= dragThresholdPx }?.rect
     val coroutineScope = rememberCoroutineScope()
-    val send: (ViewportAction) -> Unit = { action -> coroutineScope.launch { callbacks.action() } }
-    val clearSelection = { selectedNodeIds.isNotEmpty().also { if (it) send { onInspectorDismiss() } } }
+    val send: (ViewportAction) -> Unit = { action -> coroutineScope.launch { controller.action() } }
+    val clearSelection = { selectedNodeIds.isNotEmpty().also { if (it) send { edits.selection.clear() } } }
     val selectNearestNode = {
-        pointer?.let(gestures::nearestNode)?.also { node -> send { onNodeSelected(node.id) } } != null
+        pointer?.let(gestures::nearestNode)?.also { node -> send { edits.selection.select(listOf(node.id)) } } != null
     }
     val pan = { delta: Offset -> camera = camera.panBy(delta) }
     LaunchedEffect(heldPans) { panWhileHeld(heldPans, KEYBOARD_PAN_SPEED_PX_PER_SECOND, pan) }
@@ -155,6 +156,7 @@ internal fun ViewportSurface(
                                 position = change.position,
                                 secondaryPressed = event.buttons.isSecondaryPressed,
                                 ctrlPressed = event.keyboardModifiers.isCtrlPressed,
+                                shiftPressed = event.keyboardModifiers.isShiftPressed,
                             )
                         }
                     }
@@ -185,7 +187,7 @@ internal fun ViewportSurface(
             ) {
                 drawBackdrop()
                 drawGrid(camera)
-                drawScene(scene, viewportFrame, camera, selectedNodeIdSet, drag)
+                drawScene(scene, viewportFrame, camera, selectedNodeIdSet, drag, viewportSize)
                 selectionRect?.let { drawSelection(it) }
             }
             ViewportChrome(

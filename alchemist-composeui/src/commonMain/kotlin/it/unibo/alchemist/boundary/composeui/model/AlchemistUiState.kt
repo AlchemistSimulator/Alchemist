@@ -20,6 +20,7 @@ import kotlinx.collections.immutable.persistentListOf
  * @property controls the control bar.
  * @property selectedNodeIds the selected node ids.
  * @property inspector the inspector; `null` if nothing is selected.
+ * @property valueEditor the molecule open in the large value editor; `null` if closed.
  */
 @Immutable
 internal data class AlchemistUiState(
@@ -27,15 +28,38 @@ internal data class AlchemistUiState(
     val controls: SimulationControlsState = SimulationControlsState(),
     val selectedNodeIds: ImmutableList<Int> = persistentListOf(),
     val inspector: InspectorState? = null,
+    val valueEditor: ValueEditorState? = null,
 ) {
     /** This state, showing a dialog. */
     internal fun withDialog(title: String, message: String): AlchemistUiState = copy(
         controls = controls.copy(dialog = ControlDialogState(title, message)),
     )
 
-    /** This state, with [nodeIds] selected and the inspector updated. */
+    /**
+     * This state, with [nodeIds] selected and the inspector updated.
+     * The value editor follows the scene, and keeps only the nodes still selected.
+     */
     internal fun withSelection(nodeIds: List<Int>): AlchemistUiState {
         val selectedIds = scene.sanitizeSelection(nodeIds)
-        return copy(selectedNodeIds = selectedIds, inspector = scene.toInspectorState(selectedIds))
+        val selected = selectedIds.toSet()
+        return copy(
+            selectedNodeIds = selectedIds,
+            inspector = scene.toInspectorState(selectedIds),
+            valueEditor = valueEditor?.let { editor ->
+                ValueEditorState.of(scene, editor.nodeIds.filter(selected::contains), editor.molecule)
+            },
+        )
+    }
+
+    /**
+     * This state, with [molecule] of the nodes [nodeIds] open in the value editor,
+     * or with the editor closed if it already shows them.
+     */
+    internal fun withValueEditorToggled(nodeIds: List<Int>, molecule: String): AlchemistUiState {
+        val requested = ValueEditorState.of(scene, nodeIds, molecule)
+        val alreadyOpen = valueEditor != null &&
+            valueEditor.molecule == molecule &&
+            valueEditor.nodeIds.toSet() == requested?.nodeIds?.toSet()
+        return copy(valueEditor = requested.takeUnless { alreadyOpen })
     }
 }

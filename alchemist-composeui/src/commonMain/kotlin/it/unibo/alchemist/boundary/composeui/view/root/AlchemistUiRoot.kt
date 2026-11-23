@@ -15,10 +15,12 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -29,14 +31,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
-import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
+import it.unibo.alchemist.boundary.composeui.view.inspector.InspectorActions
 import it.unibo.alchemist.boundary.composeui.view.inspector.ResizableInspector
+import it.unibo.alchemist.boundary.composeui.view.inspector.ValueEditor
+import it.unibo.alchemist.boundary.composeui.view.inspector.shownInspectorWidth
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.OverlayMargin
 import it.unibo.alchemist.boundary.composeui.view.theme.PrimaryAccent
@@ -51,6 +57,7 @@ import kotlinx.coroutines.launch
 
 private const val INSPECTOR_SLIDE_MILLIS = 320
 private const val INSPECTOR_FADE_MILLIS = 200
+private const val EDITOR_SHARE = 0.6f
 
 private val defaultInspectorWidth = 324.dp
 
@@ -61,8 +68,10 @@ private val helpMargin = 8.dp
  * Main shared screen for the simulator UI: the viewport fills the window, and the other controls float over it.
  */
 @Composable
-internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCallbacks) {
+internal fun AlchemistUiRoot(state: AlchemistUiState, controller: ComposeUiController) {
     val coroutineScope = rememberCoroutineScope()
+    val transport = controller.callbacks.transport
+    val nodes = controller.callbacks.nodes
     MaterialTheme(
         colors = MaterialTheme.colors.copy(
             primary = PrimaryAccent,
@@ -102,12 +111,12 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
             CompositionLocalProvider(LocalViewportFocus provides remember { FocusRequester() }) {
                 state.controls.dialog?.let { dialog ->
                     androidx.compose.material.AlertDialog(
-                        onDismissRequest = { coroutineScope.launch { callbacks.onDialogDismiss() } },
+                        onDismissRequest = controller.edits.dialogs::dismiss,
                         title = { Text(dialog.title) },
                         text = { Text(dialog.message) },
                         confirmButton = {
                             androidx.compose.material.TextButton(
-                                onClick = { coroutineScope.launch { callbacks.onDialogDismiss() } },
+                                onClick = controller.edits.dialogs::dismiss,
                             ) {
                                 Text("OK")
                             }
@@ -116,64 +125,106 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
                         contentColor = TextPrimary,
                     )
                 }
-                BoxWithConstraints(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .playPauseOnSpace(
-                            controls = state.controls,
-                            onPlay = { coroutineScope.launch { callbacks.onPlay() } },
-                            onPause = { coroutineScope.launch { callbacks.onPause() } },
-                        ),
-                ) {
-                    var displayedInspector by remember { mutableStateOf(state.inspector) }
-                    state.inspector?.let { displayedInspector = it }
-                    var dockVisible by remember { mutableStateOf(true) }
-                    var helpVisible by remember { mutableStateOf(false) }
+                // The value editor is outside the Space shortcut, so that its text can have spaces.
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                     var inspectorWidth by remember { mutableStateOf(defaultInspectorWidth) }
-                    ViewportSurface(
-                        scene = state.scene,
-                        selectedNodeIds = state.selectedNodeIds,
-                        callbacks = callbacks,
-                        onToggleHelp = { helpVisible = !helpVisible },
-                        onToggleControls = { dockVisible = !dockVisible },
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                    Row(modifier = Modifier.fillMaxSize()) {
-                        ControlsOverlay(
-                            controls = state.controls,
-                            nodeCount = state.scene.nodes.size,
-                            showLinks = state.scene.showLinks,
-                            callbacks = callbacks,
-                            dockVisible = dockVisible,
-                            onToggleDock = { dockVisible = !dockVisible },
-                            helpVisible = helpVisible,
+                    val inspectorRoom = maxWidth - OverlayMargin * 2
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .playPauseOnSpace(
+                                controls = state.controls,
+                                onPlay = { coroutineScope.launch { transport.play() } },
+                                onPause = { coroutineScope.launch { transport.pause() } },
+                            ),
+                    ) {
+                        var displayedInspector by remember { mutableStateOf(state.inspector) }
+                        state.inspector?.let { displayedInspector = it }
+                        var dockVisible by remember { mutableStateOf(true) }
+                        var helpVisible by remember { mutableStateOf(false) }
+                        ViewportSurface(
+                            scene = state.scene,
+                            selectedNodeIds = state.selectedNodeIds,
+                            controller = controller,
                             onToggleHelp = { helpVisible = !helpVisible },
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                                .padding(helpMargin),
+                            onToggleControls = { dockVisible = !dockVisible },
+                            modifier = Modifier.fillMaxSize(),
                         )
-                        AnimatedVisibility(
-                            visible = state.inspector != null,
-                            enter = expandHorizontally(
-                                tween(INSPECTOR_SLIDE_MILLIS),
-                            ) + fadeIn(tween(INSPECTOR_FADE_MILLIS)),
-                            exit = shrinkHorizontally(
-                                tween(INSPECTOR_SLIDE_MILLIS),
-                            ) + fadeOut(tween(INSPECTOR_FADE_MILLIS)),
-                        ) {
-                            displayedInspector?.let {
-                                ResizableInspector(
-                                    inspector = it,
-                                    width = inspectorWidth,
-                                    availableWidth = this@BoxWithConstraints.maxWidth - OverlayMargin * 2,
-                                    onWidthChange = { width -> inspectorWidth = width },
-                                    onDismiss = { coroutineScope.launch { callbacks.onInspectorDismiss() } },
-                                    modifier = Modifier
-                                        .padding(OverlayMargin)
-                                        .fillMaxHeight(),
-                                )
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            ControlsOverlay(
+                                controls = state.controls,
+                                nodeCount = state.scene.nodes.size,
+                                showLinks = state.scene.showLinks,
+                                controller = controller,
+                                dockVisible = dockVisible,
+                                onToggleDock = { dockVisible = !dockVisible },
+                                helpVisible = helpVisible,
+                                onToggleHelp = { helpVisible = !helpVisible },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .padding(helpMargin),
+                            )
+                            AnimatedVisibility(
+                                visible = state.inspector != null,
+                                enter = expandHorizontally(
+                                    tween(INSPECTOR_SLIDE_MILLIS),
+                                ) + fadeIn(tween(INSPECTOR_FADE_MILLIS)),
+                                exit = shrinkHorizontally(
+                                    tween(INSPECTOR_SLIDE_MILLIS),
+                                ) + fadeOut(tween(INSPECTOR_FADE_MILLIS)),
+                            ) {
+                                displayedInspector?.let { inspector ->
+                                    ResizableInspector(
+                                        inspector = inspector,
+                                        width = inspectorWidth,
+                                        availableWidth = inspectorRoom,
+                                        onWidthChange = { width -> inspectorWidth = width },
+                                        actions = InspectorActions(
+                                            onDismiss = controller.edits.selection::clear,
+                                            onConcentrationSet = { nodeIds, molecule, value ->
+                                                coroutineScope.launch {
+                                                    nodes.setConcentration(nodeIds, molecule, value).onFailure {
+                                                        controller.edits.dialogs.show(
+                                                            "Invalid edit",
+                                                            it.refusalMessage(),
+                                                        )
+                                                    }
+                                                }
+                                            },
+                                            onMoleculeRemoved = { nodeIds, molecule ->
+                                                coroutineScope.launch { nodes.removeMolecule(nodeIds, molecule) }
+                                            },
+                                            onValueEditorToggled = controller.edits.selection::toggleValueEditor,
+                                        ),
+                                        modifier = Modifier
+                                            .padding(OverlayMargin)
+                                            .fillMaxHeight(),
+                                    )
+                                }
                             }
+                        }
+                    }
+                    state.valueEditor?.let { editor ->
+                        val viewportFocus = LocalViewportFocus.current
+                        // The editor sticks to the left of the inspector, so it shrinks as the inspector widens.
+                        val inspectorSpace = when (state.inspector) {
+                            null -> OverlayMargin
+                            else -> shownInspectorWidth(inspectorWidth, inspectorRoom) + OverlayMargin
+                        }
+                        Box(modifier = Modifier.fillMaxSize().padding(end = inspectorSpace)) {
+                            ValueEditor(
+                                editor = editor,
+                                onEdit = { text -> nodes.setConcentration(editor.nodeIds, editor.molecule, text) },
+                                onClose = {
+                                    controller.edits.selection.closeValueEditor()
+                                    viewportFocus.requestFocus()
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .fillMaxWidth(EDITOR_SHARE)
+                                    .fillMaxHeight(EDITOR_SHARE),
+                            )
                         }
                     }
                 }
@@ -181,3 +232,5 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, callbacks: AlchemistUiCall
         }
     }
 }
+
+private fun Throwable.refusalMessage(): String = message ?: "The simulation refused the change: $this"

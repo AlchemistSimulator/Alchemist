@@ -28,6 +28,7 @@ import it.unibo.alchemist.boundary.composeui.model.InspectorState
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
 import it.unibo.alchemist.boundary.composeui.model.Labeled
+import it.unibo.alchemist.boundary.composeui.util.DisplayValues.formatIdRanges
 import it.unibo.alchemist.boundary.composeui.view.components.TransportButton
 import it.unibo.alchemist.boundary.composeui.view.theme.FloatingPanel
 import it.unibo.alchemist.boundary.composeui.view.theme.Outline
@@ -35,7 +36,7 @@ import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 
 @Composable
-internal fun NodeInspector(inspector: InspectorState, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+internal fun NodeInspector(inspector: InspectorState, actions: InspectorActions, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         color = FloatingPanel,
@@ -53,11 +54,11 @@ internal fun NodeInspector(inspector: InspectorState, onDismiss: () -> Unit, mod
             InspectorHeader(
                 title = inspector.title,
                 subtitle = inspector.subtitle,
-                onDismiss = onDismiss,
+                onDismiss = actions.onDismiss,
             )
             when (inspector) {
-                is SingleNode -> SingleNodeInspector(inspector)
-                is NodeGroup -> GroupNodeInspector(inspector)
+                is SingleNode -> SingleNodeInspector(inspector, actions)
+                is NodeGroup -> GroupNodeInspector(inspector, actions)
             }
         }
     }
@@ -91,18 +92,13 @@ private fun InspectorHeader(title: String, subtitle: String, onDismiss: () -> Un
 }
 
 @Composable
-private fun SingleNodeInspector(inspector: SingleNode) {
-    InspectorSection(
-        title = "Position",
-        description = "Coordinates in simulator space.",
-        fields = inspector.position,
-    )
-    InspectorSection(
+private fun SingleNodeInspector(inspector: SingleNode, actions: InspectorActions) {
+    ConcentrationsSection(
         title = "Concentrations",
-        description = "Live contents currently stored in the selected node.",
-        fields = inspector.concentrations.ifEmpty {
-            listOf(Labeled("No molecules", "This node exposes no concentrations"))
-        },
+        description = "Live contents of the node. Enter sets a value, × removes a molecule, the last row adds one.",
+        nodeIds = listOf(inspector.nodeId),
+        concentrations = inspector.concentrations,
+        actions = actions,
     )
     InspectorSection(
         title = "Metadata",
@@ -111,26 +107,33 @@ private fun SingleNodeInspector(inspector: SingleNode) {
             listOf(Labeled("Unavailable", "No extra metadata available"))
         },
     )
+    InspectorSection(
+        title = "Position",
+        description = "Coordinates in simulator space.",
+        fields = inspector.position,
+    )
 }
 
 @Composable
-private fun GroupNodeInspector(inspector: NodeGroup) {
+private fun GroupNodeInspector(inspector: NodeGroup, actions: InspectorActions) {
+    InspectorSection(
+        title = "Selected Nodes",
+        description = "IDs of the selected nodes.",
+        fields = listOf(Labeled("IDs", inspector.nodeIds.formatIdRanges())),
+    )
+    ConcentrationsSection(
+        title = "Concentrations",
+        description = "Values shared by the selected nodes; Mixed means they differ or are missing. " +
+            "Edits apply to every selected node; ▸ shows and edits the value in each node.",
+        nodeIds = inspector.nodeIds,
+        concentrations = inspector.concentrations,
+        actions = actions,
+        valuesByNode = inspector.valuesByNode,
+    )
     InspectorSection(
         title = "Position",
         description = "Group bounds in simulator space.",
         fields = inspector.position,
-    )
-    InspectorSection(
-        title = "Selected Nodes",
-        description = "IDs currently captured by the selection box.",
-        fields = listOf(Labeled("IDs", inspector.nodeIds.joinToString(", "))),
-    )
-    InspectorSection(
-        title = "Concentrations",
-        description = "Shared molecule values across the selected nodes. Mixed means values differ or are missing.",
-        fields = inspector.concentrations.ifEmpty {
-            listOf(Labeled("No molecules", "The selected nodes expose no concentrations"))
-        },
     )
 }
 

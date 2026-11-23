@@ -6,30 +6,32 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-
 package it.unibo.alchemist.boundary.composeui.adapter
 
 import it.unibo.alchemist.boundary.composeui.model.ViewportEdge
 import it.unibo.alchemist.boundary.composeui.util.DoubleInt
+import org.danilopianini.noncryptohash.xxhash.XxHash32
 
 /**
- * A link between two nodes, smaller id first, packed in one number so that duplicates are cheap to drop.
+ * A link between two nodes, smaller id first, packed in one number.
+ * Its hash is well spread, so that sets of links stay fast even when nearby nodes are linked.
  */
-@JvmInline
-internal value class EdgeKey private constructor(private val ids: DoubleInt) {
+internal class EdgeKey private constructor(private val ids: DoubleInt) {
+    /**
+     * A stable, well-spread score (the XXH32 hash of the ids):
+     * keeping the lowest scores gives a sample of links that does not change between frames.
+     */
+    val sampleScore: Int = HASH.newDigest().update(ids.packed).digestInt()
+
     /** The link as the viewport draws it. */
     val edge: ViewportEdge get() = ViewportEdge(fromNodeId = ids.high, toNodeId = ids.low)
 
-    /**
-     * A stable, well-spread score (the MurmurHash3 64-bit finalizer):
-     * keeping the lowest scores gives a sample of links that does not change between frames.
-     */
-    val sampleScore: Long get() = ((ids.packed.mix() * FMIX_FIRST_MULTIPLIER).mix() * FMIX_SECOND_MULTIPLIER).mix()
+    override fun equals(other: Any?): Boolean = other is EdgeKey && other.ids == ids
+
+    override fun hashCode(): Int = sampleScore
 
     companion object {
-        private const val FMIX_SHIFT = 33
-        private const val FMIX_FIRST_MULTIPLIER = -0xae502812aa7333L
-        private const val FMIX_SECOND_MULTIPLIER = -0x3b314601e57a13adL
+        private val HASH = XxHash32()
 
         /** The link between two nodes, in either order; `null` if they are the same node. */
         fun of(firstNodeId: Int, secondNodeId: Int): EdgeKey? = when {
@@ -37,7 +39,5 @@ internal value class EdgeKey private constructor(private val ids: DoubleInt) {
             firstNodeId < secondNodeId -> EdgeKey(DoubleInt(firstNodeId, secondNodeId))
             else -> EdgeKey(DoubleInt(secondNodeId, firstNodeId))
         }
-
-        private fun Long.mix(): Long = this xor (this ushr FMIX_SHIFT)
     }
 }

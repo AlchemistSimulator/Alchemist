@@ -78,7 +78,12 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
   - [x] a ⚙ menu with the FPS and the links toggle, at the right end of the bar;
 - [x] Let the monitor configure the quick jumps (`timeJumps`, `stepJumps`).
 - [x] Make the inspector (right side bar) resizable by dragging its edge (240 dp to 70% of the window).
-- [ ] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.
+- [x] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.
+- [ ] Selection actions overlay: hovering the bounding box of the selected nodes shows a small translucent control, near a corner so it neither hides nodes nor blocks box-selecting next to the selection, with three buttons:
+  - **Move**: the same drag as Ctrl+drag, keeping the grabbed point under the pointer while panning or zooming.
+  - **Clone**: the same drag, drawing the original nodes plus a translucent copy under the pointer; on release, the copies are added at the new positions. Needs a `nodes.clone(nodeIds, offset)` callback; on the engine, `Node.cloneNode` and `addNode` between two steps.
+  - **Delete**: removes the selection at once, with a short undo window instead of a confirmation dialog. Needs a `nodes.delete(nodeIds)` callback.
+  - Keyboard shortcuts for clone and delete (e.g. Ctrl+D and Delete), listed in the help.
 
 ### Pacing
 
@@ -93,8 +98,8 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 ### Tests
 
 - [x] Build JVM test scenarios through the Kotlin script DSL / generated factories instead of hand-made stubs:
-  - `DesktopAlchemistUiCallbackTest`
-  - `DesktopAlchemistUiNodeMoveTest`
+  - `EngineUiCallbacksTest`
+  - `EngineUiNodeMoveTest`
 - [x] Use backtick test names and `kotlin.test` throughout; no timing-based assertions.
 
 ---
@@ -140,7 +145,7 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 
   It replaces the current `ViewportScene` payload; `ViewportScene` keeps only UI state.
 - [ ] **Session abstraction** in `commonMain`: a `SimulationSession` with a `frames: StateFlow<SceneFrame>`, commands (play, pause, step, go to time/step, move/clone/delete nodes, inject molecule, set throttling/real-time), and the active effect configuration.
-  - `LocalSession` (JVM) wraps the current `DesktopAlchemistUiCallback` logic.
+  - `LocalSession` (JVM) wraps the current `EngineUiCallbacks` logic.
   - `RemoteSession` (common: JVM, JS, wasm) is implemented in Phase 4.
 - [ ] **Frame builder** (JVM): turns `Environment` into a `SceneFrame`. It extracts only what the current effect set requests (Phase 3), throttled to the UI FPS. It runs on the simulation thread, and the result is published immutably.
 - [ ] **Projection abstraction**: `WorldProjection` with an identity/Euclidean implementation now and Web Mercator in Phase 5. Camera, hit-testing, selection and drag must work through it.

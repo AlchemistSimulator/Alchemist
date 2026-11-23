@@ -16,9 +16,12 @@ import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallback
  * The UI state and the actions the user can trigger.
  *
  * @property store the UI state.
- * @property callbacks what runs when the user acts.
+ * @property callbacks what the UI asks of the simulation.
  */
 internal data class ComposeUiController(val store: ComposeUiStateStore, val callbacks: AlchemistUiCallbacks) {
+    /** Changes that only touch the UI state. */
+    val edits: UiEdits = UiEdits(store)
+
     /** Starts a store from [initialState] and builds the [callbacks] on it. */
     constructor(
         initialState: AlchemistUiState,

@@ -13,44 +13,41 @@ import it.unibo.alchemist.boundary.composeui.model.drag.NodePositionUpdate
 import it.unibo.alchemist.boundary.composeui.model.pacing.PacingMode
 
 /**
- * Shared no-op callback implementation.
+ * Callbacks that do nothing, for previews and tests.
  */
 internal object NoOpUiCallbacks : AlchemistUiCallbacks {
-    override suspend fun onPlay() = Unit
+    override val transport: AlchemistUiCallbacks.Transport = object : AlchemistUiCallbacks.Transport {
+        override suspend fun play() = Unit
 
-    override suspend fun onPause() = Unit
+        override suspend fun pause() = Unit
 
-    override suspend fun onStep() = Unit
+        override suspend fun step() = Unit
 
-    override suspend fun onToTimeInputChanged(value: String) = Unit
+        override suspend fun runToTime(target: Double) = Unit
 
-    override suspend fun onToTimeSubmit() = Unit
+        override suspend fun runToStep(target: Long) = Unit
 
-    override suspend fun onToStepInputChanged(value: String) = Unit
+        override suspend fun jumpTimeBy(delta: Double) = Unit
 
-    override suspend fun onToStepSubmit() = Unit
+        override suspend fun jumpStepBy(delta: Long) = Unit
+    }
 
-    override suspend fun onJumpTimeBy(delta: Double) = Unit
+    override val pace: AlchemistUiCallbacks.Pace = object : AlchemistUiCallbacks.Pace {
+        override suspend fun setMode(mode: PacingMode) = Unit
 
-    override suspend fun onJumpStepBy(delta: Long) = Unit
+        override suspend fun setRateInput(value: String) = Unit
+    }
 
-    override suspend fun onFpsInputChanged(value: String) = Unit
+    override val nodes: AlchemistUiCallbacks.Nodes = object : AlchemistUiCallbacks.Nodes {
+        override suspend fun move(nodePositions: List<NodePositionUpdate>) = Unit
 
-    override suspend fun onFpsSubmit() = Unit
+        override suspend fun setConcentration(nodeIds: List<Int>, molecule: String, value: String) =
+            Result.success(Unit)
 
-    override suspend fun onPacingInputChanged(value: String) = Unit
+        override suspend fun removeMolecule(nodeIds: List<Int>, molecule: String) = Unit
+    }
 
-    override suspend fun onPacingModeChanged(mode: PacingMode) = Unit
-
-    override suspend fun onNodeSelected(nodeId: Int) = Unit
-
-    override suspend fun onNodesSelected(nodeIds: List<Int>) = Unit
-
-    override suspend fun onNodesMoved(nodePositions: List<NodePositionUpdate>) = Unit
-
-    override suspend fun onInspectorDismiss() = Unit
-
-    override suspend fun onToggleLinks() = Unit
-
-    override suspend fun onDialogDismiss() = Unit
+    override val display: AlchemistUiCallbacks.Display = object : AlchemistUiCallbacks.Display {
+        override suspend fun toggleLinks() = Unit
+    }
 }

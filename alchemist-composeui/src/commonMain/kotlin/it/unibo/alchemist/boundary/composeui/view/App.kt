@@ -28,6 +28,6 @@ internal fun app(
     val state by controller.store.stateFlow.collectAsState()
     AlchemistUiRoot(
         state = state,
-        callbacks = controller.callbacks,
+        controller = controller,
     )
 }

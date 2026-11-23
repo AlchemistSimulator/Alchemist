@@ -55,11 +55,11 @@ internal fun ResizableInspector(
     width: Dp,
     availableWidth: Dp,
     onWidthChange: (Dp) -> Unit,
-    onDismiss: () -> Unit,
+    actions: InspectorActions,
     modifier: Modifier = Modifier,
 ) {
     val allowed = allowedWidths(availableWidth)
-    val shownWidth = width.coerceIn(allowed)
+    val shownWidth = shownInspectorWidth(width, availableWidth)
     val currentWidth by rememberUpdatedState(shownWidth)
     val currentAllowed by rememberUpdatedState(allowed)
     val density = LocalDensity.current
@@ -67,7 +67,7 @@ internal fun ResizableInspector(
     val hovered by interactions.collectIsHoveredAsState()
     val dragged by interactions.collectIsDraggedAsState()
     Box(modifier = modifier.width(shownWidth)) {
-        NodeInspector(inspector = inspector, onDismiss = onDismiss, modifier = Modifier.fillMaxHeight())
+        NodeInspector(inspector = inspector, actions = actions, modifier = Modifier.fillMaxHeight())
         Box(
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -96,6 +96,9 @@ internal fun ResizableInspector(
         }
     }
 }
+
+/** The width the inspector takes when asked for [width] in [availableWidth]: between 240 dp and 70% of it. */
+internal fun shownInspectorWidth(width: Dp, availableWidth: Dp): Dp = width.coerceIn(allowedWidths(availableWidth))
 
 private fun allowedWidths(availableWidth: Dp): ClosedRange<Dp> {
     val narrowestFitting = minOf(narrowest, availableWidth)

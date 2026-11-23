@@ -36,8 +36,11 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performMouseInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.v2.runComposeUiTest
+import it.unibo.alchemist.boundary.composeui.model.AlchemistUiState
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
 import it.unibo.alchemist.boundary.composeui.model.callbacks.NoOpUiCallbacks
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import it.unibo.alchemist.boundary.composeui.view.viewport.LocalViewportFocus
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -119,7 +122,7 @@ class ControlsOverlayTest {
                         controls = SimulationControlsState(),
                         nodeCount = 0,
                         showLinks = false,
-                        callbacks = NoOpUiCallbacks,
+                        controller = ComposeUiController(ComposeUiStateStore(AlchemistUiState()), NoOpUiCallbacks),
                         dockVisible = true,
                         onToggleDock = {},
                         helpVisible = false,

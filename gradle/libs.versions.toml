@@ -127,6 +127,7 @@ miglayout-swing = "com.miglayout:miglayout-swing:11.5.2"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockk = "io.mockk:mockk:1.14.12"
 mongodb = "org.mongodb:mongodb-driver-sync:5.14.0"
+noncrypto-hash = "org.danilopianini:noncrypto-hash-kt:1.2.1"
 okio = "com.squareup.okio:okio:3.18.2"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }

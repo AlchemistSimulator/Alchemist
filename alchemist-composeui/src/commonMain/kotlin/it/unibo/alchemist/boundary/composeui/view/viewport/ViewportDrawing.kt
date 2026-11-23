@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.boundary.composeui.view.theme.Background
@@ -71,11 +72,13 @@ internal fun DrawScope.drawScene(
     camera: ViewportCameraState,
     selectedNodeIds: Set<Int>,
     drag: ViewportDrag,
+    viewportSize: IntSize,
 ) {
     val moving = drag as? ViewportDrag.MoveNodes
+    val movingDelta = moving?.screenDelta(camera, viewportSize) ?: Offset.Zero
     fun centerOf(nodeIndex: Int): Offset? = frame.screenPositions[nodeIndex]?.let { position ->
         val isMoving = moving != null && scene.nodes.getOrNull(nodeIndex)?.id in moving.nodeIds
-        if (isMoving) position + moving.delta else position
+        if (isMoving) position + movingDelta else position
     }
     if (scene.showLinks) {
         frame.visibleEdges.forEach { edge ->

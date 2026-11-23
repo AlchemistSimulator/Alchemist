@@ -71,6 +71,10 @@ internal data class ViewportScene(
             }
         }
 
+    /** Applies [edit] to the nodes in [nodeIds]. */
+    internal fun withEditedNodes(nodeIds: Collection<Int>, edit: (ViewportNode) -> ViewportNode): ViewportScene =
+        copy(nodes = nodes.map { node -> if (node.id in nodeIds) edit(node) else node }.toImmutableList())
+
     /** Moves each node in [nodePositions] to its new coordinates. */
     internal fun withMovedNodes(nodePositions: List<NodePositionUpdate>): ViewportScene = when {
         nodePositions.isEmpty() -> this

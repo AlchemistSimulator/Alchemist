@@ -175,7 +175,7 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
                     ) {
                         app(
                             remember {
-                                alchemistDesktopController(environment)
+                                engineController(environment)
                             },
                         )
                     }
@@ -187,9 +187,9 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
         }
     }
 
-    private fun alchemistDesktopController(environment: Environment<T, P>): ComposeUiController = ComposeUiController(
+    private fun engineController(environment: Environment<T, P>): ComposeUiController = ComposeUiController(
         currentUiState,
-        DesktopAlchemistUiCallback(environment.simulation, currentUiState, throttle),
+        EngineUiCallbacks(environment.simulation, currentUiState, throttle),
     )
 
     private companion object {

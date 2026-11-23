@@ -14,6 +14,7 @@ import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.NodeGroup.Companion.MIXED_CONCENTRATION_PLACEHOLDER
 import it.unibo.alchemist.boundary.composeui.model.InspectorState.SingleNode
 import it.unibo.alchemist.boundary.composeui.model.Labeled
+import it.unibo.alchemist.boundary.composeui.model.NodeValue
 import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import kotlin.test.Test
@@ -58,6 +59,14 @@ class NodeGroupTest {
         assertEquals(1, inspector.concentrations.first { it.label == "shared" }.value)
         assertEquals(MIXED_CONCENTRATION_PLACEHOLDER, inspector.concentrations.first { it.label == "variant" }.value)
         assertEquals(MIXED_CONCENTRATION_PLACEHOLDER, inspector.concentrations.first { it.label == "partial" }.value)
+        assertEquals<List<NodeValue>>(
+            listOf(NodeValue(10, true, "A"), NodeValue(20, true, "B")),
+            inspector.valuesByNode.getValue("variant"),
+        )
+        assertEquals(
+            listOf(NodeValue(10, false), NodeValue(20, true, "yes")),
+            inspector.valuesByNode.getValue("partial"),
+        )
     }
 
     @Test

@@ -64,6 +64,8 @@ class ResizableInspectorTest {
 
         fun ComposeUiTest.dragHandleBy(pixels: Float) {
             onNodeWithContentDescription("Resize the inspector").performMouseInput {
+                // A press happens wherever the mouse is, so move it onto the handle first.
+                moveTo(center)
                 press()
                 moveBy(Offset(pixels / 2, 0f))
                 moveBy(Offset(pixels / 2, 0f))
@@ -84,7 +86,11 @@ class ResizableInspectorTest {
                     width = width,
                     availableWidth = availableWidth,
                     onWidthChange = onWidthChange,
-                    onDismiss = {},
+                    actions = InspectorActions(
+                        onDismiss = {},
+                        onConcentrationSet = { _, _, _ -> },
+                        onMoleculeRemoved = { _, _ -> },
+                    ),
                     modifier = Modifier.fillMaxHeight(),
                 )
             }

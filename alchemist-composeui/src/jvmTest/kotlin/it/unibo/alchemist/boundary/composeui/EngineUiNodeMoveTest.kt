@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.test.runTest
 
-class DesktopAlchemistUiNodeMoveTest {
+class EngineUiNodeMoveTest {
     @Test
     fun `node move commits translated positions through the simulator and refreshes the scene`() = runTest {
         val simulation = TestSimulations.ticking(0.0 to 0.0, 2.0 to 3.0)
@@ -28,9 +28,9 @@ class DesktopAlchemistUiNodeMoveTest {
         val (firstNode, secondNode) = environment.nodes.current.sortedBy { environment.currentPositionOf(it).x }
         val selection = listOf(firstNode.id, secondNode.id)
         val store = ComposeUiStateStore(AlchemistUiState(scene = environment.toViewport()).withSelection(selection))
-        val callback = DesktopAlchemistUiCallback(simulation, store)
+        val callback = EngineUiCallbacks(simulation, store)
         simulation.runningInBackground {
-            callback.onNodesMoved(
+            callback.nodes.move(
                 listOf(
                     NodePositionUpdate(firstNode.id, persistentListOf(1.5, -2.0)),
                     NodePositionUpdate(secondNode.id, persistentListOf(3.5, 1.0)),

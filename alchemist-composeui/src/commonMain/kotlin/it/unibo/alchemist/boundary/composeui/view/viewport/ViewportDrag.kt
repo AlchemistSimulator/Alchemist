@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.composeui.view.viewport
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.unit.IntSize
 import kotlin.math.max
 import kotlin.math.min
 
@@ -42,12 +43,17 @@ internal sealed interface ViewportDrag {
     data class Pan(val last: Offset) : ViewportDrag
 
     /**
-     * A selection box is being drawn.
+     * A selection box is being drawn, or a node clicked.
      *
      * @property anchor where the drag started.
      * @property current where the pointer is now.
+     * @property mode how the nodes change the selection.
      */
-    data class Select(val anchor: Offset, val current: Offset) : ViewportDrag {
+    data class Select(
+        val anchor: Offset,
+        val current: Offset,
+        val mode: SelectionMode = SelectionMode.REPLACE,
+    ) : ViewportDrag {
         /** How far the pointer moved. */
         val length: Float get() = (current - anchor).getDistance()
 
@@ -61,14 +67,28 @@ internal sealed interface ViewportDrag {
     }
 
     /**
-     * Selected nodes are being moved.
+     * Selected nodes are being moved: the point grabbed stays under the pointer, even if the camera moves.
      *
-     * @property anchor where the drag started.
-     * @property current where the pointer is now.
+     * @property anchor where the drag started, on screen.
+     * @property anchorBase where the drag started, in base coordinates when it started.
+     * @property current where the pointer is now, on screen.
      * @property nodeIds the nodes being moved.
      */
-    data class MoveNodes(val anchor: Offset, val current: Offset, val nodeIds: Set<Int>) : ViewportDrag {
-        /** How far the nodes moved on screen. */
+    data class MoveNodes(
+        val anchor: Offset,
+        val anchorBase: Offset,
+        val current: Offset,
+        val nodeIds: Set<Int>,
+    ) : ViewportDrag {
+        /** How far the pointer moved on screen. */
         val delta: Offset get() = current - anchor
+
+        /** How far the nodes moved, in base coordinates, as seen through [camera]. */
+        fun baseDelta(camera: ViewportCameraState, viewportSize: IntSize): Offset =
+            camera.toBase(current, viewportSize) - anchorBase
+
+        /** How far the nodes appear moved on screen, as seen through [camera]. */
+        fun screenDelta(camera: ViewportCameraState, viewportSize: IntSize): Offset =
+            baseDelta(camera, viewportSize) * camera.zoom
     }
 }

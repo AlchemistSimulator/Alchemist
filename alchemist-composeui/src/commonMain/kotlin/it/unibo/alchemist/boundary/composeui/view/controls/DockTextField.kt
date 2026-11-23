@@ -58,6 +58,7 @@ private val fieldPadding = 8.dp
  * With a [default], the box shows it until focused, then starts editing from it,
  * and Enter or leaving the box clears the text, so that the box follows the default again.
  * While editing, an [error] turns the border red.
+ * A [Dp.Unspecified] [width] leaves the width to the [modifier].
  */
 @Composable
 internal fun DockTextField(
@@ -68,6 +69,7 @@ internal fun DockTextField(
     onSubmit: () -> Unit,
     width: Dp,
     default: String? = null,
+    modifier: Modifier = Modifier,
 ) {
     var focused by remember { mutableStateOf(false) }
     val viewportFocus = LocalViewportFocus.current
@@ -81,7 +83,7 @@ internal fun DockTextField(
     BasicTextField(
         value = default?.takeIf { following } ?: value,
         onValueChange = onValueChange,
-        modifier = Modifier
+        modifier = modifier
             .width(width)
             .height(TransportButtonSize)
             .semantics { shownError?.let { error(it) } }

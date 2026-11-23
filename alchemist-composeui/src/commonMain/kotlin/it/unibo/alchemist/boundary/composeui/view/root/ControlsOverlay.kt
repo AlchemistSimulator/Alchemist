@@ -36,9 +36,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import it.unibo.alchemist.boundary.composeui.model.SimulationControlsState
-import it.unibo.alchemist.boundary.composeui.model.callbacks.AlchemistUiCallbacks
 import it.unibo.alchemist.boundary.composeui.view.controls.ControlDock
 import it.unibo.alchemist.boundary.composeui.view.controls.SettingsPanel
+import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.boundary.composeui.view.theme.TextSecondary
 import it.unibo.alchemist.boundary.composeui.view.viewport.HelpButton
 import it.unibo.alchemist.boundary.composeui.view.viewport.HelpButtonSize
@@ -63,7 +63,7 @@ internal fun ControlsOverlay(
     controls: SimulationControlsState,
     nodeCount: Int,
     showLinks: Boolean,
-    callbacks: AlchemistUiCallbacks,
+    controller: ComposeUiController,
     dockVisible: Boolean,
     onToggleDock: () -> Unit,
     helpVisible: Boolean,
@@ -71,6 +71,10 @@ internal fun ControlsOverlay(
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val edits = controller.edits
+    val transport = controller.callbacks.transport
+    val pace = controller.callbacks.pace
+    val send: (suspend () -> Unit) -> Unit = { command -> coroutineScope.launch { command() } }
     var settingsOpen by remember { mutableStateOf(false) }
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom)) {
         ViewportGestureHint(hasNodes = nodeCount > 0, expanded = helpVisible)
@@ -87,9 +91,9 @@ internal fun ControlsOverlay(
                         SettingsPanel(
                             controls = controls,
                             showLinks = showLinks,
-                            onFpsInputChanged = { coroutineScope.launch { callbacks.onFpsInputChanged(it) } },
-                            onFpsSubmit = { coroutineScope.launch { callbacks.onFpsSubmit() } },
-                            onToggleLinks = { coroutineScope.launch { callbacks.onToggleLinks() } },
+                            onFpsInputChanged = edits.frameRate::setInput,
+                            onFpsSubmit = edits.frameRate::apply,
+                            onToggleLinks = { send(controller.callbacks.display::toggleLinks) },
                             modifier = Modifier.padding(bottom = settingsGap),
                         )
                     }
@@ -107,17 +111,17 @@ internal fun ControlsOverlay(
                             controls = controls,
                             nodeCount = nodeCount,
                             settingsOpen = settingsOpen,
-                            onPlay = { coroutineScope.launch { callbacks.onPlay() } },
-                            onPause = { coroutineScope.launch { callbacks.onPause() } },
-                            onStep = { coroutineScope.launch { callbacks.onStep() } },
-                            onToTimeInputChanged = { coroutineScope.launch { callbacks.onToTimeInputChanged(it) } },
-                            onToTimeSubmit = { coroutineScope.launch { callbacks.onToTimeSubmit() } },
-                            onToStepInputChanged = { coroutineScope.launch { callbacks.onToStepInputChanged(it) } },
-                            onToStepSubmit = { coroutineScope.launch { callbacks.onToStepSubmit() } },
-                            onJumpTimeBy = { coroutineScope.launch { callbacks.onJumpTimeBy(it) } },
-                            onJumpStepBy = { coroutineScope.launch { callbacks.onJumpStepBy(it) } },
-                            onPacingInputChanged = { coroutineScope.launch { callbacks.onPacingInputChanged(it) } },
-                            onPacingModeChanged = { coroutineScope.launch { callbacks.onPacingModeChanged(it) } },
+                            onPlay = { send(transport::play) },
+                            onPause = { send(transport::pause) },
+                            onStep = { send(transport::step) },
+                            onToTimeInputChanged = edits.jumps::setTimeInput,
+                            onToTimeSubmit = { edits.jumps.timeTarget()?.let { send { transport.runToTime(it) } } },
+                            onToStepInputChanged = edits.jumps::setStepInput,
+                            onToStepSubmit = { edits.jumps.stepTarget()?.let { send { transport.runToStep(it) } } },
+                            onJumpTimeBy = { send { transport.jumpTimeBy(it) } },
+                            onJumpStepBy = { send { transport.jumpStepBy(it) } },
+                            onPacingInputChanged = { send { pace.setRateInput(it) } },
+                            onPacingModeChanged = { send { pace.setMode(it) } },
                             onToggleSettings = { settingsOpen = !settingsOpen },
                         )
                     }

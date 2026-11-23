@@ -11,8 +11,11 @@ package it.unibo.alchemist.boundary.composeui.model
 
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 
 /**
  * State for the right-side inspector panel.
@@ -48,6 +51,7 @@ internal sealed interface InspectorState {
      * @property subtitle the subtitle.
      * @property position the box containing the nodes.
      * @property concentrations each molecule, with its value if all nodes share it.
+     * @property valuesByNode for each molecule, its value in every node of the group.
      */
     @Immutable
     data class NodeGroup(
@@ -56,6 +60,7 @@ internal sealed interface InspectorState {
         val subtitle: String = "${nodeIds.size} nodes selected",
         val position: ImmutableList<Labeled<Double>>,
         val concentrations: ImmutableList<Labeled<Any?>>,
+        val valuesByNode: ImmutableMap<String, ImmutableList<NodeValue>> = persistentMapOf(),
     ) : InspectorState {
         internal companion object {
             /** Shown for a molecule whose value differs across the group. */
@@ -65,16 +70,17 @@ internal sealed interface InspectorState {
             fun of(nodes: List<ViewportNode>): NodeGroup {
                 val xs = nodes.map { it.coordinates[0] }
                 val ys = nodes.map { it.coordinates[1] }
-                val concentrations = nodes
+                val valuesByNode = nodes
                     .flatMap { node -> node.concentrations.map(Labeled<Any?>::label) }
                     .distinct()
                     .sorted()
-                    .map { molecule ->
-                        val values = nodes.map { node ->
-                            node.concentrations.firstOrNull { it.label == molecule }?.value
-                        }
-                        Labeled(molecule, values.distinct().singleOrNull() ?: MIXED_CONCENTRATION_PLACEHOLDER)
+                    .associateWith { molecule ->
+                        nodes.map { NodeValue.of(it, molecule) }.toImmutableList()
                     }
+                val concentrations = valuesByNode.map { (molecule, values) ->
+                    val shared = values.map(NodeValue::value).distinct().singleOrNull()
+                    Labeled(molecule, shared ?: MIXED_CONCENTRATION_PLACEHOLDER)
+                }
                 return NodeGroup(
                     nodeIds = nodes.map(ViewportNode::id).toImmutableList(),
                     position = persistentListOf(
@@ -84,6 +90,7 @@ internal sealed interface InspectorState {
                         Labeled("Max Y", ys.max()),
                     ),
                     concentrations = concentrations.toImmutableList(),
+                    valuesByNode = valuesByNode.toImmutableMap(),
                 )
             }
         }

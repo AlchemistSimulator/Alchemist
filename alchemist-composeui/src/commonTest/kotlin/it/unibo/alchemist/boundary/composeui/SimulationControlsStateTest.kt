@@ -76,7 +76,7 @@ class SimulationControlsStateTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
         controller.store.update { it.withSelection(listOf(3)) }
 
-        controller.callbacks.onToggleLinks()
+        controller.callbacks.display.toggleLinks()
 
         assertTrue(controller.store.state.scene.showLinks)
         assertEquals(listOf(3), controller.store.state.selectedNodeIds)
@@ -146,7 +146,7 @@ class SimulationControlsStateTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
         val start = controller.store.state.controls.step
 
-        controller.callbacks.onToStepSubmit()
+        controller.callbacks.transport.runToStep(assertNotNull(controller.edits.jumps.stepTarget()))
 
         assertEquals(start + 1, controller.store.state.controls.step)
     }
@@ -185,11 +185,11 @@ class SimulationControlsStateTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
         val start = controller.store.state.controls
 
-        controller.callbacks.onJumpStepBy(10)
+        controller.callbacks.transport.jumpStepBy(10)
         assertEquals(start.step + 10, controller.store.state.controls.step)
 
         val afterSteps = controller.store.state.controls.time
-        controller.callbacks.onJumpTimeBy(100.0)
+        controller.callbacks.transport.jumpTimeBy(100.0)
         assertEquals(afterSteps + 100.0, controller.store.state.controls.time)
     }
 
@@ -197,8 +197,8 @@ class SimulationControlsStateTest {
     fun `demo controller rejects backward time jumps`() = runTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
-        controller.callbacks.onToTimeInputChanged("1.5")
-        controller.callbacks.onToTimeSubmit()
+        controller.edits.jumps.setTimeInput("1.5")
+        controller.callbacks.transport.runToTime(assertNotNull(controller.edits.jumps.timeTarget()))
 
         val dialog = controller.store.state.controls.dialog
         assertNotNull(dialog)
@@ -209,8 +209,8 @@ class SimulationControlsStateTest {
     fun `demo controller updates fps on submit`() = runTest {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
-        controller.callbacks.onFpsInputChanged("120")
-        controller.callbacks.onFpsSubmit()
+        controller.edits.frameRate.setInput("120")
+        controller.edits.frameRate.apply()
 
         assertEquals(MAX_UI_FPS, controller.store.state.controls.uiFps)
         assertEquals(MAX_UI_FPS.toString(), controller.store.state.controls.fpsInput)
@@ -225,18 +225,18 @@ class SimulationControlsStateTest {
             )
         }
 
-        controller.callbacks.onToStepInputChanged("99")
-        controller.callbacks.onToStepSubmit()
+        controller.edits.jumps.setStepInput("99")
+        controller.callbacks.transport.runToStep(assertNotNull(controller.edits.jumps.stepTarget()))
 
         assertEquals(SimulationStatus.PAUSED, controller.store.state.controls.status)
         assertEquals(99L, controller.store.state.controls.step)
     }
 
     @Test
-    fun `demo controller builds a group inspector for multi selection`() = runTest {
+    fun `selecting several nodes builds a group inspector`() {
         val controller = ComposeUiController(DemoUiState.initial, ::DemoUiCallbacks)
 
-        controller.callbacks.onNodesSelected(listOf(1, 3))
+        controller.edits.selection.select(listOf(1, 3))
 
         assertEquals(listOf(1, 3), controller.store.state.selectedNodeIds)
         val inspector = controller.store.state.inspector as NodeGroup

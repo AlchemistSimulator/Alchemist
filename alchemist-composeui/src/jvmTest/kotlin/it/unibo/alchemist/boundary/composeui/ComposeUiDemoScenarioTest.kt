@@ -26,6 +26,13 @@ class ComposeUiDemoScenarioTest {
     }
 
     @Test
+    fun `the gradient scenario for manual testing loads`() {
+        val scenario = assertNotNull(javaClass.classLoader.getResource("composeui-gradient.yml"))
+        val simulation = LoadAlchemist.from(scenario).getDefault<Any, Euclidean2DPosition>()
+        assertEquals(400, simulation.environment.nodeCount.current)
+    }
+
+    @Test
     fun `a simulation file can set the quick jumps with whole and decimal numbers`() {
         val scenario = assertNotNull(javaClass.classLoader.getResource("composeui-quick-jumps.yml"))
         val simulation = LoadAlchemist.from(scenario).getDefault<Any, Euclidean2DPosition>()

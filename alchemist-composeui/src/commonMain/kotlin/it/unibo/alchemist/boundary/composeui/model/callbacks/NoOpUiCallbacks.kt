@@ -41,6 +41,10 @@ internal object NoOpUiCallbacks : AlchemistUiCallbacks {
     override val nodes: AlchemistUiCallbacks.Nodes = object : AlchemistUiCallbacks.Nodes {
         override suspend fun move(nodePositions: List<NodePositionUpdate>) = Unit
 
+        override suspend fun clone(copies: List<NodePositionUpdate>) = Unit
+
+        override suspend fun delete(nodeIds: List<Int>) = Unit
+
         override suspend fun setConcentration(nodeIds: List<Int>, molecule: String, value: String) =
             Result.success(Unit)
 

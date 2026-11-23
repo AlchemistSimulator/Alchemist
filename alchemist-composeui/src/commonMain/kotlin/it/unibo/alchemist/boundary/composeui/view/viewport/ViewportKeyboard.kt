@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
@@ -24,7 +25,8 @@ private const val NANOS_PER_SECOND = 1e9f
 
 /**
  * Keyboard controls: arrows or WASD pan while held, Enter or E select the node nearest to the pointer and open it,
- * Backspace clears the selection, H shows or hides the shortcuts, C shows or hides the controls.
+ * Backspace clears the selection, Delete deletes it, Ctrl+D clones it,
+ * H shows or hides the shortcuts, C shows or hides the controls.
  * [onPanKey] gets each pan direction as it is pressed or released; the other callbacks return whether they
  * handled the key.
  */
@@ -32,11 +34,15 @@ internal fun Modifier.viewportKeyboard(
     onPanKey: (direction: PanDirection, pressed: Boolean) -> Unit,
     onSelectNearestNode: () -> Boolean,
     onClearSelection: () -> Boolean,
+    onDeleteSelection: () -> Boolean,
+    onCloneSelection: () -> Boolean,
     onToggleHelp: () -> Unit,
     onToggleControls: () -> Unit,
 ): Modifier = onPreviewKeyEvent { event ->
     val panDirection = PanDirection.of(event.key)
     when {
+        // Before the pan keys, as D also pans right.
+        event.isCtrlPressed && event.key == Key.D -> event.type != KeyEventType.KeyDown || onCloneSelection()
         panDirection != null -> {
             onPanKey(panDirection, event.type == KeyEventType.KeyDown)
             true
@@ -44,6 +50,7 @@ internal fun Modifier.viewportKeyboard(
         event.type != KeyEventType.KeyDown -> false
         event.key == Key.Enter || event.key == Key.NumPadEnter || event.key == Key.E -> onSelectNearestNode()
         event.key == Key.Backspace -> onClearSelection()
+        event.key == Key.Delete -> onDeleteSelection()
         event.key == Key.H -> {
             onToggleHelp()
             true

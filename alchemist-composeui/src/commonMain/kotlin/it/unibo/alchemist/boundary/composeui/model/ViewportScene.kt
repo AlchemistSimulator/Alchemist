@@ -75,6 +75,22 @@ internal data class ViewportScene(
     internal fun withEditedNodes(nodeIds: Collection<Int>, edit: (ViewportNode) -> ViewportNode): ViewportScene =
         copy(nodes = nodes.map { node -> if (node.id in nodeIds) edit(node) else node }.toImmutableList())
 
+    /** This scene with a copy of each node in [copies] at the position given for it, under new ids. */
+    internal fun withClonedNodes(copies: List<NodePositionUpdate>): ViewportScene {
+        val nodesById = nodes.associateBy(ViewportNode::id)
+        val firstFreeId = (nodes.maxOfOrNull(ViewportNode::id) ?: -1) + 1
+        val clones = copies
+            .mapNotNull { copy -> nodesById[copy.nodeId]?.withCoordinates(copy.coordinates) }
+            .mapIndexed { index, clone -> clone.copy(id = firstFreeId + index) }
+        return withNodes(nodes + clones)
+    }
+
+    /** This scene without the nodes [nodeIds]. */
+    internal fun withoutNodes(nodeIds: Collection<Int>): ViewportScene {
+        val removed = nodeIds.toHashSet()
+        return withNodes(nodes.filterNot { it.id in removed })
+    }
+
     /** Moves each node in [nodePositions] to its new coordinates. */
     internal fun withMovedNodes(nodePositions: List<NodePositionUpdate>): ViewportScene = when {
         nodePositions.isEmpty() -> this

@@ -23,6 +23,14 @@ internal class DemoNodes(private val store: ComposeUiStateStore) : AlchemistUiCa
         state.copy(scene = state.scene.withMovedNodes(nodePositions)).withSelection(state.selectedNodeIds)
     }
 
+    override suspend fun clone(copies: List<NodePositionUpdate>) = store.update { state ->
+        state.copy(scene = state.scene.withClonedNodes(copies)).withSelection(state.selectedNodeIds)
+    }
+
+    override suspend fun delete(nodeIds: List<Int>) = store.update { state ->
+        state.copy(scene = state.scene.withoutNodes(nodeIds)).withSelection(state.selectedNodeIds)
+    }
+
     override suspend fun setConcentration(nodeIds: List<Int>, molecule: String, value: String) = runCatching {
         edit(nodeIds) { it.withConcentration(molecule, value.toDoubleOrNull() ?: value) }
     }

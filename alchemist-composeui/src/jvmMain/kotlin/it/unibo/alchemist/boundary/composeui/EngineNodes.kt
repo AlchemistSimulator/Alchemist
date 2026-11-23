@@ -17,13 +17,26 @@ import it.unibo.alchemist.model.Position
 /**
  * Changes the nodes of the simulation of [bridge], between two steps.
  * Molecules and values are parsed by the incarnation, as in simulation files.
- * If a move or a removal fails, the user gets a dialog; a failed value is returned to the caller.
+ * If a move, a copy, a deletion or a molecule removal fails, the user gets a dialog;
+ * a value that fails is returned to the caller.
  */
 internal class EngineNodes<T, P : Position<P>>(private val bridge: EngineBridge<T, P>) : AlchemistUiCallbacks.Nodes {
     override suspend fun move(nodePositions: List<NodePositionUpdate>) = change {
         nodePositions.forEach { (nodeId, coordinates) ->
             moveNodeTo(nodeWithId(nodeId), makePosition(coordinates))
         }
+    }
+
+    override suspend fun clone(copies: List<NodePositionUpdate>) = change {
+        copies.forEach { (nodeId, coordinates) ->
+            check(addNode(nodeWithId(nodeId).cloneNode(), makePosition(coordinates))) {
+                "The copy of node $nodeId cannot be placed at $coordinates"
+            }
+        }
+    }
+
+    override suspend fun delete(nodeIds: List<Int>) = change {
+        nodeIds.map(::nodeWithId).forEach(::removeNode)
     }
 
     override suspend fun setConcentration(nodeIds: List<Int>, molecule: String, value: String) = bridge.ifActive {

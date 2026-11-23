@@ -70,6 +70,12 @@ internal interface AlchemistUiCallbacks {
         /** Moves nodes to [nodePositions], when a drag ends. */
         suspend fun move(nodePositions: List<NodePositionUpdate>)
 
+        /** Adds a copy of each node in [copies], with its contents, at the position given for it. */
+        suspend fun clone(copies: List<NodePositionUpdate>)
+
+        /** Removes the nodes [nodeIds] from the simulation. */
+        suspend fun delete(nodeIds: List<Int>)
+
         /**
          * Sets [molecule] to [value] in the nodes [nodeIds], adding it where missing.
          * The simulation parses both, as its incarnation does for simulation files.

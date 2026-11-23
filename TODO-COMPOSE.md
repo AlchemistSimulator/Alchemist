@@ -67,7 +67,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 - [x] Shortcuts help (bottom left): hidden behind a **?** button, shown or hidden by clicking it or pressing H.
 - [x] The viewport fills the window: no card frame or outer margins. The other controls float over it as translucent panels.
 - [x] A handle line above the bottom bar, or the C key, hides it, leaving only the line, and shows it again. It starts visible.
-- [ ] Replace the bottom bar with one thin strip (about 48 dp), centred at the bottom, with the same height for every control:
+- [x] Replace the bottom bar with one thin strip (about 48 dp), centred at the bottom, with the same height for every control:
   - [x] one Play/Pause toggle whose icon shows the state, replacing the Play and Pause buttons and the status pill;
   - [x] Step;
   - [x] time and step readouts;
@@ -80,10 +80,11 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 - [x] Make the inspector (right side bar) resizable by dragging its edge (240 dp to 70% of the window).
 - [x] Let the inspector edit the contents of the selected nodes: change, add and remove molecules and their concentrations, for one node or for the whole selection. Values are parsed by the incarnation, and edits run on the simulation thread.
 - [ ] Selection actions overlay: hovering the bounding box of the selected nodes shows a small translucent control, near a corner so it neither hides nodes nor blocks box-selecting next to the selection, with three buttons:
-  - **Move**: the same drag as Ctrl+drag, keeping the grabbed point under the pointer while panning or zooming.
-  - **Clone**: the same drag, drawing the original nodes plus a translucent copy under the pointer; on release, the copies are added at the new positions. Needs a `nodes.clone(nodeIds, offset)` callback; on the engine, `Node.cloneNode` and `addNode` between two steps.
-  - **Delete**: removes the selection at once, with a short undo window instead of a confirmation dialog. Needs a `nodes.delete(nodeIds)` callback.
-  - Keyboard shortcuts for clone and delete (e.g. Ctrl+D and Delete), listed in the help.
+  - [x] **Move**: the same drag as Ctrl+drag, keeping the grabbed point under the pointer while panning or zooming.
+  - [x] **Clone**: the same drag, drawing the original nodes plus a translucent copy under the pointer; on release, the copies are added at the new positions, through `nodes.clone`: on the engine, `Node.cloneNode` and `addNode` between two steps.
+  - [x] **Delete**: removes the selection at once, through `nodes.delete`.
+  - [ ] A short undo window after Delete, instead of a confirmation dialog. The engine disposes the reactions of removed nodes, so undo must add copies of them (taken before deletion, with new ids), not the removed nodes.
+  - [x] Keyboard shortcuts: Ctrl+D clones the selection a little down and right, Delete deletes it; both listed in the help.
 
 ### Pacing
 

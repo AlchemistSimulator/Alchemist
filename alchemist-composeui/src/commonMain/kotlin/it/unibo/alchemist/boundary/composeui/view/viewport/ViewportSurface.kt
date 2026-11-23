@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isCtrlPressed
@@ -45,6 +46,7 @@ import it.unibo.alchemist.boundary.composeui.view.theme.Background
 import it.unibo.alchemist.boundary.composeui.view.theme.BackgroundVariant
 import it.unibo.alchemist.boundary.composeui.view.theme.NODE_HIT_RADIUS
 import it.unibo.alchemist.boundary.composeui.view.theme.OverlayMargin
+import it.unibo.alchemist.boundary.composeui.view.theme.SELECTED_NODE_RADIUS
 import it.unibo.alchemist.boundary.composeui.view.theme.Surface as SurfaceColor
 import it.unibo.alchemist.boundary.composeui.view.theme.TextPrimary
 import kotlinx.coroutines.launch
@@ -52,6 +54,12 @@ import kotlinx.coroutines.launch
 private const val KEYBOARD_PAN_SPEED_PX_PER_SECOND = 900f
 
 private val dragThreshold = 6.dp
+private val actionButtonWidth = 56.dp
+private val actionButtonHeight = 24.dp
+private val actionGap = 6.dp
+
+/** How far Ctrl+D puts the copies from the originals, down and right. */
+private val cloneShift = 24.dp
 
 /**
  * The simulation viewport: draws the scene and handles camera, selection and node dragging.
@@ -90,6 +98,23 @@ internal fun ViewportSurface(
     val selectedNodeIdSet = remember(selectedNodeIds) { selectedNodeIds.toHashSet() }
     val density = LocalDensity.current
     val dragThresholdPx = with(density) { dragThreshold.toPx() }
+    val selectionActions = remember(scene, viewportFrame, selectedNodeIdSet, density) {
+        with(density) {
+            SelectionActions.of(
+                nodeCenters = scene.nodes.indices
+                    .filter { scene.nodes[it].id in selectedNodeIdSet }
+                    .mapNotNull(viewportFrame.screenPositions::getOrNull),
+                margin = SELECTED_NODE_RADIUS.dp.toPx() * camera.zoom,
+                buttonSize = Size(actionButtonWidth.toPx(), actionButtonHeight.toPx()),
+                gap = actionGap.toPx(),
+            )
+        }
+    }
+    // The buttons show while the pointer is over the selection, and stay while Delete is held.
+    val shownActions = selectionActions?.takeIf { actions ->
+        (drag == ViewportDrag.None || drag is ViewportDrag.DeleteNodes) &&
+            pointer?.let(actions.hoverArea::contains) == true
+    }
     val gestures = ViewportGestures(
         sceneCache = sceneCache,
         viewportSize = viewportSize,
@@ -98,6 +123,7 @@ internal fun ViewportSurface(
         selectedNodeIds = selectedNodeIdSet,
         tapThresholdPx = with(density) { NODE_HIT_RADIUS.dp.toPx() },
         dragThresholdPx = dragThresholdPx,
+        selectionActions = shownActions,
     )
     val selectionRect = (drag as? ViewportDrag.Select)?.takeIf { it.length >= dragThresholdPx }?.rect
     val coroutineScope = rememberCoroutineScope()
@@ -146,6 +172,11 @@ internal fun ViewportSurface(
                         },
                         onSelectNearestNode = selectNearestNode,
                         onClearSelection = clearSelection,
+                        onDeleteSelection = { gestures.deleteSelection()?.also(send) != null },
+                        onCloneSelection = {
+                            val shift = with(density) { cloneShift.toPx() }
+                            gestures.cloneSelection(Offset(shift, shift))?.also(send) != null
+                        },
                         onToggleHelp = onToggleHelp,
                         onToggleControls = onToggleControls,
                     )
@@ -190,6 +221,7 @@ internal fun ViewportSurface(
                 drawScene(scene, viewportFrame, camera, selectedNodeIdSet, drag, viewportSize)
                 selectionRect?.let { drawSelection(it) }
             }
+            shownActions?.let { SelectionActionsOverlay(it) }
             ViewportChrome(
                 scene = scene,
                 modifier = Modifier.align(Alignment.TopStart).padding(OverlayMargin),

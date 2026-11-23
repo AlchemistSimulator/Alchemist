@@ -65,7 +65,10 @@ internal fun DrawScope.drawGrid(camera: ViewportCameraState) {
     }
 }
 
-/** Draws the links and the nodes, moving the nodes being dragged along with the pointer. */
+/**
+ * Draws the links and the nodes, moving the nodes being dragged along with the pointer;
+ * when cloning, the nodes stay, and translucent copies follow the pointer.
+ */
 internal fun DrawScope.drawScene(
     scene: ViewportScene,
     frame: ViewportFrame,
@@ -76,9 +79,10 @@ internal fun DrawScope.drawScene(
 ) {
     val moving = drag as? ViewportDrag.MoveNodes
     val movingDelta = moving?.screenDelta(camera, viewportSize) ?: Offset.Zero
+    val cloning = moving?.kind == ViewportDrag.MoveNodes.Kind.CLONE
+    fun isDragged(nodeIndex: Int) = moving != null && scene.nodes.getOrNull(nodeIndex)?.id in moving.nodeIds
     fun centerOf(nodeIndex: Int): Offset? = frame.screenPositions[nodeIndex]?.let { position ->
-        val isMoving = moving != null && scene.nodes.getOrNull(nodeIndex)?.id in moving.nodeIds
-        if (isMoving) position + movingDelta else position
+        if (!cloning && isDragged(nodeIndex)) position + movingDelta else position
     }
     if (scene.showLinks) {
         frame.visibleEdges.forEach { edge ->
@@ -100,6 +104,11 @@ internal fun DrawScope.drawScene(
             drawNode(center, camera.zoom, isSelected = scene.nodes[nodeIndex].id in selectedNodeIds)
         }
     }
+    if (cloning) {
+        frame.visibleNodeIndices.filter(::isDragged).forEach { nodeIndex ->
+            frame.screenPositions[nodeIndex]?.let { position -> drawNodeCopy(position + movingDelta, camera.zoom) }
+        }
+    }
 }
 
 /** Draws the selection box. */
@@ -115,6 +124,16 @@ internal fun DrawScope.drawSelection(rect: Rect) {
 
 private fun DrawScope.drawAxis(start: Offset, end: Offset) {
     drawLine(color = Outline.copy(alpha = 0.7f), start = start, end = end, strokeWidth = 1.6f, cap = StrokeCap.Round)
+}
+
+private fun DrawScope.drawNodeCopy(center: Offset, zoom: Float) {
+    drawCircle(color = PrimaryAccent.copy(alpha = 0.35f), radius = NODE_RADIUS.dp.toPx() * zoom, center = center)
+    drawCircle(
+        color = PrimaryAccent.copy(alpha = 0.6f),
+        radius = NODE_RADIUS.dp.toPx() * zoom,
+        center = center,
+        style = Stroke(width = 1.dp.toPx()),
+    )
 }
 
 private fun DrawScope.drawNode(center: Offset, zoom: Float, isSelected: Boolean) {

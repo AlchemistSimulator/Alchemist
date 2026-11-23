@@ -29,6 +29,7 @@ internal sealed interface ViewportDrag {
         secondaryPressed -> Pan(position)
         this is Select -> copy(current = position)
         this is MoveNodes -> copy(current = position)
+        this is DeleteNodes -> copy(current = position)
         else -> None
     }
 
@@ -67,18 +68,29 @@ internal sealed interface ViewportDrag {
     }
 
     /**
-     * Selected nodes are being moved: the point grabbed stays under the pointer, even if the camera moves.
+     * The Delete button over the selection is pressed: the nodes go if it is released on the button.
+     *
+     * @property current where the pointer is now, on screen.
+     * @property nodeIds the nodes to delete.
+     */
+    data class DeleteNodes(val current: Offset, val nodeIds: Set<Int>) : ViewportDrag
+
+    /**
+     * Selected nodes are being moved, or copies of them: the point grabbed stays under the pointer,
+     * even if the camera moves.
      *
      * @property anchor where the drag started, on screen.
      * @property anchorBase where the drag started, in base coordinates when it started.
      * @property current where the pointer is now, on screen.
      * @property nodeIds the nodes being moved.
+     * @property kind what started the drag, and so what it does.
      */
     data class MoveNodes(
         val anchor: Offset,
         val anchorBase: Offset,
         val current: Offset,
         val nodeIds: Set<Int>,
+        val kind: Kind = Kind.CTRL_DRAG,
     ) : ViewportDrag {
         /** How far the pointer moved on screen. */
         val delta: Offset get() = current - anchor
@@ -90,5 +102,17 @@ internal sealed interface ViewportDrag {
         /** How far the nodes appear moved on screen, as seen through [camera]. */
         fun screenDelta(camera: ViewportCameraState, viewportSize: IntSize): Offset =
             baseDelta(camera, viewportSize) * camera.zoom
+
+        /** What started a drag of nodes. */
+        enum class Kind {
+            /** Ctrl and a selected node: a click without moving removes the node from the selection. */
+            CTRL_DRAG,
+
+            /** The Move button: the nodes go where they are dropped. */
+            MOVE,
+
+            /** The Clone button: the nodes stay, and copies of them are added where they are dropped. */
+            CLONE,
+        }
     }
 }

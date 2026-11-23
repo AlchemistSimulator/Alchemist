@@ -1,6 +1,19 @@
 # A plain 2D grid computing a gradient from the bottom left corner, for UI snapshots.
 incarnation: protelis
 
+_snapshots:
+  - name: wide
+  - name: compact
+    size: [1024, 600]
+  - name: inspector
+    select: [0, 1, 2, 3]
+  - name: zoomed-editor-help
+    select: [0]
+    editor: distance
+    zoom: 4
+    pan: [300, -200]
+    keys: [H]
+
 seeds:
   scenario: 0
   simulation: 0

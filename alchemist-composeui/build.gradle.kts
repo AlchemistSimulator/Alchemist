@@ -55,6 +55,7 @@ kotlin {
                 implementation(alchemist("test"))
                 implementation(incarnation("protelis"))
                 implementation(incarnation("sapere"))
+                implementation(libs.snakeyaml)
             }
         }
     }

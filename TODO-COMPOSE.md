@@ -108,7 +108,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 
 A way to look at the UI while developing, for both the developer and the agent.
 
-- [ ] **Snapshot renderer (JVM, headless).** A Gradle task, e.g. `alchemist-composeui:renderSnapshots`, that:
+- [x] **Snapshot renderer (JVM, headless).** A Gradle task, e.g. `alchemist-composeui:renderSnapshots`, that:
   - loads a set of scenario files from `src/jvmTest/resources/snapshots/*.yml` (or `.alchemist.kts`);
   - runs each for a fixed number of steps with a fixed seed;
   - renders the full UI offscreen (`ImageComposeScene`) at a few sizes: wide, compact, and an inspector/effects panel open;
@@ -116,7 +116,8 @@ A way to look at the UI while developing, for both the developer and the agent.
 
   These are review images, not assertions, so they cannot become flaky tests. The agent can open the PNGs directly; the user can open the folder.
 - [ ] **Canvas image sequences** (after the effect system, Phase 3). The same renderer writes a sequence of images of the canvas alone, without panels, at a chosen resolution: one image every chosen number of steps or amount of simulated time, numbered so they can be turned into a video. The canvas is drawn with the configured effects.
-- [ ] **Scripted UI states.** Each snapshot can declare UI actions to apply before rendering: select nodes, toggle groups, set zoom/pan, open panels. This lets one image show one specific feature.
+- [x] **Scripted UI states.** Each snapshot can declare UI actions to apply before rendering: select nodes, toggle groups, set zoom/pan, open panels. This lets one image show one specific feature.
+  Done as a `_snapshots` list in the scenario file (the loader ignores `_` keys): size, selection, value editor, zoom, pan and keys, replayed as real input. Toggling effect groups comes with Phase 3.
 - [ ] **Live desktop run.** A task, e.g. `alchemist-composeui:runDemo`, that launches the desktop UI on a chosen scenario (`-Pscenario=...`) for hands-on inspection.
 - [ ] **Live browser run.** `wasmJsBrowserDevelopmentRun` on the demo controller now; on a real simulation once Phase 4 lands.
 - [ ] **Browser snapshots (optional, later).** Headless Chromium screenshots of the wasm build, so both targets can be compared visually.

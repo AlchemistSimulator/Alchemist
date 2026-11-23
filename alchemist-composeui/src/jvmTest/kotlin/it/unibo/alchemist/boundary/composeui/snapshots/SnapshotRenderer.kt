@@ -10,6 +10,13 @@
 package it.unibo.alchemist.boundary.composeui.snapshots
 
 import androidx.compose.ui.ImageComposeScene
+import androidx.compose.ui.InternalComposeUiApi
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.pointer.PointerButton
+import androidx.compose.ui.input.pointer.PointerButtons
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.unit.Density
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistEnvironments.toViewport
@@ -22,41 +29,43 @@ import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiController
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import java.io.File
+import kotlin.math.abs
+import kotlin.math.sign
 import org.jetbrains.skia.EncodedImageFormat
+import org.yaml.snakeyaml.Yaml
 
-/** Steps each scenario runs before its snapshot. */
+/** Steps each scenario runs before its snapshots. */
 private const val STEPS = 2_000L
 
-/** Nodes selected for the snapshot with the inspector open. */
-private const val SELECTED_NODES = 4
-
-/** Frames rendered before the snapshot, so that layout settles and the inspector finishes sliding in. */
-private const val FRAMES = 60
+/** Frames rendered before and after the scripted input, so that layout and animations settle. */
+private const val SETTLE_FRAMES = 60
 private const val FRAME_NANOS = 16_666_667L
+
+/** The key of a scenario file that lists its snapshots; the loader ignores keys starting with `_`. */
+private const val SNAPSHOTS_KEY = "_snapshots"
 
 /**
  * Renders the whole UI offscreen for every `.yml` scenario in the folder `args[0]`, writing
- * `<scenario>-<size>.png` into the folder `args[1]`: review images for people and agents, not assertions.
+ * `<scenario>-<snapshot>.png` into the folder `args[1]`: review images for people and agents, not assertions.
+ * A scenario lists its snapshots under `_snapshots` (see [SnapshotSpec.of]); otherwise it gets [SnapshotSpec.DEFAULTS].
  */
 fun main(args: Array<String>) {
     val (scenarios, output) = args.map(::File)
     output.mkdirs()
     scenarios.listFiles { file -> file.extension == "yml" }.orEmpty().sorted().forEach { scenario ->
         val state = scenario.runToSnapshot()
-        Size.entries.forEach { size ->
-            val target = output.resolve("${scenario.nameWithoutExtension}-${size.label}.png")
-            target.writeBytes(state.withSelectionFor(size).render(size))
+        scenario.snapshots().forEach { spec ->
+            val target = output.resolve("${scenario.nameWithoutExtension}-${spec.name}.png")
+            target.writeBytes(state.render(spec))
             println("Rendered $target")
         }
     }
 }
 
-/** The window sizes of the snapshots. */
-private enum class Size(val label: String, val width: Int, val height: Int, val inspector: Boolean) {
-    WIDE("wide", 1920, 1080, inspector = false),
-    COMPACT("compact", 1024, 600, inspector = false),
-    INSPECTOR("inspector", 1920, 1080, inspector = true),
-}
+private fun File.snapshots(): List<SnapshotSpec> =
+    (Yaml().load<Map<String, Any?>>(readText())[SNAPSHOTS_KEY] as? List<*>)
+        ?.map { entry -> SnapshotSpec.of(entry as? Map<*, *> ?: error("Not a snapshot: $entry")) }
+        ?: SnapshotSpec.DEFAULTS
 
 /** Loads this scenario, runs it for [STEPS] steps, and returns the UI state of the result, links shown. */
 private fun File.runToSnapshot(): AlchemistUiState {
@@ -74,15 +83,19 @@ private fun File.runToSnapshot(): AlchemistUiState {
     )
 }
 
-private fun AlchemistUiState.withSelectionFor(size: Size): AlchemistUiState =
-    if (size.inspector) withSelection(scene.nodes.map { it.id }.sorted().take(SELECTED_NODES)) else this
-
-private fun AlchemistUiState.render(size: Size): ByteArray {
+/**
+ * Renders this state as [spec] asks: input first, on the bare UI, so that panels opened later do not take it;
+ * then the selection and the value editor.
+ */
+private fun AlchemistUiState.render(spec: SnapshotSpec): ByteArray {
     val controller = ComposeUiController(this) { NoOpUiCallbacks }
-    val scene = ImageComposeScene(width = size.width, height = size.height, density = Density(1f)) { app(controller) }
+    val scene = ImageComposeScene(width = spec.width, height = spec.height, density = Density(1f)) { app(controller) }
     return try {
-        repeat(FRAMES) { frame -> scene.render(frame * FRAME_NANOS).close() }
-        val image = scene.render(FRAMES * FRAME_NANOS)
+        repeat(SETTLE_FRAMES) { frame -> scene.render(frame * FRAME_NANOS).close() }
+        scene.play(spec)
+        controller.store.update(spec::applyTo)
+        repeat(SETTLE_FRAMES) { frame -> scene.render((SETTLE_FRAMES + frame) * FRAME_NANOS).close() }
+        val image = scene.render(2L * SETTLE_FRAMES * FRAME_NANOS)
         try {
             checkNotNull(image.encodeToData(EncodedImageFormat.PNG)) { "Cannot encode the snapshot as PNG" }.bytes
         } finally {
@@ -90,5 +103,25 @@ private fun AlchemistUiState.render(size: Size): ByteArray {
         }
     } finally {
         scene.close()
+    }
+}
+
+/** Sends the input of [spec]: wheel notches and a right-button drag at the centre, then the keys. */
+@OptIn(InternalComposeUiApi::class)
+private fun ImageComposeScene.play(spec: SnapshotSpec) {
+    val center = Offset(spec.width / 2f, spec.height / 2f)
+    repeat(abs(spec.zoom)) {
+        sendPointerEvent(PointerEventType.Scroll, center, scrollDelta = Offset(0f, -sign(spec.zoom.toFloat())))
+    }
+    if (spec.pan != Offset.Zero) {
+        val secondary = PointerButtons(isSecondaryPressed = true)
+        sendPointerEvent(PointerEventType.Press, center, buttons = secondary, button = PointerButton.Secondary)
+        sendPointerEvent(PointerEventType.Move, center + spec.pan, buttons = secondary)
+        sendPointerEvent(PointerEventType.Release, center + spec.pan, button = PointerButton.Secondary)
+    }
+    spec.keys.forEach { key ->
+        // Compose builds key events only through an internal factory, opted in above: the alternative is AWT events.
+        sendKeyEvent(KeyEvent(key, KeyEventType.KeyDown))
+        sendKeyEvent(KeyEvent(key, KeyEventType.KeyUp))
     }
 }

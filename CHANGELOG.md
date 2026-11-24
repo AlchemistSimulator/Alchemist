@@ -1,3 +1,10 @@
+## [50.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.7...50.0.8) (2026-11-24)
+
+### Dependency updates
+
+* **core-deps:** update react to v2026.11.4-19.3.1 ([#5766](https://github.com/AlchemistSimulator/Alchemist/issues/5766)) ([388b486](https://github.com/AlchemistSimulator/Alchemist/commit/388b486c74273436b4ec8dd6d3b41f370be01c08))
+* **deps:** update dependency io.arrow-kt:arrow-core to v2.3.0.1 ([#5769](https://github.com/AlchemistSimulator/Alchemist/issues/5769)) ([920183c](https://github.com/AlchemistSimulator/Alchemist/commit/920183c118f66471c2346a5098c4b78df7b739cc))
+
 ## [50.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/50.0.6...50.0.7) (2026-11-23)
 
 ### Dependency updates

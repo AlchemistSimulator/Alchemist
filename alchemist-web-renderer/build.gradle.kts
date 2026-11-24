@@ -10,6 +10,7 @@
 import Libs.alchemist
 import Libs.incarnation
 import com.google.devtools.ksp.gradle.KspAATask
+import dev.detekt.gradle.Detekt
 
 plugins {
     id("kotlin-multiplatform-convention")
@@ -87,6 +88,10 @@ kotlin {
 }
 
 tasks.cpdKotlinCheck.configure { dependsOn(tasks.withType<KspAATask>()) }
+
+// Detekt recognizes only the standard test source sets, and would check these tests as main code.
+// Exclusion patterns are relative to the source roots, which hide the source set name: match the absolute path.
+tasks.withType<Detekt>().configureEach { exclude { "/jvmAndJsTest/" in it.file.invariantSeparatorsPath } }
 
 publishing.publications.withType<MavenPublication>().configureEach {
     pom {

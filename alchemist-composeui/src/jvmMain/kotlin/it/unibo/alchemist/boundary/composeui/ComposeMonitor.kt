@@ -138,8 +138,11 @@ class ComposeMonitor<T, P : Position<P>> @JvmOverloads constructor(
 
     private fun updateUiState(environment: Environment<T, P>, time: Time, step: Long) {
         // Built once, outside of update, which may run its lambda again if the UI changes the state meanwhile.
-        val showLinks = currentUiState.state.scene.showLinks
-        val viewport = environment.toViewport(renderLinks = showLinks)
+        val current = currentUiState.state
+        val viewport = environment.toViewport(
+            renderLinks = current.scene.showLinks,
+            inspected = current.selectedNodeIds,
+        )
         currentUiState.update {
             it.copy(
                 scene = viewport.copy(showLinks = it.scene.showLinks),

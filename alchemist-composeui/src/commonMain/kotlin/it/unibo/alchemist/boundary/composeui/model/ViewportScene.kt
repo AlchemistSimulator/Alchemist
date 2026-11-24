@@ -61,6 +61,25 @@ internal data class ViewportScene(
         return nodeIds.distinct().filter { it in availableIds }.toImmutableList()
     }
 
+    /** The nodes among [nodeIds] whose reactions are missing. */
+    internal fun uninspected(nodeIds: Collection<Int>): List<Int> {
+        val requested = nodeIds.toHashSet()
+        return nodes.filter { it.id in requested && it.reactions == null }.map(ViewportNode::id)
+    }
+
+    /**
+     * This scene with the [reactions] of the nodes that have none yet.
+     * Reactions already there come from a frame at least as recent, so they stay.
+     */
+    internal fun withMissingReactions(reactions: Map<Int, List<String>>): ViewportScene = copy(
+        nodes = nodes.map { node ->
+            reactions[node.id]
+                ?.takeIf { node.reactions == null }
+                ?.let { node.copy(reactions = it.toImmutableList()) }
+                ?: node
+        }.toImmutableList(),
+    )
+
     /** Moves the nodes in [nodeIds] by [deltaX] and [deltaY] on the plane. */
     internal fun translateSelectedNodes(nodeIds: Collection<Int>, deltaX: Double, deltaY: Double): ViewportScene =
         when {

@@ -52,6 +52,8 @@ internal object NoOpUiCallbacks : AlchemistUiCallbacks {
     }
 
     override val display: AlchemistUiCallbacks.Display = object : AlchemistUiCallbacks.Display {
+        override suspend fun inspect(nodeIds: List<Int>) = Unit
+
         override suspend fun toggleLinks() = Unit
     }
 }

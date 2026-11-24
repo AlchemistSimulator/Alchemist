@@ -67,6 +67,23 @@ class EngineUiNodeEditTest {
         }
     }
 
+    @Test
+    fun `inspecting nodes sends their reactions, keeping the selection`() = runTest {
+        val simulation = TestSimulations.ticking(0.0 to 0.0, 1.0 to 1.0)
+        val (first, second) = simulation.environment.nodes.current.toList()
+        val store = ComposeUiStateStore(
+            AlchemistUiState(scene = simulation.environment.toViewport()).withSelection(listOf(first.id)),
+        )
+        val callback = EngineUiCallbacks(simulation, store)
+        simulation.runningInBackground {
+            callback.display.inspect(listOf(first.id))
+        }
+        val shown = store.state.scene.nodes.associate { it.id to it.reactions }
+        assertEquals(first.reactions.current.size, shown[first.id]?.size)
+        assertNull(shown[second.id])
+        assertEquals(listOf(first.id), store.state.selectedNodeIds)
+    }
+
     private companion object {
         const val MISSING_NODE = 42
         val MOLECULE = SimpleMolecule("x")

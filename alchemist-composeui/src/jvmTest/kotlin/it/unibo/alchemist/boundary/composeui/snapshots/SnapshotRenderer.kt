@@ -67,14 +67,19 @@ private fun File.snapshots(): List<SnapshotSpec> =
         ?.map { entry -> SnapshotSpec.of(entry as? Map<*, *> ?: error("Not a snapshot: $entry")) }
         ?: SnapshotSpec.DEFAULTS
 
-/** Loads this scenario, runs it for [STEPS] steps, and returns the UI state of the result, links shown. */
+/**
+ * Loads this scenario, runs it for [STEPS] steps, and returns the UI state of the result,
+ * links shown and every node inspected, as snapshots may select any of them.
+ */
 private fun File.runToSnapshot(): AlchemistUiState {
     val simulation: Simulation<Any, Euclidean2DPosition> = LoadAlchemist.from(this).getDefault()
     simulation.environment.addTerminator { simulation.step >= STEPS }
     simulation.play()
     simulation.run()
     return AlchemistUiState(
-        scene = simulation.environment.toViewport(renderLinks = true).copy(showLinks = true),
+        scene = simulation.environment
+            .toViewport(renderLinks = true, inspected = simulation.environment.nodes.current.map { it.id })
+            .copy(showLinks = true),
         controls = SimulationControlsState(
             status = SimulationStatus.PAUSED,
             time = simulation.currentTime.toDouble(),

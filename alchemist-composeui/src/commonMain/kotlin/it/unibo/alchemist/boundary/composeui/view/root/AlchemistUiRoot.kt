@@ -26,6 +26,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,6 +73,12 @@ internal fun AlchemistUiRoot(state: AlchemistUiState, controller: ComposeUiContr
     val coroutineScope = rememberCoroutineScope()
     val transport = controller.callbacks.transport
     val nodes = controller.callbacks.nodes
+    // Frames carry reactions only for the nodes selected when taken: ask for those of newly selected nodes.
+    LaunchedEffect(state.selectedNodeIds) {
+        state.scene.uninspected(state.selectedNodeIds)
+            .takeIf { it.isNotEmpty() }
+            ?.let { controller.callbacks.display.inspect(it) }
+    }
     MaterialTheme(
         colors = MaterialTheme.colors.copy(
             primary = PrimaryAccent,

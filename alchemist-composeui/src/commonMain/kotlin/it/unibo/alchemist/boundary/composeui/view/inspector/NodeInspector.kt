@@ -114,6 +114,11 @@ private fun SingleNodeInspector(inspector: SingleNode, actions: InspectorActions
         concentrations = inspector.concentrations,
         actions = actions,
     )
+    ReactionsSection(
+        title = "Reactions",
+        description = "What the node runs, as the simulation describes it.",
+        reactionsByNode = mapOf(inspector.nodeId to inspector.reactions),
+    )
     InspectorSection(
         title = "Metadata",
         description = "Simulator-provided details exposed by the current adapter.",
@@ -143,6 +148,11 @@ private fun GroupNodeInspector(inspector: NodeGroup, actions: InspectorActions) 
         concentrations = inspector.concentrations,
         actions = actions,
         valuesByNode = inspector.valuesByNode,
+    )
+    ReactionsSection(
+        title = "Reactions",
+        description = "What each node runs, as the simulation describes it; ▸ shows the reactions of a node.",
+        reactionsByNode = inspector.reactionsByNode,
     )
     InspectorSection(
         title = "Position",

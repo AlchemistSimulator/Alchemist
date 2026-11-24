@@ -187,19 +187,6 @@ private fun ValueField(shown: String, modifier: Modifier, description: String? =
 
 /** A narrow button showing [glyph]. */
 @Composable
-private fun GlyphButton(glyph: String, description: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(TransportButtonSize / 2, TransportButtonSize)
-            .semantics { contentDescription = description }
-            .clickableKeepingShortcuts(onClickLabel = description, onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = glyph, style = MaterialTheme.typography.subtitle1, color = SecondaryAccent)
-    }
-}
-
-@Composable
 private fun NewMoleculeRow(onSet: (molecule: String, value: String) -> Unit) {
     var molecule by remember { mutableStateOf("") }
     var value by remember { mutableStateOf("") }

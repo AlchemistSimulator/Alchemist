@@ -16,6 +16,12 @@ import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
  * What the demo scene draws: its links are always available, so toggling them only flips the switch.
  */
 internal class DemoDisplay(private val store: ComposeUiStateStore) : AlchemistUiCallbacks.Display {
+    /** Demo nodes run no reactions. */
+    override suspend fun inspect(nodeIds: List<Int>) = store.update {
+        it.copy(scene = it.scene.withMissingReactions(nodeIds.associateWith { emptyList() }))
+            .withSelection(it.selectedNodeIds)
+    }
+
     override suspend fun toggleLinks() = store.update {
         it.copy(scene = it.scene.copy(showLinks = !it.scene.showLinks))
     }

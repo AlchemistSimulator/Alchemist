@@ -16,9 +16,11 @@ import it.unibo.alchemist.boundary.composeui.model.ControlDialogState
 import it.unibo.alchemist.boundary.composeui.view.state.ComposeUiStateStore
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.SimulationState
+import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.completeWith
 import kotlinx.coroutines.withContext
 
 /**
@@ -53,6 +55,19 @@ internal class EngineBridge<T, P : Position<P>>(
         return outcome.await()
     }
 
+    /**
+     * Runs [query] on the simulation thread, between two steps, and returns its result.
+     * Once the simulation has ended, nothing changes the environment, so it runs right away.
+     */
+    suspend fun <R> read(query: Environment<T, P>.() -> R): R = when (simulation.state) {
+        SimulationState.TERMINATED -> simulation.environment.query()
+        else -> {
+            val result = CompletableDeferred<R>()
+            simulation.schedule { result.completeWith(runCatching { simulation.environment.query() }) }
+            result.await()
+        }
+    }
+
     /** Shows an error dialog. */
     suspend fun showDialog(title: String, message: String) = updateState {
         it.copy(controls = it.controls.copy(dialog = ControlDialogState(title, message)))
@@ -65,7 +80,9 @@ internal class EngineBridge<T, P : Position<P>>(
     suspend fun syncSimulationState(refreshScene: Boolean = false) = updateState {
         val scene = when {
             refreshScene ->
-                simulation.environment.toViewport(renderLinks = it.scene.showLinks).copy(showLinks = it.scene.showLinks)
+                simulation.environment
+                    .toViewport(renderLinks = it.scene.showLinks, inspected = it.selectedNodeIds)
+                    .copy(showLinks = it.scene.showLinks)
             else -> it.scene
         }
         it.copy(

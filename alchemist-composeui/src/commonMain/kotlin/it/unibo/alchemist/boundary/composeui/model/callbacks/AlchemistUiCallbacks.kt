@@ -89,6 +89,9 @@ internal interface AlchemistUiCallbacks {
 
     /** What the simulation sends to draw. */
     interface Display {
+        /** Sends the reactions of [nodeIds]: frames carry them only for the nodes selected when taken. */
+        suspend fun inspect(nodeIds: List<Int>)
+
         /** Shows or hides links. */
         suspend fun toggleLinks()
     }

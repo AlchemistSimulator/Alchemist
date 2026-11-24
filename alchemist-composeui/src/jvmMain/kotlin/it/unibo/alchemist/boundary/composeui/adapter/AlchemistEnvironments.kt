@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.composeui.adapter
 
+import it.unibo.alchemist.boundary.composeui.adapter.AlchemistNodes.reactionTexts
 import it.unibo.alchemist.boundary.composeui.adapter.AlchemistNodes.toViewport
 import it.unibo.alchemist.boundary.composeui.model.ViewportScene
 import it.unibo.alchemist.model.Environment
@@ -19,10 +20,23 @@ import kotlinx.collections.immutable.toImmutableList
  * Turns Alchemist environments into what the viewport draws.
  */
 internal object AlchemistEnvironments {
-    /** This environment as the viewport shows it; links are collected only if [renderLinks]. */
-    fun <T, P : Position<P>> Environment<T, P>.toViewport(renderLinks: Boolean = false): ViewportScene {
+    /** The reactions as text of the nodes [nodeIds] still in this environment. */
+    fun Environment<*, *>.reactionsOf(nodeIds: Collection<Int>): Map<Int, List<String>> {
+        val requested = nodeIds.toHashSet()
+        return nodes.current.filter { it.id in requested }.associate { it.id to it.reactionTexts }
+    }
+
+    /**
+     * This environment as the viewport shows it; links are collected only if [renderLinks],
+     * and reactions only for the nodes [inspected].
+     */
+    fun <T, P : Position<P>> Environment<T, P>.toViewport(
+        renderLinks: Boolean = false,
+        inspected: Collection<Int> = emptyList(),
+    ): ViewportScene {
         val links = if (renderLinks) EdgeSnapshot.of(neighborPairs()) else EdgeSnapshot()
-        val viewportNodes = nodes.current.map { it.toViewport(this) }.toImmutableList()
+        val inspectedIds = inspected.toHashSet()
+        val viewportNodes = nodes.current.map { it.toViewport(this, it.id in inspectedIds) }.toImmutableList()
         return ViewportScene(
             nodes = viewportNodes,
             edges = links.edges,

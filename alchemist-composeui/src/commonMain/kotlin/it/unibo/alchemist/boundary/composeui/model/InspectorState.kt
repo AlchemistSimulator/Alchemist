@@ -32,6 +32,7 @@ internal sealed interface InspectorState {
      * @property position the node position.
      * @property concentrations the node contents, by molecule.
      * @property metadata extra details about the node.
+     * @property reactions the reactions as text, or `null` until the simulation sends them.
      */
     @Immutable
     data class SingleNode(
@@ -41,6 +42,7 @@ internal sealed interface InspectorState {
         val position: ImmutableList<Labeled<Double>>,
         val concentrations: ImmutableList<Labeled<Any?>>,
         val metadata: ImmutableList<Labeled<Any?>>,
+        val reactions: ImmutableList<String>? = null,
     ) : InspectorState
 
     /**
@@ -52,6 +54,7 @@ internal sealed interface InspectorState {
      * @property position the box containing the nodes.
      * @property concentrations each molecule, with its value if all nodes share it.
      * @property valuesByNode for each molecule, its value in every node of the group.
+     * @property reactionsByNode the reactions of each node as text, or `null` until the simulation sends them.
      */
     @Immutable
     data class NodeGroup(
@@ -61,6 +64,7 @@ internal sealed interface InspectorState {
         val position: ImmutableList<Labeled<Double>>,
         val concentrations: ImmutableList<Labeled<Any?>>,
         val valuesByNode: ImmutableMap<String, ImmutableList<NodeValue>> = persistentMapOf(),
+        val reactionsByNode: ImmutableMap<Int, ImmutableList<String>?> = persistentMapOf(),
     ) : InspectorState {
         internal companion object {
             /** Shown for a molecule whose value differs across the group. */
@@ -91,6 +95,7 @@ internal sealed interface InspectorState {
                     ),
                     concentrations = concentrations.toImmutableList(),
                     valuesByNode = valuesByNode.toImmutableMap(),
+                    reactionsByNode = nodes.associate { it.id to it.reactions }.toImmutableMap(),
                 )
             }
         }

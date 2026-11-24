@@ -14,18 +14,30 @@ import it.unibo.alchemist.boundary.composeui.model.ViewportNode
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 /**
  * Turns Alchemist nodes into what the viewport draws.
  */
 internal object AlchemistNodes {
-    /** This node as the viewport shows it, at its position in [environment]. */
-    fun <T, P : Position<P>> Node<T>.toViewport(environment: Environment<T, P>): ViewportNode = ViewportNode(
+    /** The reactions of this node as text. */
+    val Node<*>.reactionTexts: ImmutableList<String>
+        get() = reactions.current.sortedBy { it.nextOccurrence.current }.map { it.toString() }.toImmutableList()
+
+    /**
+     * This node as the viewport shows it, at its position in [environment].
+     * Its reactions are included only if [inspected].
+     */
+    fun <T, P : Position<P>> Node<T>.toViewport(
+        environment: Environment<T, P>,
+        inspected: Boolean = false,
+    ): ViewportNode = ViewportNode(
         id = id,
         coordinates = environment.currentPositionOf(this).coordinates.toList().toImmutableList(),
         concentrations = contents.current
             .map { (molecule, concentration) -> Labeled(molecule.toString(), concentration) }
             .toImmutableList(),
+        reactions = if (inspected) reactionTexts else null,
     )
 }

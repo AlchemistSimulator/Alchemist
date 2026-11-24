@@ -84,6 +84,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
   - [x] **Clone**: the same drag, drawing the original nodes plus a translucent copy under the pointer; on release, the copies are added at the new positions, through `nodes.clone`: on the engine, `Node.cloneNode` and `addNode` between two steps.
   - [x] **Delete**: removes the selection at once, through `nodes.delete`. There is no undo: the engine disposes removed nodes, so bringing them back would only create new nodes.
   - [x] Keyboard shortcuts: Ctrl+D clones the selection a little down and right, Delete deletes it; both listed in the help.
+- [x] Show the reactions of the selected nodes, read-only, between their concentrations and their position, as the Swing node tracker does. Their text is costly, so frames carry it only for the selected nodes; a newly selected node gets it through `display.inspect`, read on the simulation thread.
 
 ### Pacing
 
@@ -144,11 +145,14 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 - [ ] **Frame model** in `commonMain`, `@Serializable`: a `SceneFrame` holding
   - time, step, status (mirrored as `SimulationStatus` until Phase 8);
   - nodes: id, position, and only the values requested by active effects;
+  - details of the inspected nodes only: every molecule with its value as text, and the reactions as text;
   - links;
   - environment-level primitives: polygons, polylines, raster grids, markers;
   - the coordinate system (Euclidean or geographic).
 
   It replaces the current `ViewportScene` payload; `ViewportScene` keeps only UI state.
+  Concentrations cross as text plus, for numbers and booleans, their value, so effects can map them without parsing; edits go back as text, parsed by the incarnation. The Alchemist model itself is not made serializable: frames are a lossy view, and checkpointing a simulation would be a separate feature.
+- [ ] **Frame freshness and cost.** Latest frame wins (conflated `StateFlow`), so a slow consumer skips frames but never shows an old one; the last frame after pause or termination is always sent. Remotely, send node data as deltas against the last frame acknowledged, keyed by node id, and full frames on (re)connection.
 - [ ] **Session abstraction** in `commonMain`: a `SimulationSession` with a `frames: StateFlow<SceneFrame>`, commands (play, pause, step, go to time/step, move/clone/delete nodes, inject molecule, set throttling/real-time), and the active effect configuration.
   - `LocalSession` (JVM) wraps the current `EngineUiCallbacks` logic.
   - `RemoteSession` (common: JVM, JS, wasm) is implemented in Phase 4.

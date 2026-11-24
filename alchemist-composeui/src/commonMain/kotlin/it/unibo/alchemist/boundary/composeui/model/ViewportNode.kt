@@ -23,6 +23,7 @@ import kotlinx.collections.immutable.toImmutableList
  * @property coordinates the node position; only the first two are drawn.
  * @property metadata extra details about the node.
  * @property concentrations the node contents, by molecule.
+ * @property reactions the reactions as text; `null` unless the node is inspected, as they are costly to build.
  */
 @Immutable
 internal data class ViewportNode(
@@ -30,6 +31,7 @@ internal data class ViewportNode(
     val coordinates: ImmutableList<Double>,
     val metadata: ImmutableList<Labeled<Any?>> = persistentListOf(),
     val concentrations: ImmutableList<Labeled<Any?>> = persistentListOf(),
+    val reactions: ImmutableList<String>? = null,
 ) {
     init {
         require(coordinates.size >= 2) {
@@ -44,6 +46,7 @@ internal data class ViewportNode(
         position = persistentListOf(Labeled("X", coordinates[0]), Labeled("Y", coordinates[1])),
         concentrations = concentrations,
         metadata = metadata,
+        reactions = reactions,
     )
 
     /** The current position, to send back to the simulation. */

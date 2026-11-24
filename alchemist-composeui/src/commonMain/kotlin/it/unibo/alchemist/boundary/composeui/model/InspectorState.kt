@@ -32,7 +32,8 @@ internal sealed interface InspectorState {
      * @property position the node position.
      * @property concentrations the node contents, by molecule.
      * @property metadata extra details about the node.
-     * @property reactions the reactions as text, or `null` until the simulation sends them.
+     * @property reactions the reactions as text; `null` until the simulation sends them,
+     * while an empty list means that the node has none.
      */
     @Immutable
     data class SingleNode(
@@ -54,7 +55,8 @@ internal sealed interface InspectorState {
      * @property position the box containing the nodes.
      * @property concentrations each molecule, with its value if all nodes share it.
      * @property valuesByNode for each molecule, its value in every node of the group.
-     * @property reactionsByNode the reactions of each node as text, or `null` until the simulation sends them.
+     * @property reactionsByNode the reactions of each node as text; `null` until the simulation sends them,
+     * while an empty list means that the node has none.
      */
     @Immutable
     data class NodeGroup(

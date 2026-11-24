@@ -23,7 +23,8 @@ import kotlinx.collections.immutable.toImmutableList
  * @property coordinates the node position; only the first two are drawn.
  * @property metadata extra details about the node.
  * @property concentrations the node contents, by molecule.
- * @property reactions the reactions as text; `null` unless the node is inspected, as they are costly to build.
+ * @property reactions the reactions as text, built only for inspected nodes, as they are costly.
+ * `null` means not built yet, not that the node has no reactions, which is an empty list.
  */
 @Immutable
 internal data class ViewportNode(

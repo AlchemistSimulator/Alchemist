@@ -140,23 +140,38 @@ A way to look at the UI while developing, for both the developer and the agent.
 
 ## Phase 2: Core architecture (prerequisite for effects and the browser)
 
-Separate what the simulation produces from how it is shown, so the same UI can run in-process or remotely.
+Five layers, each depending only on those above it:
 
-- [ ] **Frame model** in `commonMain`, `@Serializable`: a `SceneFrame` holding
-  - time, step, status (mirrored as `SimulationStatus` until Phase 8);
-  - nodes: id, position, and only the values requested by active effects;
-  - details of the inspected nodes only: every molecule with its value as text, and the reactions as text;
-  - links;
-  - environment-level primitives: polygons, polylines, raster grids, markers;
+1. **The Alchemist model**, unchanged.
+2. **`alchemist-immutable-model-view`**: a multiplatform, serializable, immutable view of the model.
+3. **A GraphQL service** on layer 2, replacing the live surrogates of `alchemist-graphql-surrogates`.
+4. **A WebSocket service** on layer 2, only if measurably faster than GraphQL for the browser UI.
+5. **The Compose UI**, reading layer 2 in memory on the JVM, and through a service otherwise.
+
+### Layer 2: `alchemist-immutable-model-view`
+
+- [ ] **Module.** Kotlin Multiplatform (JVM, JS, wasm), `@Serializable` types in `commonMain`, depending on nothing of Alchemist there; the snapshot builder in `jvmMain`, depending on `alchemist-api`.
+- [ ] **Types**: a snapshot holding
+  - time, step, status (mirrored until Phase 8);
+  - nodes: id and position, plus the values requested;
+  - node details: every molecule with its value, the reactions and the properties, as text;
+  - links, possibly a sample of them, with their total count;
+  - environment-level primitives: layers, obstacles, polygons, polylines, raster grids, markers;
   - the coordinate system (Euclidean or geographic).
 
-  It replaces the current `ViewportScene` payload; `ViewportScene` keeps only UI state.
-  Concentrations cross as text plus, for numbers and booleans, their value, so effects can map them without parsing; edits go back as text, parsed by the incarnation. The Alchemist model itself is not made serializable: frames are a lossy view, and checkpointing a simulation would be a separate feature.
-- [ ] **Frame freshness and cost.** Latest frame wins (conflated `StateFlow`), so a slow consumer skips frames but never shows an old one; the last frame after pause or termination is always sent. Remotely, send node data as deltas against the last frame acknowledged, keyed by node id, and full frames on (re)connection.
-- [ ] **Session abstraction** in `commonMain`: a `SimulationSession` with a `frames: StateFlow<SceneFrame>`, commands (play, pause, step, go to time/step, move/clone/delete nodes, inject molecule, set throttling/real-time), and the active effect configuration.
-  - `LocalSession` (JVM) wraps the current `EngineUiCallbacks` logic.
-  - `RemoteSession` (common: JVM, JS, wasm) is implemented in Phase 4.
-- [ ] **Frame builder** (JVM): turns `Environment` into a `SceneFrame`. It extracts only what the current effect set requests (Phase 3), throttled to the UI FPS. It runs on the simulation thread, and the result is published immutably.
+  Concentrations are text plus, for numbers and booleans, their value, so effects map them without parsing; edits go back as text, parsed by the incarnation.
+  It is a description, not a checkpoint: no simulation can be rebuilt from it.
+  The types written in `alchemist-composeui` (`model/frame`, not committed) move here.
+- [ ] **Complete types, partial instances.** A snapshot holds only what its consumer asked for: GraphQL, the selection set of the query; the UI, the selected nodes and the values its effects need (Phase 3). Whatever was not asked is absent, never empty, so absent and empty stay distinct.
+- [ ] **Snapshot builder** (JVM): builds a snapshot from an `Environment` and a request, on the simulation thread, in one go, so that every part refers to the same step.
+- [ ] **Freshness and cost.** Latest snapshot wins (conflated `StateFlow`): a slow consumer skips snapshots, but never shows an old one; the last one after pause or termination is always sent. Over the network, node data may go as changes against the last snapshot received, keyed by node id, with a full snapshot on (re)connection.
+
+### Layer 5: the UI on layer 2
+
+- [ ] **Session abstraction** in `commonMain`: a `SimulationSession` with `snapshots: StateFlow<…>`, what to include (selection, effect requirements), commands (play, pause, step, go to time/step, move/clone/delete nodes, set concentrations, set pacing), and the active effect configuration.
+  - `LocalSession` (JVM): in memory, wrapping the current `EngineUiCallbacks` logic and the snapshot builder.
+  - `RemoteSession` (common): through a service, in Phase 4.
+- [ ] The engine monitor and the demo produce snapshots; the view reads them, and `ViewportScene` keeps only UI state (selection, camera, dialogs, link visibility).
 - [ ] **Projection abstraction**: `WorldProjection` with an identity/Euclidean implementation now and Web Mercator in Phase 5. Camera, hit-testing, selection and drag must work through it.
 - [ ] Move the demo controller onto a `FakeSession` so the browser demo exercises the same code paths.
 
@@ -170,7 +185,7 @@ Separate what the simulation produces from how it is shown, so the same UI can r
   - **Node effects** are applied to each visible node.
   - **Scene effects** are drawn once per frame: obstacles, layers, graphs.
 - [ ] `EffectGroup`: `name`, `enabled`, `opacity`, and an ordered list of effects. The UI shows an ordered list of groups. Toggling a group shows or hides a whole visualisation in one click; toggling an effect within a group fine-tunes it.
-- [ ] **Data requirements.** Each effect declares what it needs, for example "concentration of molecule `x`", "property `p` of molecule `x`" (DrawShape semantics through `Incarnation.getProperty`), "obstacles", "layer `L` sampled at N×N", "navigation graph". The frame builder collects only the union of the requirements of enabled effects. Disabled groups cost nothing.
+- [ ] **Data requirements.** Each effect declares what it needs, for example "concentration of molecule `x`", "property `p` of molecule `x`" (DrawShape semantics through `Incarnation.getProperty`), "obstacles", "layer `L` sampled at N×N", "navigation graph". The requirements are part of the snapshot request (layer 2): the builder collects only the union of those of enabled effects. Disabled groups cost nothing.
 - [ ] **Rendering.** A common renderer draws effects through `DrawScope`, in group order and effect order within a group, applying group opacity.
 - [ ] **Parameter descriptors.** Each effect type exposes typed parameter descriptors: number with range, colour, enum, molecule name, boolean. The editor UI is generated from these, with no reflection.
 - [ ] **Extensibility.** A polymorphic serializer registry, with JVM extractor contributions discovered through `ServiceLoader`, so new effects can be added without touching the core.
@@ -202,17 +217,23 @@ Separate what the simulation produces from how it is shown, so the same UI can r
 
 ## Phase 4: Stand-alone and browser
 
+- [ ] **GraphQL service on layer 2** (layer 3): `alchemist-graphql` serves snapshots instead of the live surrogates, resolving every query against a snapshot built on the simulation thread.
+  - The selection set of a query becomes the snapshot request; effect requirements travel as field arguments.
+  - Adds what the surrogates lack: reactions as text, link sampling, node details, a snapshot subscription, and the commands of the session.
+  - `alchemist-graphql-surrogates` is published: replacing it is a breaking change. Check its users, such as `alchemist-web-renderer`.
 - [ ] **Server** (JVM, Ktor): `ComposeMonitor` gains a mode parameter: `desktop` (default), `browser`, or `both`.
-  - In browser mode it serves the wasm bundle and a WebSocket endpoint that streams `SceneFrame`s and receives commands.
+  - In browser mode it serves the wasm bundle and the GraphQL endpoint.
   - It works on headless machines; print the URL at startup.
 - [ ] **Bundle packaging.** Copy the `wasmJsBrowserDistribution` output into the JVM jar's resources at build time, so `alchemist run sim.yml` with `mode: browser` needs nothing else.
-- [ ] **`RemoteSession`** (common Ktor client WebSocket):
+- [ ] **`RemoteSession`** (common, Apollo client): snapshots through the subscription, commands through mutations.
   - reconnect handling;
-  - frames delta-encoded or throttled to the client's requested FPS;
+  - snapshots throttled to the FPS the client asks for;
   - effect configuration changes sent to the server, so it extracts the right data.
+  - On the JVM too, to test the remote path from the desktop UI.
 - [ ] **Multiple clients.** Several browsers can watch the same simulation. Control commands are shared; effect configuration is per client.
-- [ ] **Transport choice.** A dedicated WebSocket protocol on the shared `@Serializable` frame model is recommended over extending `alchemist-graphql`: effects need server-side extraction of arbitrary, effect-specific data, which does not fit a generic node/molecule schema. Revisit if GraphQL must stay the public remote API.
-- [ ] Snapshot/test coverage for the browser: protocol round-trip tests (frames and commands) in `commonTest` and `jvmTest`.
+- [ ] **Benchmark** on the dense scenario, in the browser: snapshots per second and bytes per snapshot through GraphQL.
+- [ ] **WebSocket service on layer 2** (layer 4), only if the benchmark shows GraphQL clearly slower: GraphQL subscriptions already travel on WebSockets, so the gain could only come from a compact encoding (CBOR or ProtoBuf through kotlinx.serialization) and from sending changes only.
+- [ ] Tests: snapshot round-trips (JSON, and the compact encoding if adopted) in `commonTest`; queries, subscriptions and commands against a running simulation in `jvmTest`.
 
 ---
 
@@ -266,7 +287,7 @@ One step per effect: extractor (JVM), renderer (common), descriptor, snapshot sc
 
 ## Phase 8: Multiplatform simulation core
 
-Use the simulation primitives directly in the UI instead of mirroring them: `SimulationState` instead of `SimulationStatus`, and then `Time`, positions, and the other types that `SceneFrame` copies.
+Use the simulation primitives directly in the UI instead of mirroring them: `SimulationState` instead of `SimulationStatus`, and then `Time`, positions, and the other types that the snapshots of `alchemist-immutable-model-view` copy.
 This requires `alchemist-api` and `alchemist-engine` to be Kotlin Multiplatform (pure Kotlin, no JVM-only API in `commonMain`).
 It is a change to the core of the simulator, independent of the Compose work, and can be developed in parallel.
 
@@ -276,13 +297,13 @@ It is a change to the core of the simulator, independent of the Compose work, an
   - `kotlin-reflect` and `kotlinx-collections-immutable-jvm` (switch to the multiplatform artifact).
 - [ ] Convert `alchemist-engine` to Kotlin Multiplatform. Its JVM-only parts are the threading model in `AbstractEngine` (locks, `BlockingQueue`, `Thread`, `@Synchronized`), `slf4j`, `guava`, `trove4j`, and `jgrapht`. The thread-based runner can stay in `jvmMain`, behind a common engine core.
 - [ ] Make `alchemist-observables` multiplatform (it is JVM-only today). `alchemist-maintenance-tooling` and `arrow-core` already are.
-- [ ] Depend on `alchemist-api` from `alchemist-composeui` `commonMain`, then remove `SimulationStatus` and the other mirrored types, serialising the core types directly in `SceneFrame`.
+- [ ] Depend on `alchemist-api` from `alchemist-immutable-model-view` `commonMain`, then remove `SimulationStatus` and the other mirrored types, using the core types directly in snapshots where they are serializable.
 
 ---
 
 ## Open decisions
 
-- Transport for browser mode: dedicated WebSocket (recommended) or GraphQL.
+- Transport for browser mode: GraphQL, with a dedicated WebSocket service only if the Phase 4 benchmark asks for it.
 - Keep both `js` and `wasmJs` targets, or wasm only.
 - Effect configuration: JSON only, or also YAML on the JVM.
 - Where domain-effect extractors live: in `alchemist-composeui` `jvmMain` (simplest, as Swing does) or contributed through `ServiceLoader` by domain modules (cleaner dependencies).

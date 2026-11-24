@@ -36,7 +36,7 @@ private val nodeRowIndent = 16.dp
 /**
  * An inspector card listing, read-only, the reactions of each node in [reactionsByNode].
  * A single node shows them right away; in a group, each node expands to show its own.
- * Reactions still `null` are on their way from the simulation.
+ * `null` reactions are not built yet, and show as loading; an empty list shows that the node has none.
  */
 @Composable
 internal fun ReactionsSection(title: String, description: String, reactionsByNode: Map<Int, List<String>?>) {

@@ -25,6 +25,7 @@ include(
     "alchemist-graphql",
     "alchemist-graphql-surrogates",
     "alchemist-implementationbase",
+    "alchemist-immutable-model-view",
     "alchemist-incarnation-biochemistry",
     "alchemist-incarnation-protelis",
     "alchemist-incarnation-sapere",

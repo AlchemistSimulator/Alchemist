@@ -10,7 +10,6 @@
 import Libs.alchemist
 import Libs.incarnation
 import it.unibo.alchemist.build.devServer
-import it.unibo.alchemist.build.webCommonConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
@@ -23,7 +22,6 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        webCommonConfiguration()
         devServer()
     }
 

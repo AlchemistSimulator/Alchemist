@@ -33,6 +33,8 @@ kotlin {
 
     js { webCommonConfiguration() }
 
+    wasmJs { webCommonConfiguration() }
+
     sourceSets {
         val alchemistApi = alchemist("api")
         val alchemistMaintenanceTooling = alchemist("maintenance-tooling")

@@ -150,18 +150,20 @@ Five layers, each depending only on those above it:
 
 ### Layer 2: `alchemist-immutable-model-view`
 
-- [ ] **Module.** Kotlin Multiplatform (JVM, JS, wasm), `@Serializable` types in `commonMain`, depending on nothing of Alchemist there; the snapshot builder in `jvmMain`, depending on `alchemist-api`.
+- [x] **Module.** Kotlin Multiplatform (JVM, JS, wasm), `@Serializable` types in `commonMain`, depending on nothing of Alchemist there; the snapshot builder in `jvmMain`, depending on `alchemist-api`.
 - [ ] **Types**: a snapshot holding
-  - time, step, status (mirrored until Phase 8);
-  - nodes: id and position, plus the values requested;
-  - node details: every molecule with its value, the reactions and the properties, as text;
-  - links, possibly a sample of them, with their total count;
-  - environment-level primitives: layers, obstacles, polygons, polylines, raster grids, markers;
-  - the coordinate system (Euclidean or geographic).
+  - [x] time, step, status (mirrored until Phase 8);
+  - [x] nodes: id and position, plus the values requested;
+  - [x] node details: every molecule with its value, the properties as text, and the reactions with their type, next occurrence, whether they can run, mean delay, time distribution, and their conditions and actions as text;
+  - [x] links, possibly a sample of them, with their total count;
+  - [ ] the environment's own reactions (`Environment` is a `ReactionHost`), as `ReactionSnapshot`s, `null` unless asked for;
+  - [ ] environment-level primitives: layers, obstacles, polygons, polylines, raster grids, markers, with the effects that draw them (Phase 3 and 6);
+  - [ ] the coordinate system (Euclidean or geographic), with maps (Phase 5).
 
-  Concentrations are text plus, for numbers and booleans, their value, so effects map them without parsing; edits go back as text, parsed by the incarnation.
+  Concentrations keep their structure: numbers, booleans, collections (items, size, whether a set) and maps, each with its text; anything else is text. Collections keep their first items and their size, within limits on items, depth and text length (`ValueLimits`). Edits go back as text, parsed by the incarnation.
   It is a description, not a checkpoint: no simulation can be rebuilt from it.
-  The types written in `alchemist-composeui` (`model/frame`, not committed) move here.
+  JSON through `SnapshotFormats.json`, which keeps infinite and NaN values; ProtoBuf through `SnapshotFormats.protoBuf`, with fields numbered in declaration order, pinned by `ProtoBufLayoutTest`. Before storing snapshots, or when that test fails after a refactoring, number the fields with `ProtoNumber`, matching the old order.
+- [ ] **Time distributions describe themselves.** Only `DiracComb` overrides `toString`; the others print `Class@hash`, which is what a reaction's time distribution shows. Give each one a `toString` with its parameters, and `SAPEREExponentialTime` its rate equation, which today only `SAPERENodeReaction.schedulingAsString` (protected) shows.
 - [ ] **Complete types, partial instances.** A snapshot holds only what its consumer asked for: GraphQL, the selection set of the query; the UI, the selected nodes and the values its effects need (Phase 3). Whatever was not asked is absent, never empty, so absent and empty stay distinct.
 - [ ] **Snapshot builder** (JVM): builds a snapshot from an `Environment` and a request, on the simulation thread, in one go, so that every part refers to the same step.
 - [ ] **Freshness and cost.** Latest snapshot wins (conflated `StateFlow`): a slow consumer skips snapshots, but never shows an old one; the last one after pause or termination is always sent. Over the network, node data may go as changes against the last snapshot received, keyed by node id, with a full snapshot on (re)connection.
@@ -171,6 +173,7 @@ Five layers, each depending only on those above it:
 - [ ] **Session abstraction** in `commonMain`: a `SimulationSession` with `snapshots: StateFlow<…>`, what to include (selection, effect requirements), commands (play, pause, step, go to time/step, move/clone/delete nodes, set concentrations, set pacing), and the active effect configuration.
   - `LocalSession` (JVM): in memory, wrapping the current `EngineUiCallbacks` logic and the snapshot builder.
   - `RemoteSession` (common): through a service, in Phase 4.
+- [ ] **Environment inspector.** Show the environment's reactions, read-only, like those of a node: in an inspector panel opened when no node is selected, or from a control in the bottom bar. The snapshot carries them only while the panel is open.
 - [ ] The engine monitor and the demo produce snapshots; the view reads them, and `ViewportScene` keeps only UI state (selection, camera, dialogs, link visibility).
 - [ ] **Projection abstraction**: `WorldProjection` with an identity/Euclidean implementation now and Web Mercator in Phase 5. Camera, hit-testing, selection and drag must work through it.
 - [ ] Move the demo controller onto a `FakeSession` so the browser demo exercises the same code paths.
@@ -230,9 +233,17 @@ Five layers, each depending only on those above it:
   - snapshots throttled to the FPS the client asks for;
   - effect configuration changes sent to the server, so it extracts the right data.
   - On the JVM too, to test the remote path from the desktop UI.
+- [ ] **Render modes**, switchable in real time from the UI:
+  - **in memory**: the UI runs in the JVM of the simulation and reads snapshots as objects (JVM only, for now);
+  - **client**: the UI runs in the browser (wasm) or in another JVM, and draws the snapshots it receives;
+  - **server**: the UI runs offscreen on the server (`ImageComposeScene`, as the snapshot renderer does), streams its frames (WebP or JPEG while moving, PNG when still), and receives pointer and key events. The browser only needs a thin client, a canvas plus input capture, without wasm, so weak devices can follow heavy simulations;
+  - **auto**: picks client or server from the device (cores, as `alchemist-web-renderer` did), the bandwidth, and the frame rate achieved.
+
+  Switching hands over the UI state (selection, camera, panels, open editor), so `AlchemistUiState` without the scene must be serializable too.
+  Later, server mode may stream only the canvas, rendered with the effects on the JVM as image-sequence export does, with the panels drawn by the client; and video encoding (H.264 over WebRTC) for smooth frame rates.
 - [ ] **Multiple clients.** Several browsers can watch the same simulation. Control commands are shared; effect configuration is per client.
 - [ ] **Benchmark** on the dense scenario, in the browser: snapshots per second and bytes per snapshot through GraphQL.
-- [ ] **WebSocket service on layer 2** (layer 4), only if the benchmark shows GraphQL clearly slower: GraphQL subscriptions already travel on WebSockets, so the gain could only come from a compact encoding (CBOR or ProtoBuf through kotlinx.serialization) and from sending changes only.
+- [ ] **WebSocket service on layer 2** (layer 4), only if the benchmark shows GraphQL clearly slower: GraphQL subscriptions already travel on WebSockets, so the gain could only come from a compact encoding (`SnapshotFormats.protoBuf`) and from sending changes only.
 - [ ] Tests: snapshot round-trips (JSON, and the compact encoding if adopted) in `commonTest`; queries, subscriptions and commands against a running simulation in `jvmTest`.
 
 ---
@@ -282,6 +293,7 @@ One step per effect: extractor (JVM), renderer (common), descriptor, snapshot sc
 - [ ] Write the "swing-effects" how-to that is currently a stub, as a Compose effects how-to, including conversion of legacy effect files.
 - [ ] Switch site examples and `src/test/resources/*.alchemist.kts` samples to `ComposeMonitor` where appropriate.
 - [ ] Decide when `SwingGUI` is removed. It is already `@Deprecated`.
+- [ ] Retire `alchemist-web-renderer`: the browser and server render modes replace it, and its surrogates duplicate `alchemist-immutable-model-view`.
 
 ---
 

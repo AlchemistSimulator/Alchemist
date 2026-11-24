@@ -26,12 +26,21 @@ kotlin {
             }
         }
     }
+    // Korim has no wasm build: the code that draws with it is shared by the JVM and JS only.
+    applyDefaultHierarchyTemplate {
+        common {
+            group("jvmAndJs") {
+                withJvm()
+                withJs()
+            }
+        }
+    }
+
     sourceSets {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)
-                implementation(libs.korim)
                 implementation(libs.ktor.client.core)
                 implementation(libs.redux.kotlin.threadsafe)
             }
@@ -40,6 +49,11 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlin.coroutines.test)
+            }
+        }
+        named("jvmAndJsMain") {
+            dependencies {
+                implementation(libs.korim)
             }
         }
         jvmMain {

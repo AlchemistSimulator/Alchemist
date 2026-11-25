@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.positionfilters.Rectangle
 val gradient = """
     let source = env.has("source") && env.get("source");
     let distance = rep (d <- POSITIVE_INFINITY) {
-      mux (source) { 0 } else { minHood(nbr(d) + self.nbrRange()) }
+      mux (source) { 0 } else { foldMin(POSITIVE_INFINITY, nbr(d) + self.nbrRange()) }
     };
     env.put("distance", distance);
     distance

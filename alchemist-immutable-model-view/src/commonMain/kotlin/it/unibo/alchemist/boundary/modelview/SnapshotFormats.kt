@@ -21,7 +21,8 @@ object SnapshotFormats {
 
     /**
      * ProtoBuf: more compact than JSON.
-     * Fields are numbered in declaration order: reordering them changes the bytes, as the tests check.
+     * Fields are numbered in declaration order, so the bytes are not stable across versions of Alchemist:
+     * both ends must use the same one.
      */
     // The ProtoBuf format is experimental: the opt-in stays here, as it is exposed as a plain BinaryFormat.
     @OptIn(ExperimentalSerializationApi::class)

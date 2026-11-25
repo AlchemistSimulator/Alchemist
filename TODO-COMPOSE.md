@@ -156,13 +156,13 @@ Five layers, each depending only on those above it:
   - [x] nodes: id and position, plus the values requested;
   - [x] node details: every molecule with its value, the properties as text, and the reactions with their type, next occurrence, whether they can run, mean delay, time distribution, and their conditions and actions as text;
   - [x] links, possibly a sample of them, with their total count;
-  - [ ] the environment's own reactions (`Environment` is a `ReactionHost`), as `ReactionSnapshot`s, `null` unless asked for;
+  - [x] the environment's own reactions (`Environment` is a `ReactionHost`), as `ReactionSnapshot`s, `null` unless asked for;
   - [ ] environment-level primitives: layers, obstacles, polygons, polylines, raster grids, markers, with the effects that draw them (Phase 3 and 6);
   - [ ] the coordinate system (Euclidean or geographic), with maps (Phase 5).
 
   Concentrations keep their structure: numbers, booleans, collections (items, size, whether a set) and maps, each with its text; anything else is text. Collections keep their first items and their size, within limits on items, depth and text length (`ValueLimits`). Edits go back as text, parsed by the incarnation.
   It is a description, not a checkpoint: no simulation can be rebuilt from it.
-  JSON through `SnapshotFormats.json`, which keeps infinite and NaN values; ProtoBuf through `SnapshotFormats.protoBuf`, with fields numbered in declaration order, pinned by `ProtoBufLayoutTest`. Before storing snapshots, or when that test fails after a refactoring, number the fields with `ProtoNumber`, matching the old order.
+  JSON through `SnapshotFormats.json`, which keeps infinite and NaN values; ProtoBuf through `SnapshotFormats.protoBuf`, with fields numbered in declaration order. The ProtoBuf layout is not part of the Alchemist API: it may change in any release, so both ends must run the same version.
 - [ ] **Time distributions describe themselves.** Only `DiracComb` overrides `toString`; the others print `Class@hash`, which is what a reaction's time distribution shows. Give each one a `toString` with its parameters, and `SAPEREExponentialTime` its rate equation, which today only `SAPERENodeReaction.schedulingAsString` (protected) shows.
 - [ ] **Complete types, partial instances.** A snapshot holds only what its consumer asked for: GraphQL, the selection set of the query; the UI, the selected nodes and the values its effects need (Phase 3). Whatever was not asked is absent, never empty, so absent and empty stay distinct.
 - [x] **Snapshot builder** (JVM): builds a snapshot from an `Environment` and a `SnapshotRequest` (values, detailed nodes, link limit, value limits), on the simulation thread, in one go, so that every part refers to the same step. Links are a stable sample, the lowest XXH32 scores; composeui's own sampling (`EdgeSnapshot`, `EdgeKey`) goes when the UI moves to snapshots.

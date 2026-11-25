@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.networks.connectWithinDistance
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.genericReaction
 import it.unibo.alchemist.model.timedistributions.DiracComb
+import it.unibo.alchemist.test.environmentTestReaction
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -29,6 +30,7 @@ class EnvironmentSnapshotsTest {
         simulation2D(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()) {
             environment {
                 networkModel(connectWithinDistance(1.5))
+                globalProgram(DiracComb(2.0), environmentTestReaction(DiracComb(2.0)))
                 deployments {
                     listOf(0.0 to 0.0, 1.0 to 0.0, 5.0 to 5.0).forEachIndexed { index, (x, y) ->
                         deploy(point(x, y)) {
@@ -82,5 +84,14 @@ class EnvironmentSnapshotsTest {
             environment.snapshot(SnapshotRequest(maxLinks = 10)).links,
         )
         assertEquals(LinksSnapshot(emptyList(), total = 1), environment.snapshot(SnapshotRequest(maxLinks = 0)).links)
+    }
+
+    @Test
+    fun `the reactions of the environment are sent only when asked for`() {
+        assertNull(environment.snapshot().environmentReactions)
+        val snapshot = environment.snapshot(SnapshotRequest(environmentReactions = true))
+        val reaction = checkNotNull(snapshot.environmentReactions).single()
+        assertEquals("EnvironmentTestReaction", reaction.type)
+        assertEquals(0.5, reaction.meanDelay)
     }
 }

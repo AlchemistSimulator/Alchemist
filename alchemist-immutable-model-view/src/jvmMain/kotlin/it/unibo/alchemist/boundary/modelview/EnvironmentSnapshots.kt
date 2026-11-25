@@ -47,6 +47,7 @@ object EnvironmentSnapshots {
                 )
             },
             links = request.maxLinks?.let { links(it) },
+            environmentReactions = reactions.current.takeIf { request.environmentReactions }?.map { it.toSnapshot() },
         )
     }
 

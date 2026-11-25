@@ -31,6 +31,7 @@ kotlin {
             dependencies {
                 implementation(alchemist("euclidean-geometry"))
                 implementation(alchemist("loading"))
+                implementation(alchemist("test"))
                 implementation(incarnation("protelis"))
             }
         }

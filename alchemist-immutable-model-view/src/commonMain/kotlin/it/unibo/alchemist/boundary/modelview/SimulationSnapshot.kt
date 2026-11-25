@@ -21,6 +21,7 @@ import kotlinx.serialization.Serializable
  * @property dimensions how many coordinates each position has.
  * @property nodes every node, with its position.
  * @property links the links between nodes, or `null` if not asked for.
+ * @property environmentReactions the reactions of the environment itself, or `null` if not asked for.
  */
 @Serializable
 data class SimulationSnapshot(
@@ -30,4 +31,5 @@ data class SimulationSnapshot(
     val dimensions: Int = 2,
     val nodes: List<NodeSnapshot> = emptyList(),
     val links: LinksSnapshot? = null,
+    val environmentReactions: List<ReactionSnapshot>? = null,
 )

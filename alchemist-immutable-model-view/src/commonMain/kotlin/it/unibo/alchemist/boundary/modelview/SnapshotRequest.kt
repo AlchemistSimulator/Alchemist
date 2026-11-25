@@ -18,6 +18,7 @@ import kotlinx.serialization.Serializable
  * @property detailed the ids of the nodes whose [NodeDetails] are built.
  * @property maxLinks how many links are sent at most, a stable sample if there are more; `null` sends none.
  * @property valueLimits how much of each value is kept.
+ * @property environmentReactions whether the reactions of the environment itself are sent.
  */
 @Serializable
 data class SnapshotRequest(
@@ -25,6 +26,7 @@ data class SnapshotRequest(
     val detailed: Set<Int> = emptySet(),
     val maxLinks: Int? = null,
     val valueLimits: ValueLimits = ValueLimits(),
+    val environmentReactions: Boolean = false,
 ) {
     init {
         require(maxLinks == null || maxLinks >= 0) { "The links sent cannot be negative: $maxLinks" }

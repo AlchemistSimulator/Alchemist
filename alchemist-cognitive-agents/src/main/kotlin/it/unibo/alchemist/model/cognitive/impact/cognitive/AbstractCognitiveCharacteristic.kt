@@ -1,8 +1,6 @@
 package it.unibo.alchemist.model.cognitive.impact.cognitive
 
-import com.uchuhimo.konf.Config
-import com.uchuhimo.konf.source.toml
-import it.unibo.alchemist.model.cognitive.impact.PARAMETERS_FILE
+import it.unibo.alchemist.model.cognitive.impact.ImpactParameters
 import it.unibo.alchemist.util.math.advancedLogistic
 import it.unibo.alchemist.util.math.logistic
 
@@ -32,84 +30,81 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
      * These are described in the [IMPACT model](https://doi.org/10.1007/978-3-319-70647-4_11).
      */
     companion object {
-        private val config =
-            Config { addSpec(CognitiveSpec) }
-                .from.toml
-                .resource(PARAMETERS_FILE)
+        private val parameters = ImpactParameters.default.cognitive
 
         /**
          * Capacity of sensing the danger.
          */
-        val sensingOmega = config[CognitiveSpec.sensingOmega]
+        val sensingOmega = parameters.sensingOmega
 
         /**
          * Influence of fear on danger belief.
          */
-        val affectiveBiasingOmega = config[CognitiveSpec.affectiveBiasingOmega]
+        val affectiveBiasingOmega = parameters.affectiveBiasingOmega
 
         /**
          * Persistence of emotions.
          */
-        val persistingOmega = config[CognitiveSpec.persistingOmega]
+        val persistingOmega = parameters.persistingOmega
 
         /**
          * Amplifies fear sensation.
          */
-        val amplifyingFeelingOmega = config[CognitiveSpec.amplifyingFeelingOmega]
+        val amplifyingFeelingOmega = parameters.amplifyingFeelingOmega
 
         /**
          * Inhibits fear sensation.
          */
-        val inhibitingFeelingOmega = config[CognitiveSpec.inhibitingFeelingOmega]
+        val inhibitingFeelingOmega = parameters.inhibitingFeelingOmega
 
         /**
          * Amplifies the desire to evacuate.
          */
-        val amplifyingEvacuationOmega = config[CognitiveSpec.amplifyingEvacuationOmega]
+        val amplifyingEvacuationOmega = parameters.amplifyingEvacuationOmega
 
         /**
          * Inhibits the desire to evacuate.
          */
-        val inhibitingWalkRandOmega = config[CognitiveSpec.inhibitingWalkRandOmega]
+        val inhibitingWalkRandOmega = parameters.inhibitingWalkRandOmega
 
         /**
          * Amplifies the intention to evacuate.
          */
-        val amplifyingIntentionOmega = config[CognitiveSpec.amplifyingIntentionOmega]
+        val amplifyingIntentionOmega = parameters.amplifyingIntentionOmega
 
         /**
          * Inhibits the intention to evacuate.
          */
-        val inhibitingIntentionOmega = config[CognitiveSpec.inhibitingIntentionOmega]
+        val inhibitingIntentionOmega = parameters.inhibitingIntentionOmega
 
         /**
          * Intensity of human mental response.
          */
-        val mentalEta = config[CognitiveSpec.mentalEta]
+        val mentalEta = parameters.mentalEta
 
         /**
          * Intensity of human body response.
          */
-        val bodyEta = config[CognitiveSpec.bodyEta]
+        val bodyEta = parameters.bodyEta
 
         /**
          * Sigma of the [logistic] function used to compute [IntentionEvacuate] and [IntentionWalkRandomly].
          */
-        val logisticSigma = config[CognitiveSpec.logisticSigma]
+        val logisticSigma = parameters.logisticSigma
 
         /**
          * Tau of the [logistic] function used to compute [IntentionEvacuate] and [IntentionWalkRandomly].
          */
-        val logisticTau = config[CognitiveSpec.logisticTau]
+        val logisticTau = parameters.logisticTau
 
         /**
          * Sigma of the [advancedLogistic] function used to compute [Fear].
          */
-        val advancedLogisticSigma = config[CognitiveSpec.advancedLogisticSigma]
+        val advancedLogisticSigma = parameters.advancedLogisticSigma
 
         /**
          * Tau of the [advancedLogistic] function used to compute [Fear].
          */
-        val advancedLogisticTau = config[CognitiveSpec.advancedLogisticTau]
+        val advancedLogisticTau = parameters.advancedLogisticTau
     }
 }

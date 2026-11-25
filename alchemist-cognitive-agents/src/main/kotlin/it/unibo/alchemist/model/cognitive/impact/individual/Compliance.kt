@@ -1,8 +1,6 @@
 package it.unibo.alchemist.model.cognitive.impact.individual
 
-import com.uchuhimo.konf.Config
-import com.uchuhimo.konf.source.toml
-import it.unibo.alchemist.model.cognitive.impact.PARAMETERS_FILE
+import it.unibo.alchemist.model.cognitive.impact.ImpactParameters
 
 /**
  * The level of compliance of an agent considering its gender and its age.
@@ -27,16 +25,13 @@ class Compliance(age: Age, gender: Gender) : Characteristic {
         }
 
     private companion object {
-        private val config =
-            Config { addSpec(ComplianceSpec) }
-                .from.toml
-                .resource(PARAMETERS_FILE)
+        private val parameters = ImpactParameters.default.compliance
 
-        private val childMale = config[ComplianceSpec.childMale]
-        private val adultMale = config[ComplianceSpec.adultMale]
-        private val elderlyMale = config[ComplianceSpec.elderlyMale]
-        private val childFemale = config[ComplianceSpec.childFemale]
-        private val adultFemale = config[ComplianceSpec.adultFemale]
-        private val elderlyFemale = config[ComplianceSpec.elderlyFemale]
+        private val childMale = parameters.childMale
+        private val adultMale = parameters.adultMale
+        private val elderlyMale = parameters.elderlyMale
+        private val childFemale = parameters.childFemale
+        private val adultFemale = parameters.adultFemale
+        private val elderlyFemale = parameters.elderlyFemale
     }
 }

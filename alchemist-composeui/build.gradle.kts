@@ -49,11 +49,11 @@ kotlin {
         jvmTest {
             dependencies {
                 implementation(libs.compose.ui.test)
+                implementation(alchemist("kotlinscript"))
                 implementation(alchemist("loading"))
                 implementation(alchemist("test"))
                 implementation(incarnation("protelis"))
                 implementation(incarnation("sapere"))
-                implementation(libs.snakeyaml)
             }
         }
     }
@@ -87,7 +87,7 @@ val runScenario = tasks.register<JavaExec>("runScenario") {
     val repository = rootProject.layout.projectDirectory
     val scenario = providers.gradleProperty("scenario")
         .map { repository.file(it).asFile }
-        .orElse(layout.projectDirectory.file("src/jvmTest/resources/composeui-gradient.yml").asFile)
+        .orElse(layout.projectDirectory.file("src/jvmTest/resources/composeui-gradient.alchemist.kts").asFile)
     classpath(listOfNotNull(testCompilation.output.allOutputs, testCompilation.runtimeDependencyFiles))
     mainClass = "it.unibo.alchemist.boundary.composeui.live.LiveRunKt"
     argumentProviders += CommandLineArgumentProvider { listOf(scenario.get().absolutePath) }

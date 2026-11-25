@@ -11,6 +11,7 @@ import Libs.alchemist
 import Libs.incarnation
 import com.google.devtools.ksp.gradle.KspAATask
 import dev.detekt.gradle.Detekt
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     id("kotlin-multiplatform-convention")
@@ -28,6 +29,7 @@ kotlin {
         }
     }
     // Korim has no wasm build: the code that draws with it is shared by the JVM and JS only.
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     applyDefaultHierarchyTemplate {
         common {
             group("jvmAndJs") {

@@ -6,6 +6,9 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+import Libs.alchemist
+import Libs.incarnation
+
 plugins {
     id("kotlin-multiplatform-convention")
     alias(libs.plugins.kotlin.serialization)
@@ -17,6 +20,18 @@ kotlin {
             dependencies {
                 api(libs.kotlinx.serialization.json)
                 api(libs.kotlinx.serialization.protobuf)
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation(libs.noncrypto.hash)
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation(alchemist("euclidean-geometry"))
+                implementation(alchemist("loading"))
+                implementation(incarnation("protelis"))
             }
         }
     }

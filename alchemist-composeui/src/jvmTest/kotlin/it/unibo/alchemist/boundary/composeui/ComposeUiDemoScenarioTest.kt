@@ -27,7 +27,7 @@ class ComposeUiDemoScenarioTest {
 
     @Test
     fun `the gradient scenario for manual testing loads`() {
-        val scenario = assertNotNull(javaClass.classLoader.getResource("composeui-gradient.yml"))
+        val scenario = assertNotNull(javaClass.classLoader.getResource("composeui-gradient.alchemist.kts"))
         val simulation = LoadAlchemist.from(scenario).getDefault<Any, Euclidean2DPosition>()
         assertEquals(400, simulation.environment.nodeCount.current)
     }

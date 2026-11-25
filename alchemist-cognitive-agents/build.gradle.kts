@@ -12,6 +12,7 @@ import Libs.incarnation
 
 plugins {
     id("kotlin-jvm-convention")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
@@ -23,7 +24,7 @@ dependencies {
     implementation(alchemist("implementationbase"))
     implementation(alchemist("physics"))
     implementation(libs.jgrapht.core)
-    implementation(libs.konf)
+    implementation(libs.ktoml.core)
     implementation(libs.kotlin.reflect)
 
     testImplementation(alchemist("test"))

@@ -46,9 +46,6 @@ internal data class SnapshotSpec(
         private const val COMPACT_WIDTH = 1024
         private const val COMPACT_HEIGHT = 600
 
-        /** The keys a snapshot can press, by name. */
-        private val KEYS = mapOf("C" to Key.C, "H" to Key.H, "Escape" to Key.Escape)
-
         /** The snapshots of a scenario that lists none: wide, compact, and wide with four nodes selected. */
         val DEFAULTS = listOf(
             SnapshotSpec(name = "wide"),
@@ -56,29 +53,20 @@ internal data class SnapshotSpec(
             SnapshotSpec(name = "inspector", select = listOf(0, 1, 2, 3)),
         )
 
-        /**
-         * The snapshot described by [entry], an item of the `_snapshots` list of a scenario:
-         * `name` is required, everything else is optional, as in [SnapshotSpec].
-         */
-        fun of(entry: Map<*, *>): SnapshotSpec {
-            val size = entry["size"]?.numbers()
-            val pan = entry["pan"]?.numbers()
-            return SnapshotSpec(
-                name = requireNotNull(entry["name"]?.toString()) { "Every snapshot needs a name: $entry" },
-                width = size?.get(0)?.toInt() ?: WIDE_WIDTH,
-                height = size?.get(1)?.toInt() ?: WIDE_HEIGHT,
-                select = entry["select"]?.numbers()?.map(Number::toInt).orEmpty(),
-                editor = entry["editor"]?.toString(),
-                zoom = (entry["zoom"] as? Number)?.toInt() ?: 0,
-                pan = pan?.let { Offset(it[0].toFloat(), it[1].toFloat()) } ?: Offset.Zero,
-                keys = (entry["keys"] as? List<*>).orEmpty().map { name ->
-                    requireNotNull(KEYS[name.toString()]) { "Unknown key $name: use one of ${KEYS.keys}" }
-                },
-            )
-        }
-
-        private fun Any.numbers(): List<Number> =
-            (this as? List<*>)?.map { it as? Number ?: error("Not a number: $it in $this") }
-                ?: error("Not a list of numbers: $this")
+        /** The snapshots of each scenario, by file name without `.alchemist.kts`, when not the [DEFAULTS]. */
+        val BY_SCENARIO = mapOf(
+            "dense" to listOf(
+                SnapshotSpec(name = "wide"),
+                SnapshotSpec(name = "inspector", select = (0..7).toList()),
+            ),
+            "grid" to DEFAULTS + SnapshotSpec(
+                name = "zoomed-editor-help",
+                select = listOf(0),
+                editor = "distance",
+                zoom = 4,
+                pan = Offset(300f, -200f),
+                keys = listOf(Key.H),
+            ),
+        )
     }
 }

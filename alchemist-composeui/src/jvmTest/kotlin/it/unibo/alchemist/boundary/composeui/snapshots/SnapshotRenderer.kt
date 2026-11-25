@@ -32,7 +32,6 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.math.sign
 import org.jetbrains.skia.EncodedImageFormat
-import org.yaml.snakeyaml.Yaml
 
 /** Steps each scenario runs before its snapshots. */
 private const val STEPS = 2_000L
@@ -41,31 +40,27 @@ private const val STEPS = 2_000L
 private const val SETTLE_FRAMES = 60
 private const val FRAME_NANOS = 16_666_667L
 
-/** The key of a scenario file that lists its snapshots; the loader ignores keys starting with `_`. */
-private const val SNAPSHOTS_KEY = "_snapshots"
+/** The extension of the scenarios, written with the Kotlin DSL. */
+private const val SCENARIO_EXTENSION = ".alchemist.kts"
 
 /**
- * Renders the whole UI offscreen for every `.yml` scenario in the folder `args[0]`, writing
+ * Renders the whole UI offscreen for every `.alchemist.kts` scenario in the folder `args[0]`, writing
  * `<scenario>-<snapshot>.png` into the folder `args[1]`: review images for people and agents, not assertions.
- * A scenario lists its snapshots under `_snapshots` (see [SnapshotSpec.of]); otherwise it gets [SnapshotSpec.DEFAULTS].
+ * A scenario gets its snapshots from [SnapshotSpec.BY_SCENARIO], or else [SnapshotSpec.DEFAULTS].
  */
 fun main(args: Array<String>) {
     val (scenarios, output) = args.map(::File)
     output.mkdirs()
-    scenarios.listFiles { file -> file.extension == "yml" }.orEmpty().sorted().forEach { scenario ->
+    scenarios.listFiles { file -> file.name.endsWith(SCENARIO_EXTENSION) }.orEmpty().sorted().forEach { scenario ->
+        val name = scenario.name.removeSuffix(SCENARIO_EXTENSION)
         val state = scenario.runToSnapshot()
-        scenario.snapshots().forEach { spec ->
-            val target = output.resolve("${scenario.nameWithoutExtension}-${spec.name}.png")
+        (SnapshotSpec.BY_SCENARIO[name] ?: SnapshotSpec.DEFAULTS).forEach { spec ->
+            val target = output.resolve("$name-${spec.name}.png")
             target.writeBytes(state.render(spec))
             println("Rendered $target")
         }
     }
 }
-
-private fun File.snapshots(): List<SnapshotSpec> =
-    (Yaml().load<Map<String, Any?>>(readText())[SNAPSHOTS_KEY] as? List<*>)
-        ?.map { entry -> SnapshotSpec.of(entry as? Map<*, *> ?: error("Not a snapshot: $entry")) }
-        ?: SnapshotSpec.DEFAULTS
 
 /**
  * Loads this scenario, runs it for [STEPS] steps, and returns the UI state of the result,

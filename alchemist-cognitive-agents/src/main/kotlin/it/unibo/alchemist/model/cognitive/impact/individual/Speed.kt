@@ -1,8 +1,6 @@
 package it.unibo.alchemist.model.cognitive.impact.individual
 
-import com.uchuhimo.konf.Config
-import com.uchuhimo.konf.source.toml
-import it.unibo.alchemist.model.cognitive.impact.PARAMETERS_FILE
+import it.unibo.alchemist.model.cognitive.impact.ImpactParameters
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -39,18 +37,18 @@ class Speed(age: Age, gender: Gender, randomGenerator: RandomGenerator) : Charac
      * Default configurations.
      */
     companion object {
-        private val config = Config { addSpec(SpeedSpec) }.from.toml.resource(PARAMETERS_FILE)
-        private val childMale: Double = config[SpeedSpec.childMale]
-        private val adultMale: Double = config[SpeedSpec.adultMale]
-        private val elderlyMale: Double = config[SpeedSpec.elderlyMale]
-        private val childFemale: Double = config[SpeedSpec.childFemale]
-        private val adultFemale: Double = config[SpeedSpec.adultFemale]
-        private val elderlyFemale: Double = config[SpeedSpec.elderlyFemale]
+        private val parameters = ImpactParameters.default.speed
+        private val childMale: Double = parameters.childMale
+        private val adultMale: Double = parameters.adultMale
+        private val elderlyMale: Double = parameters.elderlyMale
+        private val childFemale: Double = parameters.childFemale
+        private val adultFemale: Double = parameters.adultFemale
+        private val elderlyFemale: Double = parameters.elderlyFemale
 
         /**
          * Default speed.
          */
-        val default: Double = config[SpeedSpec.default]
-        private val variance: Double = config[SpeedSpec.variance]
+        val default: Double = parameters.default
+        private val variance: Double = parameters.variance
     }
 }

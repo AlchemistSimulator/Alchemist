@@ -110,7 +110,7 @@ Direction: a simulation-first sandbox, in the style of Universe Sandbox: a full-
 A way to look at the UI while developing, for both the developer and the agent.
 
 - [x] **Snapshot renderer (JVM, headless).** A Gradle task, e.g. `alchemist-composeui:renderSnapshots`, that:
-  - loads a set of scenario files from `src/jvmTest/resources/snapshots/*.yml` (or `.alchemist.kts`);
+  - loads a set of scenario files from `src/jvmTest/resources/snapshots/*.alchemist.kts`;
   - runs each for a fixed number of steps with a fixed seed;
   - renders the full UI offscreen (`ImageComposeScene`) at a few sizes: wide, compact, and an inspector/effects panel open;
   - writes PNGs to `alchemist-composeui/build/ui-snapshots/<scenario>-<size>.png`.
@@ -118,15 +118,15 @@ A way to look at the UI while developing, for both the developer and the agent.
   These are review images, not assertions, so they cannot become flaky tests. The agent can open the PNGs directly; the user can open the folder.
 - [ ] **Canvas image sequences** (after the effect system, Phase 3). The same renderer writes a sequence of images of the canvas alone, without panels, at a chosen resolution: one image every chosen number of steps or amount of simulated time, numbered so they can be turned into a video. The canvas is drawn with the configured effects.
 - [x] **Scripted UI states.** Each snapshot can declare UI actions to apply before rendering: select nodes, toggle groups, set zoom/pan, open panels. This lets one image show one specific feature.
-  Done as a `_snapshots` list in the scenario file (the loader ignores `_` keys): size, selection, value editor, zoom, pan and keys, replayed as real input. Toggling effect groups comes with Phase 3.
+  Done as a list per scenario in `SnapshotSpec`: size, selection, value editor, zoom, pan and keys, replayed as real input. Toggling effect groups comes with Phase 3.
 - [x] **Live desktop run.** `alchemist-composeui:runScenario` launches the desktop UI on a chosen scenario (`-Pscenario=...`, from the repository root; the gradient test scenario by default) for hands-on inspection.
 - [ ] **Live browser run.**
   - [x] `wasmJsBrowserDevelopmentRun` on the demo controller.
   - [ ] On an ongoing simulation, once Phase 4 serves one to the browser: a task like `runScenario` that starts the simulation with the server and opens the browser on it.
 - [ ] **Browser snapshots (optional, later).** Headless Chromium screenshots of the wasm build, so both targets can be compared visually.
 - [ ] **Scenarios.** Add `snapshots/` scenarios covering:
-  - [x] a plain 2D grid (`grid.yml`)
-  - [x] a dense random deployment with links (`dense.yml`, enough links to be sampled)
+  - [x] a plain 2D grid (`grid.alchemist.kts`)
+  - [x] a dense random deployment with links (`dense.alchemist.kts`, enough links to be sampled)
   - obstacles
   - a map environment
   - a layer
@@ -165,7 +165,7 @@ Five layers, each depending only on those above it:
   JSON through `SnapshotFormats.json`, which keeps infinite and NaN values; ProtoBuf through `SnapshotFormats.protoBuf`, with fields numbered in declaration order, pinned by `ProtoBufLayoutTest`. Before storing snapshots, or when that test fails after a refactoring, number the fields with `ProtoNumber`, matching the old order.
 - [ ] **Time distributions describe themselves.** Only `DiracComb` overrides `toString`; the others print `Class@hash`, which is what a reaction's time distribution shows. Give each one a `toString` with its parameters, and `SAPEREExponentialTime` its rate equation, which today only `SAPERENodeReaction.schedulingAsString` (protected) shows.
 - [ ] **Complete types, partial instances.** A snapshot holds only what its consumer asked for: GraphQL, the selection set of the query; the UI, the selected nodes and the values its effects need (Phase 3). Whatever was not asked is absent, never empty, so absent and empty stay distinct.
-- [ ] **Snapshot builder** (JVM): builds a snapshot from an `Environment` and a request, on the simulation thread, in one go, so that every part refers to the same step.
+- [x] **Snapshot builder** (JVM): builds a snapshot from an `Environment` and a `SnapshotRequest` (values, detailed nodes, link limit, value limits), on the simulation thread, in one go, so that every part refers to the same step. Links are a stable sample, the lowest XXH32 scores; composeui's own sampling (`EdgeSnapshot`, `EdgeKey`) goes when the UI moves to snapshots.
 - [ ] **Freshness and cost.** Latest snapshot wins (conflated `StateFlow`): a slow consumer skips snapshots, but never shows an old one; the last one after pause or termination is always sent. Over the network, node data may go as changes against the last snapshot received, keyed by node id, with a full snapshot on (re)connection.
 
 ### Layer 5: the UI on layer 2

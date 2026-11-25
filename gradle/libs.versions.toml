@@ -11,7 +11,6 @@ graphql = "11.0.0"
 graphhopper = "11.1"
 graphstream = "2.0"
 junit = "6.1.3"
-konf = "1.1.2"
 kotest = "6.2.6"
 kotlin = "2.4.21"
 ksp = "2.3.13"
@@ -80,8 +79,8 @@ junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref 
 junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junit" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit" }
 kasechange = "net.pearx.kasechange:kasechange:1.4.1"
-konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 korim = "com.soywiz.korlibs.korim:korim:4.0.10"
+ktoml-core = "com.akuleshov7:ktoml-core:0.7.1"
 kotest-plugin = { module = "io.kotest:io.kotest.gradle.plugin", version.ref = "kotest" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-assertions-table = { module = "io.kotest:kotest-assertions-table", version.ref = "kotest" }

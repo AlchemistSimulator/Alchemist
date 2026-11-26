@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.util.BugReporting
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 import it.unibo.alchemist.util.RealDistributions
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -125,6 +126,12 @@ class MoleculeControlledTimeDistribution<T> private constructor(
             errorDistributionFactory,
         )
     }
+
+    override fun toString(): String = listOfNotNull(
+        "molecule=$molecule",
+        property?.let { "property=$it" },
+        errorDistribution?.let { "error=${it::class.nonNullSimpleName}" },
+    ).joinToString(prefix = "${this::class.nonNullSimpleName}[", postfix = "]")
 
     @JvmOverloads
     constructor(

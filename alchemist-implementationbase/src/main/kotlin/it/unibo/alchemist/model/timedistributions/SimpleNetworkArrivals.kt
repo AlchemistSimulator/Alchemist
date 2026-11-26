@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 
 /**
  * This class models a distribution that follows the packet arrival times as described in
@@ -204,6 +205,13 @@ class SimpleNetworkArrivals<T> private constructor(
 
     override fun sample(): Time = DoubleTime(meanDelay)
 
+    override fun toString(): String = listOfNotNull(
+        "propagationDelay=${describe(constantPropagationDelay, propagationDelayMolecule, propagationDelayProperty)}",
+        "packetSize=${describe(constantPacketSize, packetSizeMolecule, packetSizeProperty)}",
+        "bandwidth=${describe(constantBandwidth, bandwidthMolecule, bandwidthProperty)}",
+        accessPointIdentificator?.let { "accessPoint=$it" },
+    ).joinToString(prefix = "${this::class.nonNullSimpleName}[", postfix = "]")
+
     private fun propertyOf(molecule: Molecule?, property: String?): Double = incarnation.readConcentration(
         node,
         checkNotNull(molecule) { "Neither a constant nor a molecule were provided for a network parameter" },
@@ -211,6 +219,10 @@ class SimpleNetworkArrivals<T> private constructor(
     )
 
     private companion object {
+        /** A network parameter: its constant value, or where it is read from. */
+        private fun describe(constant: Double?, molecule: Molecule?, property: String?): String =
+            constant?.toString() ?: "$molecule[$property]"
+
         private val Molecule?.isMeaningful: Molecule?
             get() = this?.takeUnless { name.isBlank() }
     }

@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator
 import org.apache.commons.math3.distribution.WeibullDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -133,6 +134,9 @@ open class WeibullTime<T> private constructor(
     )
 
     override fun sample(): Time = DoubleTime(1.0 / genSample())
+
+    override fun toString(): String = "${this::class.nonNullSimpleName}[shape=${backingDistribution.shape}, " +
+        "scale=${backingDistribution.scale}, offset=$offset]"
 
     /**
      * @return a sample from the distribution

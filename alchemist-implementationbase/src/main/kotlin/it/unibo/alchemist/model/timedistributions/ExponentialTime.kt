@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.model.timedistributions
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.FastMath
 
@@ -24,7 +24,6 @@ import org.apache.commons.math3.util.FastMath
  * @param start initial scheduling time
  * @param randomGenerator simulation random generator
  */
-@SuppressFBWarnings(value = ["EI_EXPOSE_REP2"], justification = "The simulation intentionally shares its RNG")
 open class ExponentialTime<T>(open val lambda: Double, start: Time, protected val randomGenerator: RandomGenerator) :
     AbstractDistribution<T>(start) {
 
@@ -39,6 +38,8 @@ open class ExponentialTime<T>(open val lambda: Double, start: Time, protected va
     override fun newInstanceOn(node: Node<T>): TimeDistribution<T> = ExponentialTime(lambda, startTime, randomGenerator)
 
     override fun sample(): Time = genTime(lambda)
+
+    override fun toString(): String = "${this::class.nonNullSimpleName}[λ=$lambda]"
 
     /**
      * Generates an exponential delay at [propensity].

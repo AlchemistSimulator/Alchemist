@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 
 /**
  * Generates a constant delay between occurrences.
@@ -38,5 +39,5 @@ open class DiracComb<T>(start: Time, rate: Double) : AbstractDistribution<T>(sta
 
     override fun sample(): Time = DoubleTime(timeInterval)
 
-    override fun toString(): String = "${javaClass.simpleName}[ΔT=$timeInterval]"
+    override fun toString(): String = "${this::class.nonNullSimpleName}[ΔT=$timeInterval]"
 }

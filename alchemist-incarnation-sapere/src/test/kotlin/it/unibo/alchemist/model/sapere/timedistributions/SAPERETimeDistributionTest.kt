@@ -25,6 +25,10 @@ import org.apache.commons.math3.random.Well19937c
 import org.danilopianini.lang.HashString
 
 class SAPERETimeDistributionTest {
+    @Test
+    fun `the description shows the rate equation`() {
+        assertEquals("SAPEREExponentialTime[λ=N]", SAPEREExponentialTime("N", Well19937c(0)).toString())
+    }
 
     @Test
     fun `a fresh instance preserves the rate equation but not the generator object`() {

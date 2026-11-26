@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.sapere.dsl.ITreeNode
 import it.unibo.alchemist.model.sapere.dsl.impl.Expression
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
@@ -74,6 +75,8 @@ class SAPEREExponentialTime(private val rateEquation: String, start: Time, rando
     }
 
     override fun getRateEquation(): IExpression = expression
+
+    override fun toString(): String = "${this::class.nonNullSimpleName}[λ=$rateEquation]"
 
     private companion object {
         private const val FORMAT_PATTERN = "###.######################"

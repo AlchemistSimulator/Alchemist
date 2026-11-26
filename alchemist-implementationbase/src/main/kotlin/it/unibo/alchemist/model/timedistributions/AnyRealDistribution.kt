@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.times.DoubleTime
+import it.unibo.alchemist.util.KClasses.nonNullSimpleName
 import it.unibo.alchemist.util.RealDistributions
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -86,4 +87,7 @@ open class AnyRealDistribution<T> private constructor(
         }
         DoubleTime(delay)
     }
+
+    override fun toString(): String =
+        "Apache:${distribution::class.nonNullSimpleName}[E=${distribution.numericalMean}, σ²=${distribution.numericalVariance}]"
 }
